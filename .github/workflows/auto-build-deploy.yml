@@ -57,5 +57,5 @@ jobs:
       - name: Run Docker Container (Inject Connection string Config)
         run: |
           docker run -d --name $IMAGE_NAME \
-            -e ConnectionStrings__SchoolMedicalSystemContext="${{ secrets.CONNECTIONSTRING }}" 
+            -e ConnectionStrings__SchoolMedicalSystemContext="${{ secrets.CONNECTIONSTRING }}" \
             -p $DOCKER_PORT:$APP_PORT $IMAGE_NAME:v1
