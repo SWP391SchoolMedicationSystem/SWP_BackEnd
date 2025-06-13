@@ -25,6 +25,12 @@ builder.Services.AddCors(options =>
         builder => builder.AllowAnyOrigin()
                           .AllowAnyMethod()
                           .AllowAnyHeader());
+    options.AddPolicy("AllowReact", policy =>
+    {
+        policy.WithOrigins("http://localhost:3000") 
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
 });
 builder.Services.Configure<AppSetting>(builder.Configuration.GetSection("AppSetting"));
 var secretkey = builder.Configuration["AppSetting:SecretKey"];
@@ -67,14 +73,14 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
 }
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 
 app.UseCors("AllowAllOrigins");
-
+app.UseCors("AllowReact");
 app.UseAuthorization();
 
 app.MapControllers();

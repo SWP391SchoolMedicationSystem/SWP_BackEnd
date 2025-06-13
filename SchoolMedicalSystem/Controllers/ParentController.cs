@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using BussinessLayer.IService;
+using BussinessLayer.Utils;
 using DataAccessLayer.DTO;
 using DataAccessLayer.IRepository;
+using Google.Apis.Auth;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -89,6 +91,30 @@ namespace SchoolMedicalSystem.Controllers
                 return BadRequest(e.Message);
             }
         }
-        
-    }
+        [HttpPost("google")]
+        public async Task<IActionResult> VerifyGoogleToken([FromBody] TokenRequest request)
+        {
+            try
+            {
+                var payload = await GoogleJsonWebSignature.ValidateAsync(request.Credential, new GoogleJsonWebSignature.ValidationSettings
+                {
+                    Audience = new[] { "439095486459-gvdm000c5lstr8v0j1cl3ng9bg4gs4l2.apps.googleusercontent.com" } // Thay bằng client ID của bạn
+                });
+
+                return Ok(new
+                {
+                    payload.Email,
+                    payload.Name,
+                    payload.Picture,
+                    payload.Subject // ID người dùng Google
+                });
+            }
+            catch (InvalidJwtException)
+            {
+                return Unauthorized("Token không hợp lệ.");
+            }
+        }
+
+
+}
 }
