@@ -3,10 +3,10 @@ name: CI/CD for .NET Solution (Local Docker)
 on:
   push:
     branches:
-      - main
+      - master
   pull_request:
     branches:
-      - main
+      - master
 
 jobs:
   build-and-deploy:
