@@ -58,4 +58,5 @@ jobs:
         run: |
           docker run -d --name $IMAGE_NAME \
             -e ConnectionStrings__SchoolMedicalSystemContext="${{ secrets.CONNECTIONSTRING }}" \
+            -e AppSetting__SecretKey="${{ secrets.BI_MAT_THAM_KIN }}" \
             -p $DOCKER_PORT:$APP_PORT $IMAGE_NAME:v1
