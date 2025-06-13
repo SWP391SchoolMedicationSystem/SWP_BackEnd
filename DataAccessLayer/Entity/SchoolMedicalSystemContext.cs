@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 
 namespace DataAccessLayer.Entity;
-
 public partial class SchoolMedicalSystemContext : DbContext
 {
     public SchoolMedicalSystemContext()
@@ -113,7 +112,6 @@ public partial class SchoolMedicalSystemContext : DbContext
 
             entity.HasOne(d => d.CreatedbyNavigation).WithMany(p => p.ClassCreatedbyNavigations)
                 .HasForeignKey(d => d.Createdby)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_CLASS_CREATEDBY");
 
             entity.HasOne(d => d.ModifiedbyNavigation).WithMany(p => p.ClassModifiedbyNavigations)
@@ -147,12 +145,10 @@ public partial class SchoolMedicalSystemContext : DbContext
 
             entity.HasOne(d => d.CreatedByNavigation).WithMany(p => p.EmailTemplateCreatedByNavigations)
                 .HasForeignKey(d => d.CreatedBy)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_EMAIL_TEMPLATE_CREATED_BY");
 
             entity.HasOne(d => d.UpdatedByNavigation).WithMany(p => p.EmailTemplateUpdatedByNavigations)
                 .HasForeignKey(d => d.UpdatedBy)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_EMAIL_TEMPLATE_UPDATED_BY");
         });
 
@@ -181,7 +177,6 @@ public partial class SchoolMedicalSystemContext : DbContext
 
             entity.HasOne(d => d.CreatedbyNavigation).WithMany(p => p.HealthcategoryCreatedbyNavigations)
                 .HasForeignKey(d => d.Createdby)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_HEALTHCATEGORY_CREATEDBY");
 
             entity.HasOne(d => d.ModifiedbyNavigation).WithMany(p => p.HealthcategoryModifiedbyNavigations)
@@ -218,7 +213,6 @@ public partial class SchoolMedicalSystemContext : DbContext
 
             entity.HasOne(d => d.CreatedbyNavigation).WithMany(p => p.HealthrecordCreatedbyNavigations)
                 .HasForeignKey(d => d.Createdby)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_healthrecord_createdby");
 
             entity.HasOne(d => d.Healthcategory).WithMany(p => p.Healthrecords)
@@ -267,7 +261,6 @@ public partial class SchoolMedicalSystemContext : DbContext
 
             entity.HasOne(d => d.CreatedByNavigation).WithMany(p => p.HealthstatusCreatedByNavigations)
                 .HasForeignKey(d => d.CreatedBy)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("CK_HEALTHSTATUS_CREATED_BY");
 
             entity.HasOne(d => d.HealthStatusCategoryNavigation).WithMany(p => p.Healthstatuses)
@@ -335,7 +328,6 @@ public partial class SchoolMedicalSystemContext : DbContext
 
             entity.HasOne(d => d.CreatedbyNavigation).WithMany(p => p.NotificationCreatedbyNavigations)
                 .HasForeignKey(d => d.Createdby)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_Notification_CreatedBy");
 
             entity.HasOne(d => d.ModifiedbyNavigation).WithMany(p => p.NotificationModifiedbyNavigations)
@@ -361,12 +353,10 @@ public partial class SchoolMedicalSystemContext : DbContext
 
             entity.HasOne(d => d.CreatedByNavigation).WithMany()
                 .HasForeignKey(d => d.CreatedBy)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_NOTIFICATIONPARENTDETAIL_CREATEDBY");
 
             entity.HasOne(d => d.ModifiedByNavigation).WithMany()
                 .HasForeignKey(d => d.ModifiedBy)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_NOTIFICATIONPARENTDETAIL_MODIFIEDBY");
 
             entity.HasOne(d => d.Notification).WithMany()
@@ -397,12 +387,10 @@ public partial class SchoolMedicalSystemContext : DbContext
 
             entity.HasOne(d => d.CreatedByNavigation).WithMany()
                 .HasForeignKey(d => d.CreatedBy)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_NOTIFICATIONSTAFFDETAILS_CreatedBy");
 
             entity.HasOne(d => d.ModifiedByNavigation).WithMany()
                 .HasForeignKey(d => d.ModifiedBy)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_NOTIFICATIONSTAFFDETAILS_ModifiedBy");
 
             entity.HasOne(d => d.Notification).WithMany()
@@ -442,12 +430,10 @@ public partial class SchoolMedicalSystemContext : DbContext
 
             entity.HasOne(d => d.CreatedByNavigation).WithMany(p => p.ParentCreatedByNavigations)
                 .HasForeignKey(d => d.CreatedBy)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_PARENT_CREATEDBY");
 
             entity.HasOne(d => d.ModifiedByNavigation).WithMany(p => p.ParentModifiedByNavigations)
                 .HasForeignKey(d => d.ModifiedBy)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_PARENT_MODIFIEDBY");
 
             entity.HasOne(d => d.User).WithMany(p => p.ParentUsers)
@@ -522,12 +508,10 @@ public partial class SchoolMedicalSystemContext : DbContext
 
             entity.HasOne(d => d.CreatedByNavigation).WithMany(p => p.PersonalmedicinescheduleCreatedByNavigations)
                 .HasForeignKey(d => d.CreatedBy)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_PERSONALMEDICINESCHEDULE_CREATEDBY");
 
             entity.HasOne(d => d.ModifiedByNavigation).WithMany(p => p.PersonalmedicinescheduleModifiedByNavigations)
                 .HasForeignKey(d => d.ModifiedBy)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_PERSONALMEDICINESCHEDULE_MODIFIEDBY");
 
             entity.HasOne(d => d.Personalmedicine).WithOne(p => p.Personalmedicineschedule)
@@ -580,12 +564,10 @@ public partial class SchoolMedicalSystemContext : DbContext
 
             entity.HasOne(d => d.CreatedByNavigation).WithMany(p => p.StaffCreatedByNavigations)
                 .HasForeignKey(d => d.CreatedBy)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_STAFF_CREATED_BY");
 
             entity.HasOne(d => d.ModifiedByNavigation).WithMany(p => p.StaffModifiedByNavigations)
                 .HasForeignKey(d => d.ModifiedBy)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_STAFF_MODIFIED_BY");
 
             entity.HasOne(d => d.Role).WithMany(p => p.Staff)

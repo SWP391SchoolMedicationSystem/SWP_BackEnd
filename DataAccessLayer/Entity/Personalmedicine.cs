@@ -21,9 +21,9 @@ public partial class Personalmedicine
 
     public bool Isdeleted { get; set; }
 
-    public int Createdby { get; set; }
+    public int? Createdby { get; set; }
 
-    public DateTime Createddate { get; set; }
+    public DateTime? Createddate { get; set; }
 
     public int? Modifiedby { get; set; }
 

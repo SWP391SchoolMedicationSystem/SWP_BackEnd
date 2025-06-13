@@ -11,7 +11,7 @@ public partial class Role
 
     public bool IsDeleted { get; set; }
 
-    public DateTime CreatedAt { get; set; }
+    public DateTime? CreatedAt { get; set; }
 
     public virtual ICollection<Staff> Staff { get; set; } = new List<Staff>();
 }

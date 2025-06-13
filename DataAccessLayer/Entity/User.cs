@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 
 namespace DataAccessLayer.Entity;
-
 public partial class User
 {
     public int UserId { get; set; }
