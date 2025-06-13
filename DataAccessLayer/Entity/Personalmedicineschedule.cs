@@ -3,17 +3,17 @@ using System.Collections.Generic;
 
 namespace DataAccessLayer.Entity;
 
-public partial class Parent
+public partial class Personalmedicineschedule
 {
-    public int Parentid { get; set; }
+    public int Personalmedicineid { get; set; }
 
-    public string Fullname { get; set; } = null!;
+    public DateTime Scheduletime { get; set; }
 
-    public string? Email { get; set; }
+    public string Dose { get; set; } = null!;
 
-    public int Phone { get; set; }
+    public string? Reason { get; set; }
 
-    public string Address { get; set; } = null!;
+    public bool Isconfirm { get; set; }
 
     public DateTime CreatedDate { get; set; }
 
@@ -25,13 +25,9 @@ public partial class Parent
 
     public bool IsDeleted { get; set; }
 
-    public int Userid { get; set; }
-
     public virtual User CreatedByNavigation { get; set; } = null!;
 
     public virtual User ModifiedByNavigation { get; set; } = null!;
 
-    public virtual ICollection<Student> Students { get; set; } = new List<Student>();
-
-    public virtual User User { get; set; } = null!;
+    public virtual Personalmedicine Personalmedicine { get; set; } = null!;
 }

@@ -6,11 +6,12 @@ using System.Threading.Tasks;
 
 namespace DataAccessLayer.DTO
 {
-    public class LoginDTO
+    public class EmailDTO
     {
+        public string? To { get; set; }
 
-        public string EmailorPhone { get; set; } = null!;
-        public string Password { get; set; } = null!;
+        public string? Subject { get; set; }
 
+        public string? Body { get; set; }
     }
 }

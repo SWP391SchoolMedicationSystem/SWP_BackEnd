@@ -7,7 +7,7 @@ using DataAccessLayer.Entity;
 
 namespace DataAccessLayer.IRepository
 {
-    public interface IStudentRepository : IGenericRepository<Student>
+    public interface IUserRepository : IGenericRepository<User>
     {
     }
 }

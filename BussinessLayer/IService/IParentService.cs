@@ -13,11 +13,12 @@ namespace BussinessLayer.IService
         Task<List<ParentDTO>> GetAllParentsAsync();
         Task<ParentDTO> GetParentByIdAsync(int id);
         Task AddParentAsync(ParentRegister parent);
-        void UpdateParent(ParentDTO parent);
+        void UpdateParent(ParentUpdate parent);
         void DeleteParent(int id);
         Task<List<ParentDTO>> GetParentsByStudentIdAsync(int studentId);
         Task<List<ParentDTO>> GetParentsByClassIdAsync(int classId);
         Task<List<ParentDTO>> GetParentsByStaffIdAsync(int staffId);
-        Task<String> GenerateToken(ParentLoginDTO login);
+        Task<String> GenerateToken(LoginDTO login);
+        Task<string> ValidateGoogleToken(string token);
     }
 }

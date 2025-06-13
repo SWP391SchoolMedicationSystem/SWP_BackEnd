@@ -23,9 +23,15 @@ public partial class Student
 
     public DateTime CreatedAt { get; set; }
 
-    public DateTime UpdatedAt { get; set; }
+    public DateTime? UpdatedAt { get; set; }
 
     public virtual Class Class { get; set; } = null!;
 
+    public virtual ICollection<Healthrecord> Healthrecords { get; set; } = new List<Healthrecord>();
+
+    public virtual ICollection<Healthstatus> Healthstatuses { get; set; } = new List<Healthstatus>();
+
     public virtual Parent Parent { get; set; } = null!;
+
+    public virtual ICollection<Personalmedicine> Personalmedicines { get; set; } = new List<Personalmedicine>();
 }

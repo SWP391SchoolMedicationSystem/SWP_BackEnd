@@ -52,7 +52,7 @@ namespace SchoolMedicalSystem.Controllers
             }
         }
         [HttpPost("Login")]
-        public async Task<IActionResult> Login([FromBody] ParentLoginDTO login)
+        public async Task<IActionResult> Login([FromBody] LoginDTO login)
         {
             try
             {
@@ -72,5 +72,23 @@ namespace SchoolMedicalSystem.Controllers
                 return BadRequest(e.Message);
             }
         }
+        [HttpPut("UpdateParent")]
+        public IActionResult UpdateParentRequest([FromBody] ParentUpdate parent)
+        {
+            try
+            {
+                if (parent == null)
+                {
+                    return BadRequest("Parent data is null.");
+                }
+                _parentservice.UpdateParent(parent);
+                return Ok("Parent request updated successfully.");
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+        
     }
 }

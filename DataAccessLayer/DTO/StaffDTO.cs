@@ -6,24 +6,23 @@ using System.Threading.Tasks;
 
 namespace DataAccessLayer.DTO
 {
-    public class ParentDTO
+    public class StaffDTO
     {
-        public int Parentid { get; set; }
+        public int Staffid { get; set; }
 
         public string Fullname { get; set; } = null!;
 
-        public string? Email { get; set; }
+        public string Email { get; set; } = null!;
 
-        public string Phone { get; set; } = null!;
+        public int Phone { get; set; }
 
-        public string Address { get; set; } = null!;
+        public int Roleid { get; set; }
 
         public DateTime CreatedAt { get; set; }
 
         public DateTime UpdatedAt { get; set; }
 
         public bool IsDeleted { get; set; }
-
-        public List<StudentDTO> Students { get; set; } = new List<StudentDTO>();
+        public int UserID { get; set; }
     }
 }

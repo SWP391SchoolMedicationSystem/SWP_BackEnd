@@ -3,15 +3,15 @@ using System.Collections.Generic;
 
 namespace DataAccessLayer.Entity;
 
-public partial class Class
+public partial class Notification
 {
-    public int Classid { get; set; }
+    public int NotificationId { get; set; }
 
-    public int Grade { get; set; }
+    public string Title { get; set; } = null!;
 
-    public string Classname { get; set; } = null!;
+    public DateTime CreatedAt { get; set; }
 
-    public int Staffid { get; set; }
+    public string Type { get; set; } = null!;
 
     public bool IsDeleted { get; set; }
 
@@ -26,8 +26,4 @@ public partial class Class
     public virtual User CreatedbyNavigation { get; set; } = null!;
 
     public virtual User? ModifiedbyNavigation { get; set; }
-
-    public virtual Staff Staff { get; set; } = null!;
-
-    public virtual ICollection<Student> Students { get; set; } = new List<Student>();
 }
