@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace DataAccessLayer.Entity;
+namespace SchoolMedicalSystem.Entity;
+
 public partial class Healthrecord
 {
     public int Healthrecordid { get; set; }
@@ -20,19 +21,15 @@ public partial class Healthrecord
 
     public bool Isconfirm { get; set; }
 
-    public int? Createdby { get; set; }
+    public string? Createdby { get; set; }
 
     public DateTime? Createddate { get; set; }
 
-    public int? Modifiedby { get; set; }
+    public string? Modifiedby { get; set; }
 
     public DateTime? Modifieddate { get; set; }
 
-    public virtual Staff? CreatedbyNavigation { get; set; }
-
     public virtual Healthcategory Healthcategory { get; set; } = null!;
-
-    public virtual Staff? ModifiedbyNavigation { get; set; }
 
     public virtual Staff Staff { get; set; } = null!;
 

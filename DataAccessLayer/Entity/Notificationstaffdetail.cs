@@ -19,13 +19,9 @@ public partial class Notificationstaffdetail
 
     public DateTime? ModifiedDate { get; set; }
 
-    public int? CreatedBy { get; set; }
+    public string? CreatedBy { get; set; }
 
-    public int? ModifiedBy { get; set; }
-
-    public virtual User? CreatedByNavigation { get; set; }
-
-    public virtual User? ModifiedByNavigation { get; set; }
+    public string? ModifiedBy { get; set; }
 
     public virtual Notification Notification { get; set; } = null!;
 

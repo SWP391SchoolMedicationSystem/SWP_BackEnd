@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 
 namespace DataAccessLayer.Entity;
+
 public partial class SchoolMedicalSystemContext : DbContext
 {
     public SchoolMedicalSystemContext()
@@ -98,25 +99,21 @@ public partial class SchoolMedicalSystemContext : DbContext
             entity.Property(e => e.Classname)
                 .HasMaxLength(255)
                 .HasColumnName("CLASSNAME");
-            entity.Property(e => e.Createdby).HasColumnName("CREATEDBY");
+            entity.Property(e => e.Createdby)
+                .HasMaxLength(255)
+                .HasColumnName("CREATEDBY");
             entity.Property(e => e.Createddate)
                 .HasColumnType("datetime")
                 .HasColumnName("CREATEDDATE");
             entity.Property(e => e.Grade).HasColumnName("GRADE");
             entity.Property(e => e.IsDeleted).HasColumnName("IS_DELETED");
-            entity.Property(e => e.Modifiedby).HasColumnName("MODIFIEDBY");
+            entity.Property(e => e.Modifiedby)
+                .HasMaxLength(255)
+                .HasColumnName("MODIFIEDBY");
             entity.Property(e => e.Modifieddate)
                 .HasColumnType("datetime")
                 .HasColumnName("MODIFIEDDATE");
             entity.Property(e => e.Staffid).HasColumnName("STAFFID");
-
-            entity.HasOne(d => d.CreatedbyNavigation).WithMany(p => p.ClassCreatedbyNavigations)
-                .HasForeignKey(d => d.Createdby)
-                .HasConstraintName("FK_CLASS_CREATEDBY");
-
-            entity.HasOne(d => d.ModifiedbyNavigation).WithMany(p => p.ClassModifiedbyNavigations)
-                .HasForeignKey(d => d.Modifiedby)
-                .HasConstraintName("FK_CLASS_MODIFIEDBY");
 
             entity.HasOne(d => d.Staff).WithMany(p => p.Classes)
                 .HasForeignKey(d => d.Staffid)
@@ -130,26 +127,22 @@ public partial class SchoolMedicalSystemContext : DbContext
 
             entity.Property(e => e.EmailTemplateId).HasColumnName("EMAIL_TEMPLATE_ID");
             entity.Property(e => e.Body).HasColumnName("BODY");
-            entity.Property(e => e.CreatedBy).HasColumnName("CREATED_BY");
+            entity.Property(e => e.CreatedBy)
+                .HasMaxLength(255)
+                .HasColumnName("CREATED_BY");
             entity.Property(e => e.CreatedDate)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime")
                 .HasColumnName("CREATED_DATE");
             entity.Property(e => e.Subject).HasColumnName("SUBJECT");
             entity.Property(e => e.To).HasColumnName("TO");
-            entity.Property(e => e.UpdatedBy).HasColumnName("UPDATED_BY");
+            entity.Property(e => e.UpdatedBy)
+                .HasMaxLength(255)
+                .HasColumnName("UPDATED_BY");
             entity.Property(e => e.UpdatedDate)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime")
                 .HasColumnName("UPDATED_DATE");
-
-            entity.HasOne(d => d.CreatedByNavigation).WithMany(p => p.EmailTemplateCreatedByNavigations)
-                .HasForeignKey(d => d.CreatedBy)
-                .HasConstraintName("FK_EMAIL_TEMPLATE_CREATED_BY");
-
-            entity.HasOne(d => d.UpdatedByNavigation).WithMany(p => p.EmailTemplateUpdatedByNavigations)
-                .HasForeignKey(d => d.UpdatedBy)
-                .HasConstraintName("FK_EMAIL_TEMPLATE_UPDATED_BY");
         });
 
         modelBuilder.Entity<Healthcategory>(entity =>
@@ -159,7 +152,9 @@ public partial class SchoolMedicalSystemContext : DbContext
             entity.ToTable("HEALTHCATEGORY");
 
             entity.Property(e => e.Healthcategoryid).HasColumnName("HEALTHCATEGORYID");
-            entity.Property(e => e.Createdby).HasColumnName("CREATEDBY");
+            entity.Property(e => e.Createdby)
+                .HasMaxLength(255)
+                .HasColumnName("CREATEDBY");
             entity.Property(e => e.Createddate)
                 .HasColumnType("datetime")
                 .HasColumnName("CREATEDDATE");
@@ -170,18 +165,12 @@ public partial class SchoolMedicalSystemContext : DbContext
                 .HasMaxLength(100)
                 .HasColumnName("HEALTHCATEGORYNAME");
             entity.Property(e => e.Isdeleted).HasColumnName("ISDELETED");
-            entity.Property(e => e.Modifiedby).HasColumnName("MODIFIEDBY");
+            entity.Property(e => e.Modifiedby)
+                .HasMaxLength(255)
+                .HasColumnName("MODIFIEDBY");
             entity.Property(e => e.Modifieddate)
                 .HasColumnType("datetime")
                 .HasColumnName("MODIFIEDDATE");
-
-            entity.HasOne(d => d.CreatedbyNavigation).WithMany(p => p.HealthcategoryCreatedbyNavigations)
-                .HasForeignKey(d => d.Createdby)
-                .HasConstraintName("FK_HEALTHCATEGORY_CREATEDBY");
-
-            entity.HasOne(d => d.ModifiedbyNavigation).WithMany(p => p.HealthcategoryModifiedbyNavigations)
-                .HasForeignKey(d => d.Modifiedby)
-                .HasConstraintName("FK_HEALTHCATEGORY_MODIFIEDBY");
         });
 
         modelBuilder.Entity<Healthrecord>(entity =>
@@ -191,7 +180,9 @@ public partial class SchoolMedicalSystemContext : DbContext
             entity.ToTable("HEALTHRECORD");
 
             entity.Property(e => e.Healthrecordid).HasColumnName("HEALTHRECORDID");
-            entity.Property(e => e.Createdby).HasColumnName("CREATEDBY");
+            entity.Property(e => e.Createdby)
+                .HasMaxLength(255)
+                .HasColumnName("CREATEDBY");
             entity.Property(e => e.Createddate)
                 .HasColumnType("datetime")
                 .HasColumnName("CREATEDDATE");
@@ -204,27 +195,21 @@ public partial class SchoolMedicalSystemContext : DbContext
                 .HasMaxLength(255)
                 .HasColumnName("HEALTHRECORDTITLE");
             entity.Property(e => e.Isconfirm).HasColumnName("ISCONFIRM");
-            entity.Property(e => e.Modifiedby).HasColumnName("MODIFIEDBY");
+            entity.Property(e => e.Modifiedby)
+                .HasMaxLength(255)
+                .HasColumnName("MODIFIEDBY");
             entity.Property(e => e.Modifieddate)
                 .HasColumnType("datetime")
                 .HasColumnName("MODIFIEDDATE");
             entity.Property(e => e.Staffid).HasColumnName("STAFFID");
             entity.Property(e => e.Studentid).HasColumnName("STUDENTID");
 
-            entity.HasOne(d => d.CreatedbyNavigation).WithMany(p => p.HealthrecordCreatedbyNavigations)
-                .HasForeignKey(d => d.Createdby)
-                .HasConstraintName("fk_healthrecord_createdby");
-
             entity.HasOne(d => d.Healthcategory).WithMany(p => p.Healthrecords)
                 .HasForeignKey(d => d.Healthcategoryid)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_HEALTHRECORD_HEALTHCATEGORY");
 
-            entity.HasOne(d => d.ModifiedbyNavigation).WithMany(p => p.HealthrecordModifiedbyNavigations)
-                .HasForeignKey(d => d.Modifiedby)
-                .HasConstraintName("fk_healthrecord_modifiedby");
-
-            entity.HasOne(d => d.Staff).WithMany(p => p.HealthrecordStaffs)
+            entity.HasOne(d => d.Staff).WithMany(p => p.Healthrecords)
                 .HasForeignKey(d => d.Staffid)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_HEALTHRECORD_STAFF");
@@ -242,7 +227,9 @@ public partial class SchoolMedicalSystemContext : DbContext
             entity.ToTable("HEALTHSTATUS");
 
             entity.Property(e => e.HealthId).HasColumnName("HEALTH_ID");
-            entity.Property(e => e.CreatedBy).HasColumnName("CREATED_BY");
+            entity.Property(e => e.CreatedBy)
+                .HasMaxLength(255)
+                .HasColumnName("CREATED_BY");
             entity.Property(e => e.CreatedDate)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime")
@@ -252,25 +239,19 @@ public partial class SchoolMedicalSystemContext : DbContext
                 .HasColumnName("DESCRIPTION");
             entity.Property(e => e.HealthStatusCategory).HasColumnName("HEALTH_STATUS_CATEGORY");
             entity.Property(e => e.IsDeleted).HasColumnName("IS_DELETED");
-            entity.Property(e => e.ModifiedBy).HasColumnName("MODIFIED_BY");
+            entity.Property(e => e.ModifiedBy)
+                .HasMaxLength(255)
+                .HasColumnName("MODIFIED_BY");
             entity.Property(e => e.ModifiedDate)
                 .HasColumnType("datetime")
                 .HasColumnName("MODIFIED_DATE");
             entity.Property(e => e.StaffId).HasColumnName("STAFF_ID");
             entity.Property(e => e.StudentId).HasColumnName("STUDENT_ID");
 
-            entity.HasOne(d => d.CreatedByNavigation).WithMany(p => p.HealthstatusCreatedByNavigations)
-                .HasForeignKey(d => d.CreatedBy)
-                .HasConstraintName("CK_HEALTHSTATUS_CREATED_BY");
-
             entity.HasOne(d => d.HealthStatusCategoryNavigation).WithMany(p => p.Healthstatuses)
                 .HasForeignKey(d => d.HealthStatusCategory)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_HEALTHSTATUS_CATEGORY");
-
-            entity.HasOne(d => d.ModifiedByNavigation).WithMany(p => p.HealthstatusModifiedByNavigations)
-                .HasForeignKey(d => d.ModifiedBy)
-                .HasConstraintName("CK_HEALTHSTATUS_MODIFIED_BY");
 
             entity.HasOne(d => d.Staff).WithMany(p => p.Healthstatuses)
                 .HasForeignKey(d => d.StaffId)
@@ -314,25 +295,21 @@ public partial class SchoolMedicalSystemContext : DbContext
             entity.Property(e => e.CreatedAt)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime");
-            entity.Property(e => e.Createdby).HasColumnName("CREATEDBY");
+            entity.Property(e => e.Createdby)
+                .HasMaxLength(255)
+                .HasColumnName("CREATEDBY");
             entity.Property(e => e.Createddate)
                 .HasColumnType("datetime")
                 .HasColumnName("CREATEDDATE");
             entity.Property(e => e.IsDeleted).HasColumnName("isDeleted");
-            entity.Property(e => e.Modifiedby).HasColumnName("MODIFIEDBY");
+            entity.Property(e => e.Modifiedby)
+                .HasMaxLength(255)
+                .HasColumnName("MODIFIEDBY");
             entity.Property(e => e.Modifieddate)
                 .HasColumnType("datetime")
                 .HasColumnName("MODIFIEDDATE");
             entity.Property(e => e.Title).HasMaxLength(255);
             entity.Property(e => e.Type).HasMaxLength(50);
-
-            entity.HasOne(d => d.CreatedbyNavigation).WithMany(p => p.NotificationCreatedbyNavigations)
-                .HasForeignKey(d => d.Createdby)
-                .HasConstraintName("fk_Notification_CreatedBy");
-
-            entity.HasOne(d => d.ModifiedbyNavigation).WithMany(p => p.NotificationModifiedbyNavigations)
-                .HasForeignKey(d => d.Modifiedby)
-                .HasConstraintName("fk_Notification_ModifiedBy");
         });
 
         modelBuilder.Entity<NotificationParentDetail>(entity =>
@@ -341,23 +318,17 @@ public partial class SchoolMedicalSystemContext : DbContext
                 .HasNoKey()
                 .ToTable("NotificationParentDetail");
 
+            entity.Property(e => e.CreatedBy).HasMaxLength(255);
             entity.Property(e => e.CreatedDate)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime");
             entity.Property(e => e.IsDeleted).HasColumnName("isDeleted");
             entity.Property(e => e.IsRead).HasColumnName("isRead");
             entity.Property(e => e.Message).HasMaxLength(500);
+            entity.Property(e => e.ModifiedBy).HasMaxLength(255);
             entity.Property(e => e.ModifiedDate)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime");
-
-            entity.HasOne(d => d.CreatedByNavigation).WithMany()
-                .HasForeignKey(d => d.CreatedBy)
-                .HasConstraintName("FK_NOTIFICATIONPARENTDETAIL_CREATEDBY");
-
-            entity.HasOne(d => d.ModifiedByNavigation).WithMany()
-                .HasForeignKey(d => d.ModifiedBy)
-                .HasConstraintName("FK_NOTIFICATIONPARENTDETAIL_MODIFIEDBY");
 
             entity.HasOne(d => d.Notification).WithMany()
                 .HasForeignKey(d => d.NotificationId)
@@ -374,24 +345,18 @@ public partial class SchoolMedicalSystemContext : DbContext
                 .HasNoKey()
                 .ToTable("NOTIFICATIONSTAFFDETAILS");
 
+            entity.Property(e => e.CreatedBy).HasMaxLength(255);
             entity.Property(e => e.CreatedDate)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime");
             entity.Property(e => e.IsDeleted).HasColumnName("isDeleted");
             entity.Property(e => e.IsRead).HasColumnName("isRead");
             entity.Property(e => e.Message).HasMaxLength(500);
+            entity.Property(e => e.ModifiedBy).HasMaxLength(255);
             entity.Property(e => e.ModifiedDate)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime");
             entity.Property(e => e.Staffid).HasColumnName("STAFFID");
-
-            entity.HasOne(d => d.CreatedByNavigation).WithMany()
-                .HasForeignKey(d => d.CreatedBy)
-                .HasConstraintName("FK_NOTIFICATIONSTAFFDETAILS_CreatedBy");
-
-            entity.HasOne(d => d.ModifiedByNavigation).WithMany()
-                .HasForeignKey(d => d.ModifiedBy)
-                .HasConstraintName("FK_NOTIFICATIONSTAFFDETAILS_ModifiedBy");
 
             entity.HasOne(d => d.Notification).WithMany()
                 .HasForeignKey(d => d.NotificationId)
@@ -412,6 +377,7 @@ public partial class SchoolMedicalSystemContext : DbContext
             entity.Property(e => e.Address)
                 .HasMaxLength(500)
                 .HasColumnName("ADDRESS");
+            entity.Property(e => e.CreatedBy).HasMaxLength(255);
             entity.Property(e => e.CreatedDate)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime");
@@ -422,21 +388,14 @@ public partial class SchoolMedicalSystemContext : DbContext
                 .HasMaxLength(255)
                 .HasColumnName("FULLNAME");
             entity.Property(e => e.IsDeleted).HasColumnName("IS_DELETED");
+            entity.Property(e => e.ModifiedBy).HasMaxLength(255);
             entity.Property(e => e.ModifiedDate)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime");
             entity.Property(e => e.Phone).HasColumnName("PHONE");
             entity.Property(e => e.Userid).HasColumnName("USERID");
 
-            entity.HasOne(d => d.CreatedByNavigation).WithMany(p => p.ParentCreatedByNavigations)
-                .HasForeignKey(d => d.CreatedBy)
-                .HasConstraintName("FK_PARENT_CREATEDBY");
-
-            entity.HasOne(d => d.ModifiedByNavigation).WithMany(p => p.ParentModifiedByNavigations)
-                .HasForeignKey(d => d.ModifiedBy)
-                .HasConstraintName("FK_PARENT_MODIFIEDBY");
-
-            entity.HasOne(d => d.User).WithMany(p => p.ParentUsers)
+            entity.HasOne(d => d.User).WithMany(p => p.Parents)
                 .HasForeignKey(d => d.Userid)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_PARENT_USERID");
@@ -449,7 +408,9 @@ public partial class SchoolMedicalSystemContext : DbContext
             entity.ToTable("PERSONALMEDICINE");
 
             entity.Property(e => e.Personalmedicineid).HasColumnName("PERSONALMEDICINEID");
-            entity.Property(e => e.Createdby).HasColumnName("CREATEDBY");
+            entity.Property(e => e.Createdby)
+                .HasMaxLength(255)
+                .HasColumnName("CREATEDBY");
             entity.Property(e => e.Createddate)
                 .HasColumnType("datetime")
                 .HasColumnName("CREATEDDATE");
@@ -460,7 +421,9 @@ public partial class SchoolMedicalSystemContext : DbContext
             entity.Property(e => e.Medicinename)
                 .HasMaxLength(100)
                 .HasColumnName("MEDICINENAME");
-            entity.Property(e => e.Modifiedby).HasColumnName("MODIFIEDBY");
+            entity.Property(e => e.Modifiedby)
+                .HasMaxLength(255)
+                .HasColumnName("MODIFIEDBY");
             entity.Property(e => e.Modifieddate)
                 .HasColumnType("datetime")
                 .HasColumnName("MODIFIEDDATE");
@@ -491,6 +454,7 @@ public partial class SchoolMedicalSystemContext : DbContext
             entity.Property(e => e.Personalmedicineid)
                 .ValueGeneratedNever()
                 .HasColumnName("PERSONALMEDICINEID");
+            entity.Property(e => e.CreatedBy).HasMaxLength(255);
             entity.Property(e => e.CreatedDate)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime");
@@ -498,6 +462,7 @@ public partial class SchoolMedicalSystemContext : DbContext
                 .HasMaxLength(50)
                 .HasColumnName("DOSE");
             entity.Property(e => e.Isconfirm).HasColumnName("ISCONFIRM");
+            entity.Property(e => e.ModifiedBy).HasMaxLength(255);
             entity.Property(e => e.ModifiedDate)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime");
@@ -505,14 +470,6 @@ public partial class SchoolMedicalSystemContext : DbContext
             entity.Property(e => e.Scheduletime)
                 .HasColumnType("datetime")
                 .HasColumnName("SCHEDULETIME");
-
-            entity.HasOne(d => d.CreatedByNavigation).WithMany(p => p.PersonalmedicinescheduleCreatedByNavigations)
-                .HasForeignKey(d => d.CreatedBy)
-                .HasConstraintName("FK_PERSONALMEDICINESCHEDULE_CREATEDBY");
-
-            entity.HasOne(d => d.ModifiedByNavigation).WithMany(p => p.PersonalmedicinescheduleModifiedByNavigations)
-                .HasForeignKey(d => d.ModifiedBy)
-                .HasConstraintName("FK_PERSONALMEDICINESCHEDULE_MODIFIEDBY");
 
             entity.HasOne(d => d.Personalmedicine).WithOne(p => p.Personalmedicineschedule)
                 .HasForeignKey<Personalmedicineschedule>(d => d.Personalmedicineid)
@@ -547,6 +504,7 @@ public partial class SchoolMedicalSystemContext : DbContext
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime")
                 .HasColumnName("CREATED_AT");
+            entity.Property(e => e.CreatedBy).HasMaxLength(255);
             entity.Property(e => e.Email)
                 .HasMaxLength(255)
                 .HasColumnName("EMAIL");
@@ -554,6 +512,7 @@ public partial class SchoolMedicalSystemContext : DbContext
                 .HasMaxLength(255)
                 .HasColumnName("FULLNAME");
             entity.Property(e => e.IsDeleted).HasColumnName("IS_DELETED");
+            entity.Property(e => e.ModifiedBy).HasMaxLength(255);
             entity.Property(e => e.Phone).HasColumnName("PHONE");
             entity.Property(e => e.Roleid).HasColumnName("ROLEID");
             entity.Property(e => e.UpdatedAt)
@@ -562,19 +521,11 @@ public partial class SchoolMedicalSystemContext : DbContext
                 .HasColumnName("UPDATED_AT");
             entity.Property(e => e.Userid).HasColumnName("USERID");
 
-            entity.HasOne(d => d.CreatedByNavigation).WithMany(p => p.StaffCreatedByNavigations)
-                .HasForeignKey(d => d.CreatedBy)
-                .HasConstraintName("FK_STAFF_CREATED_BY");
-
-            entity.HasOne(d => d.ModifiedByNavigation).WithMany(p => p.StaffModifiedByNavigations)
-                .HasForeignKey(d => d.ModifiedBy)
-                .HasConstraintName("FK_STAFF_MODIFIED_BY");
-
             entity.HasOne(d => d.Role).WithMany(p => p.Staff)
                 .HasForeignKey(d => d.Roleid)
                 .HasConstraintName("FK_STAFF_ROLE");
 
-            entity.HasOne(d => d.User).WithMany(p => p.StaffUsers)
+            entity.HasOne(d => d.User).WithMany(p => p.Staff)
                 .HasForeignKey(d => d.Userid)
                 .HasConstraintName("FK_STAFF_USER");
         });

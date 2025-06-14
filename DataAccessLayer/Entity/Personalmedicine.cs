@@ -21,11 +21,11 @@ public partial class Personalmedicine
 
     public bool Isdeleted { get; set; }
 
-    public int? Createdby { get; set; }
+    public string? Createdby { get; set; }
 
     public DateTime? Createddate { get; set; }
 
-    public int? Modifiedby { get; set; }
+    public string? Modifiedby { get; set; }
 
     public DateTime? Modifieddate { get; set; }
 

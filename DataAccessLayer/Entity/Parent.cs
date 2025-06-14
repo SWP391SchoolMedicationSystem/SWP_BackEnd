@@ -11,7 +11,7 @@ public partial class Parent
 
     public string? Email { get; set; }
 
-    public int Phone { get; set; }
+    public int? Phone { get; set; }
 
     public string Address { get; set; } = null!;
 
@@ -19,17 +19,13 @@ public partial class Parent
 
     public DateTime? ModifiedDate { get; set; }
 
-    public int? CreatedBy { get; set; }
+    public string? CreatedBy { get; set; }
 
-    public int? ModifiedBy { get; set; }
+    public string? ModifiedBy { get; set; }
 
     public bool IsDeleted { get; set; }
 
     public int Userid { get; set; }
-
-    public virtual User? CreatedByNavigation { get; set; }
-
-    public virtual User? ModifiedByNavigation { get; set; }
 
     public virtual ICollection<Student> Students { get; set; } = new List<Student>();
 

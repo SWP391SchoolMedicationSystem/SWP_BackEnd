@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 
 namespace DataAccessLayer.Entity;
+
 public partial class EmailTemplate
 {
     public int EmailTemplateId { get; set; }
@@ -16,11 +17,7 @@ public partial class EmailTemplate
 
     public DateTime? UpdatedDate { get; set; }
 
-    public int? CreatedBy { get; set; }
+    public string? CreatedBy { get; set; }
 
-    public int? UpdatedBy { get; set; }
-
-    public virtual User? CreatedByNavigation { get; set; }
-
-    public virtual User? UpdatedByNavigation { get; set; }
+    public string? UpdatedBy { get; set; }
 }
