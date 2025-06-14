@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace SchoolMedicalSystem.Entity;
+namespace DataAccessLayer.Entity;
 
 public partial class Healthrecord
 {

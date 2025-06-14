@@ -66,7 +66,6 @@ namespace BussinessLayer.Service
                 CreatePasswordHash(parent.Password, out byte[] hash, out byte[] salt);
 
                 var newParent = _mapper.Map<Parent>(parent);
-                newParent.CreatedBy = 2; // Tạm thời đặt giá trị CreatedBy, sẽ thay đổi sau.
                 newParent.CreatedDate = DateTime.Now;
 
                 // Initialize the 'user' variable before using it

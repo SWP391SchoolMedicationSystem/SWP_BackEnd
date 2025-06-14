@@ -8,14 +8,21 @@ namespace DataAccessLayer.DTO
 {
     public class NotificationDTO
     {
-        public string Title { get; set; }
-        public DateOnly CreatedAt { get; set; }
-        public string Type { get; set; }
-        public bool isDeleted { get; set; }
-        public int CreatedBy { get; set; }
-        public DateOnly CreatedDate { get; set; }
-        public int ModifiedBy { get; set; }
-        public DateOnly ModifiedDate { get; set; }
+        public string Title { get; set; } = null!;
+
+        public DateTime CreatedAt { get; set; }
+
+        public string Type { get; set; } = null!;
+
+        public bool IsDeleted { get; set; }
+
+        public string? Createdby { get; set; }
+
+        public DateTime? Createddate { get; set; }
+
+        public string? Modifiedby { get; set; }
+
+        public DateTime? Modifieddate { get; set; }
         public List<int> ParentIds { get; set; } = new();
     }
 }
