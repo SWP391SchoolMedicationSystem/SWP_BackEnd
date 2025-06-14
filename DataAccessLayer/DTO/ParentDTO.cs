@@ -14,7 +14,7 @@ namespace DataAccessLayer.DTO
 
         public string? Email { get; set; }
 
-        public string Phone { get; set; } = null!;
+        public int? Phone { get; set; }
 
         public string Address { get; set; } = null!;
 

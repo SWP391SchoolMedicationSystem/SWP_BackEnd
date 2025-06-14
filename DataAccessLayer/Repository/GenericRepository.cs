@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using DataAccessLayer.Entity;
 using DataAccessLayer.IRepository;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace DataAccessLayer.Repository
 {
@@ -52,5 +53,10 @@ namespace DataAccessLayer.Repository
         {
             _dbSet.Update(entity);
         }
+        public IDbContextTransaction BeginTransaction()
+        {
+            return _context.Database.BeginTransaction();
+        }
+
     }
 }

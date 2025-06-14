@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace DataAccessLayer.IRepository
 {
@@ -14,5 +15,7 @@ namespace DataAccessLayer.IRepository
         void Update(T entity);
         void Delete(int ID);
         void Save();
+        IDbContextTransaction BeginTransaction();
+
     }
 }

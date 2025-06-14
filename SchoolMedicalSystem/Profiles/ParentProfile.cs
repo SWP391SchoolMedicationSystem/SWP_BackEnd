@@ -12,8 +12,10 @@ namespace SchoolMedicalSystem.Profiles
             CreateMap<ParentRegister, Parent>().ReverseMap();
             CreateMap<Parent, ParentDTO>().ReverseMap();
             CreateMap<ParentUpdate, Parent>().ReverseMap();
+            CreateMap<Parent, ParentUpdate>().ReverseMap();
+            CreateMap<Parent, GoogleLoginDTO>().ReverseMap();
         }
+
+
     }
-    
-    
 }

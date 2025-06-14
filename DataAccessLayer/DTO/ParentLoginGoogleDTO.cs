@@ -6,12 +6,10 @@ using System.Threading.Tasks;
 
 namespace DataAccessLayer.DTO
 {
-    public class LoginDTO
+    public class GoogleLoginDTO
     {
-
+        public string? Fullname { get; set; }
         public string? Email { get; set; }
-        public int? Phone { get; set; }
-        public string Password { get; set; } = null!;
 
     }
 }
