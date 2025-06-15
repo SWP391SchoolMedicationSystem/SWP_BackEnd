@@ -138,7 +138,7 @@ namespace BussinessLayer.Service
             {
                 var parentlist = await _parentRepository.GetAllAsync();
                 var userlist = await _userRepository.GetAllAsync();
-                User user = userlist.FirstOrDefault(x => x.Email == login.Email ||  x.Email == login.Phone.ToString());
+                User user = userlist.FirstOrDefault(x => x.Email == login.Email );
 
                 if (user != null &&
                     VerifyPasswordHash(login.Password, user.Hash, user.Salt))
