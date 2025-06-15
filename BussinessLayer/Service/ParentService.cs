@@ -66,7 +66,6 @@ namespace BussinessLayer.Service
                 CreatePasswordHash(parent.Password, out byte[] hash, out byte[] salt);
 
                 var newParent = _mapper.Map<Parent>(parent);
-                newParent.CreatedBy = 2; // Tạm thời đặt giá trị CreatedBy, sẽ thay đổi sau.
                 newParent.CreatedDate = DateTime.Now;
 
                 // Initialize the 'user' variable before using it
@@ -139,7 +138,7 @@ namespace BussinessLayer.Service
             {
                 var parentlist = await _parentRepository.GetAllAsync();
                 var userlist = await _userRepository.GetAllAsync();
-                User user = userlist.FirstOrDefault(x => x.Email == login.EmailorPhone);
+                User user = userlist.FirstOrDefault(x => x.Email == login.Email || x.Email == login.Phone.ToString());
 
                 if (user != null &&
                     VerifyPasswordHash(login.Password, user.Hash, user.Salt))

@@ -33,6 +33,8 @@ public partial class Staff
 
     public virtual ICollection<Healthstatus> Healthstatuses { get; set; } = new List<Healthstatus>();
 
+    public virtual ICollection<Notificationstaffdetail> Notificationstaffdetails { get; set; } = new List<Notificationstaffdetail>();
+
     public virtual ICollection<Personalmedicine> Personalmedicines { get; set; } = new List<Personalmedicine>();
 
     public virtual Role Role { get; set; } = null!;

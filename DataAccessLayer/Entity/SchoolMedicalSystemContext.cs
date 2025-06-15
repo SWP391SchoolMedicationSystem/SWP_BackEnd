@@ -314,9 +314,9 @@ public partial class SchoolMedicalSystemContext : DbContext
 
         modelBuilder.Entity<NotificationParentDetail>(entity =>
         {
-            entity
-                .HasNoKey()
-                .ToTable("NotificationParentDetail");
+            entity.HasKey(e => new { e.NotificationId, e.ParentId });
+
+            entity.ToTable("NotificationParentDetail");
 
             entity.Property(e => e.CreatedBy).HasMaxLength(255);
             entity.Property(e => e.CreatedDate)
@@ -330,21 +330,22 @@ public partial class SchoolMedicalSystemContext : DbContext
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime");
 
-            entity.HasOne(d => d.Notification).WithMany()
+            entity.HasOne(d => d.Notification).WithMany(p => p.NotificationParentDetails)
                 .HasForeignKey(d => d.NotificationId)
                 .HasConstraintName("FK_NotificationParentDetail_Notification");
 
-            entity.HasOne(d => d.Parent).WithMany()
+            entity.HasOne(d => d.Parent).WithMany(p => p.NotificationParentDetails)
                 .HasForeignKey(d => d.ParentId)
                 .HasConstraintName("FK_NotificationParentDetail_Parent");
         });
 
         modelBuilder.Entity<Notificationstaffdetail>(entity =>
         {
-            entity
-                .HasNoKey()
-                .ToTable("NOTIFICATIONSTAFFDETAILS");
+            entity.HasKey(e => new { e.NotificationId, e.Staffid });
 
+            entity.ToTable("NOTIFICATIONSTAFFDETAILS");
+
+            entity.Property(e => e.Staffid).HasColumnName("STAFFID");
             entity.Property(e => e.CreatedBy).HasMaxLength(255);
             entity.Property(e => e.CreatedDate)
                 .HasDefaultValueSql("(getdate())")
@@ -356,13 +357,12 @@ public partial class SchoolMedicalSystemContext : DbContext
             entity.Property(e => e.ModifiedDate)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime");
-            entity.Property(e => e.Staffid).HasColumnName("STAFFID");
 
-            entity.HasOne(d => d.Notification).WithMany()
+            entity.HasOne(d => d.Notification).WithMany(p => p.Notificationstaffdetails)
                 .HasForeignKey(d => d.NotificationId)
                 .HasConstraintName("FK_NOTIFICATIONSTAFFDETAILS_Notification");
 
-            entity.HasOne(d => d.Staff).WithMany()
+            entity.HasOne(d => d.Staff).WithMany(p => p.Notificationstaffdetails)
                 .HasForeignKey(d => d.Staffid)
                 .HasConstraintName("FK_NOTIFICATIONSTAFFDETAILS_STAFF");
         });

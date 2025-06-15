@@ -27,6 +27,8 @@ public partial class Parent
 
     public int Userid { get; set; }
 
+    public virtual ICollection<NotificationParentDetail> NotificationParentDetails { get; set; } = new List<NotificationParentDetail>();
+
     public virtual ICollection<Student> Students { get; set; } = new List<Student>();
 
     public virtual User User { get; set; } = null!;
