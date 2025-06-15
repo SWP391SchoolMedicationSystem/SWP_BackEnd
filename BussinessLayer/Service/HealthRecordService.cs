@@ -70,12 +70,21 @@ namespace BussinessLayer.Service
             return Task.FromResult(_mapper.Map<List<Healthrecord>>(healthRecords));
         }
 
-        public void UpdateHealthRecord(HealthRecordDTO healthRecorddto)
+        public void UpdateHealthRecord(HealthRecordDTO healthRecorddto, int id)
         {
-            if (healthRecorddto != null)
+            var entity = _healthRecordRepository.GetByIdAsync(id).Result;
+            if (entity != null)
             {
-                Healthrecord healthRecord = _mapper.Map<Healthrecord>(healthRecorddto);
-                _healthRecordRepository.Update(healthRecord);
+                entity.Studentid = healthRecorddto.StudentID;
+                entity.Healthcategoryid = healthRecorddto.HealthCategoryID;
+                entity.Healthrecorddate = healthRecorddto.HealthRecordDate;
+                entity.Healthrecordtitle = healthRecorddto.Healthrecordtitle;
+                entity.Healthrecorddescription = healthRecorddto.Healthrecorddescription;
+                entity.Staffid = healthRecorddto.Staffid;
+                entity.Isconfirm = healthRecorddto.IsConfirm;
+                entity.Modifiedby = healthRecorddto.ModifiedBy;
+                entity.Modifieddate = DateTime.Now;
+                _healthRecordRepository.Update(entity);
                 _healthRecordRepository.Save();
             }
         }

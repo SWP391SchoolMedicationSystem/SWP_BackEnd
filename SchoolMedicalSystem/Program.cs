@@ -64,6 +64,12 @@ builder.Services.AddScoped<IParentService, ParentService>();
 builder.Services.AddScoped<IHealthRecordService, HealthRecordService>();
 builder.Services.AddScoped<IHealthRecordRepository, HealthRecordRepository>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
+builder.Services.AddScoped<IGenericRepository<Notification>, GenericRepository<Notification>>();
+builder.Services.AddScoped<IGenericRepository<Parent>, GenericRepository<Parent>>();
+builder.Services.AddScoped<IGenericRepository<NotificationParentDetail>, GenericRepository<NotificationParentDetail>>();
+builder.Services.AddScoped<IParentRepository, ParentRepository>();
+builder.Services.AddScoped<IBlogRepo, BlogRepo>();
+builder.Services.AddScoped<IBlogService, BlogService>();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

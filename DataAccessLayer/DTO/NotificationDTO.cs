@@ -23,6 +23,7 @@ namespace DataAccessLayer.DTO
         public string? Modifiedby { get; set; }
 
         public DateTime? Modifieddate { get; set; }
-        public List<int> ParentIds { get; set; } = new();
+        public string? Message { get; set; }
+ //       public List<int> ParentIds { get; set; } = new();
     }
 }

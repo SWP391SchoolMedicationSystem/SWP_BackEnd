@@ -55,13 +55,13 @@ namespace SchoolMedicalSystem.Controllers
         }
 
         [HttpPut]
-        [Route("update")]
-        public IActionResult Update([FromBody] HealthRecordDTO dto)
+        [Route("update/{id}")]
+        public IActionResult Update([FromBody] HealthRecordDTO dto, int id)
         {
             if (dto == null)
                 return BadRequest("Invalid data.");
 
-            _healthRecordService.UpdateHealthRecord(dto);
+            _healthRecordService.UpdateHealthRecord(dto, id);
             return Ok("Health record updated.");
         }
 

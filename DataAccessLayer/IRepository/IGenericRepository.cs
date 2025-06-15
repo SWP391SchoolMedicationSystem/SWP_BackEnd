@@ -14,5 +14,8 @@ namespace DataAccessLayer.IRepository
         void Update(T entity);
         void Delete(int ID);
         void Save();
+        List<T> GetAll();
+        void Add(T entity);
+
     }
 }
