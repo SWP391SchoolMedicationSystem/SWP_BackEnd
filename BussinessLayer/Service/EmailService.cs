@@ -71,7 +71,6 @@ namespace SchoolMedicalSystem.Services.EmailService
         {
             var emailTemplate = _mapper.Map<EmailTemplate>(request);
             emailTemplate.CreatedDate = DateTime.Now;
-            emailTemplate.CreatedBy = 2;
             _context.EmailTemplates.Add(emailTemplate);
  // Assuming 1 is the ID of the user creating the template, adjust as necessary
             await _context.SaveChangesAsync();
