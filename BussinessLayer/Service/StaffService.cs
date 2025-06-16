@@ -177,16 +177,22 @@ namespace BussinessLayer.Service
 
         public async Task<String> ValidateGoogleToken(string token)
         {
-            var payload = await GoogleJsonWebSignature.ValidateAsync(token, new GoogleJsonWebSignature.ValidationSettings
+            try
+            {var payload = await GoogleJsonWebSignature.ValidateAsync(token, new GoogleJsonWebSignature.ValidationSettings
             {
-                Audience = new[] { "251792493601-lkt15jmuh1jfr1cvgd0a45uamdqusosg.apps.googleusercontent.com" }
+                Audience = new[] { _appSettings.GoogleClientId }
             });
             string email = payload.Email;
             var staff = (await staffRepository.GetAllAsync())
                 .FirstOrDefault(p => p.Email == email);
             if (staff == null) return null;
             LoginDTO stafflogin = mapper.Map<LoginDTO>(staff);
-            return await GenerateToken(stafflogin);
+                return await GenerateToken(stafflogin); }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return null;
+            }
         }
     }
 

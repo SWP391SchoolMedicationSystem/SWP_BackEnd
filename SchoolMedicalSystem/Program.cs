@@ -32,11 +32,13 @@ builder.Services.AddCors(options =>
     });
 });
 builder.Services.Configure<AppSetting>(builder.Configuration.GetSection("AppSetting"));
+var googleclient = builder.Configuration["AppSetting:GoogleClientId"];
 var secretkey = builder.Configuration["AppSetting:SecretKey"];
 if (string.IsNullOrEmpty(secretkey))
 {
     throw new InvalidOperationException("AppSetting failed ");
 }
+
 var secretKeyByte = Encoding.UTF8.GetBytes(secretkey);
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer
     (options =>
