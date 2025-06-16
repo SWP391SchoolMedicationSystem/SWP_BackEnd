@@ -56,12 +56,18 @@ namespace BussinessLayer.Service
 
         public async Task<string> Login(LoginDTO dto)
         {
-            List<User> users = await _userRepository.GetAllAsync();
+            try
+            {List<User> users = await _userRepository.GetAllAsync();
             User user = users.FirstOrDefault(u => u.Email == dto.Email);
-            if (user.IsStaff) {
-                return await _staffService.GenerateToken(dto);
+                if (user.IsStaff) {
+                    return await _staffService.GenerateToken(dto);
+                }
+                else return await _parentService.GenerateToken(dto); }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                throw new InvalidOperationException("Login failed. Please check your credentials.");
             }
-            else return await _parentService.GenerateToken(dto);
         }
         public void Save()
         {

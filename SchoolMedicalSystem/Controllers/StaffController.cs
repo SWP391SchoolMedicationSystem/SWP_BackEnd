@@ -17,7 +17,7 @@ namespace SchoolMedicalSystem.Controllers
     {
         private readonly IStaffService _staffService;
         private readonly IMapper _mapper;
-        private static readonly string[] validationSettings = ["439095486459-gvdm000c5lstr8v0j1cl3ng9bg4gs4l2.apps.googleusercontent.com"];
+        private static readonly string[] validationSettings = ["251792493601-lkt15jmuh1jfr1cvgd0a45uamdqusosg.apps.googleusercontent.com"];
 
         public StaffController(IStaffService staffService, IMapper mapper)
         {
