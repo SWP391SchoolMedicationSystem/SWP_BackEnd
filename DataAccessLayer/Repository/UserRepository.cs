@@ -16,5 +16,12 @@ namespace DataAccessLayer.Repository
         {
             _dbset = context.Set<User>();
         }
+        public Task<List<User>> GetAllAsync()
+        {
+            return _dbset
+                .Include(x => x.Parents)
+                .Include(x => x.Staff)
+                .ToListAsync();
+        }
     }
 }
