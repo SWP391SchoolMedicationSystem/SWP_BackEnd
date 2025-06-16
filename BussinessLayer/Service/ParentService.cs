@@ -20,23 +20,11 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace BussinessLayer.Service
 {
-    public class ParentService : IParentService
+    public class ParentService(IParentRepository parentRepository, IUserRepository userRepository,
+        IMapper mapper,
+        IOptionsMonitor<AppSetting> option, IHttpContextAccessor httpContextAccessor) : IParentService
     {
-        private readonly IParentRepository _parentRepository;
-        private readonly IUserRepository _userRepository;
-        private readonly IMapper _mapper;
-        private readonly AppSetting _appSettings;
-        private readonly IHttpContextAccessor _httpContextAccessor;
-        public ParentService(IParentRepository parentRepository, IUserRepository userRepository,
-            IMapper mapper, 
-            IOptionsMonitor<AppSetting> option, IHttpContextAccessor httpContextAccessor)
-        {
-            _parentRepository = parentRepository;
-            _userRepository = userRepository;
-            _mapper = mapper;
-            _appSettings = option.CurrentValue;
-            _httpContextAccessor = httpContextAccessor;
-        }
+        private readonly AppSetting _appSettings = option.CurrentValue;
 
         #region HashingPassword
         public void CreatePasswordHash(string password, out byte[] hash, out byte[] salt)
@@ -57,7 +45,7 @@ namespace BussinessLayer.Service
         {
             try
             {
-                List<Parent> Parent = await _parentRepository.GetAllAsync();
+                List<Parent> Parent = await parentRepository.GetAllAsync();
                 if (Parent.Any(p => p.Email == parent.Email))
                 {
                     throw new InvalidOperationException("A parent with this email already exists.");
@@ -65,32 +53,30 @@ namespace BussinessLayer.Service
 
                 CreatePasswordHash(parent.Password, out byte[] hash, out byte[] salt);
 
-                var newParent = _mapper.Map<Parent>(parent);
+                var newParent = mapper.Map<Parent>(parent);
                 newParent.CreatedDate = DateTime.Now;
-
-                // Initialize the 'user' variable before using it
-                UserDTo userdto = new UserDTo
+                UserDTo userdto = new()
                 {
                     isStaff = false,
                     Email = parent.Phone.ToString(),
                     Hash = hash,
                     Salt = salt
                 };
-                var user = _mapper.Map<User>(userdto);
+                var user = mapper.Map<User>(userdto);
                 try
                 {
-                    await _userRepository.AddAsync(user);
-                    _userRepository.Save();
+                    await userRepository.AddAsync(user);
+                    userRepository.Save();
                     newParent.Userid = user.UserId;
-                    await _parentRepository.AddAsync(newParent);
-                    _parentRepository.Save();
+                    await parentRepository.AddAsync(newParent);
+                    parentRepository.Save();
                 }
                 catch
                 {
-                    _userRepository.Delete(user.UserId);
-                    _userRepository.Save();
-                    _parentRepository.Delete(newParent.Userid);
-                    _parentRepository.Save();
+                    userRepository.Delete(user.UserId);
+                    userRepository.Save();
+                    parentRepository.Delete(newParent.Userid);
+                    parentRepository.Save();
 
                 }
             }
@@ -103,16 +89,16 @@ namespace BussinessLayer.Service
 
         public void DeleteParent(int id)
         {
-            if(_parentRepository.GetByIdAsync(id) != null)
+            if(parentRepository.GetByIdAsync(id) != null)
             {
-                _parentRepository.Delete(id);
-                _parentRepository.Save();   
+                parentRepository.Delete(id);
+                parentRepository.Save();   
             }
 
         }
         public void UpdateParent(ParentUpdate parentdto)
         {
-            Parent parent = (Parent) _parentRepository.GetByIdAsync(parentdto.Parentid).Result;
+            Parent parent = (Parent) parentRepository.GetByIdAsync(parentdto.Parentid).Result;
             if (parent != null)
             {
                 // Only assign if value is not null/empty/0
@@ -124,8 +110,8 @@ namespace BussinessLayer.Service
                     parent.Fullname = parentdto.Fullname;
                 if (parentdto.Phone != 0)
                     parent.Phone = parentdto.Phone;
-                _parentRepository.Update(parent);
-                _parentRepository.Save();
+                parentRepository.Update(parent);
+                parentRepository.Save();
             }
         }
 
@@ -136,9 +122,9 @@ namespace BussinessLayer.Service
 
             try
             {
-                var parentlist = await _parentRepository.GetAllAsync();
-                var userlist = await _userRepository.GetAllAsync();
-                User user = userlist.FirstOrDefault(x => x.Email == login.Email || x.Email == login.Phone.ToString());
+                var parentlist = await parentRepository.GetAllAsync();
+                var userlist = await userRepository.GetAllAsync();
+                User user = userlist.FirstOrDefault(x => x.Email == login.Email);
 
                 if (user != null &&
                     VerifyPasswordHash(login.Password, user.Hash, user.Salt))
@@ -165,8 +151,8 @@ namespace BussinessLayer.Service
                     };
 
                     var principal = new ClaimsPrincipal(tokenDescription.Subject);
-                    _httpContextAccessor.HttpContext.User = principal;
-                    Console.WriteLine(_httpContextAccessor.HttpContext.User.Identity.Name);
+                    httpContextAccessor.HttpContext.User = principal;
+                    Console.WriteLine(httpContextAccessor.HttpContext.User.Identity.Name);
                     var tokenParent = jwtTokenHandler.CreateToken(tokenDescription);
                     return jwtTokenHandler.WriteToken(tokenParent);
                 }
@@ -180,30 +166,16 @@ namespace BussinessLayer.Service
 
         public async Task<List<ParentDTO>> GetAllParentsAsync()
         {
-            List<ParentDTO> list = _mapper.Map<List<ParentDTO>>(await _parentRepository.GetAllAsync()); 
+            List<ParentDTO> list = mapper.Map<List<ParentDTO>>(await parentRepository.GetAllAsync()); 
             return list;
         }
 
         public async Task<ParentDTO> GetParentByIdAsync(int id)
         {
-            ParentDTO parent = _mapper.Map<ParentDTO>(await _parentRepository.GetByIdAsync(id));
+            ParentDTO parent = mapper.Map<ParentDTO>(await parentRepository.GetByIdAsync(id));
             return parent;
         }
 
-        public Task<List<ParentDTO>> GetParentsByClassIdAsync(int classId)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<List<ParentDTO>> GetParentsByStaffIdAsync(int staffId)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<List<ParentDTO>> GetParentsByStudentIdAsync(int studentId)
-        {
-            throw new NotImplementedException();
-        }
 
         public async Task<string> ValidateGoogleToken(string token)
         {
@@ -212,10 +184,10 @@ namespace BussinessLayer.Service
                 Audience = new[] { _appSettings.GoogleClientId }
             });
             string email = payload.Email;
-            var parent = (await _parentRepository.GetAllAsync())
+            var parent = (await parentRepository.GetAllAsync())
                 .FirstOrDefault(p => p.Email == email);
             if (parent == null) return null;
-            LoginDTO parentLogin = _mapper.Map<LoginDTO>(parent);
+            LoginDTO parentLogin = mapper.Map<LoginDTO>(parent);
             return await GenerateToken(parentLogin);
         }
 

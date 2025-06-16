@@ -15,9 +15,6 @@ namespace BussinessLayer.IService
         Task AddParentAsync(ParentRegister parent);
         void UpdateParent(ParentUpdate parent);
         void DeleteParent(int id);
-        Task<List<ParentDTO>> GetParentsByStudentIdAsync(int studentId);
-        Task<List<ParentDTO>> GetParentsByClassIdAsync(int classId);
-        Task<List<ParentDTO>> GetParentsByStaffIdAsync(int staffId);
         Task<String> GenerateToken(LoginDTO login);
         Task<string> ValidateGoogleToken(string token);
     }

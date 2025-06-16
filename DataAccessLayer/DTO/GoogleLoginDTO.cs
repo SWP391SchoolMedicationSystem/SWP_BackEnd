@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DataAccessLayer.DTO
 {
-    public class GoogleLoginDTO
+    public class LoginGoogleDTO
     {
         public string? Fullname { get; set; }
         public string? Email { get; set; }

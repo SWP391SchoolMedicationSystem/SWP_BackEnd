@@ -2,7 +2,7 @@
 using DataAccessLayer.Entity;
 
 
-namespace SchoolMedicalSystem.Services.EmailService
+namespace BussinessLayer.IService
 {
     public interface IEmailService
     {

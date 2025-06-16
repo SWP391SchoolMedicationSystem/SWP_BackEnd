@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
+using BussinessLayer.IService;
 using DataAccessLayer.DTO;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using SchoolMedicalSystem.Services.EmailService;
 
 namespace SchoolMedicalSystem.Controllers
 {
