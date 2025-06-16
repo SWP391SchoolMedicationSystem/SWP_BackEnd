@@ -57,6 +57,13 @@ namespace DataAccessLayer.Repository
         {
             return _context.Database.BeginTransaction();
         }
-
+        public void Add(T entity)
+        {
+            _dbSet.Add(entity);
+        }
+        public List<T> GetAll()
+        {
+            return _dbSet.ToList();
+        }
     }
 }
