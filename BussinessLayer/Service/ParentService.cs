@@ -59,7 +59,7 @@ namespace BussinessLayer.Service
                 UserDTo userdto = new()
                 {
                     isStaff = false,
-                    Email = parent.Phone.ToString(),
+                    Email = parent.Email,
                     Hash = hash,
                     Salt = salt
                 };
