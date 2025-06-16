@@ -10,7 +10,7 @@ namespace SchoolMedicalSystem.Controllers
     [ApiController]
     public class UserController(IUserService userService, IMapper mapper) : ControllerBase
     {
-        [HttpGet("GetAllUsers")]
+        [HttpGet("user")]
         public async Task<IActionResult> GetAllUsers()
         {
             var users = await userService.GetAllAsync();
@@ -18,7 +18,7 @@ namespace SchoolMedicalSystem.Controllers
             return Ok(usersDto);
         }
     
-    [HttpPost("Login")]
+    [HttpPost("user")]
         public async Task<IActionResult> Login([FromBody] LoginDTO login)
         {
             if (login == null)
