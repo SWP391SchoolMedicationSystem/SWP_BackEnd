@@ -20,9 +20,11 @@ namespace SchoolMedicalSystem.Controllers
         }
 
         [HttpPost("sendEmail")]
-        public IActionResult SendEmail(EmailDTO request)
+        public async Task<IActionResult> SendEmail(EmailDTO request)
         {
-            _email.SendEmail(request);
+            if (request == null)
+                return BadRequest("Email request cannot be empty or null");
+            await _email.SendEmailAsync(request);
 
             return Ok("Email sent successfully");
         }
@@ -38,10 +40,26 @@ namespace SchoolMedicalSystem.Controllers
         }
 
         [HttpPost("SendEmailToAllUsers")]
-        public IActionResult SendEmailToAllUsers(int id)
+        public async Task<IActionResult> SendEmailToAllUsers(int id)
         {
-            _email.SendEmailToAllUsers(id);
+            await _email.SendEmailToAllUsersAsync(id);
             return Ok("Email sent to all users successfully");
         }
+
+        [HttpPost("SendEmailByList")]
+        public async Task<IActionResult> SendEmailByList(UserList request)
+        {
+            if (request == null)
+                return BadRequest("Email list cannot be empty or null");
+            var result = await _email.SendEmailByListAsync(request.userIDs, request.emailTemplate);
+            if (!result)
+                return BadRequest("Failed to send emails");
+            return Ok("Emails sent successfully");
+        }
+    }
+    public class UserList
+    {
+        public List<int>? userIDs { get; set; }
+        public int emailTemplate { get; set; }
     }
 }

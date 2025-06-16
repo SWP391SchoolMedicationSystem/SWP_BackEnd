@@ -31,24 +31,34 @@ namespace BussinessLayer.Service
             return _context.Users.Select(e => e.Email).ToList();
         }
 
-        public void SendEmail(EmailDTO request)
+        public List<string> GetEmailListByID(List<int> userIDs)
+        {
+            if (userIDs == null || !userIDs.Any())
+                return new List<string>();
+            return _context.Users
+                .Where(u => userIDs.Contains(u.UserId))
+                .Select(u => u.Email)
+                .ToList();
+        }
+
+        public async Task SendEmailAsync(EmailDTO request)
         {
             var email = new MimeMessage();
-            email.From.Add(MailboxAddress.Parse(_config.GetSection("EmailHost").Value));
+            email.From.Add(MailboxAddress.Parse(_config["EmailHost"]));
             email.To.Add(MailboxAddress.Parse(request.To));
             email.Subject = request.Subject;
             email.Body = new TextPart(TextFormat.Html) { Text = request.Body };
 
             using var smtp = new SmtpClient();
-            smtp.Connect(_config.GetSection("EmailHost").Value, 587, SecureSocketOptions.StartTls);
-            smtp.Authenticate(_config.GetSection("EmailUserName").Value, _config.GetSection("EmailPassword").Value);
-            smtp.Send(email);
-            smtp.Disconnect(true);
+            await smtp.ConnectAsync(_config["EmailHost"], 587, SecureSocketOptions.StartTls);
+            await smtp.AuthenticateAsync(_config["EmailUserName"], _config["EmailPassword"]);
+            await smtp.SendAsync(email);
+            await smtp.DisconnectAsync(true);
         }
 
-        public bool SendEmailToAllUsers(int id)
+        public async Task<bool> SendEmailToAllUsersAsync(int templateId)
         {
-            var emailTemplate = GetTemplateByID(id);
+            var emailTemplate = GetTemplateByID(templateId);
             if (emailTemplate == null)
                 return false;
 
@@ -56,16 +66,44 @@ namespace BussinessLayer.Service
             foreach (var email in emails)
             {
                 emailTemplate.To = email;
-                SendEmail(emailTemplate);
+                await SendEmailAsync(emailTemplate);
             }
 
             return true;
         }
 
-        public EmailDTO GetTemplateByID(int id)
+        public async Task<bool> SendEmailByListAsync(List<int> userIDs, int templateId)
         {
-            var emailTemplate = from e in _context.EmailTemplates where e.EmailTemplateId == id select e;
-            return (EmailDTO)emailTemplate;
+            var request = GetTemplateByID(templateId);
+            if (request == null)
+                return false;
+
+            request.To = string.Empty; // Reset To field before sending to each user
+            var emails = GetEmailListByID(userIDs);
+            if (emails == null || !emails.Any())
+                return false;
+
+            foreach (var email in emails)
+            {
+                request.To = email;
+                await SendEmailAsync(request);
+            }
+            return true;
+        }
+
+        public EmailDTO GetTemplateByID(int templateId)
+        {
+            var emailTemplate = _context.EmailTemplates.FirstOrDefault(e => e.EmailTemplateId == templateId);
+            if (emailTemplate == null)
+                return null;
+
+            var emailTemplateDTO = new EmailDTO
+            {
+                To = emailTemplate.To,
+                Subject = emailTemplate.Subject,
+                Body = emailTemplate.Body
+            };
+            return emailTemplateDTO;
         }
 
         public async Task<EmailTemplate> CreateEmailTemplate(EmailDTO request)

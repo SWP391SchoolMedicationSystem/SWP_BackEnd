@@ -6,9 +6,10 @@ namespace BussinessLayer.IService
 {
     public interface IEmailService
     {
-        void SendEmail(EmailDTO request);
+        Task SendEmailAsync(EmailDTO request);
         Task<EmailTemplate> CreateEmailTemplate(EmailDTO request);
-        bool SendEmailToAllUsers(int id);
+        Task<bool> SendEmailToAllUsersAsync(int id);
         List<string> GetAllEmails();
+        Task<bool> SendEmailByListAsync(List<int> userIDs, int templateId);
     }
 }
