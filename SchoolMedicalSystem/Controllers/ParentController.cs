@@ -23,13 +23,13 @@ namespace SchoolMedicalSystem.Controllers
             _parentservice = parentservice;
             _mapper = mapper;
         }
-        [HttpGet("GetAllParents")]
+        [HttpGet("parent")]
         public async Task<IActionResult> GetAllParents()
         {
             var parents = await _parentservice.GetAllParentsAsync();
             return Ok(parents);
         }
-        [HttpGet("GetParentById/{id}")]
+        [HttpGet("parent/{id}")]
         public async Task<IActionResult> GetParentById(int id)
         {
             var parent = await _parentservice.GetParentByIdAsync(id);
@@ -39,7 +39,7 @@ namespace SchoolMedicalSystem.Controllers
             }
             return Ok(parent);
         }
-        [HttpPost("Registration")]
+        [HttpPost("registration")]
         public async Task<IActionResult> Registration([FromBody] ParentRegister parent)
         {
             try
@@ -56,28 +56,8 @@ namespace SchoolMedicalSystem.Controllers
                 return BadRequest(e.Message);
             }
         }
-        [HttpPost("Login")]
-        public async Task<IActionResult> Login([FromBody] LoginDTO login)
-        {
-            try
-            {
-                if (login == null)
-                {
-                    return BadRequest("Login data is null.");
-                }
-                var token = await _parentservice.GenerateToken(login);
-                if (string.IsNullOrEmpty(token))
-                {
-                    return Unauthorized("Invalid credentials.");
-                }
-                return Ok(new { Token = token });
-            }
-            catch (Exception e)
-            {
-                return BadRequest(e.Message);
-            }
-        }
-        [HttpPut("UpdateParent")]
+
+        [HttpPut("parent")]
         public IActionResult UpdateParentRequest([FromBody] ParentUpdate parent)
         {
             try
@@ -94,7 +74,7 @@ namespace SchoolMedicalSystem.Controllers
                 return BadRequest(e.Message);
             }
         }
-        [HttpDelete("DeleteParent/{id}")]
+        [HttpDelete("parent/{id}")]
         public IActionResult DeleteParent(int id)
         {
             try
