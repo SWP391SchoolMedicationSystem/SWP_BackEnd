@@ -184,8 +184,9 @@ namespace BussinessLayer.Service
         {
             var payload = await GoogleJsonWebSignature.ValidateAsync(token, new GoogleJsonWebSignature.ValidationSettings
             {
-                Audience = new[] { _appSettings.GoogleClientId }
-            });
+                Audience = new[] {"251792493601-lkt15jmuh1jfr1cvgd0a45uamdqusosg.apps.googleusercontent.com"}
+    
+});
             string email = payload.Email;
             var parent = (await parentRepository.GetAllAsync())
                 .FirstOrDefault(p => p.Email == email);
