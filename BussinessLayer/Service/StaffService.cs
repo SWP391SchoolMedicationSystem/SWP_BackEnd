@@ -106,7 +106,7 @@ namespace BussinessLayer.Service
                     var jwtTokenHandler = new JwtSecurityTokenHandler();
 
                     var secretKeyBytes = Encoding.UTF8.GetBytes(_appSettings.SecretKey);
-
+                    string status = staff.IsDeleted ? "Tạm ngừng" : "Hoạt động";
                     var tokenDescription = new SecurityTokenDescriptor
                     {
                         Subject = new ClaimsIdentity(new[] {
@@ -114,6 +114,7 @@ namespace BussinessLayer.Service
                 new Claim("Fullname", staff.Fullname),
                 new Claim("Email", staff.Email ?? string.Empty),
                 new Claim("Phone", staff.Phone.ToString()),
+                new Claim("Status", status),
                 new Claim("DateCreated", staff.CreatedAt.ToString())
            }),
 

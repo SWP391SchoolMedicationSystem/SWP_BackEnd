@@ -17,5 +17,23 @@ namespace SchoolMedicalSystem.Controllers
             var usersDto = mapper.Map<List<UserDTo>>(users);
             return Ok(usersDto);
         }
+    
+    [HttpPost("Login")]
+        public async Task<IActionResult> Login([FromBody] LoginDTO login)
+        {
+            if (login == null)
+            {
+                return BadRequest("Login data is null.");
+            }
+            try
+            {
+                string token = await userService.Login(login);
+                return Ok(new { Token = token });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }

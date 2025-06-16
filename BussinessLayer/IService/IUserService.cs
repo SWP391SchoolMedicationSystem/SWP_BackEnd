@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
+using DataAccessLayer.DTO;
 using DataAccessLayer.Entity;
 using DataAccessLayer.IRepository;
 
@@ -17,5 +18,6 @@ namespace BussinessLayer.IService
         void Update(User entity);
         void Delete(int ID);
         void Save();
+        Task<string> Login(LoginDTO dto);
     }
 }
