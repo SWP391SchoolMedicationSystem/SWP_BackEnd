@@ -144,6 +144,7 @@ namespace BussinessLayer.Service
                 new Claim("Phone", parent.Phone.ToString()),
                 new Claim("Address", parent.Address),
                 new Claim("Status", status),
+                new Claim("Role", "Parent"),
                 new Claim("DateCreated", parent.CreatedDate.ToString())
            }),
 
