@@ -9,7 +9,6 @@ using DataAccessLayer.Repository;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using SchoolMedicalSystem.Services.EmailService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -59,7 +58,8 @@ builder.Services.AddDbContext<SchoolMedicalSystemContext>(options =>
         ?? throw new InvalidOperationException("Connection string 'SchoolMedicalSystemContext' not found.")));
 builder.Services.AddScoped<IParentRepository, ParentRepository>();
 builder.Services.AddScoped<IEmailService, EmailService>();
-
+builder.Services.AddScoped<IStaffService, StaffService>();
+builder.Services.AddScoped<IStaffRepository, StaffRepository>();
 builder.Services.AddScoped<IEmailRepo, EmailRepository>();
 builder.Services.AddScoped<IUserRepository,UserRepository>();
 builder.Services.AddScoped<IUserService, UserService>();

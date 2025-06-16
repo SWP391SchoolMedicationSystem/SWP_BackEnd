@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DataAccessLayer.DTO;
+using DataAccessLayer.DTO.Staffs;
 
 namespace BussinessLayer.IService
 {
@@ -12,9 +13,9 @@ namespace BussinessLayer.IService
         Task<List<StaffDTO>> GetAllStaffAsync();
         Task<StaffDTO> GetStaffByIdAsync(int id);
         Task AddStaffAsync(StaffRegister staff);
-        void UpdateStaff(StaffDTO staff);
+        void UpdateStaff(StaffUpdate staff);
         void DeleteStaff(int id);
         Task<String> GenerateToken(LoginDTO login);
-        Task<StaffDTO> ValidateGoogleToken(string token);
+        Task<string> ValidateGoogleToken(string token);
     }
 }

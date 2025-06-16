@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DataAccessLayer.DTO
+namespace DataAccessLayer.DTO.Parents
 {
     public class ParentRegister
     {
@@ -13,8 +14,17 @@ namespace DataAccessLayer.DTO
 
         public string? Email { get; set; }
 
+        [Required(ErrorMessage = "Phone number is required.")]
+
         public int Phone { get; set; }
+
+        [Required(ErrorMessage = "Password is required.")]
+        [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$",
+            ErrorMessage = "Password must be at least 8 characters long," +
+            " contain at least one uppercase letter, one lowercase letter, and one number.")]
         public string Password { get; set; } = null!;
+
+        [Required(ErrorMessage = "Address is required.")]
 
         public string Address { get; set; } = null!;
     }

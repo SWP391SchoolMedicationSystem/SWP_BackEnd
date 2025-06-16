@@ -8,8 +8,9 @@ using Microsoft.Extensions.Configuration;
 using DataAccessLayer.Entity;
 using DataAccessLayer.DTO;
 using AutoMapper;
+using BussinessLayer.IService;
 
-namespace SchoolMedicalSystem.Services.EmailService
+namespace BussinessLayer.Service
 {
     public class EmailService : IEmailService
     {

@@ -2,6 +2,7 @@
 using BussinessLayer.IService;
 using BussinessLayer.Utils;
 using DataAccessLayer.DTO;
+using DataAccessLayer.DTO.Parents;
 using DataAccessLayer.IRepository;
 using Google.Apis.Auth;
 using Microsoft.AspNetCore.Http;
@@ -15,6 +16,8 @@ namespace SchoolMedicalSystem.Controllers
     {
         private readonly IParentService _parentservice;
         private readonly IMapper _mapper;
+        private static readonly string[] validationSettings = ["439095486459-gvdm000c5lstr8v0j1cl3ng9bg4gs4l2.apps.googleusercontent.com"];
+
         public ParentController(IParentService parentservice, IMapper mapper)
         {
             _parentservice = parentservice;
@@ -91,6 +94,19 @@ namespace SchoolMedicalSystem.Controllers
                 return BadRequest(e.Message);
             }
         }
+        [HttpDelete("DeleteParent/{id}")]
+        public IActionResult DeleteParent(int id)
+        {
+            try
+            {
+                _parentservice.DeleteParent(id);
+                return Ok("Parent deleted successfully.");
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
         [HttpPost("google")]
         public async Task<IActionResult> VerifyGoogleToken([FromBody] TokenRequest request)
         {
@@ -98,7 +114,7 @@ namespace SchoolMedicalSystem.Controllers
             {
                 var payload = await GoogleJsonWebSignature.ValidateAsync(request.Credential, new GoogleJsonWebSignature.ValidationSettings
                 {
-                    Audience = new[] { "439095486459-gvdm000c5lstr8v0j1cl3ng9bg4gs4l2.apps.googleusercontent.com" } // Thay bằng client ID của bạn
+                    Audience = validationSettings
                 });
 
                 return Ok(new
@@ -116,5 +132,6 @@ namespace SchoolMedicalSystem.Controllers
         }
 
 
-}
+
+    }
 }

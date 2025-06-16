@@ -5,18 +5,35 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DataAccessLayer.DTO
+namespace DataAccessLayer.DTO.Staffs
 {
-    public class LoginDTO
+
+    public class StaffRegister
     {
+
+        [Required(ErrorMessage = "Full name is required.")]
+        public string Fullname { get; set; } = null!;
         [Required(ErrorMessage = "Email is required.")]
         [EmailAddress(ErrorMessage = "Invalid email format.")]
         public string Email { get; set; } = null!;
+
+        [Required(ErrorMessage = "Phone number is required.")]
+        public int Phone { get; set; }
+
         [Required(ErrorMessage = "Password is required.")]
         [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$",
             ErrorMessage = "Password must be at least 8 characters long," +
             " contain at least one uppercase letter, one lowercase letter, and one number.")]
         public string Password { get; set; } = null!;
 
+        public enum StaffRole
+        {
+            Admin = 1,
+            Teacher = 2,
+            Nurse = 3,
+            Manager = 4
+        }
+        [Required(ErrorMessage = "Role is required.")]
+        public StaffRole RoleID { get; set; }
     }
 }

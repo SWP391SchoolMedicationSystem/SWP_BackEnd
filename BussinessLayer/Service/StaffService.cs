@@ -1,28 +1,39 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
 using BussinessLayer.IService;
+using BussinessLayer.Utils.Configurations;
 using DataAccessLayer.DTO;
+using DataAccessLayer.DTO.Staffs;
 using DataAccessLayer.Entity;
 using DataAccessLayer.IRepository;
+using DataAccessLayer.Repository;
+using Google.Apis.Auth;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 
 namespace BussinessLayer.Service
 {
-    public class StaffService(IMapper mapper, IStaffRepository staffRepository, IUserRepository) :
+    public class StaffService(IMapper mapper, IStaffRepository staffRepository, IUserRepository userRepository, IHttpContextAccessor httpContextAccessor, IOptionsMonitor<AppSetting> option) :
         IStaffService
     {
-        public void CreatePasswordHash(string password, out byte[] hash, out byte[] salt)
+        private readonly AppSetting _appSettings = option.CurrentValue;
+
+        public static void CreatePasswordHash(string password, out byte[] hash, out byte[] salt)
         {
             using var hmac = new HMACSHA512();
             salt = hmac.Key;
             hash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
         }
 
-        public bool VerifyPasswordHash(string password, byte[] storedHash, byte[] storedSalt)
+        public static bool VerifyPasswordHash(string password, byte[] storedHash, byte[] storedSalt)
         {
             using var hmac = new HMACSHA512(storedSalt);
             var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
@@ -30,46 +41,135 @@ namespace BussinessLayer.Service
         }
         public async Task AddStaffAsync(StaffRegister register)
         {
-            List<Staff> existingStaff = await staffRepository.GetAllAsync();
-            if (existingStaff.Any(s => s.Email == register.Email))
+            using var transaction = staffRepository.BeginTransaction();
+            try
             {
-                throw new InvalidOperationException("A staff member with this email already exists.");
-            }
-            CreatePasswordHash(register.Password, out byte[] hash, out byte[] salt);
-            Staff staff = mapper.Map<Staff>(register);
-            staff.CreatedAt = DateTime.Now;
+                List<Staff> existingStaff = await staffRepository.GetAllAsync();
+                if (existingStaff.Any(s => s.Email == register.Email))
+                {
+                    throw new InvalidOperationException("A staff member with this email already exists.");
+                }
+                CreatePasswordHash(register.Password, out byte[] hash, out byte[] salt);
+                Staff staff = mapper.Map<Staff>(register);
+                staff.CreatedAt = DateTime.Now;
+                User user = new ()
+                {
+                    Email = register.Email,
+                    IsStaff = true,
+                    Hash = hash,
+                    Salt = salt,
+                };
+                user.Staff.Add(staff);
+                await userRepository.AddAsync(user);
+                staff.Userid = user.UserId;
+                await staffRepository.AddAsync(staff);
+                userRepository.Save();
+                staffRepository.Save();
+                transaction.Commit();
 
-            await staffRepository.AddAsync();
+
+            }
+            catch (Exception ex)
+            {
+                transaction.Rollback();
+                throw new Exception("An error occurred while adding staff: " + ex.Message);
+            }
         }
 
         public void DeleteStaff(int id)
         {
-            throw new NotImplementedException();
+            if (GetStaffByIdAsync(id) == null)
+            {
+                throw new KeyNotFoundException($"Staff with ID {id} not found.");
+            }
+            else
+            { 
+            staffRepository.Delete(id);
+                staffRepository.Save();
+
+            }
+
         }
 
-        public Task<string> GenerateToken(LoginDTO login)
+        public async Task<string> GenerateToken(LoginDTO login)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var stafflist = await staffRepository.GetAllAsync();
+                var userlist = await userRepository.GetAllAsync();
+                User user = userlist.FirstOrDefault(x => x.Email == login.Email);
+
+                if (user != null &&
+                    VerifyPasswordHash(login.Password, user.Hash, user.Salt))
+                {
+                    Staff staff = stafflist.FirstOrDefault(x => x.Userid == user.UserId);
+                    var jwtTokenHandler = new JwtSecurityTokenHandler();
+
+                    var secretKeyBytes = Encoding.UTF8.GetBytes(_appSettings.SecretKey);
+
+                    var tokenDescription = new SecurityTokenDescriptor
+                    {
+                        Subject = new ClaimsIdentity(new[] {
+               new Claim("Id", staff.Staffid.ToString()),
+                new Claim("Fullname", staff.Fullname),
+                new Claim("Email", staff.Email ?? string.Empty),
+                new Claim("Phone", staff.Phone.ToString()),
+                new Claim("DateCreated", staff.CreatedAt.ToString())
+           }),
+
+                        Expires = DateTime.UtcNow.AddMinutes(180),
+                        SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(secretKeyBytes),
+                        SecurityAlgorithms.HmacSha512Signature)
+                    };
+
+                    var principal = new ClaimsPrincipal(tokenDescription.Subject);
+                    httpContextAccessor.HttpContext.User = principal;
+                    Console.WriteLine(httpContextAccessor.HttpContext.User.Identity.Name);
+                    var tokenParent = jwtTokenHandler.CreateToken(tokenDescription);
+                    return jwtTokenHandler.WriteToken(tokenParent);
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+            return null;
         }
 
-        public Task<List<StaffDTO>> GetAllStaffAsync()
+        public async Task<List<StaffDTO>> GetAllStaffAsync()
         {
-            throw new NotImplementedException();
+            List<Staff> staffList = await staffRepository.GetAllAsync();
+            List<StaffDTO> staffDTOs = staffList.Select(staff => mapper.Map<StaffDTO>(staff)).ToList();
+            return staffDTOs;
         }
 
-        public Task<StaffDTO> GetStaffByIdAsync(int id)
+        public async Task<StaffDTO> GetStaffByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            StaffDTO staffDTO = mapper.Map<StaffDTO>(await staffRepository.GetByIdAsync(id));
+            return staffDTO ?? throw new KeyNotFoundException($"Staff with ID {id} not found.");
         }
 
-        public void UpdateStaff(StaffDTO staff)
+        public void UpdateStaff(StaffUpdate staff)
         {
-            throw new NotImplementedException();
+            Staff staffupdated = mapper.Map<Staff>(staff);
+            staffupdated.UpdatedAt = DateTime.Now;
+            staffRepository.Update(staffupdated);
+            staffRepository.Save();
         }
 
-        public Task<StaffDTO> ValidateGoogleToken(string token)
+        public async Task<String> ValidateGoogleToken(string token)
         {
-            throw new NotImplementedException();
+            var payload = await GoogleJsonWebSignature.ValidateAsync(token, new GoogleJsonWebSignature.ValidationSettings
+            {
+                Audience = new[] { _appSettings.GoogleClientId }
+            });
+            string email = payload.Email;
+            var staff = (await staffRepository.GetAllAsync())
+                .FirstOrDefault(p => p.Email == email);
+            if (staff == null) return null;
+            LoginDTO stafflogin = mapper.Map<LoginDTO>(staff);
+            return await GenerateToken(stafflogin);
         }
     }
+
 }

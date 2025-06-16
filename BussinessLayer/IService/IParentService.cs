@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DataAccessLayer.DTO;
+using DataAccessLayer.DTO.Parents;
 using DataAccessLayer.Entity;
 
 namespace BussinessLayer.IService

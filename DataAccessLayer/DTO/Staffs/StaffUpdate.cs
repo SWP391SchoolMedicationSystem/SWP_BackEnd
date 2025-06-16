@@ -4,16 +4,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DataAccessLayer.DTO
+namespace DataAccessLayer.DTO.Staffs
 {
-    public class StaffRegister
+    public class StaffUpdate
     {
+        public int Staffid { get; set; }
+
         public string Fullname { get; set; } = null!;
 
         public string Email { get; set; } = null!;
 
         public int Phone { get; set; }
-        
-        public string Password { get; set; } = null!;
+        public int Roleid { get; set; }
     }
 }

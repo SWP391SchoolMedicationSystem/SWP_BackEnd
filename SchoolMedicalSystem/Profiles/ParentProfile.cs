@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using DataAccessLayer.DTO;
+using DataAccessLayer.DTO.Parents;
 using DataAccessLayer.Entity;
 
 namespace SchoolMedicalSystem.Profiles
@@ -13,7 +14,7 @@ namespace SchoolMedicalSystem.Profiles
             CreateMap<Parent, ParentDTO>().ReverseMap();
             CreateMap<ParentUpdate, Parent>().ReverseMap();
             CreateMap<Parent, ParentUpdate>().ReverseMap();
-            CreateMap<Parent, GoogleLoginDTO>().ReverseMap();
+            CreateMap<Parent, LoginGoogleDTO>().ReverseMap();
         }
 
 

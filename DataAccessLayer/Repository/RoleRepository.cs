@@ -11,10 +11,10 @@ namespace DataAccessLayer.Repository
 {
     public class RoleRepository : GenericRepository<Role>, IRoleRepository
     {
-        private DbSet<Role> _dbset;
+        private readonly DbSet<Role> _dbset;
         public RoleRepository(SchoolMedicalSystemContext context) : base(context)
         {
-            _dbset = context.Set<Role>
+            _dbset = context.Set<Role>();
         }
     }
 }
