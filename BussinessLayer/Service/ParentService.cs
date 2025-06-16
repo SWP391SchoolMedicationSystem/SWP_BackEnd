@@ -191,7 +191,5 @@ namespace BussinessLayer.Service
             LoginDTO parentLogin = mapper.Map<LoginDTO>(parent);
             return await GenerateToken(parentLogin);
         }
-
-
     }
 }
