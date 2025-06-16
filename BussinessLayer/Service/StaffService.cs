@@ -104,9 +104,25 @@ namespace BussinessLayer.Service
                 {
                     Staff staff = stafflist.FirstOrDefault(x => x.Userid == user.UserId);
                     var jwtTokenHandler = new JwtSecurityTokenHandler();
-
+                    string role = null;
+                    if (staff.Roleid == 1)
+                    {
+                        role = "Admin";
+                    }
+                    else if (staff.Roleid == 2)
+                    {
+                        role = "Teacher";
+                    }
+                    else if (staff.Roleid == 3)
+                    {
+                        role = "Nurse";
+                    }
+                    else
+                    {
+                        role = "Manager";
+                    }
                     var secretKeyBytes = Encoding.UTF8.GetBytes(_appSettings.SecretKey);
-
+                    string status = staff.IsDeleted ? "Tạm ngừng" : "Hoạt động";
                     var tokenDescription = new SecurityTokenDescriptor
                     {
                         Subject = new ClaimsIdentity(new[] {
@@ -114,6 +130,8 @@ namespace BussinessLayer.Service
                 new Claim("Fullname", staff.Fullname),
                 new Claim("Email", staff.Email ?? string.Empty),
                 new Claim("Phone", staff.Phone.ToString()),
+                new Claim("Status", status),
+                new Claim("Role", role),
                 new Claim("DateCreated", staff.CreatedAt.ToString())
            }),
 
