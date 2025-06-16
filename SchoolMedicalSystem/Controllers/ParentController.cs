@@ -92,18 +92,8 @@ namespace SchoolMedicalSystem.Controllers
         {
             try
             {
-                var payload = await GoogleJsonWebSignature.ValidateAsync(request.Credential, new GoogleJsonWebSignature.ValidationSettings
-                {
-                    Audience = validationSettings
-                });
-
-                return Ok(new
-                {
-                    payload.Email,
-                    payload.Name,
-                    payload.Picture,
-                    payload.Subject // ID người dùng Google
-                });
+                var payload = await _parentservice.ValidateGoogleToken(request.Credential);
+                return Ok(payload);
             }
             catch (InvalidJwtException)
             {
