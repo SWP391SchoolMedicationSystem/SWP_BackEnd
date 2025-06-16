@@ -24,7 +24,7 @@ namespace SchoolMedicalSystem.Controllers
             _staffService = staffService;
             _mapper = mapper;
         }
-        [HttpPost("Register")]
+        [HttpPost("registration")]
         public async Task<IActionResult> Register([FromBody] StaffRegister register)
         {
             try
@@ -42,7 +42,7 @@ namespace SchoolMedicalSystem.Controllers
                 return BadRequest(e.Message);
             }
         }
-        [HttpPost("GetStaffById/{id}")]
+        [HttpPost("staff/{id}")]
         public async Task<IActionResult> GetStaffById(int id)
         {
             var staff = await _staffService.GetStaffByIdAsync(id);
@@ -52,34 +52,14 @@ namespace SchoolMedicalSystem.Controllers
             }
             return Ok(staff);
         }
-        [HttpGet("Login")]
-        public async Task<IActionResult> Login([FromBody] LoginDTO login)
-        {
-            try
-            {
-                if (login == null)
-                {
-                    return BadRequest("Login data is null.");
-                }
-                var token = await _staffService.GenerateToken(login);
-                if (string.IsNullOrEmpty(token))
-                {
-                    return Unauthorized("Invalid credentials.");
-                }
-                return Ok(new { Token = token });
-            }
-            catch (Exception e)
-            {
-                return BadRequest(e.Message);
-            }
-        }
-        [HttpGet("GetAllStaff")]
+
+        [HttpGet("staff")]
         public async Task<IActionResult> GetAllStaff()
         {
             var staffList = await _staffService.GetAllStaffAsync();
             return Ok(staffList);
         }
-        [HttpDelete("DeleteStaff/{id}")]
+        [HttpDelete("staff/{id}")]
         public IActionResult DeleteStaff(int id)
         {
             try
@@ -96,7 +76,7 @@ namespace SchoolMedicalSystem.Controllers
                 return BadRequest($"An error occurred while deleting staff: {ex.Message}");
             }
         }
-        [HttpPut("UpdateStaff")]
+        [HttpPut("staff")]
         public IActionResult UpdateStaff([FromBody] StaffUpdate staffUpdate)
         {
             try
