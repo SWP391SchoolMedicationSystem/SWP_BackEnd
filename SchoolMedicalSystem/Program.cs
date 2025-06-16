@@ -69,7 +69,8 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddAutoMapper(typeof(Program));
 
 var app = builder.Build();
-
+app.UseCors("AllowAllOrigins");
+app.UseCors("AllowReact");
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -79,8 +80,7 @@ app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 
-app.UseCors("AllowAllOrigins");
-app.UseCors("AllowReact");
+
 app.UseAuthorization();
 
 app.MapControllers();
