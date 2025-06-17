@@ -3,6 +3,7 @@ using DataAccessLayer.DTO;
 using DataAccessLayer;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using DataAccessLayer.Entity;
 
 namespace SchoolMedicalSystem.Controllers
 {
