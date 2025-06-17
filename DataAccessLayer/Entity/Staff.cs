@@ -30,6 +30,8 @@ public partial class Staff
     public virtual ICollection<Classroom> Classrooms { get; set; } = new List<Classroom>();
 
     public virtual ICollection<Healthrecord> Healthrecords { get; set; } = new List<Healthrecord>();
+    public virtual ICollection<Healthcheck> Healthchecks { get; set; } = new List<Healthcheck>();
+
 
     public virtual ICollection<Healthstatus> Healthstatuses { get; set; } = new List<Healthstatus>();
 
