@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using DataAccessLayer.Entity;
 using Microsoft.EntityFrameworkCore;
 
-namespace SchoolMedicalSystem.Entity;
+namespace DataAccessLayer.Entity;
 
 public partial class SchoolMedicalSystemContext : DbContext
 {

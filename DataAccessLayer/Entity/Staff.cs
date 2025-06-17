@@ -31,6 +31,7 @@ public partial class Staff
 
     public virtual ICollection<Healthrecord> Healthrecords { get; set; } = new List<Healthrecord>();
 
+    public virtual ICollection<Healthcheck> Healthchecks { get; set; } = new List<Healthcheck>();
     public virtual ICollection<Healthstatus> Healthstatuses { get; set; } = new List<Healthstatus>();
 
     public virtual ICollection<Notificationstaffdetail> Notificationstaffdetails { get; set; } = new List<Notificationstaffdetail>();
