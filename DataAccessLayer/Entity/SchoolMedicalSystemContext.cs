@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 
-namespace DataAccessLayer.Entity;
+namespace SchoolMedicalSystem.Entity;
 
 public partial class SchoolMedicalSystemContext : DbContext
 {
@@ -22,6 +22,8 @@ public partial class SchoolMedicalSystemContext : DbContext
     public virtual DbSet<EmailTemplate> EmailTemplates { get; set; }
 
     public virtual DbSet<Healthcategory> Healthcategories { get; set; }
+
+    public virtual DbSet<Healthcheck> Healthchecks { get; set; }
 
     public virtual DbSet<Healthrecord> Healthrecords { get; set; }
 
@@ -171,6 +173,61 @@ public partial class SchoolMedicalSystemContext : DbContext
             entity.Property(e => e.Modifieddate)
                 .HasColumnType("datetime")
                 .HasColumnName("MODIFIEDDATE");
+        });
+
+        modelBuilder.Entity<Healthcheck>(entity =>
+        {
+            entity.HasKey(e => e.Checkid).HasName("PK__HEALTHCH__7A9DCA670F7A506C");
+
+            entity.ToTable("HEALTHCHECK");
+
+            entity.Property(e => e.Checkid).HasColumnName("CHECKID");
+            entity.Property(e => e.Bloodpressure)
+                .HasMaxLength(255)
+                .IsUnicode(false)
+                .HasColumnName("BLOODPRESSURE");
+            entity.Property(e => e.Checkdate)
+                .HasColumnType("datetime")
+                .HasColumnName("CHECKDATE");
+            entity.Property(e => e.Createdat)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime")
+                .HasColumnName("CREATEDAT");
+            entity.Property(e => e.Createdby)
+                .HasMaxLength(255)
+                .HasColumnName("CREATEDBY");
+            entity.Property(e => e.Height)
+                .HasColumnType("decimal(5, 2)")
+                .HasColumnName("HEIGHT");
+            entity.Property(e => e.Isdeleted).HasColumnName("ISDELETED");
+            entity.Property(e => e.Notes)
+                .HasMaxLength(1000)
+                .HasColumnName("NOTES");
+            entity.Property(e => e.Staffid).HasColumnName("STAFFID");
+            entity.Property(e => e.Studentid).HasColumnName("STUDENTID");
+            entity.Property(e => e.Updatedat)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime")
+                .HasColumnName("UPDATEDAT");
+            entity.Property(e => e.Visionleft)
+                .HasColumnType("decimal(3, 2)")
+                .HasColumnName("VISIONLEFT");
+            entity.Property(e => e.Visionright)
+                .HasColumnType("decimal(3, 2)")
+                .HasColumnName("VISIONRIGHT");
+            entity.Property(e => e.Weight)
+                .HasColumnType("decimal(5, 2)")
+                .HasColumnName("WEIGHT");
+
+            entity.HasOne(d => d.Staff).WithMany(p => p.Healthchecks)
+                .HasForeignKey(d => d.Staffid)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_HEALTHCHECK_STAFF");
+
+            entity.HasOne(d => d.Student).WithMany(p => p.Healthchecks)
+                .HasForeignKey(d => d.Studentid)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_HEALTHCHECK_STUDENT");
         });
 
         modelBuilder.Entity<Healthrecord>(entity =>
