@@ -1,11 +1,8 @@
 ﻿using AutoMapper;
 using BussinessLayer.IService;
 using BussinessLayer.Utils;
-using DataAccessLayer.DTO;
 using DataAccessLayer.DTO.Parents;
-using DataAccessLayer.IRepository;
 using Google.Apis.Auth;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace SchoolMedicalSystem.Controllers

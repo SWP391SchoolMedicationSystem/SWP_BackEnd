@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using DataAccessLayer.DTO;
 using DataAccessLayer.DTO.Staffs;
+using DataAccessLayer.Entity;
 
 namespace BussinessLayer.IService
 {
