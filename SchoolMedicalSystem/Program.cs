@@ -13,7 +13,10 @@ using Microsoft.IdentityModel.Tokens;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
 builder.Services.AddControllers().AddJsonOptions(opt =>
 {
     opt.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
@@ -76,6 +79,13 @@ builder.Services.AddScoped<INotificationRepo, NotificationRepo>();
 builder.Services.AddScoped<IGenericRepository<Notification>, GenericRepository<Notification>>();
 builder.Services.AddScoped<INotificationParentDetailRepo, NotificationParentDetailRepo>();
 builder.Services.AddScoped<INotificationStaffDetailRepo, NotificationStaffDetailRepo>();
+<<<<<<< Updated upstream
+=======
+builder.Services.AddScoped<IClassRoomRepository, ClassRoomRepository>();
+builder.Services.AddScoped<IClassRoomService, ClassroomService>();
+builder.Services.AddScoped<IStudentService,StudentService>();
+builder.Services.AddScoped<IStudentRepo, StudentRepo>();
+>>>>>>> Stashed changes
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
