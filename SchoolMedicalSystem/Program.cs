@@ -79,6 +79,8 @@ builder.Services.AddScoped<INotificationParentDetailRepo, NotificationParentDeta
 builder.Services.AddScoped<INotificationStaffDetailRepo, NotificationStaffDetailRepo>();
 builder.Services.AddScoped<IClassRoomRepository, ClassRoomRepository>();
 builder.Services.AddScoped<IClassRoomService, ClassroomService>();
+builder.Services.AddScoped<IStudentRepo, StudentRepo>();
+builder.Services.AddScoped<IStudentService, StudentService>();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

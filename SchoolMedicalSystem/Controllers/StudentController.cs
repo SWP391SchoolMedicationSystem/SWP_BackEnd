@@ -58,7 +58,7 @@ namespace SchoolMedicalSystem.Controllers
         {
             if(studentlist != null)
             {
-                _studentService.UploadStudentList(studentlist);
+                await _studentService.UploadStudentList(studentlist);
             }
             return Ok("Students uploaded successfully.");
         }
