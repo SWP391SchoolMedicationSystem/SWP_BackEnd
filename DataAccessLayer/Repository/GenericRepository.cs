@@ -48,6 +48,11 @@ namespace DataAccessLayer.Repository
         {
             _context.SaveChanges();
         }
+
+        public async Task SaveChangesAsync()
+        {
+            await _context.SaveChangesAsync();
+        }
         public void Add(T entity)
         {
             _dbSet.Add(entity);

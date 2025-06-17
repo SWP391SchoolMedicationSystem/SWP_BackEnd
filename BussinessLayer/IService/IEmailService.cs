@@ -9,7 +9,10 @@ namespace BussinessLayer.IService
         Task SendEmailAsync(EmailDTO request);
         Task<EmailTemplate> CreateEmailTemplate(EmailDTO request);
         Task<bool> SendEmailToAllUsersAsync(int id);
-        List<string> GetAllEmails();
+        List<string> GetAllUserEmails();
         Task<bool> SendEmailByListAsync(List<int> userIDs, int templateId);
+        Task<List<EmailTemplate>> GetEmailAllTemplate();
+        Task<EmailTemplate> UpdateEmailTemplate(EmailDTO request, int id);
+        Task<bool> DeleteEmailTemplate(int id);
     }
 }

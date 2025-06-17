@@ -21,36 +21,62 @@ namespace BussinessLayer.Service
         private readonly IParentRepository _parentrepo;
         private readonly IMapper _mapper;
         public StudentService(IStudentRepo studentrepo, IClassRoomRepository classRoomRepository,
-            IParentRepository parentRepository, IMapper mapper, IClassRoomService classservice)
+            IParentRepository parentRepository, IMapper mapper)
         {
             _studentrepo = studentrepo;
             _classroomrepo = classRoomRepository;
             _parentrepo = parentRepository;
             _mapper = mapper;
-            _classservice = classservice;
         }
 
         public async Task<Student> AddStudentAsync(StudentDTO student)
         {
-            Student addedStudent = _mapper.Map<Student>(student);
-            await _studentrepo.AddAsync(addedStudent);
-            return addedStudent;
+            Student addedstudent = _mapper.Map<Student>(student);
+            await _studentrepo.AddAsync(addedstudent);
+            await _studentrepo.SaveChangesAsync();
+            return addedstudent;
         }
-        //COMMENT
 
         public void DeleteStudent(int id)
         {
-            throw new NotImplementedException();
+            _studentrepo.Delete(id);
+            _studentrepo.Save();
         }
 
         public async Task<List<Student>> GetAllStudentsAsync()
         {
-            return await _studentrepo.GetAllAsync();
+            var list = await _studentrepo.GetAllAsync();
+            return list;
         }
 
-        public Task<StudentDTO> GetStudentByIdAsync(int id)
+        public async Task<StudentDTO> GetStudentByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            var student = await _studentrepo.GetByIdAsync(id);
+            if (student == null)
+            {
+                throw new KeyNotFoundException($"Student with id {id} not found.");
+            }
+            return _mapper.Map<StudentDTO>(student);
+        }
+
+        public async Task<Student> UpdateStudentAsync(StudentDTO student, int id)
+        {
+            var s = await _studentrepo.GetByIdAsync(id);
+            if (s == null)
+                return null;
+
+            s.StudentCode = student.StudentCode;
+            s.Fullname = student.Fullname;
+            s.Age = student.Age;
+            s.BloodType = student.BloodType;
+            s.Gender = student.Gender;
+            s.Dob = student.Dob;
+            s.Classid = student.Classid;
+            s.Parentid = student.Parentid;
+            s.UpdatedAt = DateTime.Now;
+            _studentrepo.Update(s);
+            await _studentrepo.SaveChangesAsync();
+            return s;
         }
 
         public async Task UploadStudentList(List<InsertStudent> studentlist)
@@ -58,7 +84,7 @@ namespace BussinessLayer.Service
             try
             {
                 var parentlist = await _parentrepo.GetAllAsync();
-             foreach (var student in studentlist)
+                foreach (var student in studentlist)
                 {
                     if (student != null)
                     {
