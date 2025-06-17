@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace DataAccessLayer.Entity;
 
-public partial class Class
+public partial class Classroom
 {
     public int Classid { get; set; }
 

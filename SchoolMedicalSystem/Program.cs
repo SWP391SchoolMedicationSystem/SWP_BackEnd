@@ -9,11 +9,12 @@ using DataAccessLayer.Repository;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using OfficeOpenXml;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
+ExcelPackage.License.SetNonCommercialPersonal("Student API");
 builder.Services.AddControllers().AddJsonOptions(opt =>
 {
     opt.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
@@ -76,6 +77,8 @@ builder.Services.AddScoped<INotificationRepo, NotificationRepo>();
 builder.Services.AddScoped<IGenericRepository<Notification>, GenericRepository<Notification>>();
 builder.Services.AddScoped<INotificationParentDetailRepo, NotificationParentDetailRepo>();
 builder.Services.AddScoped<INotificationStaffDetailRepo, NotificationStaffDetailRepo>();
+builder.Services.AddScoped<IClassRoomRepository, ClassRoomRepository>();
+builder.Services.AddScoped<IClassRoomService, ClassroomService>();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

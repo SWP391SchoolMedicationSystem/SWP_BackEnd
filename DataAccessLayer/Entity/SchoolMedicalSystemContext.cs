@@ -17,7 +17,7 @@ public partial class SchoolMedicalSystemContext : DbContext
 
     public virtual DbSet<Blog> Blogs { get; set; }
 
-    public virtual DbSet<Class> Classes { get; set; }
+    public virtual DbSet<Classroom> Classrooms { get; set; }
 
     public virtual DbSet<EmailTemplate> EmailTemplates { get; set; }
 
@@ -89,11 +89,11 @@ public partial class SchoolMedicalSystemContext : DbContext
             entity.Property(e => e.UpdatedBy).HasColumnName("UPDATED_BY");
         });
 
-        modelBuilder.Entity<Class>(entity =>
+        modelBuilder.Entity<Classroom>(entity =>
         {
-            entity.HasKey(e => e.Classid).HasName("PK__tmp_ms_x__96D40B6C423F8D61");
+            entity.HasKey(e => e.Classid).HasName("PK__CLASSROO__96D40B6C52E3F12F");
 
-            entity.ToTable("CLASS");
+            entity.ToTable("CLASSROOM");
 
             entity.Property(e => e.Classid).HasColumnName("CLASSID");
             entity.Property(e => e.Classname)
@@ -115,10 +115,10 @@ public partial class SchoolMedicalSystemContext : DbContext
                 .HasColumnName("MODIFIEDDATE");
             entity.Property(e => e.Staffid).HasColumnName("STAFFID");
 
-            entity.HasOne(d => d.Staff).WithMany(p => p.Classes)
+            entity.HasOne(d => d.Staff).WithMany(p => p.Classrooms)
                 .HasForeignKey(d => d.Staffid)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_CLASS_STAFF");
+                .HasConstraintName("FK_CLASSROOM_STAFF");
         });
 
         modelBuilder.Entity<EmailTemplate>(entity =>
@@ -538,6 +538,10 @@ public partial class SchoolMedicalSystemContext : DbContext
 
             entity.Property(e => e.Studentid).HasColumnName("STUDENTID");
             entity.Property(e => e.Age).HasColumnName("AGE");
+            entity.Property(e => e.BloodType)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("BLOOD_TYPE");
             entity.Property(e => e.Classid).HasColumnName("CLASSID");
             entity.Property(e => e.CreatedAt)
                 .HasDefaultValueSql("(getdate())")
@@ -550,6 +554,10 @@ public partial class SchoolMedicalSystemContext : DbContext
             entity.Property(e => e.Gender).HasColumnName("GENDER");
             entity.Property(e => e.IsDeleted).HasColumnName("IS_DELETED");
             entity.Property(e => e.Parentid).HasColumnName("PARENTID");
+            entity.Property(e => e.StudentCode)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("STUDENT_CODE");
             entity.Property(e => e.UpdatedAt)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime")
