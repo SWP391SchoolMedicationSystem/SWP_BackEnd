@@ -12,9 +12,9 @@ namespace DataAccessLayer.DTO
         public string? StudentCode { get; set; }
         public string Fullname { get; set; } = null!;
         public string? BloodType { get; set; }
+        public int Classid { get; set; }
 
-        public virtual Classroom Class { get; set; } = null!;
-        public virtual Parent Parent { get; set; } = null!;
+        public int Parentid { get; set; }
         public int Age { get; set; }
 
         public DateOnly Dob { get; set; }

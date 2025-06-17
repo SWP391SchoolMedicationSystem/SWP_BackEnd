@@ -72,8 +72,8 @@ namespace BussinessLayer.Service
                                 Age = DateTime.Now.Year - student.birthDate.Year -
                                       (DateTime.Now.DayOfYear < student.birthDate.DayOfYear ? 1 : 0),
                                 BloodType = student.bloodtype,
-                                Class = classroom,
-                                Parent = parent,
+                                Classid = classroom.Classid,
+                                Parentid = parent.Parentid,
                                 Dob = student.birthDate,
                                 Gender = student.gender == "Nam" ? true : student.gender == "Nữ" ? false : throw new ArgumentException("Invalid gender value"),
                                 StudentCode = student.studentCode,
