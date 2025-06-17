@@ -9,6 +9,7 @@ using DataAccessLayer.Entity;
 using DataAccessLayer.DTO;
 using AutoMapper;
 using BussinessLayer.IService;
+using Microsoft.EntityFrameworkCore;
 
 namespace BussinessLayer.Service
 {
@@ -26,7 +27,7 @@ namespace BussinessLayer.Service
             _context = context;
         }
 
-        public List<string> GetAllEmails()
+        public List<string> GetAllUserEmails()
         {
             return _context.Users.Select(e => e.Email).ToList();
         }
@@ -62,7 +63,7 @@ namespace BussinessLayer.Service
             if (emailTemplate == null)
                 return false;
 
-            var emails = GetAllEmails();
+            var emails = GetAllUserEmails();
             foreach (var email in emails)
             {
                 emailTemplate.To = email;
@@ -78,7 +79,7 @@ namespace BussinessLayer.Service
             if (request == null)
                 return false;
 
-            request.To = string.Empty; // Reset To field before sending to each user
+            request.To = string.Empty;
             var emails = GetEmailListByID(userIDs);
             if (emails == null || !emails.Any())
                 return false;
@@ -89,6 +90,11 @@ namespace BussinessLayer.Service
                 await SendEmailAsync(request);
             }
             return true;
+        }
+
+        public async Task<List<EmailTemplate>> GetEmailAllTemplate()
+        {
+            return await _context.EmailTemplates.ToListAsync();
         }
 
         public EmailDTO GetTemplateByID(int templateId)
@@ -111,13 +117,33 @@ namespace BussinessLayer.Service
             var emailTemplate = _mapper.Map<EmailTemplate>(request);
             emailTemplate.CreatedDate = DateTime.Now;
             _context.EmailTemplates.Add(emailTemplate);
- // Assuming 1 is the ID of the user creating the template, adjust as necessary
             await _context.SaveChangesAsync();
-            // Optionally, you can map the created EmailTemplate back to DTO if needed
-            // var createdEmailTemplate = _mapper.Map<EmailTemplateDTO>(emailTemplate);
-            // return createdEmailTemplate;
 
             return emailTemplate;
+        }
+
+        public async Task<EmailTemplate> UpdateEmailTemplate(EmailDTO request, int id)
+        {
+            var emailTemplate = await _context.EmailTemplates.FindAsync(id);
+            if (emailTemplate == null)
+                return null;
+            emailTemplate.To = request.To;
+            emailTemplate.Subject = request.Subject;
+            emailTemplate.Body = request.Body;
+            emailTemplate.UpdatedDate = DateTime.Now;
+            _context.EmailTemplates.Update(emailTemplate);
+            await _context.SaveChangesAsync();
+            return emailTemplate;
+        }
+
+        public async Task<bool> DeleteEmailTemplate(int id)
+        {
+            var emailTemplate = await _context.EmailTemplates.FindAsync(id);
+            if (emailTemplate == null)
+                return false;
+            _context.EmailTemplates.Remove(emailTemplate);
+            await _context.SaveChangesAsync();
+            return true;
         }
     }
 }

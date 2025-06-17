@@ -3,6 +3,7 @@ using BussinessLayer.IService;
 using DataAccessLayer.DTO;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 
 namespace SchoolMedicalSystem.Controllers
 {
@@ -20,7 +21,7 @@ namespace SchoolMedicalSystem.Controllers
         }
 
         [HttpPost("sendEmail")]
-        public async Task<IActionResult> SendEmail(EmailDTO request)
+        public async Task<IActionResult> SendEmail([FromBody] EmailDTO request)
         {
             if (request == null)
                 return BadRequest("Email request cannot be empty or null");
@@ -29,8 +30,26 @@ namespace SchoolMedicalSystem.Controllers
             return Ok("Email sent successfully");
         }
 
+        [HttpPost("SendEmailToAllUsers")]
+        public async Task<IActionResult> SendEmailToAllUsers([FromBody] int templateId)
+        {
+            await _email.SendEmailToAllUsersAsync(templateId);
+            return Ok("Email sent to all users successfully");
+        }
+
+        [HttpPost("SendEmailByList")]
+        public async Task<IActionResult> SendEmailByList([FromBody] UserList request)
+        {
+            if (request == null)
+                return BadRequest("Email list cannot be empty or null");
+            var result = await _email.SendEmailByListAsync(request.userIDs, request.emailTemplateID);
+            if (!result)
+                return BadRequest("Failed to send emails");
+            return Ok("Emails sent successfully");
+        }
+
         [HttpPost("CreateEmailTemplate")]
-        public async Task<IActionResult> CreateEmailTemplate(EmailDTO request)
+        public async Task<IActionResult> CreateEmailTemplate([FromBody] EmailDTO request)
         {
             var emailTemplate = await _email.CreateEmailTemplate(request);
             if (emailTemplate == null)
@@ -39,27 +58,46 @@ namespace SchoolMedicalSystem.Controllers
             return Ok(emailTemplate);
         }
 
-        [HttpPost("SendEmailToAllUsers")]
-        public async Task<IActionResult> SendEmailToAllUsers(int id)
+        [HttpGet("GetEmailAllTemplate")]
+        public async Task<IActionResult> GetEmailAllTemplate()
         {
-            await _email.SendEmailToAllUsersAsync(id);
-            return Ok("Email sent to all users successfully");
+            var emailTemplates = await _email.GetEmailAllTemplate();
+            if (emailTemplates == null || !emailTemplates.Any())
+                return NotFound("No email templates found");
+            return Ok(emailTemplates);
         }
 
-        [HttpPost("SendEmailByList")]
-        public async Task<IActionResult> SendEmailByList(UserList request)
+        [HttpPut("UpdateEmailTemplate")]
+        public async Task<IActionResult> UpdateEmailTemplate([FromBody] UpdateEmail request)
         {
             if (request == null)
-                return BadRequest("Email list cannot be empty or null");
-            var result = await _email.SendEmailByListAsync(request.userIDs, request.emailTemplate);
+                return BadRequest("Email template cannot be empty or null");
+            var updatedTemplate = await _email.UpdateEmailTemplate(request.Email, request.Id);
+            if (updatedTemplate == null)
+                return BadRequest("Failed to update email template");
+
+            var emailTemplate = _mapper.Map<EmailDTO>(updatedTemplate);
+            return Ok(emailTemplate);
+        }
+
+        [HttpDelete("DeleteEmailTemplate/{id}")]
+        public async Task<IActionResult> DeleteEmailTemplate(int id)
+        {
+            var result = await _email.DeleteEmailTemplate(id);
             if (!result)
-                return BadRequest("Failed to send emails");
-            return Ok("Emails sent successfully");
+                return NotFound("Email template not found or could not be deleted");
+            return Ok("Email template deleted successfully");
         }
     }
     public class UserList
     {
         public List<int>? userIDs { get; set; }
-        public int emailTemplate { get; set; }
+        public int emailTemplateID { get; set; }
+    }
+
+    public class UpdateEmail
+    {
+        public int Id { get; set; }
+        public EmailDTO Email { get; set; }
     }
 }
