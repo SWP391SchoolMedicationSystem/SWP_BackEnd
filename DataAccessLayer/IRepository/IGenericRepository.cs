@@ -16,6 +16,8 @@ namespace DataAccessLayer.IRepository
         void Delete(int ID);
         void Save();
         IDbContextTransaction BeginTransaction();
+        List<T> GetAll();
+        void Add(T entity);
 
     }
 }

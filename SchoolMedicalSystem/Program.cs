@@ -66,6 +66,16 @@ builder.Services.AddScoped<IEmailRepo, EmailRepository>();
 builder.Services.AddScoped<IUserRepository,UserRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IParentService, ParentService>();
+builder.Services.AddScoped<IBlogRepo, BlogRepo>();
+builder.Services.AddScoped<IBlogService, BlogService>();
+builder.Services.AddScoped<IGenericRepository<NotificationParentDetail>, GenericRepository<NotificationParentDetail>>();
+builder.Services.AddScoped<IHealthRecordService, HealthRecordService>();
+builder.Services.AddScoped<IHealthRecordRepository, HealthRecordRepository>();
+builder.Services.AddScoped<INotificationService, NotificationService>();
+builder.Services.AddScoped<INotificationRepo, NotificationRepo>();
+builder.Services.AddScoped<IGenericRepository<Notification>, GenericRepository<Notification>>();
+builder.Services.AddScoped<INotificationParentDetailRepo, NotificationParentDetailRepo>();
+builder.Services.AddScoped<INotificationStaffDetailRepo, NotificationStaffDetailRepo>();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
