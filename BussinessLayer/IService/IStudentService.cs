@@ -4,14 +4,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DataAccessLayer.DTO;
+using DataAccessLayer.Entity;
 
 namespace BussinessLayer.IService
 {
     public interface IStudentService
     {
-        Task<List<StudentDTO>> GetAllStudentsAsync();
+        Task<List<Student>> GetAllStudentsAsync();
         Task<StudentDTO> GetStudentByIdAsync(int id);
-        Task AddStudentAsync(StudentDTO student);
+        Task<Student> AddStudentAsync(StudentDTO student);
         void DeleteStudent(int id);
         Task UploadStudentList(List<InsertStudent> studentlist); //NEW
 
