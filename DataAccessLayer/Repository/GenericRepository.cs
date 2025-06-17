@@ -48,7 +48,14 @@ namespace DataAccessLayer.Repository
         {
             _context.SaveChanges();
         }
-
+        public void Add(T entity)
+        {
+            _dbSet.Add(entity);
+        }
+        public List<T> GetAll()
+        {
+            return _dbSet.ToList();
+        }
         public void Update(T entity)
         {
             _dbSet.Update(entity);

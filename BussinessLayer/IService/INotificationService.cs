@@ -14,8 +14,6 @@ namespace BussinessLayer.IService
         void CreateNotificationForParent(NotificationDTO dto);
         void CreateNotificationForStaff(NotificationDTO dto);
         List<Notification> GetAllNotifications();
-        List<Notification> GetAllNotificationsForParent();
-        List<Notification> GetAllNotificationsForStaff();
         void DeleteNotification(int id);
 
     }

@@ -32,34 +32,11 @@ namespace SchoolMedicalSystem.Controllers
             _notificationService.CreateNotificationForParent(dto);
             return Ok("Notification for parent created successfully.");
         }
-        [HttpPost]
-        [Route("createForStaff")]
-        public IActionResult CreateNotificationForStaff([FromBody] NotificationDTO dto)
-        {
-            if (dto == null)
-                return BadRequest("Notification data is null.");
-            _notificationService.CreateNotificationForStaff(dto);
-            return Ok("Notification for staff created successfully.");
-        }
         [HttpGet]
         [Route("getAll")]
         public ActionResult<List<NotificationDTO>> GetAllNotifications()
         {
             var result = _notificationService.GetAllNotifications();
-            return Ok(result);
-        }
-        [HttpGet]
-        [Route("getNotiForParent")]
-        public ActionResult<List<NotificationDTO>> GetNotificationsForParent()
-        {
-            var result = _notificationService.GetAllNotificationsForParent();
-            return Ok(result);
-        }
-        [HttpGet]
-        [Route("getNotiForStaff")]
-        public ActionResult<List<NotificationDTO>> GetNotificationsForStaff()
-        {
-            var result = _notificationService.GetAllNotificationsForStaff();
             return Ok(result);
         }
         [HttpDelete]

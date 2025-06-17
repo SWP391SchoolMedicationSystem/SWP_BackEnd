@@ -22,8 +22,4 @@ public partial class Notification
     public string? Modifiedby { get; set; }
 
     public DateTime? Modifieddate { get; set; }
-
-    public virtual ICollection<NotificationParentDetail> NotificationParentDetails { get; set; } = new List<NotificationParentDetail>();
-
-    public virtual ICollection<Notificationstaffdetail> Notificationstaffdetails { get; set; } = new List<Notificationstaffdetail>();
 }
