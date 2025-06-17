@@ -182,10 +182,12 @@ namespace BussinessLayer.Service
 
         public async Task<string> ValidateGoogleToken(string token)
         {
+
             var payload = await GoogleJsonWebSignature.ValidateAsync(token, new GoogleJsonWebSignature.ValidationSettings
             {
                 Audience = new[] { _appSettings.GoogleClientId }
-            });
+    
+});
             string email = payload.Email;
             var parent = (await parentRepository.GetAllAsync())
                 .FirstOrDefault(p => p.Email == email);

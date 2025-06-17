@@ -15,7 +15,7 @@ namespace SchoolMedicalSystem.Controllers
         {
             var users = await userService.GetAllAsync();
             var usersDto = mapper.Map<List<UserDTo>>(users);
-            return Ok(usersDto);
+            return Ok(users);
         }
     
     [HttpPost("user")]

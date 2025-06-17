@@ -16,7 +16,6 @@ namespace SchoolMedicalSystem.Controllers
     {
         private readonly IParentService _parentservice;
         private readonly IMapper _mapper;
-        private static readonly string[] validationSettings = ["251792493601-lkt15jmuh1jfr1cvgd0a45uamdqusosg.apps.googleusercontent.com"];
 
         public ParentController(IParentService parentservice, IMapper mapper)
         {

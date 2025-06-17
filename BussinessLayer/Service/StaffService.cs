@@ -177,7 +177,8 @@ namespace BussinessLayer.Service
 
         public async Task<String> ValidateGoogleToken(string token)
         {
-            var payload = await GoogleJsonWebSignature.ValidateAsync(token, new GoogleJsonWebSignature.ValidationSettings
+            try
+            {var payload = await GoogleJsonWebSignature.ValidateAsync(token, new GoogleJsonWebSignature.ValidationSettings
             {
                 Audience = new[] { _appSettings.GoogleClientId }
             });
@@ -186,7 +187,12 @@ namespace BussinessLayer.Service
                 .FirstOrDefault(p => p.Email == email);
             if (staff == null) return null;
             LoginDTO stafflogin = mapper.Map<LoginDTO>(staff);
-            return await GenerateToken(stafflogin);
+                return await GenerateToken(stafflogin); }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return null;
+            }
         }
     }
 
