@@ -17,6 +17,7 @@ namespace SchoolMedicalSystem.Controllers
             _healthCheckService = healthCheckService;
             _mapper = mapper;
         }
+        [HttpGet]
         public async Task<ActionResult<List<HealthCheckDTO>>> GetAllHealthChecks()
         {
             var result = await _healthCheckService.GetAllHealthChecksAsync();
