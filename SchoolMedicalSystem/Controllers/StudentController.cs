@@ -103,7 +103,7 @@ namespace SchoolMedicalSystem.Controllers
         [HttpPut("UpdateStudent")]
         public async Task<IActionResult> UpdateStudent([FromBody] UpdateStudent student)
         {
-            if (student == null)
+            if (student == null || student.Student == null)
                 return BadRequest("Student data cannot be null.");
             var s = await _studentService.UpdateStudentAsync(student.Student, student.Id);
             if (s == null)
@@ -115,6 +115,6 @@ namespace SchoolMedicalSystem.Controllers
     public class UpdateStudent
     {
         public int Id { get; set; }
-        public StudentDTO Student { get; set; }
+        public StudentDTO? Student { get; set; }
     }
 }

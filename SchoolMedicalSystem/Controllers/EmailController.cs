@@ -40,7 +40,7 @@ namespace SchoolMedicalSystem.Controllers
         [HttpPost("SendEmailByList")]
         public async Task<IActionResult> SendEmailByList([FromBody] UserList request)
         {
-            if (request == null)
+            if (request == null || request.userIDs == null)
                 return BadRequest("Email list cannot be empty or null");
             var result = await _email.SendEmailByListAsync(request.userIDs, request.emailTemplateID);
             if (!result)
@@ -70,7 +70,7 @@ namespace SchoolMedicalSystem.Controllers
         [HttpPut("UpdateEmailTemplate")]
         public async Task<IActionResult> UpdateEmailTemplate([FromBody] UpdateEmail request)
         {
-            if (request == null)
+            if (request == null || request.Email == null)
                 return BadRequest("Email template cannot be empty or null");
             var updatedTemplate = await _email.UpdateEmailTemplate(request.Email, request.Id);
             if (updatedTemplate == null)
@@ -98,6 +98,6 @@ namespace SchoolMedicalSystem.Controllers
     public class UpdateEmail
     {
         public int Id { get; set; }
-        public EmailDTO Email { get; set; }
+        public EmailDTO? Email { get; set; }
     }
 }

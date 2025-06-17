@@ -43,10 +43,10 @@ namespace BussinessLayer.Service
             _studentrepo.Save();
         }
 
-        public async Task<List<StudentDTO>> GetAllStudentsAsync()
+        public async Task<List<Student>> GetAllStudentsAsync()
         {
             var list = await _studentrepo.GetAllAsync();
-            return _mapper.Map<List<StudentDTO>>(list);
+            return list;
         }
 
         public async Task<StudentDTO> GetStudentByIdAsync(int id)
