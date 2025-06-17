@@ -14,7 +14,7 @@ namespace BussinessLayer.IService
         Task<StudentDTO> GetStudentByIdAsync(int id);
         Task<Student> AddStudentAsync(StudentDTO student);
         void DeleteStudent(int id);
-        Task UploadStudentList(List<InsertStudent> studentlist);
+        Task UploadStudentList(List<InsertStudent> studentlist); //NEW
 
     }
 }
