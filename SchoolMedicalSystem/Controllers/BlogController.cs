@@ -1,6 +1,6 @@
 ﻿using BussinessLayer.IService;
 using BussinessLayer.Service;
-using DataAccessLayer.DTO;
+using DataAccessLayer.DTO.Blogs;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -34,7 +34,7 @@ namespace SchoolMedicalSystem.Controllers
         }
         [HttpPost]
         [Route("add")]
-        public async Task<IActionResult> AddBlog([FromBody] BlogDTO blogDto)
+        public async Task<IActionResult> AddBlog([FromBody] CreateBlogDTO blogDto)
         {
             if (blogDto == null)
                 return BadRequest("Blog data is null.");
@@ -43,7 +43,7 @@ namespace SchoolMedicalSystem.Controllers
         }
         [HttpPut]
         [Route("update/{id}")]
-        public IActionResult UpdateBlog([FromBody] BlogDTO dto, int id)
+        public IActionResult UpdateBlog([FromBody] UpdateBlogDTO dto, int id)
         {
             if (dto == null)
                 return BadRequest("Invalid data.");
@@ -61,6 +61,22 @@ namespace SchoolMedicalSystem.Controllers
                 throw new KeyNotFoundException($"Blog with id {id} not found.");
             }
             _blogService.DeleteBlog(id);
+        }
+        [HttpGet]
+        [Route("GetPublishedBlogs")]
+        public async Task<IActionResult> GetPublishedBlogs()
+        {
+            var blogs = await _blogService.GetPublishedBlogs();
+            return Ok(blogs);
+        }
+        [HttpPost]
+        [Route("ApproveBlog/{id}")]
+        public IActionResult ApproveBlog(int id, [FromBody] ApproveBlogDTO approveBlogDto)
+        {
+            if (approveBlogDto == null)
+                return BadRequest("Invalid approval data.");
+            _blogService.ApproveBlog(approveBlogDto, id);
+            return Ok("Blog approved successfully.");   
         }
     }
 }
