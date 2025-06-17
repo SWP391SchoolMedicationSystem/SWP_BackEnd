@@ -19,5 +19,6 @@ namespace BussinessLayer.IService
         void Delete(int ID);
         void Save();
         Task<string> Login(LoginDTO dto);
+        Task<string> ValidateGoogleToken(string token);
     }
 }

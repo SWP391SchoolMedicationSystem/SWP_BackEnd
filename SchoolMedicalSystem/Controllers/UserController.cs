@@ -1,6 +1,9 @@
 ﻿using AutoMapper;
 using BussinessLayer.IService;
+using BussinessLayer.Service;
+using BussinessLayer.Utils;
 using DataAccessLayer.DTO;
+using Google.Apis.Auth;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -35,5 +38,20 @@ namespace SchoolMedicalSystem.Controllers
                 return BadRequest(ex.Message);
             }
         }
+        [HttpPost("google")]
+        public async Task<IActionResult> VerifyGoogleToken([FromBody] TokenRequest request)
+        {
+            try
+            {
+                var payload = await userService.ValidateGoogleToken(request.Credential);
+                return Ok(payload);
+            }
+            catch (InvalidJwtException)
+            {
+                return Unauthorized("Token không hợp lệ.");
+            }
+        }
+
     }
+
 }

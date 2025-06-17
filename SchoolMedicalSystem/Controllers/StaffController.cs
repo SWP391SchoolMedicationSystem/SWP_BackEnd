@@ -98,18 +98,6 @@ namespace SchoolMedicalSystem.Controllers
                 return BadRequest($"An error occurred while updating staff: {ex.Message}");
             }
         }
-        [HttpPost("google")]
-        public async Task<IActionResult> VerifyGoogleToken([FromBody] TokenRequest request)
-        {
-            try
-            {
-                var payload = await _staffService.ValidateGoogleToken(request.Credential);
-                return Ok(payload);
-            }
-            catch (InvalidJwtException)
-            {
-                return Unauthorized("Token không hợp lệ.");
-            }
-        }
+
     }
 }

@@ -83,19 +83,7 @@ namespace SchoolMedicalSystem.Controllers
                 return BadRequest(e.Message);
             }
         }
-        [HttpPost("google")]
-        public async Task<IActionResult> VerifyGoogleToken([FromBody] TokenRequest request)
-        {
-            try
-            {
-                var payload = await _parentservice.ValidateGoogleToken(request.Credential);
-                return Ok(payload);
-            }
-            catch (InvalidJwtException)
-            {
-                return Unauthorized("Token không hợp lệ.");
-            }
-        }
+
 
 
 
