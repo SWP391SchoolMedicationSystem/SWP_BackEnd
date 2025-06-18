@@ -15,6 +15,6 @@ namespace BussinessLayer.IService
         void CreateNotificationForStaff(NotificationDTO dto);
         List<Notification> GetAllNotifications();
         void DeleteNotification(int id);
-
+        //comment
     }
 }
