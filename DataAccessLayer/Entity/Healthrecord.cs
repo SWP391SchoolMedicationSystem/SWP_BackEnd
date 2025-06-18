@@ -17,6 +17,8 @@ public partial class Healthrecord
 
     public string? Healthrecorddescription { get; set; }
 
+    public bool isDeleted { get; set; }
+
     public int Staffid { get; set; }
 
     public bool Isconfirm { get; set; }

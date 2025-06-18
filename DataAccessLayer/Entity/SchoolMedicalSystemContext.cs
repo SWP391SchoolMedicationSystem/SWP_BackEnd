@@ -245,6 +245,7 @@ public partial class SchoolMedicalSystemContext : DbContext
             entity.Property(e => e.Healthrecordtitle)
                 .HasMaxLength(255)
                 .HasColumnName("HEALTHRECORDTITLE");
+            entity.Property(e => e.isDeleted).HasColumnName("IS_DELETED");
             entity.Property(e => e.Isconfirm).HasColumnName("ISCONFIRM");
             entity.Property(e => e.Modifiedby)
                 .HasMaxLength(255)
