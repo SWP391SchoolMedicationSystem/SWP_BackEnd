@@ -30,8 +30,31 @@ namespace SchoolMedicalSystem.Controllers
         {
             if (dto == null)
                 return BadRequest("Notification data is null.");
-            _notificationService.CreateNotificationForParent(dto);
-            return Ok("Notification for parent created successfully.");
+            try
+            {
+                _notificationService.CreateNotificationForParent(dto);
+                return Ok("Notification for parent created successfully.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error creating notification for parent: {ex.Message}");
+            }
+        }
+        [HttpPost]
+        [Route("createForStaff")]
+        public IActionResult CreateNotificationForStaff([FromBody] NotificationDTO dto)
+        {
+            if (dto == null)
+                return BadRequest("Notification data is null.");
+            try
+            {
+                _notificationService.CreateNotificationForStaff(dto);
+                return Ok("Notification for staff created successfully.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error creating notification for staff: {ex.Message}");
+            }
         }
         [HttpGet]
         [Route("getAll")]
@@ -40,14 +63,35 @@ namespace SchoolMedicalSystem.Controllers
             var result = _notificationService.GetAllNotifications();
             return Ok(result);
         }
+        [HttpGet]
+        [Route("getNotiForParent")]
+        public ActionResult<List<NotificationDTO>> GetNotificationsForParent()
+        {
+            var result = _notificationService.GetAllNotificationsForParent();
+            return Ok(result);
+        }
+        [HttpGet]
+        [Route("getNotiForStaff")]
+        public ActionResult<List<NotificationDTO>> GetNotificationsForStaff()
+        {
+            var result = _notificationService.GetAllNotificationsForStaff();
+            return Ok(result);
+        }
         [HttpDelete]
         [Route("delete/{id}")]
         public IActionResult DeleteNotification(int id)
         {
             if (id <= 0)
                 return BadRequest("Invalid notification ID.");
-            _notificationService.DeleteNotification(id);
-            return Ok("Notification deleted successfully.");
+            try
+            {
+                _notificationService.DeleteNotification(id);
+                return Ok("Notification deleted successfully.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error deleting notification: {ex.Message}");
+            }
         }
     }
 }
