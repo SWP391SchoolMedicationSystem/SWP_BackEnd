@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DataAccessLayer.DTO.Notifications
+namespace DataAccessLayer.DTO
 {
     public class NotificationDTO
     {
@@ -24,6 +24,6 @@ namespace DataAccessLayer.DTO.Notifications
 
         public DateTime? Modifieddate { get; set; }
         public string? Message { get; set; }
-        //       public List<int> ParentIds { get; set; } = new();
+ //       public List<int> ParentIds { get; set; } = new();
     }
 }

@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using DataAccessLayer.DTO.Notifications;
+using DataAccessLayer.DTO;
 using DataAccessLayer.Entity;
 
 namespace SchoolMedicalSystem.Profiles
