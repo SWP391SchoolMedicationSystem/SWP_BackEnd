@@ -9,7 +9,6 @@ namespace SchoolMedicalSystem.Profiles
         public BlogProfile()
         {
             CreateMap<Blog, BlogDTO>().ReverseMap();
-            CreateMap<BlogDTO, Blog>().ReverseMap();
         }
     }
 }

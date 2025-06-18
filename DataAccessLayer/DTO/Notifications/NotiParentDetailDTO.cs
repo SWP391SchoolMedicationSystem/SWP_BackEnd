@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using DataAccessLayer.Entity;
 
-namespace DataAccessLayer.DTO
+namespace DataAccessLayer.DTO.Notifications
 {
     public class NotiParentDetailDTO
     {

@@ -1,5 +1,5 @@
 ﻿using BussinessLayer.IService;
-using DataAccessLayer.DTO;
+using DataAccessLayer.DTO.HealthRecords;
 using DataAccessLayer.Entity;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -19,13 +19,19 @@ namespace SchoolMedicalSystem.Controllers
 
         [HttpPost]
         [Route("add")]
-        public async Task<IActionResult> AddHealthRecord([FromBody] HealthRecordDTO dto)
+        public async Task<IActionResult> AddHealthRecord([FromBody] CreateHealthRecordDTO dto)
         {
             if (dto == null)
                 return BadRequest("Health record data is null.");
-
-            await _healthRecordService.AddHealthRecordAsync(dto);
-            return Ok("Health record added successfully.");
+            try
+            {
+                await _healthRecordService.AddHealthRecordAsync(dto);
+                return Ok("Health record added successfully.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Can't add health record: {ex.Message}");
+            }
         }
 
         [HttpGet]
@@ -56,21 +62,36 @@ namespace SchoolMedicalSystem.Controllers
 
         [HttpPut]
         [Route("update/{id}")]
-        public IActionResult Update([FromBody] HealthRecordDTO dto, int id)
+        public IActionResult Update([FromBody] UpdateHealthRecordDTO dto, int id)
         {
             if (dto == null)
                 return BadRequest("Invalid data.");
-
-            _healthRecordService.UpdateHealthRecord(dto, id);
-            return Ok("Health record updated.");
+            try
+            {
+                _healthRecordService.UpdateHealthRecord(dto, id);
+                return Ok("Health record updated.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error updating health record: {ex.Message}");
+            }
         }
 
         [HttpDelete]
         [Route("delete/{id}")]
         public IActionResult Delete(int id)
         {
-            _healthRecordService.DeleteHealthRecord(id);
-            return Ok("Health record deleted.");
+            if (id <= 0)
+                return BadRequest("Invalid health record ID.");
+            try
+            {
+                _healthRecordService.DeleteHealthRecord(id);
+                return Ok("Health record deleted.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error deleting health record: {ex.Message}");
+            }
         }
     }
 }

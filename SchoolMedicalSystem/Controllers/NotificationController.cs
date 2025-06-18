@@ -1,5 +1,5 @@
 ﻿using BussinessLayer.IService;
-using DataAccessLayer.DTO;
+using DataAccessLayer.DTO.Notifications;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -29,8 +29,15 @@ namespace SchoolMedicalSystem.Controllers
         {
             if (dto == null)
                 return BadRequest("Notification data is null.");
-            _notificationService.CreateNotificationForParent(dto);
-            return Ok("Notification for parent created successfully.");
+            try
+            {
+                _notificationService.CreateNotificationForParent(dto);
+                return Ok("Notification for parent created successfully.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error creating notification for parent: {ex.Message}");
+            }
         }
         [HttpPost]
         [Route("createForStaff")]
@@ -38,8 +45,15 @@ namespace SchoolMedicalSystem.Controllers
         {
             if (dto == null)
                 return BadRequest("Notification data is null.");
-            _notificationService.CreateNotificationForStaff(dto);
-            return Ok("Notification for staff created successfully.");
+            try
+            {
+                _notificationService.CreateNotificationForStaff(dto);
+                return Ok("Notification for staff created successfully.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error creating notification for staff: {ex.Message}");
+            }
         }
         [HttpGet]
         [Route("getAll")]
@@ -68,8 +82,15 @@ namespace SchoolMedicalSystem.Controllers
         {
             if (id <= 0)
                 return BadRequest("Invalid notification ID.");
-            _notificationService.DeleteNotification(id);
-            return Ok("Notification deleted successfully.");
+            try
+            {
+                _notificationService.DeleteNotification(id);
+                return Ok("Notification deleted successfully.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error deleting notification: {ex.Message}");
+            }
         }
     }
 }

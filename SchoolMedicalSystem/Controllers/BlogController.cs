@@ -38,8 +38,15 @@ namespace SchoolMedicalSystem.Controllers
         {
             if (blogDto == null)
                 return BadRequest("Blog data is null.");
-            await _blogService.AddBlogAsync(blogDto);
-            return Ok("Blog added successfully.");
+            try
+            {
+                await _blogService.AddBlogAsync(blogDto);
+                return Ok("Blog added successfully.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error adding blog: {ex.Message}");
+            }
         }
         [HttpPut]
         [Route("update/{id}")]
@@ -47,20 +54,33 @@ namespace SchoolMedicalSystem.Controllers
         {
             if (dto == null)
                 return BadRequest("Invalid data.");
-
-            _blogService.UpdateBlog(dto, id);
-            return Ok("Health record updated.");
+            if(id < 0)
+                return BadRequest("Invalid blog ID.");
+            try
+            {
+                _blogService.UpdateBlog(dto, id);
+                return Ok("Health record updated.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error updating blog: {ex.Message}");
+            }
         }
         [HttpDelete]
         [Route("delete/{id}")]
         public void DeleteBlog(int id)
         {
-            var blog = _blogService.GetBlogByIdAsync(id).Result;
-            if (blog == null)
+            if(id < 0)
+                throw new ArgumentException("Invalid blog ID.");
+            try
             {
-                throw new KeyNotFoundException($"Blog with id {id} not found.");
+                var blog = _blogService.GetBlogByIdAsync(id).Result;
+                _blogService.DeleteBlog(id);
             }
-            _blogService.DeleteBlog(id);
+            catch (Exception ex)
+            {
+                throw new Exception($"Error deleting blog: {ex.Message}", ex);
+            }
         }
         [HttpGet]
         [Route("GetPublishedBlogs")]
@@ -75,8 +95,17 @@ namespace SchoolMedicalSystem.Controllers
         {
             if (approveBlogDto == null)
                 return BadRequest("Invalid approval data.");
-            _blogService.ApproveBlog(approveBlogDto, id);
-            return Ok("Blog approved successfully.");   
+            if (id < 0)
+                return BadRequest("Invalid blog ID.");
+            try
+            {
+                _blogService.ApproveBlog(approveBlogDto, id);
+                return Ok("Blog approved successfully.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error approving blog: {ex.Message}");
+            }
         }
     }
 }
