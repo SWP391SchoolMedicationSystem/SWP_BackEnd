@@ -1,6 +1,6 @@
 ﻿using BussinessLayer.IService;
 using DataAccessLayer.DTO;
-using DataAccessLayer.DTO.Notifications;
+
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
