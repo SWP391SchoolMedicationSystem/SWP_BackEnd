@@ -88,11 +88,16 @@ namespace BussinessLayer.Service
             }
         }
 
-        public void DeleteParent(int id)
+        public async void DeleteParent(int id)
         {
-            if(parentRepository.GetByIdAsync(id) != null)
+            var parent = await parentRepository.GetByIdAsync(id);
+            if ( parent != null)
             {
-                parentRepository.Delete(id);
+                var user = (await userRepository.GetAllAsync())
+                    .FirstOrDefault(u => u.UserId == parent.Userid);
+                user.IsDeleted = true;
+                userRepository.Update(user);
+                parent.IsDeleted = true;
                 parentRepository.Save();   
             }
 

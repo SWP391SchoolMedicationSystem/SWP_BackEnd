@@ -37,10 +37,14 @@ namespace BussinessLayer.Service
             return addedstudent;
         }
 
-        public void DeleteStudent(int id)
+        public async Task DeleteStudent(int id)
         {
-            _studentrepo.Delete(id);
-            _studentrepo.Save();
+            var student = await _studentrepo.GetByIdAsync(id);
+            if (student != null)
+            {
+                student.IsDeleted = true;
+                _studentrepo.Save();
+            }
         }
 
         public async Task<List<Student>> GetAllStudentsAsync()

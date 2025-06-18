@@ -80,7 +80,8 @@ namespace BussinessLayer.Service
             var entity = _blogRepo.GetByIdAsync(id).Result;
             if (entity != null)
             {
-                _blogRepo.Delete(id);
+                entity.IsDeleted = true;
+                _blogRepo.Update(entity);
                 _blogRepo.Save();
             }
         }

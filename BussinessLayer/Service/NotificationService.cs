@@ -142,8 +142,8 @@ namespace BussinessLayer.Service
                 var entity = _notificationdRepository.GetByIdAsync(id).Result;
                 if (entity != null)
                 {
-                    //                entity.IsDeleted = true; // Soft delete
-                    _notificationdRepository.Delete(id);
+                    entity.IsDeleted = true; // Soft delete
+                    _notificationdRepository.Update(entity);
                     _notificationdRepository.Save();
                 }
             }

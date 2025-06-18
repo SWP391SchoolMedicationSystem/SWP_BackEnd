@@ -80,17 +80,21 @@ namespace BussinessLayer.Service
             }
         }
 
-        public void DeleteStaff(int id)
+        public async void DeleteStaff(int id)
         {
-            if (GetStaffByIdAsync(id) == null)
+            var staff = await staffRepository.GetByIdAsync(id);
+            if (staff == null)
             {
                 throw new KeyNotFoundException($"Staff with ID {id} not found.");
             }
             else
-            { 
-            staffRepository.Delete(id);
+            {
+                var user = (await userRepository.GetAllAsync()).
+                    FirstOrDefault(u => u.UserId == staff.Userid);
+                staff.IsDeleted = true;
+                user.IsDeleted = true;
                 staffRepository.Save();
-
+                userRepository.Save();
             }
 
         }

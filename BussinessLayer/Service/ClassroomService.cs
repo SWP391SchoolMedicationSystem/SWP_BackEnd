@@ -20,9 +20,16 @@ namespace BussinessLayer.Service
             _mapper = mapper;
         }
 
-        public void DeleteClassRoom(int id)
+        public async void DeleteClassRoom(int id)
         {
-            throw new NotImplementedException();
+            var classroom = await _classroomRepository.GetByIdAsync(id);
+            if (classroom != null)
+            {
+                classroom.IsDeleted = true;
+                _classroomRepository.Update(classroom);
+                _classroomRepository.Save();
+
+            }
         }
 
         public async Task<List<Classroom>> GetAllClassRoomsAsync()
