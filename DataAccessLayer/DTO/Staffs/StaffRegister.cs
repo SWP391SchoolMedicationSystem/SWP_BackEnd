@@ -25,15 +25,6 @@ namespace DataAccessLayer.DTO.Staffs
             ErrorMessage = "Password must be at least 8 characters long," +
             " contain at least one uppercase letter, one lowercase letter, and one number.")]
         public string Password { get; set; } = null!;
-
-        public enum StaffRole
-        {
-            Admin = 1,
-            Teacher = 2,
-            Nurse = 3,
-            Manager = 4
-        }
-        [Required(ErrorMessage = "Role is required.")]
-        public StaffRole RoleID { get; set; }
+        public int RoleID { get; set; }
     }
 }

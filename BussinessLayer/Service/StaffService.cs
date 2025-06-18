@@ -16,7 +16,10 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace BussinessLayer.Service
 {
-    public class StaffService(IMapper mapper, IStaffRepository staffRepository, IUserRepository userRepository, IHttpContextAccessor httpContextAccessor, IOptionsMonitor<AppSetting> option) :
+    public class StaffService(IMapper mapper, 
+        IStaffRepository staffRepository, IUserRepository userRepository, 
+       IRoleRepository roleRepository 
+       ,IHttpContextAccessor httpContextAccessor, IOptionsMonitor<AppSetting> option) :
         IStaffService
     {
         private readonly AppSetting _appSettings = option.CurrentValue;
@@ -55,11 +58,17 @@ namespace BussinessLayer.Service
                     Salt = salt,
                 };
                 user.Staff.Add(staff);
+                var listrole = roleRepository.GetAllAsync();
+                Role role = listrole.Result.FirstOrDefault(r => r.Roleid == register.RoleID);
+                role.Staff.Add(staff);
                 await userRepository.AddAsync(user);
                 staff.Userid = user.UserId;
                 await staffRepository.AddAsync(staff);
+                roleRepository.Save();
                 userRepository.Save();
                 staffRepository.Save();
+
+
                 transaction.Commit();
 
 
