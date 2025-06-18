@@ -9,6 +9,7 @@ using BussinessLayer.Utils.Configurations;
 using DataAccessLayer.DTO;
 using DataAccessLayer.Entity;
 using DataAccessLayer.IRepository;
+using DataAccessLayer.Repository;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 
@@ -142,5 +143,35 @@ namespace BussinessLayer.Service
             var notifications = _notificationdRepository.GetAllAsync().Result;
             return notifications.Where(n => !n.IsDeleted).ToList();
         }
-    }
+        public List<Notification> GetAllNotificationsForParent()
+        {
+            var details = _notificationParentDetailRepo.GetAll();
+            var allNotifications = _notificationdRepository.GetAll();
+
+            var notifications = (from d in details
+                                 join n in allNotifications on d.NotificationId equals n.NotificationId
+                                 where !d.IsDeleted && !n.IsDeleted
+                                 select n)
+                                .Distinct()
+                                .ToList();
+
+            return notifications;
+        }
+
+        public List<Notification> GetAllNotificationsForStaff()
+        {
+            var details = _notificationStaffDetailRepo.GetAll();
+            var allNotifications = _notificationdRepository.GetAll();
+
+            var notifications = (from d in details
+                                 join n in allNotifications on d.NotificationId equals n.NotificationId
+                                 where !d.IsDeleted && !n.IsDeleted
+                                 select n)
+                                .Distinct()
+                                .ToList();
+
+            return notifications;
+        }
+    
+}
 }
