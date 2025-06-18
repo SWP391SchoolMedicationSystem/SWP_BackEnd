@@ -84,11 +84,12 @@ namespace BussinessLayer.Service
             try
             {
                 var parentlist = await _parentrepo.GetAllAsync();
+                var classlist = await _classroomrepo.GetAllAsync();
                 foreach (var student in studentlist)
                 {
                     if (student != null)
                     {
-                        Classroom classroom = await _classservice.GetClassRoomByName(student.className);
+                        Classroom classroom = classlist.FirstOrDefault(c => c.Classname == student.className);
                         Parent parent = parentlist.FirstOrDefault(p => p.Fullname == student.parentName && p.Phone == student.parentphone);
                         if (parent != null && classroom != null)
                         {
