@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using DataAccessLayer.DTO;
+using DataAccessLayer.DTO.Blogs;
 using DataAccessLayer.Entity;
 
 namespace SchoolMedicalSystem.Profiles
@@ -9,7 +9,6 @@ namespace SchoolMedicalSystem.Profiles
         public BlogProfile()
         {
             CreateMap<Blog, BlogDTO>().ReverseMap();
-            CreateMap<BlogDTO, Blog>().ReverseMap();
         }
     }
 }

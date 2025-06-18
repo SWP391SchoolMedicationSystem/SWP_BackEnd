@@ -1,6 +1,6 @@
 ﻿using BussinessLayer.IService;
 using BussinessLayer.Service;
-using DataAccessLayer.DTO;
+using DataAccessLayer.DTO.Blogs;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -34,33 +34,78 @@ namespace SchoolMedicalSystem.Controllers
         }
         [HttpPost]
         [Route("add")]
-        public async Task<IActionResult> AddBlog([FromBody] BlogDTO blogDto)
+        public async Task<IActionResult> AddBlog([FromBody] CreateBlogDTO blogDto)
         {
             if (blogDto == null)
                 return BadRequest("Blog data is null.");
-            await _blogService.AddBlogAsync(blogDto);
-            return Ok("Blog added successfully.");
+            try
+            {
+                await _blogService.AddBlogAsync(blogDto);
+                return Ok("Blog added successfully.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error adding blog: {ex.Message}");
+            }
         }
         [HttpPut]
         [Route("update/{id}")]
-        public IActionResult UpdateBlog([FromBody] BlogDTO dto, int id)
+        public IActionResult UpdateBlog([FromBody] UpdateBlogDTO dto, int id)
         {
             if (dto == null)
                 return BadRequest("Invalid data.");
-
-            _blogService.UpdateBlog(dto, id);
-            return Ok("Health record updated.");
+            if(id < 0)
+                return BadRequest("Invalid blog ID.");
+            try
+            {
+                _blogService.UpdateBlog(dto, id);
+                return Ok("Health record updated.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error updating blog: {ex.Message}");
+            }
         }
         [HttpDelete]
         [Route("delete/{id}")]
         public void DeleteBlog(int id)
         {
-            var blog = _blogService.GetBlogByIdAsync(id).Result;
-            if (blog == null)
+            if(id < 0)
+                throw new ArgumentException("Invalid blog ID.");
+            try
             {
-                throw new KeyNotFoundException($"Blog with id {id} not found.");
+                var blog = _blogService.GetBlogByIdAsync(id).Result;
+                _blogService.DeleteBlog(id);
             }
-            _blogService.DeleteBlog(id);
+            catch (Exception ex)
+            {
+                throw new Exception($"Error deleting blog: {ex.Message}", ex);
+            }
+        }
+        [HttpGet]
+        [Route("GetPublishedBlogs")]
+        public async Task<IActionResult> GetPublishedBlogs()
+        {
+            var blogs = await _blogService.GetPublishedBlogs();
+            return Ok(blogs);
+        }
+        [HttpPost]
+        [Route("ApproveBlog/{id}")]
+        public IActionResult ApproveBlog(int id, [FromBody] ApproveBlogDTO approveBlogDto)
+        {
+            if (approveBlogDto == null)
+                return BadRequest("Invalid approval data.");
+            if (id < 0)
+                return BadRequest("Invalid blog ID.");
+            try
+            {
+                _blogService.ApproveBlog(approveBlogDto, id);
+                return Ok("Blog approved successfully.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error approving blog: {ex.Message}");
+            }
         }
     }
 }

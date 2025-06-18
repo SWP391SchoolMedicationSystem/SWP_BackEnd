@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using BussinessLayer.IService;
 using BussinessLayer.Utils.Configurations;
-using DataAccessLayer.DTO;
+using DataAccessLayer.DTO.Notifications;
 using DataAccessLayer.Entity;
 using DataAccessLayer.IRepository;
 using Microsoft.AspNetCore.Http;
@@ -47,7 +47,7 @@ namespace BussinessLayer.Service
             entity.Createddate = DateTime.Now;
             entity.IsDeleted = false;
 
-            _notificationdRepository.AddAsync(entity).GetAwaiter().GetResult(); // Fix: Use GetAwaiter().GetResult() to handle async void issue  
+            _notificationdRepository.AddAsync(entity).GetAwaiter().GetResult();
             _notificationdRepository.Save();
         }
 
@@ -127,12 +127,20 @@ namespace BussinessLayer.Service
 
         public void DeleteNotification(int id)
         {
-            var entity = _notificationdRepository.GetByIdAsync(id).Result;
-            if (entity != null)
+            try
             {
-//                entity.IsDeleted = true; // Soft delete
-                _notificationdRepository.Delete(id);
-                _notificationdRepository.Save();
+
+                var entity = _notificationdRepository.GetByIdAsync(id).Result;
+                if (entity != null)
+                {
+                    //                entity.IsDeleted = true; // Soft delete
+                    _notificationdRepository.Delete(id);
+                    _notificationdRepository.Save();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Failed to delete notification: {ex.Message}", ex);
             }
         }
 

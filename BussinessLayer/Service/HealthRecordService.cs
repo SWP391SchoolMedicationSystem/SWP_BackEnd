@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using BussinessLayer.IService;
 using BussinessLayer.Utils.Configurations;
-using DataAccessLayer.DTO;
+using DataAccessLayer.DTO.HealthRecords;
 using DataAccessLayer.Entity;
 using DataAccessLayer.IRepository;
 using DataAccessLayer.Repository;
@@ -29,7 +29,7 @@ namespace BussinessLayer.Service
             _appSettings = option.CurrentValue;
             _httpContextAccessor = httpContextAccessor;
         }
-        public Task AddHealthRecordAsync(HealthRecordDTO healthRecorddto)
+        public Task AddHealthRecordAsync(CreateHealthRecordDTO healthRecorddto)
         {
             if (healthRecorddto != null)
             {
@@ -70,7 +70,7 @@ namespace BussinessLayer.Service
             return Task.FromResult(_mapper.Map<List<Healthrecord>>(healthRecords));
         }
 
-        public void UpdateHealthRecord(HealthRecordDTO healthRecorddto, int id)
+        public void UpdateHealthRecord(UpdateHealthRecordDTO healthRecorddto, int id)
         {
             var entity = _healthRecordRepository.GetByIdAsync(id).Result;
             if (entity != null)
