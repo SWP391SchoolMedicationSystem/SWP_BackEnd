@@ -123,7 +123,7 @@ namespace BussinessLayer.Service
                     }
                     else
                     {
-                        role = "Manager";
+                        role = "Other";
                     }
                     var secretKeyBytes = Encoding.UTF8.GetBytes(_appSettings.SecretKey);
                     string status = staff.IsDeleted ? "Tạm ngừng" : "Hoạt động";
