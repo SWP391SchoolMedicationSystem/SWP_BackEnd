@@ -20,6 +20,7 @@ namespace BussinessLayer.Service
     {
         private readonly INotificationRepo _notificationdRepository;
         private readonly INotificationParentDetailRepo _notificationParentDetailRepo;
+        private readonly INotificationStaffDetailRepo _notificationStaffDetailRepo;
         private readonly IMapper _mapper;
         private readonly AppSetting _appSettings;
         private readonly IHttpContextAccessor _httpContextAccessor;
@@ -32,7 +33,8 @@ namespace BussinessLayer.Service
             IMapper mapper,
             IOptionsMonitor<AppSetting> option,
             IHttpContextAccessor httpContextAccessor,
-            IStaffRepository staffRepository)
+            IStaffRepository staffRepository,
+            INotificationStaffDetailRepo notificationStaffDetailRepo)
         {
             _notificationdRepository = notificationdRepository;
             _notificationParentDetailRepo = notificationParentDetailRepo;
@@ -41,6 +43,7 @@ namespace BussinessLayer.Service
             _appSettings = option.CurrentValue;
             _httpContextAccessor = httpContextAccessor;
             _staffRepository = staffRepository;
+            _notificationStaffDetailRepo = notificationStaffDetailRepo;
         }
         public void CreateNotification(NotificationDTO dto)
         {
@@ -49,7 +52,7 @@ namespace BussinessLayer.Service
             entity.Createddate = DateTime.Now;
             entity.IsDeleted = false;
 
-            _notificationdRepository.AddAsync(entity).GetAwaiter().GetResult(); // Fix: Use GetAwaiter().GetResult() to handle async void issue  
+            _notificationdRepository.AddAsync(entity).GetAwaiter().GetResult();
             _notificationdRepository.Save();
         }
 
@@ -57,20 +60,17 @@ namespace BussinessLayer.Service
         {
             try
             {
-                // Get all active parents FIRST - before any modifications
                 var parentEntities = _parentRepository.GetAll();
                 var activeParents = parentEntities.Where(p => !p.IsDeleted).ToList();
 
-                // Create and save the Notification
                 var notification = _mapper.Map<Notification>(dto);
                 notification.CreatedAt = DateTime.Now;
                 notification.Createddate = DateTime.Now;
                 notification.IsDeleted = false;
-
                 _notificationdRepository.Add(notification);
                 _notificationdRepository.Save();
 
-                // Create notification details for each parent
+
                 foreach (var parent in activeParents)
                 {
                     var detail = new NotificationParentDetail
@@ -82,7 +82,7 @@ namespace BussinessLayer.Service
                         IsDeleted = false,
                         CreatedDate = DateTime.Now,
                         CreatedBy = notification.Createdby,
-                        ModifiedDate = DateTime.Now, // Use DateTime.Now instead of notification.Modifieddate
+                        ModifiedDate = DateTime.Now,
                         ModifiedBy = notification.Modifiedby
                     };
                     _notificationParentDetailRepo.Add(detail);
@@ -97,44 +97,58 @@ namespace BussinessLayer.Service
 
         public void CreateNotificationForStaff(NotificationDTO dto)
         {
-            // Create and save the Notification  
-            var notification = _mapper.Map<Notification>(dto);
-            notification.CreatedAt = DateTime.Now;
-            notification.Createddate = DateTime.Now;
-            notification.IsDeleted = false;
-
-            _notificationdRepository.AddAsync(notification).GetAwaiter().GetResult(); // Fix: Use GetAwaiter().GetResult() to handle async void issue  
-            _notificationdRepository.Save();
-
-            // Get all active staff (not deleted)  
-            var allStaff = _staffRepository.GetAllAsync().GetAwaiter().GetResult()
-                                .Where(s => !s.IsDeleted).ToList();
-            // Create a NotificationParentDetail for each staff  
-            foreach (var staff in allStaff)
+            try
             {
-                var detail = new NotificationParentDetail
+                var staffs = _staffRepository.GetAll();
+                var activeStaffs = staffs.Where(p => !p.IsDeleted).ToList();
+
+                var notification = _mapper.Map<Notification>(dto);
+                notification.CreatedAt = DateTime.Now;
+                notification.Createddate = DateTime.Now;
+                notification.IsDeleted = false;
+                _notificationdRepository.Add(notification);
+                _notificationdRepository.Save();
+
+                foreach (var staff in activeStaffs)
                 {
-                    NotificationId = notification.NotificationId,
-                    ParentId = staff.Staffid,
-                    Message = dto.Title,
-                    IsRead = false,
-                    IsDeleted = false,
-                    CreatedDate = DateTime.Now,
-                    CreatedBy = notification.Createdby
-                };
-                _notificationParentDetailRepo.AddAsync(detail).GetAwaiter().GetResult(); // Fix: Use GetAwaiter().GetResult() to handle async void issue  
+                    var detail = new Notificationstaffdetail
+                    {
+                        NotificationId = notification.NotificationId,
+                        Staffid = staff.Staffid,
+                        Message = dto.Message,
+                        IsRead = false,
+                        IsDeleted = false,
+                        CreatedDate = DateTime.Now,
+                        CreatedBy = notification.Createdby,
+                        ModifiedDate = DateTime.Now,
+                        ModifiedBy = notification.Modifiedby
+                    };
+                    _notificationStaffDetailRepo.Add(detail);
+                }
+                _notificationStaffDetailRepo.Save();
             }
-            _notificationParentDetailRepo.Save();
+            catch (Exception ex)
+            {
+                throw new Exception($"Failed to create notification for parents: {ex.Message}", ex);
+            }
         }
 
         public void DeleteNotification(int id)
         {
-            var entity = _notificationdRepository.GetByIdAsync(id).Result;
-            if (entity != null)
+            try
             {
-//                entity.IsDeleted = true; // Soft delete
-                _notificationdRepository.Delete(id);
-                _notificationdRepository.Save();
+
+                var entity = _notificationdRepository.GetByIdAsync(id).Result;
+                if (entity != null)
+                {
+                    //                entity.IsDeleted = true; // Soft delete
+                    _notificationdRepository.Delete(id);
+                    _notificationdRepository.Save();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Failed to delete notification: {ex.Message}", ex);
             }
         }
 
@@ -143,6 +157,7 @@ namespace BussinessLayer.Service
             var notifications = _notificationdRepository.GetAllAsync().Result;
             return notifications.Where(n => !n.IsDeleted).ToList();
         }
+
         public List<Notification> GetAllNotificationsForParent()
         {
             var details = _notificationParentDetailRepo.GetAll();
@@ -172,6 +187,5 @@ namespace BussinessLayer.Service
 
             return notifications;
         }
-    
-}
+    }
 }
