@@ -109,7 +109,7 @@ namespace BussinessLayer.Service
                     parent.Email = parentdto.Email;
                 if (!string.IsNullOrWhiteSpace(parentdto.Fullname))
                     parent.Fullname = parentdto.Fullname;
-                if (parentdto.Phone != 0)
+                if (!string.IsNullOrWhiteSpace(parentdto.Phone))
                     parent.Phone = parentdto.Phone;
                 parentRepository.Update(parent);
                 parentRepository.Save();

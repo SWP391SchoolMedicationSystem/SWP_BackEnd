@@ -31,8 +31,9 @@ public partial class Student
 
     public virtual Classroom Class { get; set; } = null!;
 
-    public virtual ICollection<Healthrecord> Healthrecords { get; set; } = new List<Healthrecord>();
     public virtual ICollection<Healthcheck> Healthchecks { get; set; } = new List<Healthcheck>();
+
+    public virtual ICollection<Healthrecord> Healthrecords { get; set; } = new List<Healthrecord>();
 
     public virtual ICollection<Healthstatus> Healthstatuses { get; set; } = new List<Healthstatus>();
 

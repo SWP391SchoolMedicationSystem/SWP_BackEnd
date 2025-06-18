@@ -18,7 +18,7 @@ namespace DataAccessLayer.DTO.Staffs
         public string Email { get; set; } = null!;
 
         [Required(ErrorMessage = "Phone number is required.")]
-        public int Phone { get; set; }
+        public string Phone { get; set; } = null!;
 
         [Required(ErrorMessage = "Password is required.")]
         [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$",

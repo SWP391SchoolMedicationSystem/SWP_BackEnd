@@ -15,6 +15,8 @@ public partial class User
 
     public byte[] Salt { get; set; } = null!;
 
+    public bool IsDeleted { get; set; }
+
     public virtual ICollection<Parent> Parents { get; set; } = new List<Parent>();
 
     public virtual ICollection<Staff> Staff { get; set; } = new List<Staff>();

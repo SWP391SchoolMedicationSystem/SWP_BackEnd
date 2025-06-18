@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using DataAccessLayer.Entity;
 using Microsoft.EntityFrameworkCore;
 
 namespace DataAccessLayer.Entity;
@@ -54,13 +53,13 @@ public partial class SchoolMedicalSystemContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Server=database.purintech.id.vn;user=sa;password=<Hu@nH0aH0n9>;Database=SchoolMedicalSystem;TrustServerCertificate=True;");
+        => optionsBuilder.UseSqlServer("Server=TECOOKIE\\SQLEXPRESS;user=sa;password=12345;Database=SchoolMedicalSystem;TrustServerCertificate=True;");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Blog>(entity =>
         {
-            entity.HasKey(e => e.BlogId).HasName("PK__BLOG__F913A29D150AC718");
+            entity.HasKey(e => e.BlogId).HasName("PK__BLOG__F913A29D7E6EACCA");
 
             entity.ToTable("BLOG");
 
@@ -94,7 +93,7 @@ public partial class SchoolMedicalSystemContext : DbContext
 
         modelBuilder.Entity<Classroom>(entity =>
         {
-            entity.HasKey(e => e.Classid).HasName("PK__CLASSROO__96D40B6C52E3F12F");
+            entity.HasKey(e => e.Classid).HasName("PK__CLASSROO__96D40B6C45C6AA34");
 
             entity.ToTable("CLASSROOM");
 
@@ -116,12 +115,9 @@ public partial class SchoolMedicalSystemContext : DbContext
             entity.Property(e => e.Modifieddate)
                 .HasColumnType("datetime")
                 .HasColumnName("MODIFIEDDATE");
-            entity.Property(e => e.Staffid).HasColumnName("STAFFID");
-
-            entity.HasOne(d => d.Staff).WithMany(p => p.Classrooms)
-                .HasForeignKey(d => d.Staffid)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_CLASSROOM_STAFF");
+            entity.Property(e => e.Teachername)
+                .HasMaxLength(255)
+                .HasColumnName("TEACHERNAME");
         });
 
         modelBuilder.Entity<EmailTemplate>(entity =>
@@ -150,7 +146,7 @@ public partial class SchoolMedicalSystemContext : DbContext
 
         modelBuilder.Entity<Healthcategory>(entity =>
         {
-            entity.HasKey(e => e.Healthcategoryid).HasName("PK__HEALTHCA__21157DD6BC5269C5");
+            entity.HasKey(e => e.Healthcategoryid).HasName("PK__HEALTHCA__21157DD65442117B");
 
             entity.ToTable("HEALTHCATEGORY");
 
@@ -178,7 +174,7 @@ public partial class SchoolMedicalSystemContext : DbContext
 
         modelBuilder.Entity<Healthcheck>(entity =>
         {
-            entity.HasKey(e => e.Checkid).HasName("PK__HEALTHCH__7A9DCA670F7A506C");
+            entity.HasKey(e => e.Checkid).HasName("PK__HEALTHCH__7A9DCA677DE5AF61");
 
             entity.ToTable("HEALTHCHECK");
 
@@ -233,7 +229,7 @@ public partial class SchoolMedicalSystemContext : DbContext
 
         modelBuilder.Entity<Healthrecord>(entity =>
         {
-            entity.HasKey(e => e.Healthrecordid).HasName("PK__tmp_ms_x__05992FCEA73E1132");
+            entity.HasKey(e => e.Healthrecordid).HasName("PK__HEALTHRE__05992FCE4D39AF16");
 
             entity.ToTable("HEALTHRECORD");
 
@@ -280,7 +276,7 @@ public partial class SchoolMedicalSystemContext : DbContext
 
         modelBuilder.Entity<Healthstatus>(entity =>
         {
-            entity.HasKey(e => e.HealthId).HasName("PK__HEALTHST__D05E23F8037019AB");
+            entity.HasKey(e => e.HealthId).HasName("PK__HEALTHST__D05E23F877580884");
 
             entity.ToTable("HEALTHSTATUS");
 
@@ -323,7 +319,7 @@ public partial class SchoolMedicalSystemContext : DbContext
 
         modelBuilder.Entity<Healthstatuscategory>(entity =>
         {
-            entity.HasKey(e => e.HealthStatusCategoryId).HasName("PK__HEALTHST__7C33ADE1A856D6A8");
+            entity.HasKey(e => e.HealthStatusCategoryId).HasName("PK__HEALTHST__7C33ADE108F2C6A5");
 
             entity.ToTable("HEALTHSTATUSCATEGORY");
 
@@ -346,7 +342,7 @@ public partial class SchoolMedicalSystemContext : DbContext
 
         modelBuilder.Entity<Notification>(entity =>
         {
-            entity.HasKey(e => e.NotificationId).HasName("PK__Notifica__20CF2E12C31EBE6D");
+            entity.HasKey(e => e.NotificationId).HasName("PK__Notifica__20CF2E1258372FB0");
 
             entity.ToTable("Notification");
 
@@ -427,7 +423,7 @@ public partial class SchoolMedicalSystemContext : DbContext
 
         modelBuilder.Entity<Parent>(entity =>
         {
-            entity.HasKey(e => e.Parentid).HasName("PK__tmp_ms_x__7444E66AE19BE58D");
+            entity.HasKey(e => e.Parentid).HasName("PK__PARENT__7444E66AB6E7B3BB");
 
             entity.ToTable("PARENT");
 
@@ -450,7 +446,9 @@ public partial class SchoolMedicalSystemContext : DbContext
             entity.Property(e => e.ModifiedDate)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime");
-            entity.Property(e => e.Phone).HasColumnName("PHONE");
+            entity.Property(e => e.Phone)
+                .HasMaxLength(255)
+                .HasColumnName("PHONE");
             entity.Property(e => e.Userid).HasColumnName("USERID");
 
             entity.HasOne(d => d.User).WithMany(p => p.Parents)
@@ -461,7 +459,7 @@ public partial class SchoolMedicalSystemContext : DbContext
 
         modelBuilder.Entity<Personalmedicine>(entity =>
         {
-            entity.HasKey(e => e.Personalmedicineid).HasName("PK__PERSONAL__183A5A640F08CC21");
+            entity.HasKey(e => e.Personalmedicineid).HasName("PK__PERSONAL__E0FDAEFFF5825B95");
 
             entity.ToTable("PERSONALMEDICINE");
 
@@ -505,7 +503,7 @@ public partial class SchoolMedicalSystemContext : DbContext
 
         modelBuilder.Entity<Personalmedicineschedule>(entity =>
         {
-            entity.HasKey(e => e.Personalmedicineid).HasName("PK__PERSONAL__E0FDAEFF0607CB1B");
+            entity.HasKey(e => e.Personalmedicineid).HasName("PK__PERSONAL__E0FDAEFFAE9296B1");
 
             entity.ToTable("PERSONALMEDICINESCHEDULE");
 
@@ -536,7 +534,7 @@ public partial class SchoolMedicalSystemContext : DbContext
 
         modelBuilder.Entity<Role>(entity =>
         {
-            entity.HasKey(e => e.Roleid).HasName("PK__ROLE__006568E91292435B");
+            entity.HasKey(e => e.Roleid).HasName("PK__ROLE__006568E96E7F5CEB");
 
             entity.ToTable("ROLE");
 
@@ -553,7 +551,7 @@ public partial class SchoolMedicalSystemContext : DbContext
 
         modelBuilder.Entity<Staff>(entity =>
         {
-            entity.HasKey(e => e.Staffid).HasName("PK__tmp_ms_x__28B5063B6FB4213C");
+            entity.HasKey(e => e.Staffid).HasName("PK__STAFF__28B5063B287CAF92");
 
             entity.ToTable("STAFF");
 
@@ -571,7 +569,9 @@ public partial class SchoolMedicalSystemContext : DbContext
                 .HasColumnName("FULLNAME");
             entity.Property(e => e.IsDeleted).HasColumnName("IS_DELETED");
             entity.Property(e => e.ModifiedBy).HasMaxLength(255);
-            entity.Property(e => e.Phone).HasColumnName("PHONE");
+            entity.Property(e => e.Phone)
+                .HasMaxLength(255)
+                .HasColumnName("PHONE");
             entity.Property(e => e.Roleid).HasColumnName("ROLEID");
             entity.Property(e => e.UpdatedAt)
                 .HasDefaultValueSql("(getdate())")
@@ -590,7 +590,7 @@ public partial class SchoolMedicalSystemContext : DbContext
 
         modelBuilder.Entity<Student>(entity =>
         {
-            entity.HasKey(e => e.Studentid).HasName("PK__STUDENT__495196F0E731BCB6");
+            entity.HasKey(e => e.Studentid).HasName("PK__STUDENT__495196F0D7AB005C");
 
             entity.ToTable("STUDENT");
 
@@ -641,6 +641,7 @@ public partial class SchoolMedicalSystemContext : DbContext
                 .HasMaxLength(255)
                 .IsUnicode(false);
             entity.Property(e => e.Hash).HasMaxLength(255);
+            entity.Property(e => e.IsDeleted).HasColumnName("IS_DELETED");
             entity.Property(e => e.IsStaff).HasColumnName("isStaff");
             entity.Property(e => e.Salt).HasMaxLength(255);
         });
