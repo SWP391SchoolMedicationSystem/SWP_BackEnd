@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using BussinessLayer.IService;
 using BussinessLayer.Utils.Configurations;
-using DataAccessLayer.DTO;
+using DataAccessLayer.DTO.Blogs;
 using DataAccessLayer.Entity;
 using DataAccessLayer.IRepository;
 using DataAccessLayer.Repository;
@@ -42,7 +42,7 @@ namespace BussinessLayer.Service
         {
             return await _blogRepo.GetByIdAsync(id);
         }
-        public async Task AddBlogAsync(BlogDTO dto)
+        public async Task AddBlogAsync(CreateBlogDTO dto)
         {
             if (dto != null)
             {
@@ -51,7 +51,7 @@ namespace BussinessLayer.Service
                 _blogRepo.Save();
             }
         }
-        public void UpdateBlog(BlogDTO dto, int id)
+        public void UpdateBlog(UpdateBlogDTO dto, int id)
         {
             if (dto != null)
             {
@@ -60,10 +60,10 @@ namespace BussinessLayer.Service
                 {
                     entity.Title = dto.Title;
                     entity.Content = dto.Content;
-                    entity.ApprovedBy = dto.ApprovedBy;
-                    entity.ApprovedOn = dto.ApprovedOn;
-                    entity.CreatedBy = dto.CreatedBy;
-                    entity.CreatedAt = DateTime.Now;
+                    //                    entity.ApprovedBy = dto.ApprovedBy;
+                    //                    entity.ApprovedOn = dto.ApprovedOn;
+                    //                    entity.CreatedBy = dto.CreatedBy;
+                    //                   entity.CreatedAt = DateTime.Now;
                     entity.UpdatedAt = DateTime.Now;
                     entity.UpdatedBy = dto.UpdatedBy;
                     entity.Status = dto.Status;
@@ -90,6 +90,22 @@ namespace BussinessLayer.Service
             return Task.FromResult(blogs.Where(b => b.Title.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
                                                      b.Content.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)).ToList());
         }
-
+        public void ApproveBlog(ApproveBlogDTO dto, int id)
+        {
+            var blog = _blogRepo.GetByIdAsync(id).Result;
+            if (blog != null)
+            {
+                blog.ApprovedBy = dto.ApprovedBy;
+                blog.ApprovedOn = DateTime.Now;
+                blog.Status = "Approved";
+                _blogRepo.Update(blog);
+                _blogRepo.Save();
+            }
+        }
+        public async Task<List<Blog>> GetPublishedBlogs()
+        {
+            var blogs = await _blogRepo.GetAllAsync();
+            return blogs.Where(b => b.Status == "Published" && b.IsDeleted != true).ToList();
+        }
     }
 }

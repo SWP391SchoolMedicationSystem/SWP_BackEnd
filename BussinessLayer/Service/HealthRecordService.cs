@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using BussinessLayer.IService;
 using BussinessLayer.Utils.Configurations;
-using DataAccessLayer.DTO;
+using DataAccessLayer.DTO.HealthRecords;
 using DataAccessLayer.Entity;
 using DataAccessLayer.IRepository;
 using DataAccessLayer.Repository;
