@@ -115,7 +115,7 @@ namespace BussinessLayer.Service
                     }
                     else if (staff.Roleid == 2)
                     {
-                        role = "Teacher";
+                        role = "Manager";
                     }
                     else if (staff.Roleid == 3)
                     {
