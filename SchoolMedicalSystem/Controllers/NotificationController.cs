@@ -16,7 +16,7 @@ namespace SchoolMedicalSystem.Controllers
         }
         [HttpPost]
         [Route("create")]
-        public IActionResult CreateNotification([FromBody] NotificationDTO dto)
+        public IActionResult CreateNotification([FromBody] CreateNotificationDTO dto)
         {
             if (dto == null)
                 return BadRequest("Notification data is null.");
@@ -25,7 +25,7 @@ namespace SchoolMedicalSystem.Controllers
         }
         [HttpPost]
         [Route("createForParent")]
-        public IActionResult CreateNotificationForParent([FromBody] NotificationDTO dto)
+        public IActionResult CreateNotificationForParent([FromBody] CreateNotificationDTO dto)
         {
             if (dto == null)
                 return BadRequest("Notification data is null.");
@@ -41,7 +41,7 @@ namespace SchoolMedicalSystem.Controllers
         }
         [HttpPost]
         [Route("createForStaff")]
-        public IActionResult CreateNotificationForStaff([FromBody] NotificationDTO dto)
+        public IActionResult CreateNotificationForStaff([FromBody] CreateNotificationDTO dto)
         {
             if (dto == null)
                 return BadRequest("Notification data is null.");
@@ -90,6 +90,38 @@ namespace SchoolMedicalSystem.Controllers
             catch (Exception ex)
             {
                 return StatusCode(500, $"Error deleting notification: {ex.Message}");
+            }
+        }
+        [HttpPut]
+        [Route("updateParentNoti/{id}")]
+        public IActionResult UpdateNotificationForParent([FromBody] UpdateNotificationDTO dto, int id)
+        {
+            if (dto == null || id <= 0)
+                return BadRequest("Invalid data.");
+            try
+            {
+                _notificationService.UpdateNotificationForParent(dto, id);
+                return Ok("Notification for parent updated successfully.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error updating notification for parent: {ex.Message}");
+            }
+        }
+        [HttpPut]
+        [Route("updateStaffNoti/{id}")]
+        public IActionResult UpdateNotificationForStaff([FromBody] UpdateNotificationDTO dto, int id)
+        {
+            if (dto == null || id <= 0)
+                return BadRequest("Invalid data.");
+            try
+            {
+                _notificationService.UpdateNotificationForStaff(dto, id);
+                return Ok("Notification for staff updated successfully.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error updating notification for staff: {ex.Message}");
             }
         }
     }

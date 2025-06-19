@@ -90,6 +90,10 @@ builder.Services.AddScoped<IClassRoomService, ClassroomService>();
 builder.Services.AddScoped<IStudentRepo, StudentRepo>();
 builder.Services.AddScoped<IStudentService, StudentService>();
 builder.Services.AddScoped<IRoleRepository, RoleRepository>();
+builder.Services.AddScoped<IConsultationTypeService, ConsultationTypeService>();
+builder.Services.AddScoped<IConsultationService, ConsultationRequestService>();
+builder.Services.AddScoped<IConsultationTypeRepo, ConsultationTypeRepo>();
+builder.Services.AddScoped<IConsulationRepository,ConsultationRepository>();
 #endregion
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

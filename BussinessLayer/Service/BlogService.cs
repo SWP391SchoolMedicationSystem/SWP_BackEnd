@@ -106,7 +106,14 @@ namespace BussinessLayer.Service
         public async Task<List<Blog>> GetPublishedBlogs()
         {
             var blogs = await _blogRepo.GetAllAsync();
-            return blogs.Where(b => b.Status == "Published" && b.IsDeleted != true).ToList();
+            return blogs
+                .Where(b =>
+                    b.IsDeleted != true &&
+                    b.ApprovedBy != null &&
+                    b.ApprovedOn != null &&
+                    b.Status != null &&
+                    (b.Status.Equals("Published", StringComparison.OrdinalIgnoreCase)))
+                .ToList();
         }
     }
 }

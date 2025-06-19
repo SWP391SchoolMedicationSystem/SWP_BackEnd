@@ -8,7 +8,7 @@ namespace SchoolMedicalSystem.Profiles
     {
         public StudentProfile() {
             CreateMap<StudentDTO, Student>().ReverseMap();
-            
+            CreateMap<StudentParentDTO, Student>().ReverseMap();
         
         }
     }

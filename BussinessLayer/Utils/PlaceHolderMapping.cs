@@ -15,6 +15,8 @@ namespace BussinessLayer.Utils
             { "{EMAIL}", obj => ((Parent) obj).Email ?? "" },
             { "{PHONE}", obj => ((Parent) obj).Phone ?? "" },
             { "{ADDRESS}", obj => ((Parent)obj).Address },
+            { "{CREATED_DATE}", obj => ((Parent)obj).CreatedDate?.ToString("yyyy-MM-dd") ?? "" },
+            { "{MODIFIED_DATE}", obj => ((Parent)obj).ModifiedDate?.ToString("yyyy-MM-dd") ?? "" },
             { "{USER_ID}", obj => ((Parent)obj).Userid.ToString() }
         };
 

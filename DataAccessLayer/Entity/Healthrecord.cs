@@ -31,6 +31,8 @@ public partial class Healthrecord
 
     public DateTime? Modifieddate { get; set; }
 
+    public bool Isdeleted { get; set; }
+
     public virtual Healthcategory Healthcategory { get; set; } = null!;
 
     public virtual Staff Staff { get; set; } = null!;
