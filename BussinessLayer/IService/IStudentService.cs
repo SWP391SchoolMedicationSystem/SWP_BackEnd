@@ -13,7 +13,7 @@ namespace BussinessLayer.IService
         Task<List<Student>> GetAllStudentsAsync();
         Task<StudentDTO> GetStudentByIdAsync(int id);
         Task<Student> AddStudentAsync(StudentDTO student);
-        void DeleteStudent(int id);
+        Task DeleteStudent(int id);
         Task UploadStudentList(List<InsertStudent> studentlist);
         Task<Student> UpdateStudentAsync(StudentDTO student, int id);
     }
