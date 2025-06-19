@@ -21,7 +21,6 @@ namespace DataAccessLayer.DTO
 
         public string Status { get; set; } = null!;
 
-        public int? Staffid { get; set; }
 
     }
 }
