@@ -11,6 +11,10 @@ using AutoMapper;
 using BussinessLayer.IService;
 using Microsoft.EntityFrameworkCore;
 using DataAccessLayer.IRepository;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 namespace BussinessLayer.Service
 {
@@ -179,6 +183,14 @@ namespace BussinessLayer.Service
 
             await SendEmailAsync(emailDTO);
             return true;
+        }
+
+        public static string GenerateOtp(int length = 6)
+        {
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            var random = new Random();
+            return new string(Enumerable.Repeat(chars, length)
+                .Select(s => s[random.Next(s.Length)]).ToArray());
         }
     }
 }

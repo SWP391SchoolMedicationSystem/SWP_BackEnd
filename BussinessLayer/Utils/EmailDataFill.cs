@@ -8,18 +8,27 @@ namespace BussinessLayer.Utils
 {
     public static class EmailDataFill
     {
-        public static string FillEmailTemplate(string template, object data)
+        public static string FillEmailTemplate(string template, params object[] dataObjects)
         {
-            var type = data.GetType();
-            if (!PlaceHolderMapping.AllMappings.TryGetValue(type, out var placeholders))
-                throw new InvalidOperationException($"No placeholder mappings found for type: {type.Name}");
+            var allPlaceholders = new Dictionary<string, string>();
 
-            StringBuilder body = new StringBuilder(template);
-            foreach (var kvp in placeholders)
+            foreach (var obj in dataObjects)
             {
-                var placeholder = kvp.Key;
-                var value = kvp.Value(data) ?? "";
-                body.Replace(placeholder, value);
+                var type = obj.GetType();
+                if (!PlaceHolderMapping.AllMappings.TryGetValue(type, out var mappings))
+                    throw new InvalidOperationException($"No mappings for {type.Name}");
+
+                foreach (var kvp in mappings)
+                {
+                    if (!allPlaceholders.ContainsKey(kvp.Key))
+                        allPlaceholders[kvp.Key] = kvp.Value(obj) ?? "";
+                }
+            }
+
+            var body = new StringBuilder(template);
+            foreach (var kvp in allPlaceholders)
+            {
+                body.Replace(kvp.Key, kvp.Value);
             }
 
             return body.ToString();

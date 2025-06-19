@@ -89,7 +89,7 @@ namespace SchoolMedicalSystem.Controllers
             return Ok("Email template deleted successfully");
         }
 
-        [HttpPost("ForgetPassword")]
+        [HttpPost("ForgotPassword")]
         public async Task<IActionResult> ForgetPassword(string email)
         {
             var success = await _email.ResetPassword(email);
