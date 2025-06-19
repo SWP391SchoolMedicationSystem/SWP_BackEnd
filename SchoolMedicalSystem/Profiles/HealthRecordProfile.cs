@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using DataAccessLayer.DTO;
+using DataAccessLayer.DTO.HealthRecords;
 using DataAccessLayer.Entity;
 
 namespace SchoolMedicalSystem.Profiles
@@ -10,6 +11,7 @@ namespace SchoolMedicalSystem.Profiles
         {
             CreateMap<Healthrecord, HealthRecordDTO>().ReverseMap();
             CreateMap<HealthRecordDTO, Healthrecord>().ReverseMap();
+            CreateMap<Healthrecord, CreateHealthRecordDTO>().ReverseMap();
         }
     }
 
