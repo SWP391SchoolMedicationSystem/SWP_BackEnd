@@ -54,7 +54,7 @@ namespace SchoolMedicalSystem.Controllers
         {
             if (dto == null)
                 return BadRequest("Invalid data.");
-            if(id < 0)
+            if (id < 0)
                 return BadRequest("Invalid blog ID.");
             try
             {
@@ -70,7 +70,7 @@ namespace SchoolMedicalSystem.Controllers
         [Route("delete/{id}")]
         public void DeleteBlog(int id)
         {
-            if(id < 0)
+            if (id < 0)
                 throw new ArgumentException("Invalid blog ID.");
             try
             {
@@ -105,6 +105,22 @@ namespace SchoolMedicalSystem.Controllers
             catch (Exception ex)
             {
                 return StatusCode(500, $"Error approving blog: {ex.Message}");
+            }
+        }
+        [HttpGet]
+        [Route("search")]
+        public async Task<IActionResult> SearchBlogs(string searchTerm)
+        {
+            if (string.IsNullOrEmpty(searchTerm))
+                return BadRequest("Search term cannot be empty.");
+            try
+            {
+                var blogs = await _blogService.SearchBlogsAsync(searchTerm);
+                return Ok(blogs);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error searching blogs: {ex.Message}");
             }
         }
     }
