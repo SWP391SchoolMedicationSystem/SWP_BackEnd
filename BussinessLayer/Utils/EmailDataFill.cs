@@ -6,17 +6,23 @@ using System.Threading.Tasks;
 
 namespace BussinessLayer.Utils
 {
-    public class EmailDataFill
+    public static class EmailDataFill
     {
-        public static string FillEmailTemplate(string template, Dictionary<string, string> replacements)
+        public static string FillEmailTemplate(string template, object data)
         {
-            if (string.IsNullOrEmpty(template) || replacements == null || !replacements.Any())
-                return template;
-            foreach (var kvp in replacements)
+            var type = data.GetType();
+            if (!PlaceHolderMapping.AllMappings.TryGetValue(type, out var placeholders))
+                throw new InvalidOperationException($"No placeholder mappings found for type: {type.Name}");
+
+            StringBuilder body = new StringBuilder(template);
+            foreach (var kvp in placeholders)
             {
-                template = template.Replace($"{{{{{kvp.Key}}}}}", kvp.Value);
+                var placeholder = kvp.Key;
+                var value = kvp.Value(data) ?? "";
+                body.Replace(placeholder, value);
             }
-            return template;
+
+            return body.ToString();
         }
     }
 }

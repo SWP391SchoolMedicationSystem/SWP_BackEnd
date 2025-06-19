@@ -10,6 +10,7 @@ using DataAccessLayer.DTO;
 using AutoMapper;
 using BussinessLayer.IService;
 using Microsoft.EntityFrameworkCore;
+using DataAccessLayer.IRepository;
 
 namespace BussinessLayer.Service
 {
@@ -17,14 +18,16 @@ namespace BussinessLayer.Service
     {
         private readonly IConfiguration _config;
         private readonly SchoolMedicalSystemContext _context;
+        private readonly IEmailRepo _emailRepository;
         private readonly IMapper _mapper;
 
         public EmailService(IMapper mapper,
-            IConfiguration config, SchoolMedicalSystemContext context)
+            IConfiguration config, SchoolMedicalSystemContext context, IEmailRepo emailRepo)
         {
             _mapper = mapper;
             _config = config;
             _context = context;
+            _emailRepository = emailRepo;
         }
 
         public List<string> GetAllUserEmails()
