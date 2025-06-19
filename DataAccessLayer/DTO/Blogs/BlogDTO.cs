@@ -28,6 +28,6 @@ namespace DataAccessLayer.DTO.Blogs
 
         public bool IsDeleted { get; set; }
 
-        public string? Image { get; set; }
+        public string? Image { get; set; } = null;
     }
 }

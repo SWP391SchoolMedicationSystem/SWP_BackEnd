@@ -10,7 +10,7 @@ namespace BussinessLayer.IService
 {
     public interface IStudentService
     {
-        Task<List<Student>> GetAllStudentsAsync();
+        Task<List<StudentDTO>> GetAllStudentsAsync();
         Task<StudentDTO> GetStudentByIdAsync(int id);
         Task<Student> AddStudentAsync(StudentDTO student);
         Task DeleteStudent(int id);

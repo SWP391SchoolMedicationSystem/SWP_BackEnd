@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using BussinessLayer.IService;
 using DataAccessLayer.DTO;
+using DataAccessLayer.DTO.Parents;
 using DataAccessLayer.Entity;
 using DataAccessLayer.IRepository;
 using DataAccessLayer.Repository;
@@ -47,10 +48,17 @@ namespace BussinessLayer.Service
             }
         }
 
-        public async Task<List<Student>> GetAllStudentsAsync()
+        public async Task<List<StudentDTO>> GetAllStudentsAsync()
         {
             var list = await _studentrepo.GetAllAsync();
-            return list;
+            var returnlist = _mapper.Map<List<StudentDTO>>(list);
+            foreach(var student in returnlist)
+            {
+                var parent = await _parentrepo.GetByIdAsync(student.Parentid);
+                var parentdto = _mapper.Map<ParentDTO>(parent);
+                student.listparent.Add(parentdto);
+            }
+            return returnlist;
         }
 
         public async Task<StudentDTO> GetStudentByIdAsync(int id)

@@ -24,6 +24,6 @@ namespace DataAccessLayer.DTO.Parents
 
         public bool IsDeleted { get; set; }
 
-        public List<StudentDTO> Students { get; set; } = new List<StudentDTO>();
+        public List<StudentParentDTO> Students { get; set; } = new List<StudentParentDTO>();
     }
 }
