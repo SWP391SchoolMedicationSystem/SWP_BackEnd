@@ -17,8 +17,6 @@ public partial class Healthrecord
 
     public string? Healthrecorddescription { get; set; }
 
-    public bool IsDeleted { get; set; }
-
     public int Staffid { get; set; }
 
     public bool Isconfirm { get; set; }
@@ -30,6 +28,8 @@ public partial class Healthrecord
     public string? Modifiedby { get; set; }
 
     public DateTime? Modifieddate { get; set; }
+
+    public bool Isdeleted { get; set; }
 
     public virtual Healthcategory Healthcategory { get; set; } = null!;
 

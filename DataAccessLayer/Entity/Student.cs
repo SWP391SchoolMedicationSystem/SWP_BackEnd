@@ -31,6 +31,8 @@ public partial class Student
 
     public virtual Classroom Class { get; set; } = null!;
 
+    public virtual ICollection<Consultationrequest> Consultationrequests { get; set; } = new List<Consultationrequest>();
+
     public virtual ICollection<Healthcheck> Healthchecks { get; set; } = new List<Healthcheck>();
 
     public virtual ICollection<Healthrecord> Healthrecords { get; set; } = new List<Healthrecord>();
@@ -40,5 +42,6 @@ public partial class Student
     public virtual Parent Parent { get; set; } = null!;
 
     public virtual ICollection<Personalmedicine> Personalmedicines { get; set; } = new List<Personalmedicine>();
+
     public virtual ICollection<Vaccinationrecord> Vaccinationrecords { get; set; } = new List<Vaccinationrecord>();
 }

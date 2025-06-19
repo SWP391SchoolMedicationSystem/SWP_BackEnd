@@ -19,6 +19,10 @@ public partial class SchoolMedicalSystemContext : DbContext
 
     public virtual DbSet<Classroom> Classrooms { get; set; }
 
+    public virtual DbSet<Consultationrequest> Consultationrequests { get; set; }
+
+    public virtual DbSet<Consultationtype> Consultationtypes { get; set; }
+
     public virtual DbSet<EmailTemplate> EmailTemplates { get; set; }
 
     public virtual DbSet<Healthcategory> Healthcategories { get; set; }
@@ -124,6 +128,80 @@ public partial class SchoolMedicalSystemContext : DbContext
                 .HasColumnName("TEACHERNAME");
         });
 
+        modelBuilder.Entity<Consultationrequest>(entity =>
+        {
+            entity.HasKey(e => e.Consultationid).HasName("PK__CONSULTA__D2399067AC386CBF");
+
+            entity.ToTable("CONSULTATIONREQUEST");
+
+            entity.Property(e => e.Consultationid).HasColumnName("CONSULTATIONID");
+            entity.Property(e => e.Createdby).HasColumnName("CREATEDBY");
+            entity.Property(e => e.Createddate)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime")
+                .HasColumnName("CREATEDDATE");
+            entity.Property(e => e.Description).HasColumnName("DESCRIPTION");
+            entity.Property(e => e.Isdelete).HasColumnName("ISDELETE");
+            entity.Property(e => e.Modifiedby).HasColumnName("MODIFIEDBY");
+            entity.Property(e => e.Modifieddate)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime")
+                .HasColumnName("MODIFIEDDATE");
+            entity.Property(e => e.Parentid).HasColumnName("PARENTID");
+            entity.Property(e => e.Requestdate)
+                .HasColumnType("datetime")
+                .HasColumnName("REQUESTDATE");
+            entity.Property(e => e.Requesttypeid).HasColumnName("REQUESTTYPEID");
+            entity.Property(e => e.Scheduledate)
+                .HasColumnType("datetime")
+                .HasColumnName("SCHEDULEDATE");
+            entity.Property(e => e.Staffid).HasColumnName("STAFFID");
+            entity.Property(e => e.Status)
+                .HasMaxLength(50)
+                .HasColumnName("STATUS");
+            entity.Property(e => e.Studentid).HasColumnName("STUDENTID");
+            entity.Property(e => e.Title)
+                .HasMaxLength(255)
+                .HasColumnName("TITLE");
+
+            entity.HasOne(d => d.Parent).WithMany(p => p.Consultationrequests)
+                .HasForeignKey(d => d.Parentid)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_ConsultationRequest_Parent");
+
+            entity.HasOne(d => d.Requesttype).WithMany(p => p.Consultationrequests)
+                .HasForeignKey(d => d.Requesttypeid)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_ConsultationRequest_RequestType");
+
+            entity.HasOne(d => d.Staff).WithMany(p => p.Consultationrequests)
+                .HasForeignKey(d => d.Staffid)
+                .HasConstraintName("FK_ConsultationRequest_Staff");
+
+            entity.HasOne(d => d.Student).WithMany(p => p.Consultationrequests)
+                .HasForeignKey(d => d.Studentid)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_ConsultationRequest_Student");
+        });
+
+        modelBuilder.Entity<Consultationtype>(entity =>
+        {
+            entity.HasKey(e => e.Typeid).HasName("PK__CONSULTA__B2802A015360D0D1");
+
+            entity.ToTable("CONSULTATIONTYPE");
+
+            entity.Property(e => e.Typeid)
+                .ValueGeneratedNever()
+                .HasColumnName("TYPEID");
+            entity.Property(e => e.Description)
+                .HasMaxLength(255)
+                .HasColumnName("DESCRIPTION");
+            entity.Property(e => e.Isdeleted).HasColumnName("ISDELETED");
+            entity.Property(e => e.Typename)
+                .HasMaxLength(50)
+                .HasColumnName("TYPENAME");
+        });
+
         modelBuilder.Entity<EmailTemplate>(entity =>
         {
             entity.ToTable("EMAIL_TEMPLATE");
@@ -146,7 +224,6 @@ public partial class SchoolMedicalSystemContext : DbContext
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime")
                 .HasColumnName("UPDATED_DATE");
-            entity.Property(e => e.IsDeleted).HasColumnName("IsDeleted");
         });
 
         modelBuilder.Entity<Healthcategory>(entity =>
@@ -254,7 +331,7 @@ public partial class SchoolMedicalSystemContext : DbContext
                 .HasMaxLength(255)
                 .HasColumnName("HEALTHRECORDTITLE");
             entity.Property(e => e.Isconfirm).HasColumnName("ISCONFIRM");
-            entity.Property(e => e.IsDeleted).HasColumnName("ISDELETED");
+            entity.Property(e => e.Isdeleted).HasColumnName("ISDELETED");
             entity.Property(e => e.Modifiedby)
                 .HasMaxLength(255)
                 .HasColumnName("MODIFIEDBY");
