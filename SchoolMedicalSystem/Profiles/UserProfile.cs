@@ -9,6 +9,8 @@ namespace SchoolMedicalSystem.Profiles
         public UserProfile() {
             CreateMap<UserDTo, User>().ReverseMap();
             CreateMap<User, UserDTo>().ReverseMap();
+            CreateMap<LoginGoogleDTO, User>().ReverseMap();
+            CreateMap<LoginDTO, User>().ReverseMap();
         }
     }
 }

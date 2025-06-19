@@ -103,13 +103,13 @@ namespace BussinessLayer.Service
                 if (user == null) return "Email is incorrect or doesn't exist";
                     if (user.IsStaff == true)
                     {
-                        LoginDTO stafflogin = _mapper.Map<LoginDTO>(user);
-                        return await _staffService.GenerateToken(stafflogin);
+                    LoginGoogleDTO stafflogin = _mapper.Map<LoginGoogleDTO>(user);
+                        return await _staffService.GenerateGoogleToken(stafflogin);
                     }
                     else
                     {
-                        LoginDTO parentLogin = _mapper.Map<LoginDTO>(user);
-                        return await _parentService.GenerateToken(parentLogin);
+                    LoginGoogleDTO parentLogin = _mapper.Map<LoginGoogleDTO>(user);
+                        return await _parentService.GenerateGoogleToken(parentLogin);
                     }
                 }
                 catch (Exception e) {

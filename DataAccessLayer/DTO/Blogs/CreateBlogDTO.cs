@@ -12,9 +12,7 @@ namespace DataAccessLayer.DTO.Blogs
 
         public string Content { get; set; } = null!;
 
-        public int CreatedBy { get; set; }
-
-        public DateTime CreatedAt { get; set; }
+        public int CreatedBy { get; set; } //FE return 
 
         public string? Image { get; set; }
     }

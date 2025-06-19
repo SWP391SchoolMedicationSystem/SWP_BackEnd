@@ -20,7 +20,7 @@ namespace SchoolMedicalSystem.Controllers
             _mapper = mapper;
         }
 
-        [HttpPost("sendEmail")]
+        [HttpPost("email")]
         public async Task<IActionResult> SendEmail([FromBody] EmailDTO request)
         {
             if (request == null)
@@ -30,14 +30,14 @@ namespace SchoolMedicalSystem.Controllers
             return Ok("Email sent successfully");
         }
 
-        [HttpPost("SendEmailToAllUsers")]
+        [HttpPost("email/alluser")]
         public async Task<IActionResult> SendEmailToAllUsers([FromBody] int templateId)
         {
             await _email.SendEmailToAllUsersAsync(templateId);
             return Ok("Email sent to all users successfully");
         }
 
-        [HttpPost("SendEmailByList")]
+        [HttpPost("email/list")]
         public async Task<IActionResult> SendEmailByList([FromBody] UserList request)
         {
             if (request == null || request.userIDs == null)

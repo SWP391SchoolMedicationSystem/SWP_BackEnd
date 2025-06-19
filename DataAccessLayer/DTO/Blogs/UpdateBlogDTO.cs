@@ -8,13 +8,12 @@ namespace DataAccessLayer.DTO.Blogs
 {
     public class UpdateBlogDTO
     {
+        public int BlogID { get; set; } 
         public string Title { get; set; } = null!;
 
         public string Content { get; set; } = null!;
 
         public int? UpdatedBy { get; set; }
-
-        public DateTime? UpdatedAt { get; set; }
 
         public string Status { get; set; } = null!;
 

@@ -18,7 +18,7 @@ namespace SchoolMedicalSystem.Controllers
         }
 
         [HttpPost]
-        [Route("add")]
+        [Route("healthrecord")]
         public async Task<IActionResult> AddHealthRecord([FromBody] CreateHealthRecordDTO dto)
         {
             if (dto == null)

@@ -203,6 +203,51 @@ namespace BussinessLayer.Service
             return await GenerateToken(parentLogin);
         }
 
+        public async Task<string> GenerateGoogleToken(LoginGoogleDTO login)
+        {
+            try
+            {
+                var parentlist = await parentRepository.GetAllAsync();
+                var userlist = await userRepository.GetAllAsync();
+                User user = userlist.FirstOrDefault(x => x.Email == login.Email);
 
+                if (user != null)
+                {
+                    Parent parent = parentlist.FirstOrDefault(x => x.Userid == user.UserId);
+                    var jwtTokenHandler = new JwtSecurityTokenHandler();
+
+                    var secretKeyBytes = Encoding.UTF8.GetBytes(_appSettings.SecretKey);
+                    string status = parent.IsDeleted ? "Tạm ngừng" : "Hoạt động";
+                    var tokenDescription = new SecurityTokenDescriptor
+                    {
+                        Subject = new ClaimsIdentity(new[] {
+               new Claim("Id", parent.Parentid.ToString()),
+                new Claim("Fullname", parent.Fullname),
+                new Claim("Email", parent.Email ?? string.Empty),
+                new Claim("Phone", parent.Phone.ToString()),
+                new Claim("Address", parent.Address),
+                new Claim("Status", status),
+                new Claim("Role", "Parent"),
+                new Claim("DateCreated", parent.CreatedDate.ToString())
+           }),
+
+                        Expires = DateTime.UtcNow.AddMinutes(180),
+                        SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(secretKeyBytes),
+                        SecurityAlgorithms.HmacSha512Signature)
+                    };
+
+                    var principal = new ClaimsPrincipal(tokenDescription.Subject);
+                    httpContextAccessor.HttpContext.User = principal;
+                    Console.WriteLine(httpContextAccessor.HttpContext.User.Identity.Name);
+                    var tokenParent = jwtTokenHandler.CreateToken(tokenDescription);
+                    return jwtTokenHandler.WriteToken(tokenParent);
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+            return null;
+        }
     }
 }
