@@ -15,26 +15,18 @@ namespace BussinessLayer.Utils
             { "{EMAIL}", obj => ((Parent) obj).Email ?? "" },
             { "{PHONE}", obj => ((Parent) obj).Phone ?? "" },
             { "{ADDRESS}", obj => ((Parent)obj).Address },
-            { "{CREATED_DATE}", obj => ((Parent)obj).CreatedDate?.ToString("yyyy-MM-dd") ?? "" },
-            { "{MODIFIED_DATE}", obj => ((Parent)obj).ModifiedDate?.ToString("yyyy-MM-dd") ?? "" },
             { "{USER_ID}", obj => ((Parent)obj).Userid.ToString() }
         };
 
-        public static readonly Dictionary<string, Func<object, string>> ParentStudentPlaceholders = new()
+        public static readonly Dictionary<string, Func<object, string>> StudentPlaceholders = new()
         {
-            { "{FULLNAME}", obj => ((Parent)obj).Fullname },
-            { "{EMAIL}", obj => ((Parent) obj).Email ?? "" },
-            { "{PHONE}", obj => ((Parent) obj).Phone ?? "" },
-            { "{ADDRESS}", obj => ((Parent)obj).Address },
-            { "{CREATED_DATE}", obj => ((Parent)obj).CreatedDate?.ToString("yyyy-MM-dd") ?? "" },
-            { "{MODIFIED_DATE}", obj => ((Parent)obj).ModifiedDate?.ToString("yyyy-MM-dd") ?? "" },
-            { "{USER_ID}", obj => ((Parent)obj).Userid.ToString() }
+            
         };
 
         public static readonly Dictionary<Type, Dictionary<string, Func<object, string>>> AllMappings = new()
         {
             { typeof(Parent), ParentPlaceholders },
-            //{ typeof(ParentStudent), ParentStudentPlaceholders }
+            { typeof(Student), StudentPlaceholders }
             //{ typeof(Staff), StaffPlaceholders }
         };
     }

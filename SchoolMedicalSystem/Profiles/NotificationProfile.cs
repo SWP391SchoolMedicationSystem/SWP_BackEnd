@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using DataAccessLayer.DTO;
+using DataAccessLayer.DTO.Notifications;
 using DataAccessLayer.Entity;
 
 namespace SchoolMedicalSystem.Profiles
@@ -9,10 +10,11 @@ namespace SchoolMedicalSystem.Profiles
         public NotificationProfile()
         {
             CreateMap<Notification, NotificationDTO>().ReverseMap();
-            //CreateMap<NotificationDTO, Notification>().ReverseMap();
+            CreateMap<NotificationDTO, Notification>().ForSourceMember(c=> c.Message, opt => opt.DoNotValidate()).ReverseMap();
+
             CreateMap<NotificationParentDetail, Notification>().ReverseMap();
-            CreateMap<Notification, NotificationParentDetail>().ReverseMap();
             CreateMap<NotificationParentDetail, NotificationDTO>().ReverseMap();
+
         }
     }
 }

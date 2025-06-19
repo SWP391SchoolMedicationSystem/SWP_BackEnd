@@ -88,6 +88,16 @@ namespace SchoolMedicalSystem.Controllers
                 return NotFound("Email template not found or could not be deleted");
             return Ok("Email template deleted successfully");
         }
+
+        [HttpPost("ForgetPassword")]
+        public async Task<IActionResult> ForgetPassword(string email)
+        {
+            var success = await _email.ResetPassword(email);
+            if (!success)
+                return NotFound("Email not found!");
+
+            return Ok("Reset email have been sent!");
+        }
     }
     public class UserList
     {

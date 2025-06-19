@@ -40,4 +40,5 @@ public partial class Student
     public virtual Parent Parent { get; set; } = null!;
 
     public virtual ICollection<Personalmedicine> Personalmedicines { get; set; } = new List<Personalmedicine>();
+    public virtual ICollection<Vaccinationrecord> Vaccinationrecords { get; set; } = new List<Vaccinationrecord>();
 }
