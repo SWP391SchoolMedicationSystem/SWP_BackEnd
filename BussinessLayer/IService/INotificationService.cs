@@ -10,12 +10,14 @@ namespace BussinessLayer.IService
 {
     public interface INotificationService
     {
-        void CreateNotification(NotificationDTO dto);
-        void CreateNotificationForParent(NotificationDTO dto);
-        void CreateNotificationForStaff(NotificationDTO dto);
+        void CreateNotification(CreateNotificationDTO dto);
+        void CreateNotificationForParent(CreateNotificationDTO dto);
+        void CreateNotificationForStaff(CreateNotificationDTO dto);
         List<Notification> GetAllNotifications();
         List<Notification> GetAllNotificationsForParent();
         List<Notification> GetAllNotificationsForStaff();
+        void UpdateNotificationForParent(UpdateNotificationDTO dto, int id);
+        void UpdateNotificationForStaff(UpdateNotificationDTO dto, int id);
         void DeleteNotification(int id);
         //comment
     }

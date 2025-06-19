@@ -13,6 +13,8 @@ namespace SchoolMedicalSystem.Profiles
             CreateMap<NotificationParentDetail, Notification>().ReverseMap();
             CreateMap<Notification, NotificationParentDetail>().ReverseMap();
             CreateMap<NotificationParentDetail, NotificationDTO>().ReverseMap();
+            CreateMap<CreateNotificationDTO, Notification>().ReverseMap();
+            CreateMap<UpdateNotificationDTO, Notification>().ReverseMap();
 
         }
     }
