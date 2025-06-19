@@ -16,6 +16,8 @@ namespace DataAccessLayer.DTO.Notifications
 
         public bool IsDeleted { get; set; }
 
+        public string? Message { get; set; }
+
         public string? Createdby { get; set; }
 
         public DateTime? Createddate { get; set; }
@@ -23,7 +25,7 @@ namespace DataAccessLayer.DTO.Notifications
         public string? Modifiedby { get; set; }
 
         public DateTime? Modifieddate { get; set; }
-        public string? Message { get; set; }
+       
         //       public List<int> ParentIds { get; set; } = new();
     }
 }

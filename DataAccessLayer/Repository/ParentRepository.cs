@@ -16,5 +16,12 @@ namespace DataAccessLayer.Repository
         {
             _dbset = context.Set<Parent>();
         }
+        public Task<List<Parent>> GetAllAsync()
+        {
+            return _dbset
+                .Include(p => p.Students)
+                .Where(p => p.IsDeleted == false)
+                .ToListAsync();
+        }
     }
 }
