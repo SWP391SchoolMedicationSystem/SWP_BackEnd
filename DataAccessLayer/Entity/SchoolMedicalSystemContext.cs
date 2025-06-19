@@ -139,6 +139,8 @@ public partial class SchoolMedicalSystemContext : DbContext
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime")
                 .HasColumnName("UPDATED_DATE");
+            entity.Property(e => e.IsDeleted).HasColumnName("IS_DELETED");
+
         });
 
         modelBuilder.Entity<Healthcategory>(entity =>
@@ -245,7 +247,7 @@ public partial class SchoolMedicalSystemContext : DbContext
             entity.Property(e => e.Healthrecordtitle)
                 .HasMaxLength(255)
                 .HasColumnName("HEALTHRECORDTITLE");
-            entity.Property(e => e.isDeleted).HasColumnName("IS_DELETED");
+            entity.Property(e => e.IsDeleted).HasColumnName("IS_DELETED");
             entity.Property(e => e.Isconfirm).HasColumnName("ISCONFIRM");
             entity.Property(e => e.Modifiedby)
                 .HasMaxLength(255)
