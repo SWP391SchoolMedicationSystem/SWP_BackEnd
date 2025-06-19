@@ -144,7 +144,8 @@ namespace BussinessLayer.Service
             var emailTemplate = await _context.EmailTemplates.FindAsync(id);
             if (emailTemplate == null)
                 return false;
-            _context.EmailTemplates.Remove(emailTemplate);
+            emailTemplate.IsDeleted = true;
+            _context.EmailTemplates.Update(emailTemplate);
             await _context.SaveChangesAsync();
             return true;
         }
