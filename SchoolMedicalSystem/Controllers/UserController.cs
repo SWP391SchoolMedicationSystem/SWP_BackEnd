@@ -44,7 +44,11 @@ namespace SchoolMedicalSystem.Controllers
             try
             {
                 var payload = await userService.ValidateGoogleToken(request.Credential);
-                return Ok(payload);
+                if (payload != null)
+                {
+                    return Ok(payload);
+                }
+                return null;
             }
             catch (InvalidJwtException)
             {
