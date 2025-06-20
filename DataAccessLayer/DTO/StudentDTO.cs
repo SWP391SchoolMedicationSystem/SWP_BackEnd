@@ -19,7 +19,7 @@ namespace DataAccessLayer.DTO
         public int Age { get; set; }
         public DateOnly Dob { get; set; }
         public bool Gender { get; set; }
-        public List<ParentDTO> listparent { get; set; } = new List<ParentDTO>();
+        public List<ParentStudent> listparent { get; set; } = new List<ParentStudent>();
 
     }
 }

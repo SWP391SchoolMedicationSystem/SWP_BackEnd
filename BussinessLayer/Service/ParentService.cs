@@ -21,7 +21,9 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace BussinessLayer.Service
 {
-    public class ParentService(IParentRepository parentRepository, IUserRepository userRepository,
+    public class ParentService(
+        IStudentRepo studentRepo,
+        IParentRepository parentRepository, IUserRepository userRepository,
         IMapper mapper,
         IOptionsMonitor<AppSetting> option, IHttpContextAccessor httpContextAccessor) : IParentService
     {
@@ -176,6 +178,12 @@ namespace BussinessLayer.Service
         {
             List<Parent> list = await parentRepository.GetAllAsync();
             var parentlist = mapper.Map<List<ParentDTO>>(list);
+            foreach(ParentDTO parent in parentlist)
+            {
+                var studentlist = studentRepo.GetAll().Where(s => s.Parentid == parent.Parentid);
+                var studentdto = mapper.Map<List<StudentParentDTO>>(studentlist);
+                parent.Students = studentdto;
+            }
             
             return parentlist;
         }
