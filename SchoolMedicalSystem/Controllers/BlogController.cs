@@ -17,14 +17,14 @@ namespace SchoolMedicalSystem.Controllers
             _blogService = blogService;
         }
         [HttpGet]
-        [Route("blog")]
+        [Route("getAll")]
         public async Task<IActionResult> GetAllBlogs()
         {
             var blogs = await _blogService.GetAllBlogsAsync();
             return Ok(blogs);
         }
         [HttpGet]
-        [Route("blog/{id}")]
+        [Route("getById")]
         public async Task<IActionResult> GetBlogById([FromBody] int id)
         {
             var blog = await _blogService.GetBlogByIdAsync(id);
@@ -33,7 +33,7 @@ namespace SchoolMedicalSystem.Controllers
             return Ok(blog);
         }
         [HttpPost]
-        [Route("blog")]
+        [Route("add")]
         public async Task<IActionResult> AddBlog([FromBody] CreateBlogDTO blogDto)
         {
             if (blogDto == null)
@@ -49,7 +49,7 @@ namespace SchoolMedicalSystem.Controllers
             }
         }
         [HttpPut]
-        [Route("blog/{id}")]
+        [Route("update")]
         public IActionResult UpdateBlog([FromBody] UpdateBlogDTO dto)
         {
             if (dto == null)
@@ -65,7 +65,7 @@ namespace SchoolMedicalSystem.Controllers
             }
         }
         [HttpDelete]
-        [Route("blog/{id}")]
+        [Route("delete")]
         public void DeleteBlog([FromBody] int id)
         {
             if(id < 0)
@@ -81,14 +81,14 @@ namespace SchoolMedicalSystem.Controllers
             }
         }
         [HttpGet]
-        [Route("publishedblog")]
+        [Route("GetPublishedBlogs")]
         public async Task<IActionResult> GetPublishedBlogs()
         {
             var blogs = await _blogService.GetPublishedBlogs();
             return Ok(blogs);
         }
         [HttpPost]
-        [Route("blogapproval/{id}")]
+        [Route("ApproveBlog")]
         public IActionResult ApproveBlog([FromBody] ApproveBlogDTO approveBlogDto)
         {
             if (approveBlogDto == null)
