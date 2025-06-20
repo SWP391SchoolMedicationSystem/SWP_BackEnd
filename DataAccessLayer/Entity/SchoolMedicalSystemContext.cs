@@ -344,7 +344,7 @@ public partial class SchoolMedicalSystemContext : DbContext
                 .HasMaxLength(255)
                 .HasColumnName("HEALTHRECORDTITLE");
             entity.Property(e => e.Isconfirm).HasColumnName("ISCONFIRM");
-            entity.Property(e => e.IsDeleted).HasColumnName("ISDELETED");
+            entity.Property(e => e.Isdeleted).HasColumnName("ISDELETED");
             entity.Property(e => e.Modifiedby)
                 .HasMaxLength(255)
                 .HasColumnName("MODIFIEDBY");

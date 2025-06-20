@@ -10,6 +10,7 @@ namespace DataAccessLayer.DTO
 {
     public class StudentDTO
     {
+        public int Id { get; set; }
         public string? StudentCode { get; set; }
         public string Fullname { get; set; } = null!;
         public string? BloodType { get; set; }
@@ -18,7 +19,7 @@ namespace DataAccessLayer.DTO
         public int Age { get; set; }
         public DateOnly Dob { get; set; }
         public bool Gender { get; set; }
-        public List<ParentDTO> listparent { get; set; } = new List<ParentDTO>();
+        public List<ParentStudent> listparent { get; set; } = new List<ParentStudent>();
 
     }
 }

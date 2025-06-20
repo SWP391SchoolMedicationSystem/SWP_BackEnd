@@ -24,8 +24,8 @@ namespace SchoolMedicalSystem.Controllers
             return Ok(blogs);
         }
         [HttpGet]
-        [Route("getById/{id}")]
-        public async Task<IActionResult> GetBlogById(int id)
+        [Route("getById")]
+        public async Task<IActionResult> GetBlogById([FromQuery] int id)
         {
             var blog = await _blogService.GetBlogByIdAsync(id);
             if (blog == null)
@@ -37,7 +37,7 @@ namespace SchoolMedicalSystem.Controllers
         public async Task<IActionResult> AddBlog([FromBody] CreateBlogDTO blogDto)
         {
             if (blogDto == null)
-                return BadRequest("Blog data is null.");
+                return BadRequest("Blog data is null."); 
             try
             {
                 await _blogService.AddBlogAsync(blogDto);
@@ -49,16 +49,14 @@ namespace SchoolMedicalSystem.Controllers
             }
         }
         [HttpPut]
-        [Route("update/{id}")]
-        public IActionResult UpdateBlog([FromBody] UpdateBlogDTO dto, int id)
+        [Route("update")]
+        public IActionResult UpdateBlog([FromBody] UpdateBlogDTO dto)
         {
             if (dto == null)
                 return BadRequest("Invalid data.");
-            if (id < 0)
-                return BadRequest("Invalid blog ID.");
             try
             {
-                _blogService.UpdateBlog(dto, id);
+                _blogService.UpdateBlog(dto);
                 return Ok("Health record updated.");
             }
             catch (Exception ex)
@@ -67,8 +65,8 @@ namespace SchoolMedicalSystem.Controllers
             }
         }
         [HttpDelete]
-        [Route("delete/{id}")]
-        public void DeleteBlog(int id)
+        [Route("delete")]
+        public void DeleteBlog([FromQuery] int id)
         {
             if (id < 0)
                 throw new ArgumentException("Invalid blog ID.");
@@ -90,16 +88,16 @@ namespace SchoolMedicalSystem.Controllers
             return Ok(blogs);
         }
         [HttpPost]
-        [Route("ApproveBlog/{id}")]
-        public IActionResult ApproveBlog(int id, [FromBody] ApproveBlogDTO approveBlogDto)
+        [Route("ApproveBlog")]
+        public IActionResult ApproveBlog([FromBody] ApproveBlogDTO approveBlogDto)
         {
             if (approveBlogDto == null)
                 return BadRequest("Invalid approval data.");
-            if (id < 0)
+            if (approveBlogDto.BlogId < 0)
                 return BadRequest("Invalid blog ID.");
             try
             {
-                _blogService.ApproveBlog(approveBlogDto, id);
+                _blogService.ApproveBlog(approveBlogDto);
                 return Ok("Blog approved successfully.");
             }
             catch (Exception ex)
@@ -107,20 +105,22 @@ namespace SchoolMedicalSystem.Controllers
                 return StatusCode(500, $"Error approving blog: {ex.Message}");
             }
         }
-        [HttpGet]
-        [Route("search")]
-        public async Task<IActionResult> SearchBlogs(string searchTerm)
+        [HttpPost]
+        [Route("RejectBlog")]
+        public IActionResult RejectBlog([FromBody] RejectBlogDTO rejectBlogDto)
         {
-            if (string.IsNullOrEmpty(searchTerm))
-                return BadRequest("Search term cannot be empty.");
+            if (rejectBlogDto == null)
+                return BadRequest("Invalid rejection data.");
+            if (rejectBlogDto.BlogId < 0)
+                return BadRequest("Invalid blog ID.");
             try
             {
-                var blogs = await _blogService.SearchBlogsAsync(searchTerm);
-                return Ok(blogs);
+                _blogService.RejectBlog(rejectBlogDto);
+                return Ok(new {Message = rejectBlogDto.Message});
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Error searching blogs: {ex.Message}");
+                return StatusCode(500, $"Error rejecting blog: {ex.Message}");
             }
         }
     }

@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="14.0.0" />
+    <PackageReference Include="DotNetCore.NPOI" Version="1.2.3" />
     <PackageReference Include="EPPlus" Version="8.0.5" />
     <PackageReference Include="Google.Apis.Auth" Version="1.70.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.16" />
@@ -22,6 +23,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="NPOI" Version="2.7.3" />
     <PackageReference Include="Quartz" Version="3.14.0" />
     <PackageReference Include="Quartz.Extensions.DependencyInjection" Version="3.14.0" />
     <PackageReference Include="Quartz.Jobs" Version="3.14.0" />

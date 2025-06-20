@@ -7,6 +7,7 @@ using DataAccessLayer.Entity;
 using DataAccessLayer.IRepository;
 using DataAccessLayer.Repository;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using OfficeOpenXml;
@@ -15,7 +16,7 @@ using Quartz;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-ExcelPackage.License.SetNonCommercialPersonal("Student API");
+
 builder.Services.AddControllers().AddJsonOptions(opt =>
 {
     opt.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
@@ -41,6 +42,10 @@ builder.Services.AddQuartz();
 builder.Services.Configure<AppSetting>(builder.Configuration.GetSection("AppSetting"));
 var googleclient = builder.Configuration["AppSetting:GoogleClientId"];
 var secretkey = builder.Configuration["AppSetting:SecretKey"];
+builder.Services.Configure<FormOptions>(options =>
+{
+    options.MultipartBodyLengthLimit = 10 * 1024 * 1024; // 10MB
+});
 if (string.IsNullOrEmpty(secretkey))
 {
     throw new InvalidOperationException("AppSetting failed ");

@@ -78,7 +78,7 @@ namespace SchoolMedicalSystem.Controllers
         }
         [HttpDelete]
         [Route("delete/{id}")]
-        public IActionResult DeleteNotification(int id)
+        public IActionResult DeleteNotification([FromBody] int id)
         {
             if (id <= 0)
                 return BadRequest("Invalid notification ID.");

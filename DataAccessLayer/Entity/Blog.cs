@@ -15,7 +15,7 @@ public partial class Blog
 
     public DateTime? ApprovedOn { get; set; }
 
-    public int CreatedBy { get; set; }
+    public int? CreatedBy { get; set; }
 
     public DateTime CreatedAt { get; set; }
 
