@@ -166,37 +166,6 @@ namespace BussinessLayer.Service
                 emailTemplate = new EmailTemplate
                 {
                     Subject = "Yêu cầu đặt lại mật khẩu",
-                    Body = "Vui lòng nhấp vào liên kết sau để đặt lại mật khẩu của bạn: {RESET_LINK}",
-                    CreatedDate = DateTime.Now,
-                    IsDeleted = false
-                };
-                _context.EmailTemplates.Add(emailTemplate);
-                await _context.SaveChangesAsync();
-            }
-
-            var emailDTO = new EmailDTO
-            {
-                To = email,
-                Subject = emailTemplate.Subject,
-                Body = emailTemplate.Body.Replace("{RESET_LINK}", "https://example.com/reset-password")
-            };
-
-            await SendEmailAsync(emailDTO);
-            return true;
-        }
-
-        public async Task<bool> ResetPassword(string email)
-        {
-            var emailTemplate = await _context.EmailTemplates.FirstOrDefaultAsync(e => e.Subject.Contains("Yêu cầu đặt lại mật khẩu"));
-            var checkEmail = await _context.Users.AnyAsync(u => u.Email == email);
-            if (!checkEmail)
-                return false;
-
-            if (emailTemplate == null)
-            {
-                emailTemplate = new EmailTemplate
-                {
-                    Subject = "Yêu cầu đặt lại mật khẩu",
                     Body = "Mã OTP đễ đặt lại mật khẩu của bạn là :\n <h1>{OTP}</h1>",
                     CreatedDate = DateTime.Now,
                     IsDeleted = false
