@@ -4,6 +4,10 @@ using DataAccessLayer.Entity;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using OfficeOpenXml;
+using NPOI.SS.UserModel;
+using NPOI.XSSF.UserModel;
+using DataAccessLayer.Repository;
+using DataAccessLayer.IRepository;
 
 namespace SchoolMedicalSystem.Controllers
 {
@@ -14,11 +18,15 @@ namespace SchoolMedicalSystem.Controllers
         private readonly IClassRoomService _classroomservice;
         private readonly IParentService _parentservice;
         private readonly IStudentService _studentService;
-        public StudentController(IClassRoomService classRoomService, IParentService parentservice, IStudentService studentService)
+        private readonly IStudentRepo _studentRepo;
+        public StudentController(IStudentRepo studentrepo,
+            IClassRoomService classRoomService, IParentService parentservice, IStudentService studentService)
         {
             _classroomservice = classRoomService;
             _parentservice = parentservice;
             _studentService = studentService;
+            _studentRepo = studentrepo;
+
         }
 
         //[HttpPost("student")]
@@ -55,13 +63,16 @@ namespace SchoolMedicalSystem.Controllers
 
 
         [HttpPost("student")]
-        public async Task<IActionResult> UploadStudent(List<InsertStudent> studentlist)
+        public Task<IActionResult> UploadStudent(IFormFile file)
         {
-            if (studentlist != null)
+            try
             {
-                await _studentService.UploadStudentList(studentlist);
+                var list = _studentService.ProcessExcelFile(file);
+                _studentService.UploadStudentList(list.Item1);
+                return Task.FromResult<IActionResult>(Ok(list.Item2));
             }
-            return Ok("Students uploaded successfully.");
+            catch (Exception ex) { }
+            return null;
         }
 
         [HttpGet("GetAllStudents")]
@@ -90,6 +101,7 @@ namespace SchoolMedicalSystem.Controllers
                 return BadRequest("Student data cannot be null.");
             }
             await _studentService.AddStudentAsync(student);
+            _studentRepo.Save();
             return Ok(student);
         }
 

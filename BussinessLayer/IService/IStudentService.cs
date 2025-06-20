@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using DataAccessLayer.DTO;
 using DataAccessLayer.Entity;
+using Microsoft.AspNetCore.Http;
 
 namespace BussinessLayer.IService
 {
@@ -16,5 +17,7 @@ namespace BussinessLayer.IService
         Task DeleteStudent(int id);
         Task UploadStudentList(List<InsertStudent> studentlist);
         Task<Student> UpdateStudentAsync(StudentDTO student, int id);
+        public (List<InsertStudent>, string) ProcessExcelFile(IFormFile file);
+
     }
 }
