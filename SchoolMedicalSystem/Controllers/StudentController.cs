@@ -77,6 +77,17 @@ namespace SchoolMedicalSystem.Controllers
                 return NotFound($"Student with ID {student.Id} not found.");
             return Ok(s);
         }
+
+        [HttpGet("GetStudentByParentId/{parentId}")]
+        public async Task<IActionResult> GetStudentByParentId(int parentId)
+        {
+            var students = await _studentService.GetStudentByParentId(parentId);
+            if (students == null || !students.Any())
+            {
+                return NotFound($"No students found for parent ID {parentId}.");
+            }
+            return Ok(students);
+        }
     }
 
     public class UpdateStudent

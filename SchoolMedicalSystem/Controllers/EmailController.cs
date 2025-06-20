@@ -90,13 +90,26 @@ namespace SchoolMedicalSystem.Controllers
         }
 
         [HttpPost("ForgotPassword")]
-        public async Task<IActionResult> ForgetPassword(string email)
+        public async Task<IActionResult> ForgetPassword([FromBody] string email)
         {
+            if (string.IsNullOrEmpty(email))
+                return BadRequest("Email cannot be empty or null");
             var success = await _email.ResetPassword(email);
             if (!success)
                 return NotFound("Email not found!");
 
             return Ok("Reset email have been sent!");
+        }
+
+        [HttpPost("ValidateOTP")]
+        public async Task<IActionResult> ValidateOTP([FromBody] string otp)
+        {
+            if (string.IsNullOrEmpty(otp))
+                return BadRequest("OTP cannot be empty or null");
+            var isValid = await _email.ValidateOtpAsync(new OtpDTO { OtpCode = otp });
+            if (!isValid)
+                return BadRequest("Invalid OTP");
+            return Ok("OTP is valid");
         }
     }
     public class UserList

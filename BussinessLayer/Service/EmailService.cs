@@ -185,12 +185,75 @@ namespace BussinessLayer.Service
             return true;
         }
 
+        public async Task<bool> ResetPassword(string email)
+        {
+            var emailTemplate = await _context.EmailTemplates.FirstOrDefaultAsync(e => e.Subject.Contains("Yêu cầu đặt lại mật khẩu"));
+            var checkEmail = await _context.Users.AnyAsync(u => u.Email == email);
+            if (!checkEmail)
+                return false;
+
+            if (emailTemplate == null)
+            {
+                emailTemplate = new EmailTemplate
+                {
+                    Subject = "Yêu cầu đặt lại mật khẩu",
+                    Body = "Mã OTP đễ đặt lại mật khẩu của bạn là :\n <h1>{OTP}</h1>",
+                    CreatedDate = DateTime.Now,
+                    IsDeleted = false
+                };
+                _context.EmailTemplates.Add(emailTemplate);
+                await _context.SaveChangesAsync();
+            }
+
+            var emailDTO = new EmailDTO
+            {
+                To = email,
+                Subject = emailTemplate.Subject,
+                Body = emailTemplate.Body.Replace("{RESET_LINK}", "https://example.com/reset-password")
+            };
+
+            var otp = GenerateOtp(6);
+            var otpEntry = new Otp
+            {
+                Email = email,
+                OtpCode = otp,
+                ExpiresAt = DateTime.UtcNow.AddMinutes(5),
+                IsUsed = false
+            };
+
+            _context.Otps.Add(otpEntry);
+            await _context.SaveChangesAsync();
+
+            await SendEmailAsync(emailDTO);
+            return true;
+        }
+
         public static string GenerateOtp(int length = 6)
         {
             const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
             var random = new Random();
             return new string(Enumerable.Repeat(chars, length)
                 .Select(s => s[random.Next(s.Length)]).ToArray());
+        }
+
+        public async Task<bool> ValidateOtpAsync(OtpDTO request)
+        {
+            var otpEntry = await _context.Otps
+                .FirstOrDefaultAsync(o =>
+                    o.Email == request.Email &&
+                    o.OtpCode == request.OtpCode &&
+                    !o.IsUsed);
+
+            if (otpEntry == null)
+                return false;
+
+            if (DateTime.UtcNow > otpEntry.ExpiresAt)
+                return false;
+
+            otpEntry.IsUsed = true;
+            await _context.SaveChangesAsync();
+
+            return true;
         }
     }
 }

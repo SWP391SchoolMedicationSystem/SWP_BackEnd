@@ -67,6 +67,16 @@ public partial class SchoolMedicalSystemContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<Otp>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__Otp__3214EC2777B3A41B");
+
+            entity.ToTable("Otp");
+
+            entity.Property(e => e.Id).HasColumnName("ID");
+            entity.Property(e => e.Email).HasMaxLength(256);
+            entity.Property(e => e.OtpCode).HasMaxLength(20);
+        });
         modelBuilder.Entity<Blog>(entity =>
         {
             entity.HasKey(e => e.BlogId).HasName("PK__BLOG__F913A29D2FA57285");

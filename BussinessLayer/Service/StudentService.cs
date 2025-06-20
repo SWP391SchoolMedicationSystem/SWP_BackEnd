@@ -71,6 +71,21 @@ namespace BussinessLayer.Service
             return _mapper.Map<StudentDTO>(student);
         }
 
+        public async Task<List<StudentDTO>> GetStudentByParentId(int parentId)
+        {
+            var students = await _studentrepo.GetAllAsync();
+            var filteredStudents = students.Where(s => s.Parentid == parentId && !s.IsDeleted).ToList();
+            var returnlist = _mapper.Map<List<StudentDTO>>(filteredStudents);
+
+            foreach (var student in returnlist)
+            {
+                var parent = await _parentrepo.GetByIdAsync(student.Parentid);
+                var parentdto = _mapper.Map<ParentDTO>(parent);
+                student.listparent.Add(parentdto);
+            }
+            return returnlist;
+        }
+
         public async Task<Student> UpdateStudentAsync(StudentDTO student, int id)
         {
             var s = await _studentrepo.GetByIdAsync(id);
