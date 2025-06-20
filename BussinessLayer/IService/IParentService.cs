@@ -6,7 +6,7 @@ namespace BussinessLayer.IService
 {
     public interface IParentService
     {
-        Task<List<Parent>> GetAllParentsAsync();
+        Task<List<ParentDTO>> GetAllParentsAsync();
         Task<ParentDTO> GetParentByIdAsync(int id);
         Task AddParentAsync(ParentRegister parent);
         void UpdateParent(ParentUpdate parent);
