@@ -84,7 +84,7 @@ namespace BussinessLayer.Service
             foreach (var student in returnlist)
             {
                 var parent = await _parentrepo.GetByIdAsync(student.Parentid);
-                var parentdto = _mapper.Map<ParentDTO>(parent);
+                var parentdto = _mapper.Map<ParentStudent>(parent);
                 student.listparent.Add(parentdto);
             }
             return returnlist;

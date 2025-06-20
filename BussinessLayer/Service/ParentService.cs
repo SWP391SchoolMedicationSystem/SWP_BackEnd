@@ -174,7 +174,7 @@ namespace BussinessLayer.Service
             return null;
         }
 
-        public async Task<List<Parent>> GetAllParentsAsync()
+        public async Task<List<ParentDTO>> GetAllParentsAsync()
         {
             List<Parent> list = await parentRepository.GetAllAsync();
             var parentlist = mapper.Map<List<ParentDTO>>(list);
