@@ -20,7 +20,7 @@ namespace SchoolMedicalSystem.Controllers
             _mapper = mapper;
         }
 
-        [HttpPost("email")]
+        [HttpPost("testemail")]
         public async Task<IActionResult> SendEmail([FromBody] EmailDTO request)
         {
             if (request == null)
