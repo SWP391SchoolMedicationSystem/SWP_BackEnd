@@ -26,7 +26,7 @@ namespace SchoolMedicalSystem.Controllers
             return Ok(parents);
         }
         [HttpGet("parent/{id}")]
-        public async Task<IActionResult> GetParentById(int id)
+        public async Task<IActionResult> GetParentById([FromBody] int id)
         {
             var parent = await _parentservice.GetParentByIdAsync(id);
             if (parent == null)
@@ -71,7 +71,7 @@ namespace SchoolMedicalSystem.Controllers
             }
         }
         [HttpDelete("parent/{id}")]
-        public IActionResult DeleteParent(int id)
+        public IActionResult DeleteParent([FromBody] int id)
         {
             try
             {

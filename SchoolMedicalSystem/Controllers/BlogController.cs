@@ -66,7 +66,7 @@ namespace SchoolMedicalSystem.Controllers
         }
         [HttpDelete]
         [Route("blog/{id}")]
-        public void DeleteBlog(int id)
+        public void DeleteBlog([FromBody] int id)
         {
             if(id < 0)
                 throw new ArgumentException("Invalid blog ID.");
@@ -89,11 +89,11 @@ namespace SchoolMedicalSystem.Controllers
         }
         [HttpPost]
         [Route("blogapproval/{id}")]
-        public IActionResult ApproveBlog(int id, [FromBody] ApproveBlogDTO approveBlogDto)
+        public IActionResult ApproveBlog([FromBody] ApproveBlogDTO approveBlogDto)
         {
             if (approveBlogDto == null)
                 return BadRequest("Invalid approval data.");
-            if (id < 0)
+            if (approveBlogDto.BlogId < 0)
                 return BadRequest("Invalid blog ID.");
             try
             {
