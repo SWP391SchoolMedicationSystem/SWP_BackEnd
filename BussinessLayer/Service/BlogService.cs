@@ -50,13 +50,13 @@ namespace BussinessLayer.Service
                 blog.Status = "Pending";
                 blog.CreatedAt = DateTime.Now;
                 await _blogRepo.AddAsync(blog);
-                _blogRepo.Save(); 
+                _blogRepo.Save();
             }
-            catch(Exception e)
+            catch (Exception e)
             {
 
             }
-            
+
         }
         public void UpdateBlog(UpdateBlogDTO dto)
         {
@@ -122,5 +122,17 @@ namespace BussinessLayer.Service
                     (b.Status.Equals("Published", StringComparison.OrdinalIgnoreCase)))
                 .ToList();
         }
-    }
+        public void RejectBlog(RejectBlogDTO dto)
+        {
+            var blog = _blogRepo.GetByIdAsync(dto.BlogId).Result;
+            if (blog != null)
+            {
+                blog.ApprovedBy = dto.ApprovedBy;
+                blog.ApprovedOn = DateTime.Now;
+                blog.Status = "Rejected";
+                _blogRepo.Update(blog);
+                _blogRepo.Save();
+            }
+        }
+    }            
 }

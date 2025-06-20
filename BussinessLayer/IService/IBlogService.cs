@@ -17,6 +17,7 @@ namespace BussinessLayer.IService
         void DeleteBlog(int id);
         Task<List<Blog>> SearchBlogsAsync(string searchTerm);
         void ApproveBlog(ApproveBlogDTO dto);
+        void RejectBlog(RejectBlogDTO dto);
         Task<List<Blog>> GetPublishedBlogs();
     }
 }

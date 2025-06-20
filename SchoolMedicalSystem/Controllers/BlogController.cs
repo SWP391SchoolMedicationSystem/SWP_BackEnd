@@ -105,5 +105,23 @@ namespace SchoolMedicalSystem.Controllers
                 return StatusCode(500, $"Error approving blog: {ex.Message}");
             }
         }
+        [HttpPost]
+        [Route("RejectBlog")]
+        public IActionResult RejectBlog([FromBody] RejectBlogDTO rejectBlogDto)
+        {
+            if (rejectBlogDto == null)
+                return BadRequest("Invalid rejection data.");
+            if (rejectBlogDto.BlogId < 0)
+                return BadRequest("Invalid blog ID.");
+            try
+            {
+                _blogService.RejectBlog(rejectBlogDto);
+                return Ok(new {Message = rejectBlogDto.Message});
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error rejecting blog: {ex.Message}");
+            }
+        }
     }
 }
