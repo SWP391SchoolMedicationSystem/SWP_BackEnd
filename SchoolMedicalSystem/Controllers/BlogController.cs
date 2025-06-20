@@ -25,7 +25,7 @@ namespace SchoolMedicalSystem.Controllers
         }
         [HttpGet]
         [Route("getById")]
-        public async Task<IActionResult> GetBlogById([FromBody] int id)
+        public async Task<IActionResult> GetBlogById([FromQuery] int id)
         {
             var blog = await _blogService.GetBlogByIdAsync(id);
             if (blog == null)
@@ -66,7 +66,7 @@ namespace SchoolMedicalSystem.Controllers
         }
         [HttpDelete]
         [Route("delete")]
-        public void DeleteBlog([FromBody] int id)
+        public void DeleteBlog([FromQuery] int id)
         {
             if(id < 0)
                 throw new ArgumentException("Invalid blog ID.");
