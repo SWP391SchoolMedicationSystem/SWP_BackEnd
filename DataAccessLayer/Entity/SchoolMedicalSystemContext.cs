@@ -73,9 +73,27 @@ public partial class SchoolMedicalSystemContext : DbContext
 
             entity.ToTable("Otp");
 
-            entity.Property(e => e.Id).HasColumnName("ID");
-            entity.Property(e => e.Email).HasMaxLength(256);
-            entity.Property(e => e.OtpCode).HasMaxLength(20);
+            entity.Property(e => e.Id)
+                .IsRequired()
+                .HasColumnName("ID");
+            entity.Property(e => e.Email)
+                .IsRequired()
+                .HasMaxLength(256);
+            entity.Property(e => e.OtpCode)
+                .IsRequired()
+                .HasMaxLength(20);
+            entity.Property(e => e.IsUsed)
+                .IsRequired()
+                .HasDefaultValue(false);
+            entity.Property(e => e.FailedAttempts)
+                .IsRequired()
+                .HasDefaultValue(0);
+            entity.Property(e => e.CreatedAt)
+                .IsRequired()
+                .HasDefaultValueSql("GETUTCDATE()");
+            entity.Property(e => e.ExpiresAt)
+                .IsRequired();
+
         });
         modelBuilder.Entity<Blog>(entity =>
         {

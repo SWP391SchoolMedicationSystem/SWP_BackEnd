@@ -99,6 +99,7 @@ builder.Services.AddScoped<IConsultationTypeService, ConsultationTypeService>();
 builder.Services.AddScoped<IConsultationService, ConsultationRequestService>();
 builder.Services.AddScoped<IConsultationTypeRepo, ConsultationTypeRepo>();
 builder.Services.AddScoped<IConsulationRepository,ConsultationRepository>();
+builder.Services.AddScoped<IOtpRepo, OtpRepo>();
 #endregion
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

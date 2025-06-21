@@ -59,7 +59,7 @@ namespace SchoolMedicalSystem.Controllers
         }
 
         [HttpGet("GetEmailAllTemplate")]
-        public async Task<IActionResult> GetEmailAllTemplate()
+        public async Task<IActionResult> GetAllEmailTemplate()
         {
             var emailTemplates = await _email.GetEmailAllTemplate();
             if (emailTemplates == null || !emailTemplates.Any())
@@ -87,29 +87,6 @@ namespace SchoolMedicalSystem.Controllers
             if (!result)
                 return NotFound("Email template not found or could not be deleted");
             return Ok("Email template deleted successfully");
-        }
-
-        [HttpPost("ForgotPassword")]
-        public async Task<IActionResult> ForgetPassword([FromBody] string email)
-        {
-            if (string.IsNullOrEmpty(email))
-                return BadRequest("Email cannot be empty or null");
-            var success = await _email.ResetPassword(email);
-            if (!success)
-                return NotFound("Email not found!");
-
-            return Ok("Reset email have been sent!");
-        }
-
-        [HttpPost("ValidateOTP")]
-        public async Task<IActionResult> ValidateOTP([FromBody] string otp)
-        {
-            if (string.IsNullOrEmpty(otp))
-                return BadRequest("OTP cannot be empty or null");
-            var isValid = await _email.ValidateOtpAsync(new OtpDTO { OtpCode = otp });
-            if (!isValid)
-                return BadRequest("Invalid OTP");
-            return Ok("OTP is valid");
         }
     }
     public class UserList
