@@ -12,6 +12,8 @@ namespace DataAccessLayer.Entity
         public string Email { get; set; }
         public string OtpCode { get; set; }
         public DateTime ExpiresAt { get; set; }
+        public int FailedAttempts { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public bool IsUsed { get; set; } = false;
     }
 }

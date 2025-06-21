@@ -19,6 +19,9 @@ namespace BussinessLayer.IService
         void Delete(int ID);
         void Save();
         Task<string> Login(LoginDTO dto);
+        Task<bool> ResetPassword(string email, string newPassword);
         Task<string> ValidateGoogleToken(string token);
+        Task<bool> SendOTPEmailAsync(string email);
+        Task<bool> ValidateOtpAsync(OtpDTO request);
     }
 }
