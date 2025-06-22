@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace DataAccessLayer.DTO.PersonalMedicine
 {
-    public class AddPersonalMedicineDTO
+    public class UpdatePersonalMedicineDTO
     {
+        public int Personalmedicineid { get; set; }
         public int Studentid { get; set; }
 
         public string Medicinename { get; set; } = null!;
@@ -22,9 +23,8 @@ namespace DataAccessLayer.DTO.PersonalMedicine
 
         public bool Isdeleted { get; set; }
 
-        public string? Createdby { get; set; }
+        public string? Modifiedby { get; set; }
 
-        public DateTime? Createddate { get; set; }
-
+        public DateTime? Modifieddate { get; set; }
     }
 }
