@@ -9,5 +9,6 @@ namespace DataAccessLayer.IRepository
 {
     public interface IEmailRepo : IGenericRepository<EmailTemplate>
     {
+        Task<EmailTemplate?> GetEmailTemplateByIdAsync(int id);
     }
 }

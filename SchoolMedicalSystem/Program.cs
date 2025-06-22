@@ -100,6 +100,9 @@ builder.Services.AddScoped<IConsultationService, ConsultationRequestService>();
 builder.Services.AddScoped<IConsultationTypeRepo, ConsultationTypeRepo>();
 builder.Services.AddScoped<IConsulationRepository,ConsultationRepository>();
 builder.Services.AddScoped<IOtpRepo, OtpRepo>();
+builder.Services.AddScoped<IVaccinationEventRepository, VaccinationEventRepository>();
+builder.Services.AddScoped<IVaccinationRecordRepository, VaccinationRecordRepository>();
+builder.Services.AddScoped<IVaccinationEventService, VaccinationEventService>();
 #endregion
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -119,7 +122,7 @@ app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 
-
+//app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

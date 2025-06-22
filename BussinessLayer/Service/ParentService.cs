@@ -58,7 +58,7 @@ namespace BussinessLayer.Service
 
                 var newParent = mapper.Map<Parent>(parent);
                 newParent.CreatedDate = DateTime.Now;
-                UserDTo userdto = new()
+                UserDTO userdto = new()
                 {
                     isStaff = false,
                     Email = parent.Email,

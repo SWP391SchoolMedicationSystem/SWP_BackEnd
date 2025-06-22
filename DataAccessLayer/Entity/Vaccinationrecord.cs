@@ -19,6 +19,14 @@ public partial class Vaccinationrecord
 
     public bool Confirmedbyparent { get; set; }
 
+    public bool? WillAttend { get; set; }
+
+    public string? ReasonForDecline { get; set; }
+
+    public bool? ParentConsent { get; set; }
+
+    public DateTime? ResponseDate { get; set; }
+
     public bool Isdeleted { get; set; }
 
     public DateTime Createdat { get; set; }

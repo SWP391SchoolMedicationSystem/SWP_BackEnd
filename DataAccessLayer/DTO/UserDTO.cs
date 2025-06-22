@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DataAccessLayer.DTO
 {
-    public class UserDTo
+    public class UserDTO
     {
         public int UserId { get; set; }
 
