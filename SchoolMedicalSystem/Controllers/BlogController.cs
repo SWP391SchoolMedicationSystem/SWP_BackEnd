@@ -57,7 +57,7 @@ namespace SchoolMedicalSystem.Controllers
             try
             {
                 _blogService.UpdateBlog(dto);
-                return Ok("Health record updated.");
+                return Ok("Blog updated.");
             }
             catch (Exception ex)
             {

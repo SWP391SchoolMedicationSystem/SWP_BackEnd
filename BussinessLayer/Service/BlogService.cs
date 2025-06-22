@@ -47,7 +47,7 @@ namespace BussinessLayer.Service
             try
             {
                 Blog blog = _mapper.Map<Blog>(dto);
-                blog.Status = "Pending";
+                blog.Status = "Draft";
                 blog.CreatedAt = DateTime.Now;
                 await _blogRepo.AddAsync(blog);
                 _blogRepo.Save();
