@@ -44,18 +44,12 @@ namespace BussinessLayer.Service
         }
         public async Task AddBlogAsync(CreateBlogDTO dto)
         {
-            try
-            {
+
                 Blog blog = _mapper.Map<Blog>(dto);
                 blog.Status = "Draft";
                 blog.CreatedAt = DateTime.Now;
                 await _blogRepo.AddAsync(blog);
                 _blogRepo.Save();
-            }
-            catch (Exception e)
-            {
-
-            }
 
         }
         public void UpdateBlog(UpdateBlogDTO dto)
@@ -116,8 +110,8 @@ namespace BussinessLayer.Service
             return blogs
                 .Where(b =>
                     b.IsDeleted != true &&
-                    b.ApprovedBy != null &&
-                    b.ApprovedOn != null &&
+//                    b.ApprovedBy != null &&
+ //                   b.ApprovedOn != null &&
                     b.Status != null &&
                     (b.Status.Equals("Published", StringComparison.OrdinalIgnoreCase)))
                 .ToList();
