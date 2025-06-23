@@ -148,8 +148,8 @@ namespace BussinessLayer.Service
                     }
                 }
                 catch (Exception e) {
-                return null;
-                }
+                throw new InvalidOperationException(e.Message);
+            }
         }
 
         public async Task<bool> SendOTPEmailAsync(string email)
