@@ -55,7 +55,6 @@ namespace SchoolMedicalSystem.Controllers
 
         // POST: api/VaccinationEvent
         [HttpPost]
-        //[Authorize(Roles = "Admin,Manager")]
         public async Task<ActionResult<VaccinationEventDTO>> CreateEvent([FromBody] CreateVaccinationEventDTO dto)
         {
             try
@@ -75,15 +74,11 @@ namespace SchoolMedicalSystem.Controllers
         }
 
         // PUT: api/VaccinationEvent/5
-        [HttpPut("{id}")]
-        //[Authorize(Roles = "Admin,Manager")]
-        public async Task<IActionResult> UpdateEvent(int id, [FromBody] UpdateVaccinationEventDTO dto)
+        [HttpPut]
+        public async Task<IActionResult> UpdateEvent([FromBody] UpdateVaccinationEventDTO dto)
         {
             try
             {
-                if (id != dto.VaccinationEventId)
-                    return BadRequest("ID mismatch");
-
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
 
@@ -104,7 +99,6 @@ namespace SchoolMedicalSystem.Controllers
 
         // DELETE: api/VaccinationEvent/5
         [HttpDelete("{id}")]
-        //[Authorize(Roles = "Admin,Manager")]
         public async Task<IActionResult> DeleteEvent(int id)
         {
             try
@@ -172,7 +166,8 @@ namespace SchoolMedicalSystem.Controllers
             }
         }
 
-        // GET: api/VaccinationEvent/5/responses
+        // GET: api/VaccinationEvent/id/responses
+        // This endpoint is used to get student responses for a vaccination event
         [HttpGet("{id}/responses")]
         public async Task<ActionResult<List<StudentVaccinationStatusDTO>>> GetStudentResponses(int id)
         {
@@ -188,15 +183,12 @@ namespace SchoolMedicalSystem.Controllers
         }
 
         // POST: api/VaccinationEvent/5/send-email
-        [HttpPost("{id}/send-email")]
-        //[Authorize(Roles = "Admin,Manager")]
-        public async Task<IActionResult> SendVaccinationEmail(int id, [FromBody] SendVaccinationEmailDTO dto)
+        // This endpoint is used to send vaccination emails to all parents
+        [HttpPost("send-email")]
+        public async Task<IActionResult> SendVaccinationEmail([FromBody] SendVaccinationEmailDTO dto)
         {
             try
             {
-                if (id != dto.VaccinationEventId)
-                    return BadRequest("ID mismatch");
-
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
 
@@ -214,16 +206,13 @@ namespace SchoolMedicalSystem.Controllers
         }
 
         // POST: api/VaccinationEvent/5/send-email-specific
-        [HttpPost("{id}/send-email-specific")]
-        //[Authorize(Roles = "Admin,Manager")]
+        // This endpoint is used to send vaccination emails to specific parents
+        [HttpPost("send-email-specific")]
         public async Task<IActionResult> SendVaccinationEmailToSpecificParents(
-            int id, [FromBody] SendVaccinationEmailDTO dto, [FromQuery] List<int> parentIds)
+            [FromBody] SendVaccinationEmailDTO dto, [FromQuery] List<int> parentIds)
         {
             try
             {
-                if (id != dto.VaccinationEventId)
-                    return BadRequest("ID mismatch");
-
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
 
@@ -244,8 +233,8 @@ namespace SchoolMedicalSystem.Controllers
         }
 
         // POST: api/VaccinationEvent/respond
+        // This endpoint is used by parents to respond to vaccination events
         [HttpPost("respond")]
-        //[AllowAnonymous] // Allow parents to respond without authentication
         public async Task<IActionResult> ProcessParentResponse([FromBody] ParentVaccinationResponseDTO dto)
         {
             try
@@ -266,7 +255,7 @@ namespace SchoolMedicalSystem.Controllers
             }
         }
 
-        // GET: api/VaccinationEvent/5/parent-responses
+        // GET: api/VaccinationEvent/id/parent-responses
         [HttpGet("{id}/parent-responses")]
         public async Task<ActionResult<List<ParentVaccinationResponseDTO>>> GetParentResponses(int id)
         {
@@ -313,7 +302,6 @@ namespace SchoolMedicalSystem.Controllers
 
         // GET: api/VaccinationEvent/respond
         [HttpGet("respond")]
-        //[AllowAnonymous]
         public async Task<IActionResult> GetResponseForm([FromQuery] string email, [FromQuery] int eventId)
         {
             try
@@ -454,29 +442,6 @@ namespace SchoolMedicalSystem.Controllers
 </html>";
 
                 return Content(htmlForm, "text/html");
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
-            }
-        }
-
-        // POST: api/VaccinationEvent/email-reply
-        [HttpPost("email-reply")]
-        //[AllowAnonymous]
-        public async Task<IActionResult> ProcessEmailReply([FromBody] EmailReplyDTO dto)
-        {
-            try
-            {
-                if (!ModelState.IsValid)
-                    return BadRequest(ModelState);
-
-                var result = await _vaccinationEventService.ProcessEmailReplyAsync(dto.FromEmail, dto.Subject, dto.Body);
-
-                if (!result)
-                    return BadRequest("Failed to process email reply.");
-
-                return Ok("Email reply processed successfully.");
             }
             catch (Exception ex)
             {

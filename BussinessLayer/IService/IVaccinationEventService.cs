@@ -30,6 +30,5 @@ namespace BussinessLayer.IService
         Task<Dictionary<string, int>> GetEventStatisticsAsync(int eventId);
         Task<List<VaccinationEventDTO>> GetEventsWithStatisticsAsync();
         Task<StudentVaccinationStatusDTO?> GetStudentByParentEmailAsync(string email, int eventId);
-        Task<bool> ProcessEmailReplyAsync(string fromEmail, string subject, string body);
     }
 } 

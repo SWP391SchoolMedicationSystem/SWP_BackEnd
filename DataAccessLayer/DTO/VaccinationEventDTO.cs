@@ -124,17 +124,4 @@ namespace DataAccessLayer.DTO
 
         public string? CustomMessage { get; set; }
     }
-
-    public class EmailReplyDTO
-    {
-        [Required(ErrorMessage = "From email is required")]
-        [EmailAddress(ErrorMessage = "Invalid email format")]
-        public string FromEmail { get; set; } = null!;
-
-        [Required(ErrorMessage = "Subject is required")]
-        public string Subject { get; set; } = null!;
-
-        [Required(ErrorMessage = "Body is required")]
-        public string Body { get; set; } = null!;
-    }
 } 
