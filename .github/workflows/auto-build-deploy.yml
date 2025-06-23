@@ -50,7 +50,7 @@ jobs:
 
       - name: Clean build cache
         run: |
-          docker builder prune
+          docker builder prune -f
 
       - name: Stop and Remove Old Container (if exists)
         run: |
