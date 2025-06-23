@@ -101,6 +101,8 @@ builder.Services.AddScoped<IVaccinationRecordRepo, VaccinationRecordRepository>(
 builder.Services.AddScoped<IVaccinationRecordService, VaccinationRecordService>();
 builder.Services.AddScoped<IVaccinationEventRepository, VaccinationEventRepository>();
 builder.Services.AddScoped<IVaccinationEventService, VaccinationEventService>();
+builder.Services.AddScoped<IOtpRepo, OtpRepo>();
+
 #endregion
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
