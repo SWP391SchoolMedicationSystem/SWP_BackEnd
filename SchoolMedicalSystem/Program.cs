@@ -1,6 +1,8 @@
 using System.Text;
 using System.Text.Json.Serialization;
 using BussinessLayer.IService;
+using BussinessLayer.QuartzJob.Job;
+using BussinessLayer.QuartzJob.Scheduler;
 using BussinessLayer.Service;
 using BussinessLayer.Utils.Configurations;
 using DataAccessLayer.Entity;
@@ -33,10 +35,15 @@ builder.Services.AddCors(options =>
               .AllowAnyMethod();
     });
 });
-
-#region Quatz
+#region Quartz Scheduler Configuration
+// SETUP QUARTZ SCHEDULER
 builder.Services.AddQuartz();
-
+builder.Services.AddTransient<NotifyScheduler>();
+builder.Services.AddQuartzHostedService(opt =>
+{
+    opt.WaitForJobsToComplete = true;
+});
+builder.Services.AddTransient<NotifyJob>();
 #endregion
 builder.Services.Configure<AppSetting>(builder.Configuration.GetSection("AppSetting"));
 var googleclient = builder.Configuration["AppSetting:GoogleClientId"];
@@ -90,6 +97,10 @@ builder.Services.AddScoped<IClassRoomService, ClassroomService>();
 builder.Services.AddScoped<IStudentRepo, StudentRepo>();
 builder.Services.AddScoped<IStudentService, StudentService>();
 builder.Services.AddScoped<IRoleRepository, RoleRepository>();
+builder.Services.AddScoped<IVaccinationRecordRepo, VaccinationRecordRepository>();
+builder.Services.AddScoped<IVaccinationRecordService, VaccinationRecordService>();
+builder.Services.AddScoped<IVaccinationEventRepository, VaccinationEventRepository>();
+builder.Services.AddScoped<IVaccinationEventService, VaccinationEventService>();
 #endregion
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -112,6 +123,6 @@ app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
-app.MapControllers();
+    app.MapControllers();
 
 app.Run();
