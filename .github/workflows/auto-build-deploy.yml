@@ -44,10 +44,13 @@ jobs:
 
       - name: Build solution
         run: dotnet build --configuration Release --no-restore
-
       - name: Build Docker Image
         run: |
           docker build -t $IMAGE_NAME:v1 .
+
+      - name: Clean build cache
+        run: |
+          docker builder prune
 
       - name: Stop and Remove Old Container (if exists)
         run: |
