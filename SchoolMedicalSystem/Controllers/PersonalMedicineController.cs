@@ -1,4 +1,5 @@
 ﻿using BussinessLayer.IService;
+using DataAccessLayer.DTO.PersonalMedicine;
 using DataAccessLayer.Entity;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -18,51 +19,77 @@ namespace SchoolMedicalSystem.Controllers
         [Route("getAll")]
         public async Task<IActionResult> GetAllPersonalMedicines()
         {
-            var lists = await _personalMedicineService.GetAllPersonalMedicinesAsync(); 
-            return Ok("Get all personal medicines");
+            var lists = await _personalMedicineService.GetAllPersonalMedicinesAsync();
+            return Ok(lists);
         }
         [HttpGet]
         [Route("getById")]
-        public IActionResult GetPersonalMedicineById([FromQuery] int id)
+        public async Task<IActionResult> GetPersonalMedicineById([FromQuery] int id)
         {
-            // Logic to get personal medicine by ID
-            return Ok($"Get personal medicine by ID: {id}");
+            try
+            {
+                var pm = await _personalMedicineService.GetPersonalMedicineById(id);
+                return Ok(pm);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
         }
         [HttpPost]
         [Route("add")]
-        public IActionResult AddPersonalMedicine([FromBody] object personalMedicineDto)
+        public IActionResult AddPersonalMedicine([FromBody] AddPersonalMedicineDTO personalMedicineDto)
         {
-            // Logic to add personal medicine
             if (personalMedicineDto == null)
                 return BadRequest("Personal medicine data is null.");
-            return Ok("Add personal medicine");
+            try
+            {
+                _personalMedicineService.AddPersonalMedicine(personalMedicineDto);
+                return Ok("Personal medicine added successfully.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error adding personal medicine: {ex.Message}");
+            }
         }
         [HttpPut]
         [Route("update")]
-        public IActionResult UpdatePersonalMedicine([FromBody] object personalMedicineDto)
+        public IActionResult UpdatePersonalMedicine([FromBody] UpdatePersonalMedicineDTO personalMedicineDto)
         {
-            // Logic to update personal medicine
             if (personalMedicineDto == null)
                 return BadRequest("Invalid data.");
-            return Ok("Update personal medicine");
+            try
+            {
+                _personalMedicineService.UpdatePersonalMedicineAsync(personalMedicineDto);
+                return Ok("Personal medicine updated successfully.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error updating personal medicine: {ex.Message}");
+            }
         }
         [HttpDelete]
         [Route("delete")]
         public IActionResult DeletePersonalMedicine([FromQuery] int id)
         {
-            // Logic to delete personal medicine
             if (id <= 0)
                 return BadRequest("Invalid ID.");
-            return Ok($"Delete personal medicine with ID: {id}");
+            try
+            {
+                _personalMedicineService.DeletePersonalMedicine(id);
+                return Ok("Personal medicine deleted successfully.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error deleting personal medicine: {ex.Message}");
+            }
         }
         [HttpGet]
-        [Route("search")]
-        public IActionResult SearchPersonalMedicinesByMedicineName([FromQuery] string searchTerm)
+        [Route("getAvailable")]
+        public async Task<IActionResult> GetAvailablePersonalMedicines()
         {
-            // Logic to search personal medicines by medicine name
-            if (string.IsNullOrEmpty(searchTerm))
-                return BadRequest("Search term cannot be empty.");
-            return Ok($"Search personal medicines by medicine name: {searchTerm}");
+            var lists = await _personalMedicineService.GetAvailablePersonalMedicineAsync();
+            return Ok(lists);
         }
     }
 }

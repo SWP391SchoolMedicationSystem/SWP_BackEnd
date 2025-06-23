@@ -102,6 +102,8 @@ builder.Services.AddScoped<IVaccinationRecordService, VaccinationRecordService>(
 builder.Services.AddScoped<IVaccinationEventRepository, VaccinationEventRepository>();
 builder.Services.AddScoped<IVaccinationEventService, VaccinationEventService>();
 builder.Services.AddScoped<IOtpRepo, OtpRepo>();
+builder.Services.AddScoped<IPersonalMedicineService, PersonalMedicineService>();
+builder.Services.AddScoped<IPersonalMedicineRepository, PersonalMedicineRepository>();
 
 #endregion
 

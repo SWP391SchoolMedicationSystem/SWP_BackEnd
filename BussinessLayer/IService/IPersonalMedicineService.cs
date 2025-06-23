@@ -13,9 +13,9 @@ namespace BussinessLayer.IService
         public void AddPersonalMedicine(AddPersonalMedicineDTO personalMedicineDto);
         public void DeletePersonalMedicine(int id);
         public Task<List<Personalmedicine>> GetAllPersonalMedicinesAsync();
+        public Task<List<Personalmedicine>> GetAvailablePersonalMedicineAsync();
         public Task<Personalmedicine> GetPersonalMedicineById(int id);
         public void UpdatePersonalMedicineAsync(UpdatePersonalMedicineDTO personalMedicineDto);
-        public Task<List<Personalmedicine>> SearchPersonalMedicinesByMedicineName(string searchTerm);
 
     }
 }

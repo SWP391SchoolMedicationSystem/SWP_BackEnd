@@ -89,8 +89,7 @@ namespace BussinessLayer.Service
         public Task<List<Blog>> SearchBlogsAsync(string searchTerm)
         {
             var blogs = _blogRepo.GetAllAsync().Result;
-            return Task.FromResult(blogs.Where(b => b.Title.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
-                                                     b.Content.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)).ToList());
+            return Task.FromResult(blogs.Where(b => b.Title.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)).ToList());
         }
         public void ApproveBlog(ApproveBlogDTO dto)
         {
