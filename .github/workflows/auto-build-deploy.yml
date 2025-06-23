@@ -50,7 +50,7 @@ jobs:
 
       - name: Clean build cache
         run: |
-          docker builder prune
+          docker builder prune -f
 
       - name: Stop and Remove Old Container (if exists)
         run: |
@@ -62,5 +62,5 @@ jobs:
           docker run -d --name $IMAGE_NAME \
             -e ConnectionStrings__SchoolMedicalSystemContext="${{ secrets.CONNECTIONSTRING }}" \
             -e AppSetting__SecretKey="${{ secrets.BI_MAT_THAM_KIN }}" \
-            -e AppSetting__GoogleClientId ="${{ secrets.GoogleClientId  }}" \
+            -e GoogleClientId="${{ secrets.GOOGLECLIENTID  }}" \
             -p $DOCKER_PORT:$APP_PORT $IMAGE_NAME:v1

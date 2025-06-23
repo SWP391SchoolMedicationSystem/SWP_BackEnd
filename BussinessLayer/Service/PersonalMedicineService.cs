@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using BussinessLayer.IService;
 using BussinessLayer.Utils.Configurations;
+using DataAccessLayer.DTO;
 using DataAccessLayer.DTO.HealthRecords;
 using DataAccessLayer.DTO.PersonalMedicine;
 using DataAccessLayer.Entity;
@@ -30,7 +31,6 @@ namespace BussinessLayer.Service
         public void AddPersonalMedicine(AddPersonalMedicineDTO personalMedicineDto)
         {
             Personalmedicine pm = _mapper.Map<Personalmedicine>(personalMedicineDto);
-            pm.Receivedate = DateTime.Now;
             _personalMedicineRepository.Add(pm);
             _personalMedicineRepository.Save();
         }
@@ -52,20 +52,21 @@ namespace BussinessLayer.Service
             return lists;
         }
 
-        public Task<Personalmedicine> GetPersonalMedicineById(int id)
+        public async Task<List<Personalmedicine>> GetAvailablePersonalMedicineAsync()
         {
-            var pm = _personalMedicineRepository.GetByIdAsync(id);
+            List<Personalmedicine> lists = await _personalMedicineRepository.GetAllAsync();
+            lists = lists.Where(pm => !pm.Isdeleted).ToList();
+            return lists;
+        }
+
+        public async Task<Personalmedicine> GetPersonalMedicineById(int id)
+        {
+            var pm = await _personalMedicineRepository.GetByIdAsync(id);
             if (pm == null)
             {
                 throw new KeyNotFoundException($"Personal medicine with ID {id} not found.");
             }
             return pm;
-        }
-
-        public Task<List<Personalmedicine>> SearchPersonalMedicinesByMedicineName(string searchTerm)
-        {
-            var pm = _personalMedicineRepository.GetAllAsync().Result;
-            return Task.FromResult(pm.Where(x => x.Medicinename.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)).ToList());
         }
 
         public void UpdatePersonalMedicineAsync(UpdatePersonalMedicineDTO personalMedicineDto)
@@ -84,6 +85,8 @@ namespace BussinessLayer.Service
             personalMedicine.Isdeleted = personalMedicineDto.Isdeleted;
             personalMedicine.Modifiedby = personalMedicineDto.Modifiedby;
             personalMedicine.Modifieddate = DateTime.Now;
+            _personalMedicineRepository.Update(personalMedicine);
+            _personalMedicineRepository.Save();
         }
     }
 }
