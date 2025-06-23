@@ -135,7 +135,7 @@ namespace BussinessLayer.Service
                     });
                     string email = payload.Email;
                     var user = _userRepository.GetAll().FirstOrDefault(u => u.Email == email);
-                if (user == null) return "Email is incorrect or doesn't exist";
+                if (user == null) return null;
                     if (user.IsStaff == true)
                     {
                     LoginGoogleDTO stafflogin = _mapper.Map<LoginGoogleDTO>(user);
