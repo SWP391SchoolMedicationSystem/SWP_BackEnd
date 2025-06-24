@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using DataAccessLayer.DTO;
 
 namespace DataAccessLayer.Entity;
 
@@ -19,6 +18,14 @@ public partial class Vaccinationrecord
     public DateOnly Vaccinationdate { get; set; }
 
     public bool Confirmedbyparent { get; set; }
+
+    public bool? Willattend { get; set; }
+
+    public string? Reasonfordecline { get; set; }
+
+    public bool? Parentconsent { get; set; }
+
+    public DateTime? Responsedate { get; set; }
 
     public bool Isdeleted { get; set; }
 

@@ -29,6 +29,8 @@ public partial class Parent
 
     public virtual ICollection<Consultationrequest> Consultationrequests { get; set; } = new List<Consultationrequest>();
 
+    public virtual ICollection<Form> Forms { get; set; } = new List<Form>();
+
     public virtual ICollection<NotificationParentDetail> NotificationParentDetails { get; set; } = new List<NotificationParentDetail>();
 
     public virtual ICollection<Student> Students { get; set; } = new List<Student>();

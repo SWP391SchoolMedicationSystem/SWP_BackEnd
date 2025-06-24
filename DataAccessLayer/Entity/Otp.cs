@@ -1,19 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace DataAccessLayer.Entity
+namespace DataAccessLayer.Entity;
+
+public partial class Otp
 {
-    public class Otp
-    {
-        public int Id { get; set; }
-        public string Email { get; set; }
-        public string OtpCode { get; set; }
-        public DateTime ExpiresAt { get; set; }
-        public int FailedAttempts { get; set; }
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-        public bool IsUsed { get; set; } = false;
-    }
+    public int Id { get; set; }
+
+    public string Email { get; set; } = null!;
+
+    public string OtpCode { get; set; } = null!;
+
+    public int FailedAttempts { get; set; }
+
+    public DateTime ExpiresAt { get; set; }
+
+    public DateTime CreatedAt { get; set; }
+
+    public bool IsUsed { get; set; }
 }
