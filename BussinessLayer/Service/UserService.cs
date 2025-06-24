@@ -112,7 +112,7 @@ namespace BussinessLayer.Service
             using var hmac = new HMACSHA512();
             user.Salt = hmac.Key;
             user.Hash = hmac.ComputeHash(Encoding.UTF8.GetBytes(newPassword));
-            
+
             _userRepository.Update(user);
             await _userRepository.SaveChangesAsync();
             return true;
@@ -131,29 +131,26 @@ namespace BussinessLayer.Service
         public async Task<string> ValidateGoogleToken(string token)
         {
 
-                try
+            try
+            {
+                var payload = await GoogleJsonWebSignature.ValidateAsync(token, new GoogleJsonWebSignature.ValidationSettings
                 {
-                    var payload = await GoogleJsonWebSignature.ValidateAsync(token, new GoogleJsonWebSignature.ValidationSettings
-                    {
-                        Audience = new[] { _appSettings.GoogleClientId }
-                    });
-                    string email = payload.Email;
-                    var user = _userRepository.GetAll().FirstOrDefault(u => u.Email == email);
-                if (user == null) return "Email is incorrect or doesn't exist";
-                    if (user.IsStaff == true)
-                    {
-                    LoginGoogleDTO stafflogin = _mapper.Map<LoginGoogleDTO>(user);
-                        return await _staffService.GenerateGoogleToken(stafflogin);
-                    }
-                    else
-                    {
+                    Audience = new[] { _appSettings.GoogleClientId }
+                });
+                string email = payload.Email;
+                var user = _userRepository.GetAll().FirstOrDefault(u => u.Email == email);
+
+                if (user != null && user.IsStaff == false)
+                {
                     LoginGoogleDTO parentLogin = _mapper.Map<LoginGoogleDTO>(user);
-                        return await _parentService.GenerateGoogleToken(parentLogin);
-                    }
+                    return await _parentService.GenerateGoogleToken(parentLogin);
                 }
-                catch (Exception e) {
-                return null;
-                }
+                else return "Email is incorrect or doesn't exist";
+            }
+            catch (Exception e)
+            {
+                throw new InvalidOperationException(e.Message);
+            }
         }
 
         public async Task<bool> SendOTPEmailAsync(string email)

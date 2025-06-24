@@ -38,7 +38,7 @@ namespace SchoolMedicalSystem.Controllers
                 _studentService.UploadStudentList(list.Item1);
                 return Task.FromResult<IActionResult>(Ok(list.Item2));
             }
-            catch (Exception ex) { }
+            catch (Exception ex) {}
             return null;
         }
 

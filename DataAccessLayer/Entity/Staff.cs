@@ -29,6 +29,8 @@ public partial class Staff
 
     public virtual ICollection<Consultationrequest> Consultationrequests { get; set; } = new List<Consultationrequest>();
 
+    public virtual ICollection<Form> Forms { get; set; } = new List<Form>();
+
     public virtual ICollection<Healthcheck> Healthchecks { get; set; } = new List<Healthcheck>();
 
     public virtual ICollection<Healthrecord> Healthrecords { get; set; } = new List<Healthrecord>();

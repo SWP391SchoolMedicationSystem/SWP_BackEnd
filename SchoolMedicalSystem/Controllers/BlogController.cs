@@ -37,7 +37,7 @@ namespace SchoolMedicalSystem.Controllers
         public async Task<IActionResult> AddBlog([FromBody] CreateBlogDTO blogDto)
         {
             if (blogDto == null)
-                return BadRequest("Blog data is null."); 
+                return BadRequest("Blog data is null.");
             try
             {
                 await _blogService.AddBlogAsync(blogDto);
@@ -57,7 +57,7 @@ namespace SchoolMedicalSystem.Controllers
             try
             {
                 _blogService.UpdateBlog(dto);
-                return Ok("Health record updated.");
+                return Ok("Blog updated.");
             }
             catch (Exception ex)
             {
@@ -116,11 +116,27 @@ namespace SchoolMedicalSystem.Controllers
             try
             {
                 _blogService.RejectBlog(rejectBlogDto);
-                return Ok(new {Message = rejectBlogDto.Message});
+                return Ok(new { Message = rejectBlogDto.Message });
             }
             catch (Exception ex)
             {
                 return StatusCode(500, $"Error rejecting blog: {ex.Message}");
+            }
+        }
+        [HttpGet]
+        [Route("SearchBlogs")]
+        public async Task<IActionResult> SearchBlogs([FromBody] string searchTerm)
+        {
+            if (string.IsNullOrWhiteSpace(searchTerm))
+                return BadRequest("Search term cannot be empty.");
+            try
+            {
+                var blogs = await _blogService.SearchBlogsAsync(searchTerm);
+                return Ok(blogs);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error searching blogs: {ex.Message}");
             }
         }
     }

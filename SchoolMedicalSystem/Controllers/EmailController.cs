@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using BussinessLayer.IService;
+using BussinessLayer.QuartzJob.Scheduler;
 using DataAccessLayer.DTO;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -13,11 +14,13 @@ namespace SchoolMedicalSystem.Controllers
     {
         private readonly IEmailService _email;
         private readonly IMapper _mapper;
+        private readonly NotifyScheduler _notifyScheduler;
 
-        public EmailController(IEmailService email, IMapper mapper)
+        public EmailController(IEmailService email, IMapper mapper, NotifyScheduler notifyScheduler)
         {
             _email = email;
             _mapper = mapper;
+            _notifyScheduler = notifyScheduler;
         }
 
         [HttpPost("testemail")]
@@ -28,6 +31,28 @@ namespace SchoolMedicalSystem.Controllers
             await _email.SendEmailAsync(request);
 
             return Ok("Email sent successfully");
+        }
+        public class Notifyer()
+        {
+            public string id { get; set; }
+            public EmailDTO request { get; set; }
+            public DateTime time { get; set; }
+        }
+        [HttpPost("email/schedule")]
+        public async Task<IActionResult> ScheduleEmail([FromBody] Notifyer noti)
+        {
+            try
+            {
+                if (noti == null)
+                    return BadRequest("Email request cannot be empty or null");
+                // Schedule the email to be sent at the specified time
+                await _notifyScheduler.ScheduleNotifyJob(noti.id, noti.request, noti.time);
+                return Ok("Email scheduled successfully");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Error scheduling email: {ex.Message}");
+            }
         }
 
         [HttpPost("email/alluser")]
