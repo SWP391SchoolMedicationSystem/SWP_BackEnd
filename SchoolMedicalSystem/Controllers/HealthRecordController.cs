@@ -43,8 +43,8 @@ namespace SchoolMedicalSystem.Controllers
         }
 
         [HttpGet]
-        [Route("getById/{id}")]
-        public async Task<ActionResult<HealthRecordDTO>> GetById(int id)
+        [Route("getById")]
+        public async Task<ActionResult<HealthRecordDTO>> GetById([FromBody] int id)
         {
             var result = await _healthRecordService.GetHealthRecordByIdAsync(id);
             if (result == null)
@@ -53,22 +53,27 @@ namespace SchoolMedicalSystem.Controllers
         }
 
         [HttpGet]
-        [Route("getByStudentId/{studentId}")]
-        public async Task<ActionResult<List<Healthrecord>>> GetByStudentId(int studentId)
+        [Route("getByStudentId")]
+        public async Task<ActionResult<List<Healthrecord>>> GetByStudentId([FromBody] int studentId)
         {
             var result = await _healthRecordService.GetHealthRecordsByStudentIdAsync(studentId);
             return Ok(result);
         }
 
-        [HttpPut]
-        [Route("update/{id}")]
-        public IActionResult Update([FromBody] UpdateHealthRecordDTO dto, int id)
+        public class HealthRecordContent
         {
-            if (dto == null)
+            public UpdateHealthRecordDTO dto { get; set; }
+            public int id { get; set; }
+        }
+        [HttpPut]
+        [Route("update")]
+        public IActionResult Update([FromBody] HealthRecordContent content)
+        {
+            if (content.dto == null)
                 return BadRequest("Invalid data.");
             try
             {
-                _healthRecordService.UpdateHealthRecord(dto, id);
+                _healthRecordService.UpdateHealthRecord(content.dto, content.id);
                 return Ok("Health record updated.");
             }
             catch (Exception ex)
@@ -78,8 +83,8 @@ namespace SchoolMedicalSystem.Controllers
         }
 
         [HttpDelete]
-        [Route("delete/{id}")]
-        public IActionResult Delete(int id)
+        [Route("delete")]
+        public IActionResult Delete([FromBody] int id)
         {
             if (id <= 0)
                 return BadRequest("Invalid health record ID.");

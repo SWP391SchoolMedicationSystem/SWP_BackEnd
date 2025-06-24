@@ -125,7 +125,7 @@ namespace SchoolMedicalSystem.Controllers
         }
         [HttpGet]
         [Route("SearchBlogs")]
-        public async Task<IActionResult> SearchBlogs([FromQuery] string searchTerm)
+        public async Task<IActionResult> SearchBlogs([FromBody] string searchTerm)
         {
             if (string.IsNullOrWhiteSpace(searchTerm))
                 return BadRequest("Search term cannot be empty.");
