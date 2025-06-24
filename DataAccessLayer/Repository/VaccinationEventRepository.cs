@@ -98,6 +98,7 @@ namespace DataAccessLayer.Repository
                        select new StudentVaccinationStatusDTO
                        {
                            StudentId = s.Studentid,
+                           ParentId = p.Parentid,
                            StudentName = s.Fullname,
                            ParentName = p.Fullname,
                            ParentEmail = p.Email ?? "",

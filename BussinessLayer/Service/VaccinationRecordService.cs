@@ -13,11 +13,11 @@ namespace BussinessLayer.Service
 {
     public class VaccinationRecordService : IVaccinationRecordService
     {
-        private readonly IVaccinationRecordRepo _vaccinationRecordRepo;
+        private readonly IVaccinationRecordRepository _vaccinationRecordRepo;
         private readonly IStudentRepo _studentRepo;
         private readonly IVaccinationEventRepository _vaccinationEventRepository;
         private readonly IMapper _mapper;
-        public VaccinationRecordService(IVaccinationRecordRepo vaccinationRecordRepo,
+        public VaccinationRecordService(IVaccinationRecordRepository vaccinationRecordRepo,
             IVaccinationEventRepository vaccinationEventRepository,IStudentRepo studentRepo,
             IMapper mapper)
         {

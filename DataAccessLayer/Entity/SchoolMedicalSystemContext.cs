@@ -879,7 +879,7 @@ public partial class SchoolMedicalSystemContext : DbContext
             entity.Property(e => e.Description)
                 .HasColumnType("text")
                 .HasColumnName("DESCRIPTION");
-            entity.Property(e => e.Eventdate)
+            entity.Property(e => e.EventDate)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime")
                 .HasColumnName("EVENTDATE");
@@ -919,13 +919,13 @@ public partial class SchoolMedicalSystemContext : DbContext
                 .HasColumnName("CREATEDBY");
             entity.Property(e => e.Dosenumber).HasColumnName("DOSENUMBER");
             entity.Property(e => e.Isdeleted).HasColumnName("ISDELETED");
-            entity.Property(e => e.Parentconsent)
+            entity.Property(e => e.ParentConsent)
                 .HasDefaultValue(false)
                 .HasColumnName("PARENTCONSENT");
-            entity.Property(e => e.Reasonfordecline)
+            entity.Property(e => e.ReasonForDecline)
                 .HasMaxLength(500)
                 .HasColumnName("REASONFORDECLINE");
-            entity.Property(e => e.Responsedate)
+            entity.Property(e => e.ResponseDate)
                 .HasColumnType("datetime")
                 .HasColumnName("RESPONSEDATE");
             entity.Property(e => e.Studentid).HasColumnName("STUDENTID");
@@ -941,7 +941,7 @@ public partial class SchoolMedicalSystemContext : DbContext
             entity.Property(e => e.Vaccinename)
                 .HasMaxLength(100)
                 .HasColumnName("VACCINENAME");
-            entity.Property(e => e.Willattend)
+            entity.Property(e => e.WillAttend)
                 .HasDefaultValue(false)
                 .HasColumnName("WILLATTEND");
 

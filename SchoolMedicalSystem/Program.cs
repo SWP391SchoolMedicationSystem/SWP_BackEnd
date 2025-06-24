@@ -97,14 +97,11 @@ builder.Services.AddScoped<IClassRoomService, ClassroomService>();
 builder.Services.AddScoped<IStudentRepo, StudentRepo>();
 builder.Services.AddScoped<IStudentService, StudentService>();
 builder.Services.AddScoped<IRoleRepository, RoleRepository>();
-builder.Services.AddScoped<IVaccinationRecordRepo, VaccinationRecordRepository>();
+builder.Services.AddScoped<IVaccinationRecordRepository, VaccinationRecordRepository>();
 builder.Services.AddScoped<IVaccinationRecordService, VaccinationRecordService>();
 builder.Services.AddScoped<IVaccinationEventRepository, VaccinationEventRepository>();
 builder.Services.AddScoped<IVaccinationEventService, VaccinationEventService>();
 builder.Services.AddScoped<IOtpRepo, OtpRepo>();
-builder.Services.AddScoped<IVaccinationEventRepository, VaccinationEventRepository>();
-builder.Services.AddScoped<IVaccinationRecordRepository, VaccinationRecordRepository>();
-builder.Services.AddScoped<IVaccinationEventService, VaccinationEventService>();
 builder.Services.AddScoped<IPersonalMedicineService, PersonalMedicineService>();
 builder.Services.AddScoped<IPersonalMedicineRepository, PersonalMedicineRepository>();
 
