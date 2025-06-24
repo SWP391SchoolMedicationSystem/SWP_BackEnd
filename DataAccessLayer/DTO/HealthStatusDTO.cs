@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DataAccessLayer.IRepository
+namespace DataAccessLayer.DTO
 {
-    internal interface IHealthStatusCategory
+    internal class HealthStatusDTO
     {
     }
 }
