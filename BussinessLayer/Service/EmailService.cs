@@ -75,56 +75,100 @@ namespace BussinessLayer.Service
             }
         }
 
-        // Optimized method for sending multiple emails with connection pooling
-        public async Task<bool> SendBulkEmailsAsync(List<EmailDTO> emails, int batchSize = 10)
+        // Returns a list of all emails that failed to send across all batches.
+        // An empty list means everything was successful.
+        public async Task<List<EmailDTO>> SendBulkEmailsAsync(List<EmailDTO> emails, int batchSize = 10)
         {
             if (emails == null || !emails.Any())
-                return false;
+                return new List<EmailDTO>(); // Nothing to do
 
+            var allFailedEmails = new List<EmailDTO>();
             var batches = emails.Chunk(batchSize);
-            var tasks = new List<Task>();
+            var batchProcessingTasks = new List<Task<List<EmailDTO>>>();
 
             foreach (var batch in batches)
             {
-                var batchTask = ProcessEmailBatchAsync(batch);
-                tasks.Add(batchTask);
+                // Wait for a slot to become available
+                await _smtpSemaphore.WaitAsync();
+
+                // Start the task and add it to our list.
+                // The ContinueWith ensures the semaphore is released.
+                var task = ProcessEmailBatchAsync(batch)
+                    .ContinueWith(t =>
+                    {
+                        _smtpSemaphore.Release();
+                        return t.Result; // t.Result is the List<EmailDTO> of failed emails from the batch
+                    });
+                batchProcessingTasks.Add(task);
             }
 
-            await Task.WhenAll(tasks);
-            return true;
+            // Await all batch tasks to complete
+            var results = await Task.WhenAll(batchProcessingTasks);
+
+            // Aggregate the lists of ailed emails from all batches
+            foreach (var failedBatch in results)
+            {
+                if (failedBatch.Any())
+                {
+                    allFailedEmails.AddRange(failedBatch);
+                }
+            }
+
+            return allFailedEmails;
         }
 
-        private async Task ProcessEmailBatchAsync(IEnumerable<EmailDTO> emails)
+        private async Task<List<EmailDTO>> ProcessEmailBatchAsync(IEnumerable<EmailDTO> emailBatch)
         {
+            var failedEmails = new List<EmailDTO>();
             using var smtp = new SmtpClient();
             try
             {
                 await smtp.ConnectAsync(_config["EmailHost"], 587, SecureSocketOptions.StartTls);
                 await smtp.AuthenticateAsync(_config["EmailUserName"], _config["EmailPassword"]);
 
-                foreach (var emailDto in emails)
+                foreach (var emailDto in emailBatch)
                 {
-                    var email = new MimeMessage();
-                    email.From.Add(MailboxAddress.Parse(_config["EmailHost"]));
-                    email.To.Add(MailboxAddress.Parse(emailDto.To));
-                    email.Subject = emailDto.Subject;
-                    email.Body = new TextPart(TextFormat.Html) { Text = emailDto.Body };
+                    try
+                    {
+                        var email = new MimeMessage();
+                        email.From.Add(MailboxAddress.Parse(_config["EmailHost"]));
+                        email.To.Add(MailboxAddress.Parse(emailDto.To));
+                        email.Subject = emailDto.Subject;
+                        email.Body = new TextPart(TextFormat.Html) { Text = emailDto.Body };
 
-                    await smtp.SendAsync(email);
+                        await smtp.SendAsync(email);
+                    }
+                    catch (Exception ex)
+                    {
+                        // A specific email failed. Log the exception and the recipient.
+                        // For example: _logger.LogError(ex, "Failed to send email to {Recipient}", emailDto.To);
+                        failedEmails.Add(emailDto);
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                // A catastrophic failure occurred (e.g., couldn't connect or authenticate).
+                // All emails in this batch are considered failed.
+                // For example: _logger.LogError(ex, "Catastrophic failure in email batch processing.");
+                return emailBatch.ToList(); // Return the whole batch as failed
             }
             finally
             {
-                await smtp.DisconnectAsync(true);
+                if (smtp.IsConnected)
+                {
+                    await smtp.DisconnectAsync(true);
+                }
             }
+            return failedEmails;
         }
 
         // Optimized method for sending emails to all users
-        public async Task<bool> SendEmailToAllUsersAsync(int templateId)
+        public async Task<List<EmailDTO>> SendEmailToAllUsersAsync(int templateId)
         {
             var emailTemplate = GetTemplateByID(templateId);
             if (emailTemplate == null)
-                return false;
+                return null;
 
             var emails = GetAllUserEmails();
             var emailDtos = emails.Select(email => new EmailDTO
@@ -134,19 +178,21 @@ namespace BussinessLayer.Service
                 Body = emailTemplate.Body
             }).ToList();
 
-            return await SendBulkEmailsAsync(emailDtos);
+            var failedEmails = await SendBulkEmailsAsync(emailDtos);
+
+            return failedEmails;
         }
 
         // Optimized method for sending emails to specific users
-        public async Task<bool> SendEmailByListAsync(List<int> userIDs, int templateId)
+        public async Task<List<EmailDTO>> SendEmailByListAsync(List<int> userIDs, int templateId)
         {
             var request = GetTemplateByID(templateId);
             if (request == null)
-                return false;
+                return null;
 
             var emails = GetEmailListByID(userIDs);
             if (emails == null || !emails.Any())
-                return false;
+                return null;
 
             var emailDtos = emails.Select(email => new EmailDTO
             {
@@ -155,18 +201,21 @@ namespace BussinessLayer.Service
                 Body = request.Body
             }).ToList();
 
+            // Send the emails in bulk and return any that failed
             return await SendBulkEmailsAsync(emailDtos);
         }
 
         // Optimized method for sending personalized emails
-        public async Task<bool> SendPersonalizedEmailsAsync<T>(List<T> recipients, int templateId, 
+        public async Task<List<EmailDTO>> SendPersonalizedEmailsAsync<T>(List<T> recipients, int templateId, 
             Func<T, EmailDTO> personalizationFunc, int batchSize = 10)
         {
             var emailTemplate = GetTemplateByID(templateId);
             if (emailTemplate == null)
-                return false;
+                return null;
 
             var emailDtos = recipients.Select(recipient => personalizationFunc(recipient)).ToList();
+
+            // Ensure each email has the template's subject and body
             return await SendBulkEmailsAsync(emailDtos, batchSize);
         }
 

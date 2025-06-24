@@ -194,8 +194,11 @@ namespace SchoolMedicalSystem.Controllers
 
                 var result = await _vaccinationEventService.SendVaccinationEmailToAllParentsAsync(dto);
 
-                if (!result)
-                    return BadRequest("Failed to send vaccination emails.");
+                if (result == null)
+                    return BadRequest("Not found Event info or Email template");
+
+                if(result.Any())
+                    return BadRequest("Failed to send vaccination emails to some parents: " + string.Join(", ", result.Select(e => e.To)));
 
                 return Ok("Vaccination emails sent successfully.");
             }
@@ -221,8 +224,11 @@ namespace SchoolMedicalSystem.Controllers
 
                 var result = await _vaccinationEventService.SendVaccinationEmailToSpecificParentsAsync(dto, parentIds);
 
-                if (!result)
-                    return BadRequest("Failed to send vaccination emails.");
+                if (result == null)
+                    return BadRequest("Not found Event info or Email template");
+
+                if (result.Any())
+                    return BadRequest("Failed to send vaccination emails to some parents: " + string.Join(", ", result.Select(e => e.To)));
 
                 return Ok("Vaccination emails sent successfully to specific parents.");
             }

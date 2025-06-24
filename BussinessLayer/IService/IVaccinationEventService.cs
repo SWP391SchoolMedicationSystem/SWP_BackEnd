@@ -19,8 +19,8 @@ namespace BussinessLayer.IService
         Task<List<StudentVaccinationStatusDTO>> GetStudentResponsesForEventAsync(int eventId);
         
         // Email Operations
-        Task<bool> SendVaccinationEmailToAllParentsAsync(SendVaccinationEmailDTO dto);
-        Task<bool> SendVaccinationEmailToSpecificParentsAsync(SendVaccinationEmailDTO dto, List<int> parentIds);
+        Task<List<EmailDTO>> SendVaccinationEmailToAllParentsAsync(SendVaccinationEmailDTO dto);
+        Task<List<EmailDTO>> SendVaccinationEmailToSpecificParentsAsync(SendVaccinationEmailDTO dto, List<int> parentIds);
         
         // Parent Response Handling
         Task<bool> ProcessParentResponseAsync(ParentVaccinationResponseDTO dto);

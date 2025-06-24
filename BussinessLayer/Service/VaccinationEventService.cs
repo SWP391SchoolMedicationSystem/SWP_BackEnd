@@ -144,23 +144,23 @@ namespace BussinessLayer.Service
             return await _vaccinationEventRepository.GetStudentResponsesForEventAsync(eventId);
         }
 
-        public async Task<bool> SendVaccinationEmailToAllParentsAsync(SendVaccinationEmailDTO dto)
+        public async Task<List<EmailDTO>> SendVaccinationEmailToAllParentsAsync(SendVaccinationEmailDTO dto)
         {
             try
             {
                 var eventInfo = await _vaccinationEventRepository.GetByIdAsync(dto.VaccinationEventId);
                 if (eventInfo == null)
-                    return false;
+                    return null;
 
                 var emailTemplate = await _emailRepo.GetEmailTemplateByIdAsync(dto.EmailTemplateId);
                 if (emailTemplate == null)
-                    return false;
+                    return null;
 
                 var parents = await _vaccinationEventRepository.GetParentsForEventAsync(dto.VaccinationEventId);
                 var parentsWithEmails = parents.Where(p => !string.IsNullOrEmpty(p.Email)).ToList();
 
                 // Use the optimized bulk email method
-                return await _emailService.SendPersonalizedEmailsAsync(
+                var failList = await _emailService.SendPersonalizedEmailsAsync(
                     parentsWithEmails,
                     dto.EmailTemplateId,
                     parent => new EmailDTO
@@ -177,31 +177,35 @@ namespace BussinessLayer.Service
                     },
                     batchSize: 20 // Process 20 emails per batch
                 );
+
+                return failList;
             }
             catch (Exception ex)
             {
                 // Log the exception
-                return false;
+                // You can use a logging framework like Serilog, NLog, etc.
             }
+            
+            return new List<EmailDTO>();
         }
 
-        public async Task<bool> SendVaccinationEmailToSpecificParentsAsync(SendVaccinationEmailDTO dto, List<int> parentIds)
+        public async Task<List<EmailDTO>> SendVaccinationEmailToSpecificParentsAsync(SendVaccinationEmailDTO dto, List<int> parentIds)
         {
             try
             {
                 var eventInfo = await _vaccinationEventRepository.GetByIdAsync(dto.VaccinationEventId);
                 if (eventInfo == null)
-                    return false;
+                    return null;
 
                 var emailTemplate = await _emailRepo.GetEmailTemplateByIdAsync(dto.EmailTemplateId);
                 if (emailTemplate == null)
-                    return false;
+                    return null;
 
                 var parents = await _vaccinationEventRepository.GetParentsForEventAsync(dto.VaccinationEventId);
                 var specificParents = parents.Where(p => parentIds.Contains(p.Parentid) && !string.IsNullOrEmpty(p.Email)).ToList();
 
                 // Use the optimized bulk email method
-                return await _emailService.SendPersonalizedEmailsAsync(
+                var failList = await _emailService.SendPersonalizedEmailsAsync(
                     specificParents,
                     dto.EmailTemplateId,
                     parent => new EmailDTO
@@ -219,12 +223,16 @@ namespace BussinessLayer.Service
                     },
                     batchSize: 20 // Process 20 emails per batch
                 );
+
+                return failList;
             }
             catch (Exception ex)
             {
                 // Log the exception
-                return false;
+                // You can use a logging framework like Serilog, NLog, etc.
             }
+
+            return new List<EmailDTO>();
         }
 
         public async Task<bool> ProcessParentResponseAsync(ParentVaccinationResponseDTO dto)
