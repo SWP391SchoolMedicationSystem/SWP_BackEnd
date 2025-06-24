@@ -44,7 +44,7 @@ namespace SchoolMedicalSystem.Controllers
 
         [HttpGet]
         [Route("getById")]
-        public async Task<ActionResult<HealthRecordDTO>> GetById([FromBody] int id)
+        public async Task<ActionResult<HealthRecordDTO>> GetById([FromQuery] int id)
         {
             var result = await _healthRecordService.GetHealthRecordByIdAsync(id);
             if (result == null)
@@ -54,7 +54,7 @@ namespace SchoolMedicalSystem.Controllers
 
         [HttpGet]
         [Route("getByStudentId")]
-        public async Task<ActionResult<List<Healthrecord>>> GetByStudentId([FromBody] int studentId)
+        public async Task<ActionResult<List<Healthrecord>>> GetByStudentId([FromQuery] int studentId)
         {
             var result = await _healthRecordService.GetHealthRecordsByStudentIdAsync(studentId);
             return Ok(result);
