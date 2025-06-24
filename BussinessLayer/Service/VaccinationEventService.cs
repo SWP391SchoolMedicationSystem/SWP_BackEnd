@@ -157,13 +157,15 @@ namespace BussinessLayer.Service
                     return false;
 
                 var parents = await _vaccinationEventRepository.GetParentsForEventAsync(dto.VaccinationEventId);
-                var parentEmails = parents.Where(p => !string.IsNullOrEmpty(p.Email)).Select(p => p.Email).ToList();
+                var parentsWithEmails = parents.Where(p => !string.IsNullOrEmpty(p.Email)).ToList();
 
-                foreach (var email in parentEmails)
-                {
-                    var personalizedEmail = new EmailDTO
+                // Use the optimized bulk email method
+                return await _emailService.SendPersonalizedEmailsAsync(
+                    parentsWithEmails,
+                    dto.EmailTemplateId,
+                    parent => new EmailDTO
                     {
-                        To = email,
+                        To = parent.Email!,
                         Subject = emailTemplate.Subject.Replace("{EventName}", eventInfo.Vaccinationeventname),
                         Body = emailTemplate.Body
                             .Replace("{EventName}", eventInfo.Vaccinationeventname)
@@ -171,13 +173,10 @@ namespace BussinessLayer.Service
                             .Replace("{Location}", eventInfo.Location)
                             .Replace("{Description}", eventInfo.Description)
                             .Replace("{CustomMessage}", dto.CustomMessage ?? "")
-                            .Replace("{ResponseLink}", GenerateResponseLink(email, dto.VaccinationEventId))
-                    };
-
-                    await _emailService.SendEmailAsync(personalizedEmail);
-                }
-
-                return true;
+                            .Replace("{ResponseLink}", GenerateResponseLink(parent.Email!, dto.VaccinationEventId))
+                    },
+                    batchSize: 20 // Process 20 emails per batch
+                );
             }
             catch (Exception ex)
             {
@@ -201,9 +200,11 @@ namespace BussinessLayer.Service
                 var parents = await _vaccinationEventRepository.GetParentsForEventAsync(dto.VaccinationEventId);
                 var specificParents = parents.Where(p => parentIds.Contains(p.Parentid) && !string.IsNullOrEmpty(p.Email)).ToList();
 
-                foreach (var parent in specificParents)
-                {
-                    var personalizedEmail = new EmailDTO
+                // Use the optimized bulk email method
+                return await _emailService.SendPersonalizedEmailsAsync(
+                    specificParents,
+                    dto.EmailTemplateId,
+                    parent => new EmailDTO
                     {
                         To = parent.Email!,
                         Subject = emailTemplate.Subject.Replace("{EventName}", eventInfo.Vaccinationeventname),
@@ -215,12 +216,9 @@ namespace BussinessLayer.Service
                             .Replace("{ParentName}", parent.Fullname)
                             .Replace("{CustomMessage}", dto.CustomMessage ?? "")
                             .Replace("{ResponseLink}", GenerateResponseLink(parent.Email!, dto.VaccinationEventId))
-                    };
-
-                    await _emailService.SendEmailAsync(personalizedEmail);
-                }
-
-                return true;
+                    },
+                    batchSize: 20 // Process 20 emails per batch
+                );
             }
             catch (Exception ex)
             {

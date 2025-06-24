@@ -1,12 +1,14 @@
 ﻿using DataAccessLayer.DTO;
 using DataAccessLayer.Entity;
 
-
 namespace BussinessLayer.IService
 {
     public interface IEmailService
     {
         Task SendEmailAsync(EmailDTO request);
+        Task<bool> SendBulkEmailsAsync(List<EmailDTO> emails, int batchSize = 10);
+        Task<bool> SendPersonalizedEmailsAsync<T>(List<T> recipients, int templateId, 
+            Func<T, EmailDTO> personalizationFunc, int batchSize = 10);
         Task<EmailTemplate> CreateEmailTemplate(EmailDTO request);
         Task<bool> SendEmailToAllUsersAsync(int id);
         List<string> GetAllUserEmails();

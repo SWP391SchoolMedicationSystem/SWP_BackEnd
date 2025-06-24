@@ -1,9 +1,7 @@
 ﻿using MailKit.Security;
 using MimeKit.Text;
 using MimeKit;
-
 using MailKit.Net.Smtp;
-
 using Microsoft.Extensions.Configuration;
 using DataAccessLayer.Entity;
 using DataAccessLayer.DTO;
@@ -25,6 +23,8 @@ namespace BussinessLayer.Service
         private readonly SchoolMedicalSystemContext _context;
         private readonly IEmailRepo _emailRepository;
         private readonly IMapper _mapper;
+        private readonly SemaphoreSlim _smtpSemaphore;
+        private readonly int _maxConcurrentEmails;
 
         public EmailService(IMapper mapper,
             IConfiguration config, SchoolMedicalSystemContext context, IEmailRepo emailRepo)
@@ -33,6 +33,8 @@ namespace BussinessLayer.Service
             _config = config;
             _context = context;
             _emailRepository = emailRepo;
+            _maxConcurrentEmails = int.TryParse(_config["EmailSettings:MaxConcurrentEmails"], out var max) ? max : 5;
+            _smtpSemaphore = new SemaphoreSlim(_maxConcurrentEmails, _maxConcurrentEmails);
         }
 
         public List<string> GetAllUserEmails()
@@ -52,19 +54,72 @@ namespace BussinessLayer.Service
 
         public async Task SendEmailAsync(EmailDTO request)
         {
-            var email = new MimeMessage();
-            email.From.Add(MailboxAddress.Parse(_config["EmailHost"]));
-            email.To.Add(MailboxAddress.Parse(request.To));
-            email.Subject = request.Subject;
-            email.Body = new TextPart(TextFormat.Html) { Text = request.Body };
+            await _smtpSemaphore.WaitAsync();
+            try
+            {
+                var email = new MimeMessage();
+                email.From.Add(MailboxAddress.Parse(_config["EmailHost"]));
+                email.To.Add(MailboxAddress.Parse(request.To));
+                email.Subject = request.Subject;
+                email.Body = new TextPart(TextFormat.Html) { Text = request.Body };
 
-            using var smtp = new SmtpClient();
-            await smtp.ConnectAsync(_config["EmailHost"], 587, SecureSocketOptions.StartTls);
-            await smtp.AuthenticateAsync(_config["EmailUserName"], _config["EmailPassword"]);
-            await smtp.SendAsync(email);
-            await smtp.DisconnectAsync(true);
+                using var smtp = new SmtpClient();
+                await smtp.ConnectAsync(_config["EmailHost"], 587, SecureSocketOptions.StartTls);
+                await smtp.AuthenticateAsync(_config["EmailUserName"], _config["EmailPassword"]);
+                await smtp.SendAsync(email);
+                await smtp.DisconnectAsync(true);
+            }
+            finally
+            {
+                _smtpSemaphore.Release();
+            }
         }
 
+        // Optimized method for sending multiple emails with connection pooling
+        public async Task<bool> SendBulkEmailsAsync(List<EmailDTO> emails, int batchSize = 10)
+        {
+            if (emails == null || !emails.Any())
+                return false;
+
+            var batches = emails.Chunk(batchSize);
+            var tasks = new List<Task>();
+
+            foreach (var batch in batches)
+            {
+                var batchTask = ProcessEmailBatchAsync(batch);
+                tasks.Add(batchTask);
+            }
+
+            await Task.WhenAll(tasks);
+            return true;
+        }
+
+        private async Task ProcessEmailBatchAsync(IEnumerable<EmailDTO> emails)
+        {
+            using var smtp = new SmtpClient();
+            try
+            {
+                await smtp.ConnectAsync(_config["EmailHost"], 587, SecureSocketOptions.StartTls);
+                await smtp.AuthenticateAsync(_config["EmailUserName"], _config["EmailPassword"]);
+
+                foreach (var emailDto in emails)
+                {
+                    var email = new MimeMessage();
+                    email.From.Add(MailboxAddress.Parse(_config["EmailHost"]));
+                    email.To.Add(MailboxAddress.Parse(emailDto.To));
+                    email.Subject = emailDto.Subject;
+                    email.Body = new TextPart(TextFormat.Html) { Text = emailDto.Body };
+
+                    await smtp.SendAsync(email);
+                }
+            }
+            finally
+            {
+                await smtp.DisconnectAsync(true);
+            }
+        }
+
+        // Optimized method for sending emails to all users
         public async Task<bool> SendEmailToAllUsersAsync(int templateId)
         {
             var emailTemplate = GetTemplateByID(templateId);
@@ -72,32 +127,47 @@ namespace BussinessLayer.Service
                 return false;
 
             var emails = GetAllUserEmails();
-            foreach (var email in emails)
+            var emailDtos = emails.Select(email => new EmailDTO
             {
-                emailTemplate.To = email;
-                await SendEmailAsync(emailTemplate);
-            }
+                To = email,
+                Subject = emailTemplate.Subject,
+                Body = emailTemplate.Body
+            }).ToList();
 
-            return true;
+            return await SendBulkEmailsAsync(emailDtos);
         }
 
+        // Optimized method for sending emails to specific users
         public async Task<bool> SendEmailByListAsync(List<int> userIDs, int templateId)
         {
             var request = GetTemplateByID(templateId);
             if (request == null)
                 return false;
 
-            request.To = string.Empty;
             var emails = GetEmailListByID(userIDs);
             if (emails == null || !emails.Any())
                 return false;
 
-            foreach (var email in emails)
+            var emailDtos = emails.Select(email => new EmailDTO
             {
-                request.To = email;
-                await SendEmailAsync(request);
-            }
-            return true;
+                To = email,
+                Subject = request.Subject,
+                Body = request.Body
+            }).ToList();
+
+            return await SendBulkEmailsAsync(emailDtos);
+        }
+
+        // Optimized method for sending personalized emails
+        public async Task<bool> SendPersonalizedEmailsAsync<T>(List<T> recipients, int templateId, 
+            Func<T, EmailDTO> personalizationFunc, int batchSize = 10)
+        {
+            var emailTemplate = GetTemplateByID(templateId);
+            if (emailTemplate == null)
+                return false;
+
+            var emailDtos = recipients.Select(recipient => personalizationFunc(recipient)).ToList();
+            return await SendBulkEmailsAsync(emailDtos, batchSize);
         }
 
         public async Task<List<EmailTemplate>> GetEmailAllTemplate()
