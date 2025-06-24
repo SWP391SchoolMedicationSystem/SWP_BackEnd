@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
 using BussinessLayer.IService;
-using DataAccessLayer.DTO;
+using DataAccessLayer.DTO.Consultation;
 using DataAccessLayer.Entity;
 using DataAccessLayer.IRepository;
 using DataAccessLayer.Repository;

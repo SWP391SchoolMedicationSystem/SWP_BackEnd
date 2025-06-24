@@ -1,6 +1,6 @@
 ﻿using BussinessLayer.IService;
 using BussinessLayer.Service;
-using DataAccessLayer.DTO;
+using DataAccessLayer.DTO.Consultation;
 using DataAccessLayer.Entity;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

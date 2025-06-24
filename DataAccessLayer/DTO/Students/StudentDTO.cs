@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using DataAccessLayer.DTO.Parents;
 using DataAccessLayer.Entity;
 
-namespace DataAccessLayer.DTO
+namespace DataAccessLayer.DTO.Students
 {
     public class StudentDTO
     {

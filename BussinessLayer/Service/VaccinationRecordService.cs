@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using BussinessLayer.IService;
 using DataAccessLayer.DTO;
+using DataAccessLayer.DTO.Students;
 using DataAccessLayer.Entity;
 using DataAccessLayer.IRepository;
 

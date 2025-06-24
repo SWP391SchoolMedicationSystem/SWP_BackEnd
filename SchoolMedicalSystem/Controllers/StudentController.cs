@@ -1,5 +1,4 @@
 ﻿using BussinessLayer.IService;
-using DataAccessLayer.DTO;
 using DataAccessLayer.Entity;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -8,6 +7,7 @@ using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 using DataAccessLayer.Repository;
 using DataAccessLayer.IRepository;
+using DataAccessLayer.DTO.Students;
 
 namespace SchoolMedicalSystem.Controllers
 {
