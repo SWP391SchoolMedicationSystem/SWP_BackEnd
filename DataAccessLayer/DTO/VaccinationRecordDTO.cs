@@ -22,5 +22,13 @@ namespace DataAccessLayer.DTO
 
         public bool Confirmedbyparent { get; set; }
 
+        public bool? Willattend { get; set; }
+
+        public string? Reasonfordecline { get; set; }
+
+        public bool? Parentconsent { get; set; }
+
+        public DateTime? Responsedate { get; set; }
+
     }
 }

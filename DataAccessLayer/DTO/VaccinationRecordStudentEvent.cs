@@ -22,6 +22,14 @@ namespace DataAccessLayer.DTO
 
         public bool Confirmedbyparent { get; set; }
 
+        public bool? Willattend { get; set; }
+
+        public string? Reasonfordecline { get; set; }
+
+        public bool? Parentconsent { get; set; }
+
+        public DateTime? Responsedate { get; set; }
+
         public bool Isdeleted { get; set; }
         public List<StudentDTO> Students { get; set; } = new List<StudentDTO>();
         public List<VaccinationEventDTO> Vaccinationevents { get; set; } = new List<VaccinationEventDTO>();

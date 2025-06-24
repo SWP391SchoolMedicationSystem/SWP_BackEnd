@@ -16,5 +16,6 @@ namespace BussinessLayer.IService
         void UpdateVaccinationRecord(VaccinationRecordDTO record);
         void DeleteVaccinationRecord(int id);
 
+
     }
 }
