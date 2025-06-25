@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,11 +10,30 @@ namespace BussinessLayer.IService
 {
     public interface IVaccinationEventService
     {
-        Task<List<Vaccinationevent>> GetAllVaccinationEvents();
-        Task<Vaccinationevent> GetVaccinationEventById(int id);
-        Task AddVaccinationEventAsync(VaccinationEventDTO eventDto);
-        void UpdateVaccinationEvent(VaccinationEventDTO eventDto);
-        void DeleteVaccinationEvent(int id);
-
+        // CRUD Operations
+        Task<List<VaccinationEventDTO>> GetAllEventsAsync();
+        Task<VaccinationEventDTO?> GetEventByIdAsync(int eventId);
+        Task<VaccinationEventDTO> CreateEventAsync(CreateVaccinationEventDTO dto, string createdBy);
+        Task<VaccinationEventDTO> UpdateEventAsync(UpdateVaccinationEventDTO dto, string modifiedBy);
+        Task<bool> DeleteEventAsync(int eventId, string deletedBy);
+        
+        // Event Management
+        Task<List<VaccinationEventDTO>> GetUpcomingEventsAsync();
+        Task<List<VaccinationEventDTO>> GetEventsByDateRangeAsync(DateTime startDate, DateTime endDate);
+        Task<VaccinationEventSummaryDTO> GetEventSummaryAsync(int eventId);
+        Task<List<StudentVaccinationStatusDTO>> GetStudentResponsesForEventAsync(int eventId);
+        
+        // Email Operations
+        Task<List<EmailDTO>> SendVaccinationEmailToAllParentsAsync(SendVaccinationEmailDTO dto);
+        Task<List<EmailDTO>> SendVaccinationEmailToSpecificParentsAsync(SendVaccinationEmailDTO dto, List<int> parentIds);
+        
+        // Parent Response Handling
+        Task<bool> ProcessParentResponseAsync(ParentVaccinationResponseDTO dto);
+        Task<List<ParentVaccinationResponseDTO>> GetParentResponsesForEventAsync(int eventId);
+        
+        // Statistics
+        Task<Dictionary<string, int>> GetEventStatisticsAsync(int eventId);
+        Task<List<VaccinationEventDTO>> GetEventsWithStatisticsAsync();
+        Task<StudentVaccinationStatusDTO?> GetStudentByParentEmailAsync(string email, int eventId);
     }
-}
+} 

@@ -11,6 +11,7 @@ namespace DataAccessLayer.DTO
         public int Vaccinationrecordid { get; set; }
 
         public int Studentid { get; set; }
+        public int Parentid { get; set; }
 
         public int Vaccinationeventid { get; set; }
 

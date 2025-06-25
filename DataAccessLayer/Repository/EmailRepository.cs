@@ -16,5 +16,12 @@ namespace DataAccessLayer.Repository
         {
             _dbset = context.Set<EmailTemplate>();
         }
+
+        public async Task<EmailTemplate?> GetEmailTemplateByIdAsync(int id)
+        {
+            return await _dbset.FirstOrDefaultAsync(e => e.EmailTemplateId == id && !e.IsDeleted);
+        }
+
+
     }
 }

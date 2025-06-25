@@ -18,7 +18,7 @@ namespace SchoolMedicalSystem.Controllers
         public async Task<IActionResult> GetAllUsers()
         {
             var users = await userService.GetAllAsync();
-            var usersDto = mapper.Map<List<UserDTo>>(users);
+            var usersDto = mapper.Map<List<UserDTO>>(users);
             return Ok(users);
         }
     

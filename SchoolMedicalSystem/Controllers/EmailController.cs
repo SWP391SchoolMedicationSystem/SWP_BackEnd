@@ -58,7 +58,13 @@ namespace SchoolMedicalSystem.Controllers
         [HttpPost("email/alluser")]
         public async Task<IActionResult> SendEmailToAllUsers([FromBody] int templateId)
         {
-            await _email.SendEmailToAllUsersAsync(templateId);
+            var failList = await _email.SendEmailToAllUsersAsync(templateId);
+            if(failList == null)
+                return NotFound("No email template found or failed to send emails");
+
+            if(failList.Any())
+                return Ok("Email sent to all users with some failures: " + string.Join(", ", failList.Select(e => e.To)));
+
             return Ok("Email sent to all users successfully");
         }
 
@@ -68,8 +74,12 @@ namespace SchoolMedicalSystem.Controllers
             if (request == null || request.userIDs == null)
                 return BadRequest("Email list cannot be empty or null");
             var result = await _email.SendEmailByListAsync(request.userIDs, request.emailTemplateID);
-            if (!result)
-                return BadRequest("Failed to send emails");
+            if (result == null)
+                return BadRequest("No email template found or failed to send emails");
+
+            if (result.Any())
+                return Ok("Emails sent successfully to the specified users: " + string.Join(", ", result.Select(e => e.To)));
+
             return Ok("Emails sent successfully");
         }
 

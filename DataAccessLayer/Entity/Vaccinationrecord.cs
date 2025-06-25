@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 namespace DataAccessLayer.Entity;
@@ -19,13 +19,13 @@ public partial class Vaccinationrecord
 
     public bool Confirmedbyparent { get; set; }
 
-    public bool? Willattend { get; set; }
+    public bool? WillAttend { get; set; }
 
-    public string? Reasonfordecline { get; set; }
+    public string? ReasonForDecline { get; set; }
 
-    public bool? Parentconsent { get; set; }
+    public bool? ParentConsent { get; set; }
 
-    public DateTime? Responsedate { get; set; }
+    public DateTime? ResponseDate { get; set; }
 
     public bool Isdeleted { get; set; }
 

@@ -76,6 +76,10 @@ namespace BussinessLayer.Service
         {
             var users = await _userRepository.GetAllAsync();
             var filteredUsers = users.FirstOrDefault(u => u.Email == email);
+            if (filteredUsers == null)
+            {
+                throw new InvalidOperationException("User not found.");
+            }
 
             return filteredUsers;
         }
