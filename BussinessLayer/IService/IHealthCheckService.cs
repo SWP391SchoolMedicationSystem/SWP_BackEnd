@@ -13,6 +13,9 @@ namespace BussinessLayer.IService
         Task<Healthcheck> AddHealthCheckAsync(HealthCheckDTO healthCheckDto);
         Task<Healthcheck> UpdateHealthCheckAsync(HealthCheckDTO healthCheckDto);
         Task <bool> DeleteHealthCheckAsync(int checkId);
-        Task<List<HealthCheckDTO>> GetAllHealthChecksAsync();
+        List<HealthCheckDTO> GetAllHealthChecksAsync();
+        Task<Healthcheck> GetHealthCheckByIdAsync(int checkId);
+        Task<List<HealthCheckDTO>> GetHealthChecksByStudentIdAsync(int studentId);
+
     }
 }

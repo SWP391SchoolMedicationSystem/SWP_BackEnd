@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using BussinessLayer.IService;
 using DataAccessLayer.DTO;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace SchoolMedicalSystem.Controllers

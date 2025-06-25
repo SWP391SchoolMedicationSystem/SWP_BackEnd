@@ -6,8 +6,9 @@ namespace SchoolMedicalSystem.Profiles
 {
     public class HealthCheckProfile : Profile
     {
-        public HealthCheckProfile() {
-        CreateMap<Healthcheck, HealthCheckDTO>().ReverseMap();
+        public HealthCheckProfile()
+        {
+            CreateMap<Healthcheck, HealthCheckDTO>().ReverseMap();
         }
 
     }

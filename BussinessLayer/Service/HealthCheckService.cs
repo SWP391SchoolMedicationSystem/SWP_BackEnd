@@ -43,7 +43,7 @@ namespace BussinessLayer.Service
                 return healthcheck; // Return the created healthcheck object
             }
 
-            return null; // Return null if the conditions are not met
+            return null; 
         }
 
         public async Task<bool> DeleteHealthCheckAsync(int checkId)
@@ -58,51 +58,85 @@ namespace BussinessLayer.Service
                 check.Isdeleted = true;
                 _healthCheckRepository.Save();
                 return true;
-                // Ensure changes are saved
             }
         }
 
-        public async Task<List<HealthCheckDTO>> GetAllHealthChecksAsync()
+        public List<HealthCheckDTO> GetAllHealthChecksAsync()
         {
-            var listhealth =  await _healthCheckRepository.GetAllAsync();
-            return _mapper.Map<List<HealthCheckDTO>>(listhealth);
+            var listhealth = _healthCheckRepository.GetAllAsync().Result;
+            var result = new List<HealthCheckDTO>();
+            foreach (var healthcheck in listhealth)
+            {
+                {
+                    if(_healthCheckRepository.GetAllAsync().Result.FirstOrDefault(h => h.Checkid == healthcheck.Checkid) != null)
+
+                    result.Add(new HealthCheckDTO
+                    {
+                        Checkid = healthcheck.Checkid,
+                        Staffid = healthcheck.Staffid,
+                        Studentid = healthcheck.Studentid,
+                        Notes = healthcheck.Notes,
+                        Height = healthcheck.Height,
+                        Weight = healthcheck.Weight,
+                        Visionleft = healthcheck.Visionleft,
+                        Visionright = healthcheck.Visionright,
+                        Bloodpressure = healthcheck.Bloodpressure,
+                        Checkdate = healthcheck.Checkdate
+                    });
+                }
+
+            }
+            return result;
         }
 
         public async Task<Healthcheck> UpdateHealthCheckAsync(HealthCheckDTO healthCheckDto)
         {
-                Healthcheck check = await _healthCheckRepository.GetByIdAsync(healthCheckDto.Checkid);
-                if (check != null)
-                    if(!string.IsNullOrEmpty(healthCheckDto.Notes))
+            Healthcheck check = await _healthCheckRepository.GetByIdAsync(healthCheckDto.Checkid);
+            if (check != null)
+            {
+                if (!string.IsNullOrEmpty(healthCheckDto.Notes))
                 {
                     check.Notes = healthCheckDto.Notes;
                 }
-            if (healthCheckDto.Height.HasValue)
-            {
-                check.Height = healthCheckDto.Height.Value;
+
+
+                if (healthCheckDto.Height.HasValue)
+                {
+                    check.Height = healthCheckDto.Height.Value;
+                }
+                if (healthCheckDto.Weight.HasValue)
+                {
+                    check.Weight = healthCheckDto.Weight.Value;
+                }
+                if (healthCheckDto.Visionleft.HasValue)
+                {
+                    check.Visionleft = healthCheckDto.Visionleft.Value;
+                }
+                if (healthCheckDto.Visionright.HasValue)
+                {
+                    check.Visionright = healthCheckDto.Visionright.Value;
+                }
+                if (!string.IsNullOrEmpty(healthCheckDto.Bloodpressure))
+                {
+                    check.Bloodpressure = healthCheckDto.Bloodpressure;
+                }
             }
-            if (healthCheckDto.Weight.HasValue)
-            {
-                check.Weight = healthCheckDto.Weight.Value;
-            }
-            if (healthCheckDto.Visionleft.HasValue)
-            {
-                check.Visionleft = healthCheckDto.Visionleft.Value;
-            }
-            if (healthCheckDto.Visionright.HasValue)
-            {
-                check.Visionright = healthCheckDto.Visionright.Value;
-            }
-            if (!string.IsNullOrEmpty(healthCheckDto.Bloodpressure))
-            {
-                check.Bloodpressure = healthCheckDto.Bloodpressure;
-            }
+
             check.Updatedat = DateTime.Now; // Update the timestamp
             _healthCheckRepository.Update(check); // Use Update method to save changes
             _healthCheckRepository.Save(); // Ensure changes are saved
             return check; // Return the updated healthcheck object
-        
-                    // Ensure changes are saved
-                }
+        }
+        public async Task<Healthcheck> GetHealthCheckByIdAsync(int checkId)
+        {
+            return await _healthCheckRepository.GetByIdAsync(checkId);
+        }
+        public async Task<List<HealthCheckDTO>> GetHealthChecksByStudentIdAsync(int studentId)
+        {
+            var healthChecks = await _healthCheckRepository.GetAllAsync();
+            var studentHealthChecks = healthChecks.Where(h => h.Studentid == studentId).ToList();
+            return _mapper.Map<List<HealthCheckDTO>>(studentHealthChecks);
         }
     }
+}
 

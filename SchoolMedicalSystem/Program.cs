@@ -27,7 +27,7 @@ builder.Services.AddCors(options =>
                           .AllowAnyHeader());
     options.AddPolicy("AllowReact", policy =>
     {
-        policy.WithOrigins("http://localhost:3000") 
+        policy.WithOrigins("http://localhost:3000")
               .AllowAnyHeader()
               .AllowAnyMethod();
     });
@@ -57,14 +57,14 @@ builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
 builder.Services.AddDbContext<SchoolMedicalSystemContext>(options =>
     options.UseSqlServer(
-        builder.Configuration.GetConnectionString("SchoolMedicalSystemContext") 
+        builder.Configuration.GetConnectionString("SchoolMedicalSystemContext")
         ?? throw new InvalidOperationException("Connection string 'SchoolMedicalSystemContext' not found.")));
 builder.Services.AddScoped<IParentRepository, ParentRepository>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IStaffService, StaffService>();
 builder.Services.AddScoped<IStaffRepository, StaffRepository>();
 builder.Services.AddScoped<IEmailRepo, EmailRepository>();
-builder.Services.AddScoped<IUserRepository,UserRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IParentService, ParentService>();
 builder.Services.AddScoped<IBlogRepo, BlogRepo>();

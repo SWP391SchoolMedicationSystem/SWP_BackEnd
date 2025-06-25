@@ -6,7 +6,8 @@ namespace SchoolMedicalSystem.Profiles
 {
     public class UserProfile : Profile
     {
-        public UserProfile() {
+        public UserProfile()
+        {
             CreateMap<UserDTo, User>().ReverseMap();
             CreateMap<User, UserDTo>().ReverseMap();
         }

@@ -1,9 +1,6 @@
 ﻿using BussinessLayer.IService;
 using DataAccessLayer.DTO;
-using DataAccessLayer.Entity;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using OfficeOpenXml;
 
 namespace SchoolMedicalSystem.Controllers
 {
@@ -56,7 +53,7 @@ namespace SchoolMedicalSystem.Controllers
         [HttpPost("student")]
         public async Task<IActionResult> UploadStudent(List<InsertStudent> studentlist)
         {
-            if(studentlist != null)
+            if (studentlist != null)
             {
                 await _studentService.UploadStudentList(studentlist);
             }

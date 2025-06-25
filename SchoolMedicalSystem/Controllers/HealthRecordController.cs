@@ -1,9 +1,7 @@
 ﻿using BussinessLayer.IService;
 using DataAccessLayer.DTO;
-using DataAccessLayer;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using DataAccessLayer.Entity;
+using Microsoft.AspNetCore.Mvc;
 
 namespace SchoolMedicalSystem.Controllers
 {
