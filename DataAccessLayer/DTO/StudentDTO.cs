@@ -10,7 +10,7 @@ namespace DataAccessLayer.DTO
 {
     public class StudentDTO
     {
-        public int Id { get; set; }
+        public int StudentId { get; set; }
         public string? StudentCode { get; set; }
         public string Fullname { get; set; } = null!;
         public string? BloodType { get; set; }
