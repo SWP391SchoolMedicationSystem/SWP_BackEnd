@@ -60,20 +60,20 @@ namespace SchoolMedicalSystem.Controllers
             return Ok(result);
         }
 
-        public class HealthRecordContent
+/*        public class HealthRecordContent
         {
             public UpdateHealthRecordDTO dto { get; set; }
             public int id { get; set; }
-        }
+        }*/
         [HttpPut]
         [Route("update")]
-        public IActionResult Update([FromBody] HealthRecordContent content)
+        public IActionResult Update([FromBody] UpdateHealthRecordDTO content, [FromQuery] int id)
         {
-            if (content.dto == null)
+            if (content == null)
                 return BadRequest("Invalid data.");
             try
             {
-                _healthRecordService.UpdateHealthRecord(content.dto, content.id);
+                _healthRecordService.UpdateHealthRecord(content, id);
                 return Ok("Health record updated.");
             }
             catch (Exception ex)
@@ -84,7 +84,7 @@ namespace SchoolMedicalSystem.Controllers
 
         [HttpDelete]
         [Route("delete")]
-        public IActionResult Delete([FromBody] int id)
+        public IActionResult Delete([FromQuery] int id)
         {
             if (id <= 0)
                 return BadRequest("Invalid health record ID.");
