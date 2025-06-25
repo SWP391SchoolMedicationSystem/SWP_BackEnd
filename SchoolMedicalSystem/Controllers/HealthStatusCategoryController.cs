@@ -25,7 +25,7 @@ namespace SchoolMedicalSystem.Controllers
             return Ok(categoriesDto);
         }
         [HttpGet("category/{id}")]
-        public async Task<IActionResult> GetCategoryById([FromBody] int id)
+        public async Task<IActionResult> GetCategoryById(int id)
         {
             var category = await _healthStatusCategoryService.GetHealthstatuscategoryByID(id);
             if (category == null)

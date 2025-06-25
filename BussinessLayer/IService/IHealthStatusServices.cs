@@ -11,7 +11,7 @@ namespace BussinessLayer.IService
     {
         List<Healthstatus> GetHealthstatuses();
         Healthstatus GetHealthstatusByID(int id);
-        void AddHealthStatus(Healthstatus healthstatus);
+        Task AddHealthStatus(Healthstatus healthstatus);
         void UpdateHealthstatus(Healthstatus healthstatus);
         void DeleteHealthstatus(int id);
         List<Healthstatus> GetHealthstatusesByCategoryId(int categoryId);

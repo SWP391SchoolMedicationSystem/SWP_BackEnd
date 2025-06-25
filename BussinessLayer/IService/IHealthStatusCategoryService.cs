@@ -15,5 +15,6 @@ namespace BussinessLayer.IService
         Task AddHealthStatusCategory(HealthStatusCategoryDTO healthstatuscategory);
         void UpdateHealthstatuscategory(HealthStatusCategoryDTO healthstatuscategory);
         void DeleteHealthstatuscategory(int id);
+
     }
 }

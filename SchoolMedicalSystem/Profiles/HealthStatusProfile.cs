@@ -4,10 +4,11 @@ using DataAccessLayer.Entity;
 
 namespace SchoolMedicalSystem.Profiles
 {
-    public class HealthStatusCategoryProfile : Profile
+    public class HealthStatusProfile : Profile
     {
-        public HealthStatusCategoryProfile() {
+        public HealthStatusProfile() {
             CreateMap<Healthstatuscategory,HealthStatusCategoryDTO>().ReverseMap();
+            CreateMap<HealthStatusDTO, Healthstatus>().ReverseMap();
         }
     }
 }

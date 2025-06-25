@@ -73,7 +73,7 @@ namespace SchoolMedicalSystem.Controllers
         }
 
         [HttpDelete("DeleteStudent/{id}")]
-        public IActionResult DeleteStudent([FromBody] int id)
+        public Task<IActionResult> DeleteStudent([FromBody] int id)
         {
             _studentService.DeleteStudent(id);
             return Ok($"Student with ID {id} deleted successfully.");
@@ -100,7 +100,10 @@ namespace SchoolMedicalSystem.Controllers
             }
             return Ok(students);
         }
+
+    
     }
+
 
     public class UpdateStudent
     {

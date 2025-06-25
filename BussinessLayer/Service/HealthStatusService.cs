@@ -33,7 +33,7 @@ namespace BussinessLayer.Service
         public async void DeleteHealthstatus(int id)
         {
             var healthstatus = await _healthStatusRepository.GetByIdAsync(id);
-            if(healthstatus != null)
+            if (healthstatus != null)
             {
                 healthstatus.IsDeleted = true;
                 _healthStatusRepository.Update(healthstatus);
@@ -43,6 +43,7 @@ namespace BussinessLayer.Service
             {
                 throw new KeyNotFoundException($"Health status with ID {id} not found.");
             }
+        }
 
         public Healthstatus GetHealthstatusByID(int id)
         {
@@ -56,16 +57,12 @@ namespace BussinessLayer.Service
 
         public List<Healthstatus> GetHealthstatusesByCategoryId(int categoryId)
         {
-            return _healthStatusRepository.GetAll()
-                .Where(h => h.HealthStatusCategory == categoryId && !h.IsDeleted)
-                .ToList();
+            return [.. _healthStatusRepository.GetAll().Where(h => h.HealthStatusCategory == categoryId && !h.IsDeleted)];
         }
 
         public List<Healthstatus> GetHealthstatusesByStudentId(int studentId)
         {
-            return _healthStatusRepository.GetAll()
-                .Where(h => h.StudentId == studentId && !h.IsDeleted)
-                .ToList();
+            return [.. _healthStatusRepository.GetAll().Where(h => h.StudentId == studentId && !h.IsDeleted)];
         }
 
         public void UpdateHealthstatus(Healthstatus healthstatus)

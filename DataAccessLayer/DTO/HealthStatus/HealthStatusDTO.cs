@@ -6,7 +6,14 @@ using System.Threading.Tasks;
 
 namespace DataAccessLayer.DTO.HealthStatus
 {
-    internal class HealthStatusDTO
+    public class HealthStatusDTO
     {
+        public int StudentId { get; set; }
+
+        public int? StaffId { get; set; }
+
+        public int HealthStatusCategory { get; set; }
+
+        public string? Description { get; set; }
     }
 }

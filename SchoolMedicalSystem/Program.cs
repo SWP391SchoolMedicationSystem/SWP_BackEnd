@@ -106,6 +106,8 @@ builder.Services.AddScoped<IPersonalMedicineService, PersonalMedicineService>();
 builder.Services.AddScoped<IPersonalMedicineRepository, PersonalMedicineRepository>();
 builder.Services.AddScoped<IHealthStatusCategoryRepository, HealthStatusCategoryRepo>();
 builder.Services.AddScoped<IHealthStatusCategoryService, HealthStatusCategoryService>();
+builder.Services.AddScoped<IHealthStatusRepository, HealthStatusRepository>();
+builder.Services.AddScoped<IHealthStatusServices, HealthStatusService>();
 #endregion
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
