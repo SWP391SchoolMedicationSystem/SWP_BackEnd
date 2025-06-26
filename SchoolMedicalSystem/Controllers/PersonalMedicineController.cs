@@ -1,6 +1,7 @@
-﻿using BussinessLayer.IService;
+﻿using AutoMapper;
+using BussinessLayer.IService;
+using DataAccessLayer.DTO;
 using DataAccessLayer.DTO.PersonalMedicine;
-using DataAccessLayer.Entity;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,88 +9,90 @@ namespace SchoolMedicalSystem.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class PersonalMedicineController : ControllerBase
+    public class PersonalMedicineController(IPersonalmedicineService PersonalmedicineService, IMapper mapper) : ControllerBase
     {
-        private readonly IPersonalMedicineService _personalMedicineService;
-        public PersonalMedicineController(IPersonalMedicineService personalMedicineService)
+        [HttpGet("Personalmedicines")]
+        public async Task<IActionResult> GetAllPersonalmedicines()
         {
-            _personalMedicineService = personalMedicineService;
+            var Personalmedicines = await PersonalmedicineService.GetAllPersonalmedicinesAsync();
+            return Ok(Personalmedicines);
         }
-        [HttpGet]
-        [Route("getAll")]
-        public async Task<IActionResult> GetAllPersonalMedicines()
+        [HttpGet("Personalmedicine/{id}")]
+        public async Task<IActionResult> GetPersonalmedicineById(int id)
         {
-            var lists = await _personalMedicineService.GetAllPersonalMedicinesAsync();
-            return Ok(lists);
+            var Personalmedicines = await PersonalmedicineService.GetPersonalmedicinesByMedicineIdAsync(id);
+            if (Personalmedicines == null)
+                return NotFound("Medicine donation not found.");
+            return Ok(Personalmedicines);
         }
-        [HttpGet]
-        [Route("getById")]
-        public async Task<IActionResult> GetPersonalMedicineById([FromQuery] int id)
+        [HttpPost("Personalmedicine")]
+        public async Task<IActionResult> AddPersonalmedicine([FromBody] AddPersonalMedicineDTO PersonalmedicineDto)
+        {
+            if (PersonalmedicineDto == null)
+                return BadRequest("Medicine donation data is null.");
+            try
+            {
+                await PersonalmedicineService.AddPersonalmedicineAsync(PersonalmedicineDto);
+                return Ok("Medicine donation added successfully.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error adding medicine donation: {ex.Message}");
+            }
+        }
+        [HttpPut("Personalmedicine")]
+        public IActionResult UpdatePersonalmedicine(int id, [FromBody] UpdatePersonalMedicineDTO PersonalmedicineDto)
+        {
+            if (PersonalmedicineDto == null)
+                return BadRequest("Invalid data.");
+            try
+            {
+                PersonalmedicineService.UpdatePersonalmedicine(PersonalmedicineDto);
+                return Ok("Medicine donation updated successfully.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error updating medicine donation: {ex.Message}");
+            }
+        }
+        [HttpDelete("Personalmedicine/{id}")]
+        public IActionResult DeletePersonalmedicine(int id)
         {
             try
             {
-                var pm = await _personalMedicineService.GetPersonalMedicineById(id);
-                return Ok(pm);
+                PersonalmedicineService.DeletePersonalmedicine(id);
+                return Ok("Medicine donation deleted successfully.");
             }
             catch (KeyNotFoundException ex)
             {
                 return NotFound(ex.Message);
             }
-        }
-        [HttpPost]
-        [Route("add")]
-        public IActionResult AddPersonalMedicine([FromBody] AddPersonalMedicineDTO personalMedicineDto)
-        {
-            if (personalMedicineDto == null)
-                return BadRequest("Personal medicine data is null.");
-            try
-            {
-                _personalMedicineService.AddPersonalMedicine(personalMedicineDto);
-                return Ok("Personal medicine added successfully.");
-            }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Error adding personal medicine: {ex.Message}");
+                return StatusCode(500, $"Error deleting medicine donation: {ex.Message}");
             }
         }
-        [HttpPut]
-        [Route("update")]
-        public IActionResult UpdatePersonalMedicine([FromBody] UpdatePersonalMedicineDTO personalMedicineDto)
+        [HttpGet("search")]
+        public async Task<IActionResult> SearchPersonalmedicines([FromQuery] string searchTerm)
         {
-            if (personalMedicineDto == null)
-                return BadRequest("Invalid data.");
-            try
-            {
-                _personalMedicineService.UpdatePersonalMedicineAsync(personalMedicineDto);
-                return Ok("Personal medicine updated successfully.");
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Error updating personal medicine: {ex.Message}");
-            }
+            if (string.IsNullOrEmpty(searchTerm))
+                return BadRequest("Search term cannot be empty.");
+            var Personalmedicines = await PersonalmedicineService.SearchPersonalmedicinesAsync(searchTerm);
+            return Ok(Personalmedicines);
         }
-        [HttpDelete]
-        [Route("delete")]
-        public IActionResult DeletePersonalMedicine([FromQuery] int id)
+        [HttpGet("parent/{parentId}")]
+        public async Task<IActionResult> GetPersonalmedicinesByParentId(int parentId)
         {
-            if (id <= 0)
-                return BadRequest("Invalid ID.");
-            try
-            {
-                _personalMedicineService.DeletePersonalMedicine(id);
-                return Ok("Personal medicine deleted successfully.");
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Error deleting personal medicine: {ex.Message}");
-            }
+            var Personalmedicines = await PersonalmedicineService.GetPersonalmedicinesByParentIdAsync(parentId);
+            return Ok(Personalmedicines);
         }
-        [HttpGet]
-        [Route("getAvailable")]
-        public async Task<IActionResult> GetAvailablePersonalMedicines()
+        [HttpGet("medicine/{medicineId}")]
+        public async Task<IActionResult> GetPersonalmedicinesByMedicineId(int medicineId)
         {
-            var lists = await _personalMedicineService.GetAvailablePersonalMedicineAsync();
-            return Ok(lists);
+            var Personalmedicines = await PersonalmedicineService.GetPersonalmedicinesByMedicineIdAsync(medicineId);
+            return Ok(Personalmedicines);
+
         }
+
     }
 }

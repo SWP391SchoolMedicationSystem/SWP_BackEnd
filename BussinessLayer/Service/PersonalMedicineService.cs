@@ -5,88 +5,125 @@ using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
 using BussinessLayer.IService;
-using BussinessLayer.Utils.Configurations;
 using DataAccessLayer.DTO;
-using DataAccessLayer.DTO.HealthRecords;
 using DataAccessLayer.DTO.PersonalMedicine;
 using DataAccessLayer.Entity;
 using DataAccessLayer.IRepository;
-using DataAccessLayer.Repository;
-using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore.Storage;
-using Microsoft.Extensions.Options;
+using NPOI.OpenXmlFormats.Dml;
 
 namespace BussinessLayer.Service
 {
-    public class PersonalMedicineService : IPersonalMedicineService
+    public class PersonalmedicineService(IPersonalMedicineRepository PersonalmedicineRepository, IParentRepository parentRepository,
+        IMedicineRepository medicineRepository,IStudentRepo studentRepo, IMapper mapper) : IPersonalmedicineService
     {
-        private readonly IPersonalMedicineRepository _personalMedicineRepository;
-        private readonly IMapper _mapper;
-        public PersonalMedicineService(IPersonalMedicineRepository personalMedicineRepository, IMapper mapper)
+        public Task AddPersonalmedicineAsync(AddPersonalMedicineDTO Personalmedicine)
         {
-            _personalMedicineRepository = personalMedicineRepository;
-            _mapper = mapper;
-        }
-
-        public void AddPersonalMedicine(AddPersonalMedicineDTO personalMedicineDto)
-        {
-            Personalmedicine pm = _mapper.Map<Personalmedicine>(personalMedicineDto);
-            _personalMedicineRepository.Add(pm);
-            _personalMedicineRepository.Save();
-        }
-
-        public void DeletePersonalMedicine(int id)
-        {
-            Personalmedicine personalMedicine = _personalMedicineRepository.GetByIdAsync(id).Result;
-            if (personalMedicine != null)
+            var PersonalmedicineEntity = mapper.Map<Personalmedicine>(Personalmedicine);
+            PersonalmedicineEntity.Medicine = medicineRepository.GetByIdAsync(Personalmedicine.Medicineid).Result;
+            
+            PersonalmedicineEntity.Parent = parentRepository.GetByIdAsync(Personalmedicine.Parentid.Value).Result;
+            if (PersonalmedicineEntity.Parent == null)
             {
-                personalMedicine.Isdeleted = true;
-                _personalMedicineRepository.Update(personalMedicine);
-                _personalMedicineRepository.Save();
+                return Task.FromException(new KeyNotFoundException("Parent not found."));
+            }
+            PersonalmedicineEntity.Student = studentRepo.GetByIdAsync(Personalmedicine.Studentid.Value).Result;
+            if (PersonalmedicineEntity.Student == null)
+            {
+                return Task.FromException(new KeyNotFoundException("Student not found."));
+            }
+
+            PersonalmedicineEntity.Status = false;
+            PersonalmedicineEntity.Createddate = DateTime.Now;
+            PersonalmedicineEntity.Medicine = medicineRepository.GetByIdAsync(Personalmedicine.Medicineid).Result;
+            if (PersonalmedicineEntity.Medicine == null)
+            {
+                return Task.FromException(new KeyNotFoundException("Medicine not found."));
+            }
+            PersonalmedicineRepository.AddAsync(PersonalmedicineEntity);
+            PersonalmedicineRepository.Save();
+            return Task.CompletedTask;
+        }
+
+        public void DeletePersonalmedicine(int id)
+        {
+            var Personalmedicine = PersonalmedicineRepository.GetByIdAsync(id).Result;
+            if (Personalmedicine != null)
+            {
+                Personalmedicine.Isdeleted = true;
+                Personalmedicine.Modifieddate = DateTime.Now;
+                PersonalmedicineRepository.Update(Personalmedicine);
+                PersonalmedicineRepository.Save();
+            }
+            else
+            {
+                throw new KeyNotFoundException("Medicine donation not found.");
             }
         }
 
-        public async Task<List<Personalmedicine>> GetAllPersonalMedicinesAsync()
+        public async Task<List<PersonalMedicineDTO>> GetAllPersonalmedicinesAsync()
         {
-            List<Personalmedicine> lists = await _personalMedicineRepository.GetAllAsync();
-            return lists;
+            var personalMedicines = await PersonalmedicineRepository.GetAllAsync();
+            return mapper.Map<List<PersonalMedicineDTO>>(personalMedicines);
         }
 
-        public async Task<List<Personalmedicine>> GetAvailablePersonalMedicineAsync()
+        public Task<Personalmedicine> GetPersonalmedicineByIdAsync(int id)
         {
-            List<Personalmedicine> lists = await _personalMedicineRepository.GetAllAsync();
-            lists = lists.Where(pm => !pm.Isdeleted).ToList();
-            return lists;
+            return PersonalmedicineRepository.GetByIdAsync(id);
         }
 
-        public async Task<Personalmedicine> GetPersonalMedicineById(int id)
+        public Task<List<Personalmedicine>> GetPersonalmedicinesByMedicineIdAsync(int medicineId)
         {
-            var pm = await _personalMedicineRepository.GetByIdAsync(id);
-            if (pm == null)
+            var Personalmedicines = PersonalmedicineRepository.GetAllAsync();
+            return Personalmedicines.ContinueWith(task =>
             {
-                throw new KeyNotFoundException($"Personal medicine with ID {id} not found.");
-            }
-            return pm;
+                return task.Result.Where(md => md.Medicineid == medicineId).ToList();
+            });
         }
 
-        public void UpdatePersonalMedicineAsync(UpdatePersonalMedicineDTO personalMedicineDto)
+        public Task<List<Personalmedicine>> GetPersonalmedicinesByParentIdAsync(int parentId)
         {
-            var personalMedicine = _personalMedicineRepository.GetByIdAsync(personalMedicineDto.Personalmedicineid).Result;
-            if (personalMedicine == null)
+            var Personalmedicines = PersonalmedicineRepository.GetAllAsync();
+            return Personalmedicines.ContinueWith(task =>
             {
-                throw new KeyNotFoundException($"Personal medicine with ID {personalMedicineDto.Personalmedicineid} not found.");
+                return task.Result.Where(md => md.Parentid == parentId).ToList();
+            });
+        }
+
+        public Task<List<Personalmedicine>> SearchPersonalmedicinesAsync(string searchTerm)
+        {
+            var Personalmedicines = PersonalmedicineRepository.GetAllAsync();
+            return Personalmedicines.ContinueWith(task =>
+            {
+                return task.Result.Where(donation =>
+                    donation.Medicine.Medicinename.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+                    (donation.Parent != null && donation.Parent.Fullname.Contains(searchTerm, StringComparison.OrdinalIgnoreCase))
+                ).ToList();
+            });
+        }
+
+        public void UpdatePersonalmedicine(UpdatePersonalMedicineDTO Personalmedicine)
+        {
+            var PersonalmedicineEntity = PersonalmedicineRepository.GetByIdAsync(Personalmedicine.Personalmedicineid).Result;
+            if (PersonalmedicineEntity == null)
+            {
+                throw new KeyNotFoundException("Medicine donation not found.");
             }
-            personalMedicine.Studentid = personalMedicineDto.Studentid;
-            personalMedicine.Medicinename = personalMedicineDto.Medicinename;
-            personalMedicine.Quanttiy = personalMedicineDto.Quanttiy;
-            personalMedicine.Receivedate = personalMedicineDto.Receivedate; //can change to keep the original date
-            personalMedicine.Expirydate = personalMedicineDto.Expirydate;
-            personalMedicine.Staffid = personalMedicineDto.Staffid;
-            personalMedicine.Isdeleted = personalMedicineDto.Isdeleted;
-            personalMedicine.Modifiedby = personalMedicineDto.Modifiedby;
-            personalMedicine.Modifieddate = DateTime.Now;
-            _personalMedicineRepository.Update(personalMedicine);
-            _personalMedicineRepository.Save();
+            else
+            {
+                PersonalmedicineEntity.Modifieddate = DateTime.Now;
+                medicineRepository.Update(PersonalmedicineEntity.Medicine);
+
+            }
+
+
+        }
+        public Task<List<Personalmedicine>> GetPersonalmedicinesByApprovalAsync(int isApproved)
+        {
+            var Personalmedicines = PersonalmedicineRepository.GetAllAsync();
+            return Personalmedicines.ContinueWith(task =>
+            {
+                return task.Result.Where(md => md.Isapproved == (isApproved == 1)).ToList();
+            });
         }
     }
 }

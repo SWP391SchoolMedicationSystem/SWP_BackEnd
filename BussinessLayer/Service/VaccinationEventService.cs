@@ -96,7 +96,7 @@ namespace BussinessLayer.Service
             existingEvent.Vaccinationeventname = dto.VaccinationEventName;
             existingEvent.Location = dto.Location;
             existingEvent.Organizedby = dto.OrganizedBy;
-            existingEvent.EventDate = dto.EventDate;
+            existingEvent.Eventdate = dto.EventDate;
             existingEvent.Description = dto.Description;
             existingEvent.Modifieddate = DateTime.Now;
             existingEvent.Modifiedby = modifiedBy;
@@ -170,7 +170,7 @@ namespace BussinessLayer.Service
                         Subject = emailTemplate.Subject.Replace("{EventName}", eventInfo.Vaccinationeventname),
                         Body = emailTemplate.Body
                             .Replace("{EventName}", eventInfo.Vaccinationeventname)
-                            .Replace("{EventDate}", eventInfo.EventDate.ToString("dd/MM/yyyy"))
+                            .Replace("{EventDate}", eventInfo.Eventdate.ToString("dd/MM/yyyy"))
                             .Replace("{Location}", eventInfo.Location)
                             .Replace("{Description}", eventInfo.Description)
                             .Replace("{CustomMessage}", dto.CustomMessage ?? "")
@@ -215,7 +215,7 @@ namespace BussinessLayer.Service
                         Subject = emailTemplate.Subject.Replace("{EventName}", eventInfo.Vaccinationeventname),
                         Body = emailTemplate.Body
                             .Replace("{EventName}", eventInfo.Vaccinationeventname)
-                            .Replace("{EventDate}", eventInfo.EventDate.ToString("dd/MM/yyyy"))
+                            .Replace("{EventDate}", eventInfo.Eventdate.ToString("dd/MM/yyyy"))
                             .Replace("{Location}", eventInfo.Location)
                             .Replace("{Description}", eventInfo.Description)
                             .Replace("{ParentName}", parent.Fullname)
@@ -246,10 +246,10 @@ namespace BussinessLayer.Service
                 if (existingRecord != null)
                 {
                     // Update existing record
-                    existingRecord.WillAttend = dto.WillAttend;
-                    existingRecord.ReasonForDecline = dto.ReasonForDecline;
-                    existingRecord.ParentConsent = dto.ParentConsent;
-                    existingRecord.ResponseDate = DateTime.Now;
+                    existingRecord.Willattend = dto.WillAttend;
+                    existingRecord.Reasonfordecline = dto.ReasonForDecline;
+                    existingRecord.Parentconsent = dto.ParentConsent;
+                    existingRecord.Responsedate = DateTime.Now;
                     existingRecord.Updatedat = DateTime.Now;
                     existingRecord.Updatedby = dto.ParentId.ToString();
                     existingRecord.Confirmedbyparent = dto.WillAttend;
@@ -268,10 +268,10 @@ namespace BussinessLayer.Service
                         Dosenumber = 1,
                         Vaccinationdate = DateOnly.FromDateTime(DateTime.Now), // Will be updated when actual vaccination occurs
                         Confirmedbyparent = dto.WillAttend,
-                        WillAttend = dto.WillAttend,
-                        ReasonForDecline = dto.ReasonForDecline,
-                        ParentConsent = dto.ParentConsent,
-                        ResponseDate = DateTime.Now,
+                        Willattend = dto.WillAttend,
+                        Reasonfordecline = dto.ReasonForDecline,
+                        Parentconsent = dto.ParentConsent,
+                        Responsedate = DateTime.Now,
                         Isdeleted = false,
                         Createdat = DateTime.Now,
                         Updatedat = DateTime.Now,
@@ -304,9 +304,9 @@ namespace BussinessLayer.Service
                     ParentId = record.Student.Parentid,
                     StudentId = record.Studentid,
                     VaccinationEventId = record.Vaccinationeventid,
-                    WillAttend = record.WillAttend ?? false,
-                    ReasonForDecline = record.ReasonForDecline,
-                    ParentConsent = record.ParentConsent ?? false
+                    WillAttend = record.Willattend ?? false,
+                    ReasonForDecline = record.Reasonfordecline,
+                    ParentConsent = record.Parentconsent ?? false
                 });
             }
 

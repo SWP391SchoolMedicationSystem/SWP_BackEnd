@@ -5,13 +5,16 @@ using System.Text;
 using System.Threading.Tasks;
 using DataAccessLayer.Entity;
 using DataAccessLayer.IRepository;
+using Microsoft.EntityFrameworkCore;
 
 namespace DataAccessLayer.Repository
 {
     public class PersonalMedicineRepository : GenericRepository<Personalmedicine>, IPersonalMedicineRepository
     {
+        private readonly DbSet<Personalmedicine> _dbset;
         public PersonalMedicineRepository(SchoolMedicalSystemContext context) : base(context)
         {
+            _dbset = context.Set<Personalmedicine>();
         }
     }
 }

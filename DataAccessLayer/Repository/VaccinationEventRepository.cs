@@ -19,7 +19,7 @@ namespace DataAccessLayer.Repository
         {
             return await _context.Vaccinationevents
                 .Where(e => !e.Isdeleted)
-                .OrderByDescending(e => e.EventDate)
+                .OrderByDescending(e => e.Eventdate)
                 .ToListAsync();
         }
 
@@ -38,16 +38,16 @@ namespace DataAccessLayer.Repository
         public async Task<List<Vaccinationevent>> GetEventsByDateRangeAsync(DateTime startDate, DateTime endDate)
         {
             return await _context.Vaccinationevents
-                .Where(e => !e.Isdeleted && e.EventDate >= startDate && e.EventDate <= endDate)
-                .OrderBy(e => e.EventDate)
+                .Where(e => !e.Isdeleted && e.Eventdate >= startDate && e.Eventdate <= endDate)
+                .OrderBy(e => e.Eventdate)
                 .ToListAsync();
         }
 
         public async Task<List<Vaccinationevent>> GetUpcomingEventsAsync()
         {
             return await _context.Vaccinationevents
-                .Where(e => !e.Isdeleted && e.EventDate > DateTime.Now)
-                .OrderBy(e => e.EventDate)
+                .Where(e => !e.Isdeleted && e.Eventdate > DateTime.Now)
+                .OrderBy(e => e.Eventdate)
                 .ToListAsync();
         }
 
@@ -103,12 +103,12 @@ namespace DataAccessLayer.Repository
                            ParentName = p.Fullname,
                            ParentEmail = p.Email ?? "",
                            ClassName = c.Classname,
-                           WillAttend = vr.WillAttend,
-                           ReasonForDecline = vr.ReasonForDecline,
-                           ResponseDate = vr.ResponseDate,
+                           WillAttend = vr.Willattend,
+                           ReasonForDecline = vr.Reasonfordecline,
+                           ResponseDate = vr.Responsedate,
                            Status = vr == null ? "Pending" :
-                                   vr.WillAttend == true ? "Confirmed" :
-                                   vr.WillAttend == false ? "Declined" : "Pending"
+                                   vr.Willattend == true ? "Confirmed" :
+                                   vr.Willattend == false ? "Declined" : "Pending"
                        };
 
             return await query.ToListAsync();
@@ -118,7 +118,7 @@ namespace DataAccessLayer.Repository
         {
             var eventInfo = await _context.Vaccinationevents
                 .Where(e => e.Vaccinationeventid == eventId && !e.Isdeleted)
-                .Select(e => new { e.Vaccinationeventname, e.EventDate, e.Location })
+                .Select(e => new { e.Vaccinationeventname, e.Eventdate, e.Location })
                 .FirstOrDefaultAsync();
 
             if (eventInfo == null)
@@ -134,7 +134,7 @@ namespace DataAccessLayer.Repository
             {
                 VaccinationEventId = eventId,
                 VaccinationEventName = eventInfo.Vaccinationeventname,
-                EventDate = eventInfo.EventDate,
+                EventDate = eventInfo.Eventdate,
                 Location = eventInfo.Location,
                 TotalStudents = totalStudents,
                 ConfirmedCount = confirmedCount,
@@ -174,13 +174,13 @@ namespace DataAccessLayer.Repository
         public async Task<int> GetConfirmedCountAsync(int eventId)
         {
             return await _context.Vaccinationrecords
-                .CountAsync(r => r.Vaccinationeventid == eventId && r.WillAttend == true && !r.Isdeleted);
+                .CountAsync(r => r.Vaccinationeventid == eventId && r.Willattend == true && !r.Isdeleted);
         }
 
         public async Task<int> GetDeclinedCountAsync(int eventId)
         {
             return await _context.Vaccinationrecords
-                .CountAsync(r => r.Vaccinationeventid == eventId && r.WillAttend == false && !r.Isdeleted);
+                .CountAsync(r => r.Vaccinationeventid == eventId && r.Willattend == false && !r.Isdeleted);
         }
 
         public async Task<int> GetPendingCountAsync(int eventId)

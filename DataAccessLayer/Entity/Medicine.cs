@@ -24,7 +24,6 @@ public partial class Medicine
     public string? Updatedby { get; set; }
 
     public virtual Medicinecategory Medicinecategory { get; set; } = null!;
-    public virtual ICollection<Medicinedonation> Medicinedonations { get; set; } = new List<Medicinedonation>();
 
-
+    public virtual ICollection<Personalmedicine> Personalmedicines { get; set; } = new List<Personalmedicine>();
 }

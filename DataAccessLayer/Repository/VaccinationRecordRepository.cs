@@ -46,13 +46,13 @@ namespace DataAccessLayer.Repository
         public async Task<int> GetConfirmedCountAsync(int eventId)
         {
             return await _context.Vaccinationrecords
-                .CountAsync(r => r.Vaccinationeventid == eventId && r.WillAttend == true && !r.Isdeleted);
+                .CountAsync(r => r.Vaccinationeventid == eventId && r.Willattend == true && !r.Isdeleted);
         }
 
         public async Task<int> GetDeclinedCountAsync(int eventId)
         {
             return await _context.Vaccinationrecords
-                .CountAsync(r => r.Vaccinationeventid == eventId && r.WillAttend == false && !r.Isdeleted);
+                .CountAsync(r => r.Vaccinationeventid == eventId && r.Willattend == false && !r.Isdeleted);
         }
 
         public async Task<int> GetPendingCountAsync(int eventId)

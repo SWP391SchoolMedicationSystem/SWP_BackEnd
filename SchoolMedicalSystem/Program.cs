@@ -102,12 +102,10 @@ builder.Services.AddScoped<IVaccinationRecordService, VaccinationRecordService>(
 builder.Services.AddScoped<IVaccinationEventRepository, VaccinationEventRepository>();
 builder.Services.AddScoped<IVaccinationEventService, VaccinationEventService>();
 builder.Services.AddScoped<IOtpRepo, OtpRepo>();
-builder.Services.AddScoped<IPersonalMedicineService, PersonalMedicineService>();
+builder.Services.AddScoped<IPersonalmedicineService, PersonalmedicineService>();
 builder.Services.AddScoped<IPersonalMedicineRepository, PersonalMedicineRepository>();
 builder.Services.AddScoped<IMedicineRepository, MedicineRepository>();
 builder.Services.AddScoped<IMedicineService, MedicineService>();
-builder.Services.AddScoped<IMedicineDonationService, MedicineDonationService>();
-builder.Services.AddScoped<IMedicineDonationRepository, MedicineDonationRepository>();
 
 #endregion
 

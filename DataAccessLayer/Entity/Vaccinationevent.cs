@@ -13,9 +13,9 @@ public partial class Vaccinationevent
 
     public string Organizedby { get; set; } = null!;
 
-    public DateTime EventDate { get; set; }
+    public DateTime Eventdate { get; set; }
 
-    public string Description { get; set; } = null!;
+    public string? Description { get; set; }
 
     public DateTime Createddate { get; set; }
 

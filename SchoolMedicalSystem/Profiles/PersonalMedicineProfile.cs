@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using DataAccessLayer.DTO.Blogs;
 using DataAccessLayer.DTO.PersonalMedicine;
 using DataAccessLayer.Entity;
 
@@ -9,8 +8,9 @@ namespace SchoolMedicalSystem.Profiles
     {
         public PersonalMedicineProfile()
         {
-            CreateMap<Personalmedicine, AddPersonalMedicineDTO>().ReverseMap();
-            CreateMap<Personalmedicine, UpdatePersonalMedicineDTO>().ReverseMap();
+            CreateMap<PersonalMedicineDTO,Personalmedicine>().ReverseMap();
+            CreateMap<UpdatePersonalMedicineDTO, Personalmedicine>().ReverseMap();
+            CreateMap<AddPersonalMedicineDTO, Personalmedicine>().ReverseMap();
         }
     }
 }
