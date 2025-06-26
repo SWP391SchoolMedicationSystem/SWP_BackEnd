@@ -84,7 +84,7 @@ namespace BussinessLayer.Service
             catch (Exception ex)
             {
                 // Log the exception or handle it as needed
-                throw new Exception("An error occurred while adding the parent.", ex);
+                throw new InvalidOperationException("An error occurred while adding the parent.", ex);
             }
         }
 
@@ -97,21 +97,21 @@ namespace BussinessLayer.Service
             }
 
         }
-        public void UpdateParent(ParentUpdate parentdto)
+        public void UpdateParent(ParentUpdate parent)
         {
-            Parent parent = (Parent) parentRepository.GetByIdAsync(parentdto.Parentid).Result;
+            Parent newparent = parentRepository.GetByIdAsync(parent.Parentid).Result;
             if (parent != null)
             {
                 // Only assign if value is not null/empty/0
-                if (!string.IsNullOrWhiteSpace(parentdto.Address))
-                    parent.Address = parentdto.Address;
-                if (!string.IsNullOrWhiteSpace(parentdto.Email))
-                    parent.Email = parentdto.Email;
-                if (!string.IsNullOrWhiteSpace(parentdto.Fullname))
-                    parent.Fullname = parentdto.Fullname;
-                if (parentdto.Phone != 0)
-                    parent.Phone = parentdto.Phone;
-                parentRepository.Update(parent);
+                if (!string.IsNullOrWhiteSpace(parent.Address))
+                    newparent.Address = parent.Address;
+                if (!string.IsNullOrWhiteSpace(newparent.Email))
+                    newparent.Email = parent.Email;
+                if (!string.IsNullOrWhiteSpace(parent.Fullname))
+                    newparent.Fullname = parent.Fullname;
+                if (newparent.Phone != 0)
+                    newparent.Phone = parent.Phone;
+                parentRepository.Update(newparent);
                 parentRepository.Save();
             }
         }
@@ -120,34 +120,33 @@ namespace BussinessLayer.Service
 
         public async Task<string> GenerateToken(LoginDTO login)
         {
-
             try
             {
                 var parentlist = await parentRepository.GetAllAsync();
                 var userlist = await userRepository.GetAllAsync();
-                User user = userlist.FirstOrDefault(x => x.Email == login.Email);
+                User? user = userlist.FirstOrDefault(x => x.Email == login.Email);
 
                 if (user != null &&
                     VerifyPasswordHash(login.Password, user.Hash, user.Salt))
                 {
-                    Parent parent = parentlist.FirstOrDefault(x => x.Userid == user.UserId);
+                    Parent? parent = parentlist.FirstOrDefault(x => x.Userid == user.UserId) ?? throw new InvalidOperationException("Parent not found for the given user.");
                     var jwtTokenHandler = new JwtSecurityTokenHandler();
-
                     var secretKeyBytes = Encoding.UTF8.GetBytes(_appSettings.SecretKey);
                     string status = parent.IsDeleted ? "Tạm ngừng" : "Hoạt động";
+
                     var tokenDescription = new SecurityTokenDescriptor
                     {
-                        Subject = new ClaimsIdentity(new[] {
-               new Claim("Id", parent.Parentid.ToString()),
-                new Claim("Fullname", parent.Fullname),
-                new Claim("Email", parent.Email ?? string.Empty),
-                new Claim("Phone", parent.Phone.ToString()),
-                new Claim("Address", parent.Address),
-                new Claim("Status", status),
-                new Claim("Role", "Parent"),
-                new Claim("DateCreated", parent.CreatedDate.ToString())
-           }),
-
+                        Subject = new ClaimsIdentity(
+                        [
+                            new Claim("Id", parent.Parentid.ToString()),
+                            new Claim("Fullname", parent.Fullname ?? string.Empty),
+                            new Claim("Email", parent.Email ?? string.Empty),
+                            new Claim("Phone", parent.Phone?.ToString() ?? string.Empty),
+                            new Claim("Address", parent.Address ?? string.Empty),
+                            new Claim("Status", status),
+                            new Claim("Role", "Parent"),
+                            new Claim("DateCreated", parent.CreatedDate?.ToString() ?? string.Empty)
+                        ]),
                         Expires = DateTime.UtcNow.AddMinutes(180),
                         SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(secretKeyBytes),
                         SecurityAlgorithms.HmacSha512Signature)
@@ -185,7 +184,7 @@ namespace BussinessLayer.Service
 
             var payload = await GoogleJsonWebSignature.ValidateAsync(token, new GoogleJsonWebSignature.ValidationSettings
             {
-                Audience = new[] { _appSettings.GoogleClientId }
+                Audience = [_appSettings.GoogleClientId]
     
 });
             string email = payload.Email;

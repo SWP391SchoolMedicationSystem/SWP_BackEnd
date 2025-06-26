@@ -13,7 +13,6 @@ namespace BussinessLayer.Service
     public class ClassroomService : IClassRoomService
     {
         private readonly IClassRoomRepository _classroomRepository;
-        private readonly IMapper _mapper;
         public ClassroomService(IClassRoomRepository classroomRepository, IMapper mapper)
         {
             _classroomRepository = classroomRepository;
@@ -33,8 +32,8 @@ namespace BussinessLayer.Service
         public async Task<Classroom> GetClassRoomByName(string name)
         {
             var classlist = await _classroomRepository.GetAllAsync();
-            Classroom classes = classlist.FirstOrDefault(c => c.Classname.Equals(name, StringComparison.OrdinalIgnoreCase));
-            return classes;
+            Classroom? classes = classlist.FirstOrDefault(c => c.Classname.Equals(name, StringComparison.OrdinalIgnoreCase));
+            return classes ?? throw new InvalidOperationException($"Classroom with name '{name}' not found.");
         }
     }
 }

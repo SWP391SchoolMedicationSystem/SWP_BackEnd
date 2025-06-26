@@ -11,9 +11,9 @@ namespace BussinessLayer.IService
     public interface IHealthRecordService
     {
         Task<List<Healthrecord>> GetAllHealthRecordsAsync();
-        Task<HealthRecordDTO> GetHealthRecordByIdAsync(int id);
-        Task AddHealthRecordAsync(HealthRecordDTO healthRecorddto);
-        void UpdateHealthRecord(HealthRecordDTO healthRecorddto, int id);
+        Task<HealthRecordDto> GetHealthRecordByIdAsync(int id);
+        Task AddHealthRecordAsync(HealthRecordDto healthRecorddto);
+        void UpdateHealthRecord(HealthRecordDto healthRecorddto, int id);
         void DeleteHealthRecord(int id);
         Task<List<Healthrecord>> GetHealthRecordsByStudentIdAsync(int studentId);
     }

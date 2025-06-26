@@ -15,64 +15,52 @@ using Microsoft.Extensions.Options;
 
 namespace BussinessLayer.Service
 {
-    public class HealthRecordService : IHealthRecordService
+    public class HealthRecordService(IHealthRecordRepository healthRecordRepository, IMapper mapper) : IHealthRecordService
     {
-        private readonly IHealthRecordRepository _healthRecordRepository;
-        private readonly IMapper _mapper;
-        private readonly AppSetting _appSettings;
-        private readonly IHttpContextAccessor _httpContextAccessor;
-        public HealthRecordService(IHealthRecordRepository healthRecordRepository, IMapper mapper,
-            IOptionsMonitor<AppSetting> option, IHttpContextAccessor httpContextAccessor)
-        {
-            _healthRecordRepository = healthRecordRepository;
-            _mapper = mapper;
-            _appSettings = option.CurrentValue;
-            _httpContextAccessor = httpContextAccessor;
-        }
-        public Task AddHealthRecordAsync(HealthRecordDTO healthRecorddto)
+        public Task AddHealthRecordAsync(HealthRecordDto healthRecorddto)
         {
             if (healthRecorddto != null)
             {
-                Healthrecord healthRecord = _mapper.Map<Healthrecord>(healthRecorddto);
-                _healthRecordRepository.AddAsync(healthRecord);
-                _healthRecordRepository.Save();
+                Healthrecord healthRecord = mapper.Map<Healthrecord>(healthRecorddto);
+                healthRecordRepository.AddAsync(healthRecord);
+                healthRecordRepository.Save();
             }
             return Task.CompletedTask;
         }
 
         public void DeleteHealthRecord(int id)
         {
-            var entity = _healthRecordRepository.GetByIdAsync(id).Result;
+            var entity = healthRecordRepository.GetByIdAsync(id).Result;
 
             if (entity != null)
             {
-                _healthRecordRepository.Delete(id);
-                _healthRecordRepository.Save();
+                healthRecordRepository.Delete(id);
+                healthRecordRepository.Save();
             }
         }
 
         public async Task<List<Healthrecord>> GetAllHealthRecordsAsync()
         {
-            List<Healthrecord> healthRecords = _mapper.Map<List<Healthrecord>>(await _healthRecordRepository.GetAllAsync());
+            List<Healthrecord> healthRecords = mapper.Map<List<Healthrecord>>(await healthRecordRepository.GetAllAsync());
             return healthRecords;
         }
 
-        public async Task<HealthRecordDTO> GetHealthRecordByIdAsync(int id)
+        public async Task<HealthRecordDto> GetHealthRecordByIdAsync(int id)
         {
-            HealthRecordDTO healthRecord = _mapper.Map<HealthRecordDTO>(await _healthRecordRepository.GetByIdAsync(id));
+            HealthRecordDto healthRecord = mapper.Map<HealthRecordDto>(await healthRecordRepository.GetByIdAsync(id));
             return healthRecord;
         }
 
         public Task<List<Healthrecord>> GetHealthRecordsByStudentIdAsync(int studentId)
         {
-            var healthRecords = _healthRecordRepository.GetAllAsync()
+            var healthRecords = healthRecordRepository.GetAllAsync()
                 .Result.Where(hr => hr.Studentid == studentId).ToList();
-            return Task.FromResult(_mapper.Map<List<Healthrecord>>(healthRecords));
+            return Task.FromResult(mapper.Map<List<Healthrecord>>(healthRecords));
         }
 
-        public void UpdateHealthRecord(HealthRecordDTO healthRecorddto, int id)
+        public void UpdateHealthRecord(HealthRecordDto healthRecorddto, int id)
         {
-            var entity = _healthRecordRepository.GetByIdAsync(id).Result;
+            var entity = healthRecordRepository.GetByIdAsync(id).Result;
             if (entity != null)
             {
                 entity.Studentid = healthRecorddto.StudentID;
@@ -84,8 +72,8 @@ namespace BussinessLayer.Service
                 entity.Isconfirm = healthRecorddto.IsConfirm;
                 entity.Modifiedby = healthRecorddto.ModifiedBy;
                 entity.Modifieddate = DateTime.Now;
-                _healthRecordRepository.Update(entity);
-                _healthRecordRepository.Save();
+                healthRecordRepository.Update(entity);
+                healthRecordRepository.Save();
             }
         }
 

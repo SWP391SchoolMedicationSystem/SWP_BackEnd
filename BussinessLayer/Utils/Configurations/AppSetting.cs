@@ -8,7 +8,7 @@ namespace BussinessLayer.Utils.Configurations
 {
     public class AppSetting
     {
-        public string SecretKey { get; set; }
-        public string GoogleClientId { get; set; } // Added property to fix CS1061  
+        public string SecretKey { get; set; } = null!;
+        public string GoogleClientId { get; set; } = null!;
     }
 }

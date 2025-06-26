@@ -19,7 +19,7 @@ namespace SchoolMedicalSystem.Controllers
         [HttpGet]
         public async Task<List<HealthCheckDTO>> GetAllHealthChecks()
         {
-            var result = _healthCheckService.GetAllHealthChecksAsync().Result;
+            var result = _healthCheckService.GetAllHealthChecksAsync();
             if (result == null || !result.Any())
                 return null;
             return result;
