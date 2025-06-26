@@ -206,7 +206,7 @@ namespace BussinessLayer.Service
         }
 
         // Optimized method for sending personalized emails
-        public async Task<List<EmailDTO>> SendPersonalizedEmailsAsync<T>(List<T> recipients, int templateId, 
+        public async Task<List<EmailDTO>> SendPersonalizedEmailsAsync<T>(List<T> recipients, int templateId,
             Func<T, EmailDTO> personalizationFunc, int batchSize = 10)
         {
             var emailTemplate = GetTemplateByID(templateId);
@@ -272,6 +272,24 @@ namespace BussinessLayer.Service
             _context.EmailTemplates.Update(emailTemplate);
             await _context.SaveChangesAsync();
             return true;
+        }
+
+        public async Task<EmailTemplate?> GetEmailTemplateByIdAsync(int id)
+        {
+            return await _emailRepository.GetEmailTemplateByIdAsync(id);
+        }
+
+        public EmailDTO GetTemplateByIDA(int templateId)
+        {
+            var emailTemplate = _context.EmailTemplates.FirstOrDefault(e => e.EmailTemplateId == templateId);
+            if (emailTemplate == null)
+                return null
+            return new EmailDTO
+            {
+                To = emailTemplate.To,
+                Subject = emailTemplate.Subject,
+                Body = emailTemplate.Body
+            };
         }
     }
 }
