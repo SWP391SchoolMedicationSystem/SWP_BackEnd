@@ -127,5 +127,28 @@ namespace BussinessLayer.Service
                 _blogRepo.Save();
             }
         }
+        public async Task UploadBlogImageAsync(BlogImageUploadDTO dto)
+        {
+            var blog = await _blogRepo.GetByIdAsync(dto.BlogId);
+            if (blog == null) throw new Exception("Blog not found.");
+
+            // Save image to wwwroot/images/blogs
+            var wwwRootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "blogs");
+            Directory.CreateDirectory(wwwRootPath); // ensure folder exists
+
+            var fileName = Guid.NewGuid().ToString() + Path.GetExtension(dto.ImageFile.FileName);
+            var filePath = Path.Combine(wwwRootPath, fileName);
+
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await dto.ImageFile.CopyToAsync(stream);
+            }
+
+            // Update blog entity
+            blog.Image = $"/images/blogs/{fileName}";
+            blog.UpdatedAt = DateTime.Now;
+            _blogRepo.Update(blog);
+            _blogRepo.Save();
+        }
     }            
 }

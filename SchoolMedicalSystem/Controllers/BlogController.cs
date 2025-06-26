@@ -139,5 +139,18 @@ namespace SchoolMedicalSystem.Controllers
                 return StatusCode(500, $"Error searching blogs: {ex.Message}");
             }
         }
+        [HttpPost("upload-image")]
+        public async Task<IActionResult> UploadImage([FromForm] BlogImageUploadDTO dto)
+        {
+            try
+            {
+                await _blogService.UploadBlogImageAsync(dto);
+                return Ok("Image uploaded successfully.");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Error: {ex.Message}");
+            }
+        }
     }
 }
