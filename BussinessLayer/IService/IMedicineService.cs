@@ -10,10 +10,11 @@ namespace BussinessLayer.IService
 {
     public interface IMedicineService
     {
-        Task<List<Medicine>> GetAllMedicinesAsync();
-        Task<Medicine> GetMedicineByIdAsync(int id);
+        Task<List<MedicineDTO>> GetAllMedicinesAsync();
+        Task<MedicineDTO> GetMedicineByIdAsync(int id);
         void AddMedicine(CreateMedicineDTO medicine);
         void UpdateMedicine(UpdateMedicineDTO medicine);
-        void DeleteMedicine(int id);
+        Task<List<MedicineDTO>> SearchMedicinesNameAsync(string searchTerm);
+        Task<List<MedicineDTO>> GetMedicinesByCategoryIdAsync(int categoryId);
     }
 }

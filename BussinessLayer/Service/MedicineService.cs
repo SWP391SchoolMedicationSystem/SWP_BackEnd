@@ -22,27 +22,59 @@ namespace BussinessLayer.Service
         }
         public void AddMedicine(CreateMedicineDTO medicine)
         {
-            throw new NotImplementedException();
+            Medicine entity = _mapper.Map<Medicine>(medicine);
+            _medicineRepository.AddAsync(entity);
+            _medicineRepository.Save();
         }
 
-        public void DeleteMedicine(int id)
+        public async Task<List<MedicineDTO>> GetAllMedicinesAsync()
         {
-            throw new NotImplementedException();
+            var medicines = await _medicineRepository.GetAllAsync();
+            var dtos = _mapper.Map<List<MedicineDTO>>(medicines);
+            return dtos;
         }
 
-        public Task<List<Medicine>> GetAllMedicinesAsync()
+        public async Task<MedicineDTO> GetMedicineByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            var medicines = await _medicineRepository.GetByIdAsync(id);
+            var dto = _mapper.Map<MedicineDTO>(medicines);
+            return dto;
         }
 
-        public Task<Medicine> GetMedicineByIdAsync(int id)
+        public async Task<List<MedicineDTO>> GetMedicinesByCategoryIdAsync(int categoryId)
         {
-            throw new NotImplementedException();
+            var medicines = await _medicineRepository.GetAllAsync();
+            var filtered = medicines.Where(m => m.Medicinecategoryid == categoryId).ToList();
+            return _mapper.Map<List<MedicineDTO>>(filtered);
+        }
+
+        public async Task<List<MedicineDTO>> SearchMedicinesNameAsync(string searchTerm)
+        {
+            var medicines = await _medicineRepository.GetAllAsync();
+            var filtered = medicines
+                .Where(m => m.Medicinename.Contains(searchTerm, StringComparison.OrdinalIgnoreCase))
+                .ToList();
+
+            return _mapper.Map<List<MedicineDTO>>(filtered);
         }
 
         public void UpdateMedicine(UpdateMedicineDTO medicine)
         {
-            throw new NotImplementedException();
+            if (medicine != null)
+            {
+                var entity = _medicineRepository.GetByIdAsync(medicine.Medicineid).Result;
+                if (entity != null)
+                {
+                    entity.Medicinename = medicine.Medicinename;
+                    entity.Medicinecategoryid = medicine.Medicinecategoryid;
+                    entity.Type = medicine.Type;
+                    entity.Quantity = medicine.Quantity;
+                    entity.Updatedat = DateTime.Now;
+                    entity.Updatedby = medicine.Updatedby;
+                    _medicineRepository.Update(entity);
+                    _medicineRepository.Save();
+                }
+            }
         }
     }
 }

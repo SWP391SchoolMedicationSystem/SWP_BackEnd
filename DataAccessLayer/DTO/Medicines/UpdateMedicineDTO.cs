@@ -8,6 +8,7 @@ namespace DataAccessLayer.DTO.Medicines
 {
     public class UpdateMedicineDTO
     {
+        public int Medicineid { get; set; }
         public string Medicinename { get; set; } = null!;
 
         public int Medicinecategoryid { get; set; }
