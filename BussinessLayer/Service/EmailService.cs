@@ -25,6 +25,7 @@ namespace BussinessLayer.Service
         private readonly IMapper _mapper;
         private readonly SemaphoreSlim _smtpSemaphore;
         private readonly int _maxConcurrentEmails;
+        private readonly string test = "test";
 
         public EmailService(IMapper mapper,
             IConfiguration config, SchoolMedicalSystemContext context, IEmailRepo emailRepo)
@@ -282,14 +283,14 @@ namespace BussinessLayer.Service
         public EmailDTO GetTemplateByIDA(int templateId)
         {
             var test = 10;
-            var emailTemplate = _context.EmailTemplates.FirstOrDefault(e => e.EmailTemplateId == templateId);
-            if (emailTemplate == null)
+            var email123Template = _context.EmailTemplates.FirstOrDefault(e => e.EmailTemplateId == templateId);
+            if (email123Template == null)
                 return null;
             return new EmailDTO
             {
-                To = emailTemplate.To,
-                Subject = emailTemplate.Subject,
-                Body = emailTemplate.Body
+                To = email123Template.To,
+                Subject = email123Template.Subject,
+                Body = email123Template.Body
             };
         }
     }
