@@ -9,8 +9,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DataAccessLayer.Repository
 {
-    public class MedicineDonationRepository(SchoolMedicalSystemContext context) : GenericRepository<Medicinedonation>(context), IMedicineDonationRepository
+    public class MedicineDonationRepository : GenericRepository<Medicinedonation>, IMedicineDonationRepository
     {
-        private readonly DbSet<Medicinedonation> _medicinedonations = context.Set<Medicinedonation>();
+        private readonly DbSet<Medicinedonation> _dbset;
+        public MedicineDonationRepository(SchoolMedicalSystemContext context) : base(context)
+        {
+            _dbset = context.Set<Medicinedonation>();
+        }
     }
 }

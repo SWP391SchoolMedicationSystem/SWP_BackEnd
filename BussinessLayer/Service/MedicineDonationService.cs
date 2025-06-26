@@ -8,6 +8,7 @@ using BussinessLayer.IService;
 using DataAccessLayer.DTO;
 using DataAccessLayer.Entity;
 using DataAccessLayer.IRepository;
+using NPOI.OpenXmlFormats.Dml;
 
 namespace BussinessLayer.Service
 {
@@ -18,13 +19,20 @@ namespace BussinessLayer.Service
         {
             var MedicineDonationEntity = mapper.Map<Medicinedonation>(medicinedonation);
             MedicineDonationEntity.Medicine = medicineRepository.GetByIdAsync(medicinedonation.Medicineid).Result;
-            if (medicinedonation.Parentid.HasValue)
+
+            MedicineDonationEntity.Parent = parentRepository.GetByIdAsync(medicinedonation.Parentid.Value).Result;
+            if(MedicineDonationEntity.Parent == null)
             {
-                MedicineDonationEntity.Parent = parentRepository.GetByIdAsync(medicinedonation.Parentid.Value).Result;
+                return Task.FromException(new KeyNotFoundException("Parent not found."));
             }
+
             MedicineDonationEntity.Status = false;
             MedicineDonationEntity.Createddate = DateTime.Now;
             MedicineDonationEntity.Medicine = medicineRepository.GetByIdAsync(medicinedonation.Medicineid).Result;
+            if (MedicineDonationEntity.Medicine == null)
+            {
+                return Task.FromException(new KeyNotFoundException("Medicine not found."));
+            }
             medicineDonationRepository.AddAsync(MedicineDonationEntity);
             medicineDonationRepository.Save();
             return Task.CompletedTask;
