@@ -123,6 +123,23 @@ namespace SchoolMedicalSystem.Controllers
                 return NotFound("Email template not found or could not be deleted");
             return Ok("Email template deleted successfully");
         }
+
+        [HttpGet("GetTemplateByID/{templateId}")]
+        public IActionResult GetTemplateByID(int templateId)
+        {
+            var emailTemplate = _email.GetTemplateByID(templateId);
+            if (emailTemplate == null)
+                return NotFound("Email template not found");
+            return Ok(emailTemplate);
+        }
+        [HttpGet("GetAllUserEmails")]
+        public IActionResult GetAllUserEmails()
+        {
+            var emails = _email.GetAllUserEmails();
+            if (emails == null || !emails.Any())
+                return NotFound("No user emails found");
+            return Ok(emails);
+        }
     }
     public class UserList
     {
