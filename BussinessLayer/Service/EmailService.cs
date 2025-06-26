@@ -281,9 +281,10 @@ namespace BussinessLayer.Service
 
         public EmailDTO GetTemplateByIDA(int templateId)
         {
+            var test = 10;
             var emailTemplate = _context.EmailTemplates.FirstOrDefault(e => e.EmailTemplateId == templateId);
             if (emailTemplate == null)
-                return null
+                return null;
             return new EmailDTO
             {
                 To = emailTemplate.To,
