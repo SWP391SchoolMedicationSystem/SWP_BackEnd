@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 
 namespace DataAccessLayer.Entity;
 
@@ -44,6 +43,8 @@ public partial class SchoolMedicalSystemContext : DbContext
 
     public virtual DbSet<Medicinecategory> Medicinecategories { get; set; }
 
+    public virtual DbSet<Medicinedonation> Medicinedonations { get; set; }
+
     public virtual DbSet<Notification> Notifications { get; set; }
 
     public virtual DbSet<NotificationParentDetail> NotificationParentDetails { get; set; }
@@ -70,6 +71,9 @@ public partial class SchoolMedicalSystemContext : DbContext
 
     public virtual DbSet<Vaccinationrecord> Vaccinationrecords { get; set; }
 
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
+        => optionsBuilder.UseSqlServer("Server=database.purintech.id.vn;user=sa;password=<Hu@nH0aH0n9>;Database=SchoolMedicalSystem;TrustServerCertificate=True;");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -542,6 +546,53 @@ public partial class SchoolMedicalSystemContext : DbContext
             entity.Property(e => e.Medicinecategoryname)
                 .HasMaxLength(255)
                 .HasColumnName("MEDICINECATEGORYNAME");
+        });
+
+        modelBuilder.Entity<Medicinedonation>(entity =>
+        {
+            entity.HasKey(e => e.Donationid).HasName("PK__MEDICINE__7FBE06FD040394DA");
+
+            entity.ToTable("MEDICINEDONATION");
+
+            entity.Property(e => e.Donationid).HasColumnName("DONATIONID");
+            entity.Property(e => e.Createdby)
+                .HasMaxLength(50)
+                .HasColumnName("CREATEDBY");
+            entity.Property(e => e.Createddate)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime")
+                .HasColumnName("CREATEDDATE");
+            entity.Property(e => e.Donationdate)
+                .HasColumnType("datetime")
+                .HasColumnName("DONATIONDATE");
+            entity.Property(e => e.ExpiryDate).HasColumnType("datetime");
+            entity.Property(e => e.Isdeleted).HasColumnName("ISDELETED");
+            entity.Property(e => e.Medicineid).HasColumnName("MEDICINEID");
+            entity.Property(e => e.Modifiedby)
+                .HasMaxLength(50)
+                .HasColumnName("MODIFIEDBY");
+            entity.Property(e => e.Modifieddate)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime")
+                .HasColumnName("MODIFIEDDATE");
+            entity.Property(e => e.Note)
+                .HasMaxLength(500)
+                .HasColumnName("NOTE");
+            entity.Property(e => e.Parentid).HasColumnName("PARENTID");
+            entity.Property(e => e.Quantity).HasColumnName("QUANTITY");
+            entity.Property(e => e.Status)
+                .HasDefaultValue(true)
+                .HasColumnName("STATUS");
+
+            entity.HasOne(d => d.Medicine).WithMany(p => p.Medicinedonations)
+                .HasForeignKey(d => d.Medicineid)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__MEDICINED__MEDIC__671F4F74");
+
+            entity.HasOne(d => d.Parent).WithMany(p => p.Medicinedonations)
+                .HasForeignKey(d => d.Parentid)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("FK__MEDICINED__PAREN__681373AD");
         });
 
         modelBuilder.Entity<Notification>(entity =>
