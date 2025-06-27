@@ -17,7 +17,6 @@ using Quartz;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-ExcelPackage.License.SetNonCommercialPersonal("Student API");
 builder.Services.AddControllers().AddJsonOptions(opt =>
 {
     opt.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
@@ -106,6 +105,8 @@ builder.Services.AddScoped<IPersonalmedicineService, PersonalmedicineService>();
 builder.Services.AddScoped<IPersonalMedicineRepository, PersonalMedicineRepository>();
 builder.Services.AddScoped<IMedicineRepository, MedicineRepository>();
 builder.Services.AddScoped<IMedicineService, MedicineService>();
+builder.Services.AddScoped<IMedicineCategoryRepository, MedicineCategoryRepository>();
+builder.Services.AddScoped<IMedicineScheduleRepository, MedicineScheduleRepository>();
 
 #endregion
 
@@ -129,6 +130,6 @@ app.UseHttpsRedirection();
 //app.UseAuthentication();
 app.UseAuthorization();
 
-    app.MapControllers();
+app.MapControllers();
 
 app.Run();

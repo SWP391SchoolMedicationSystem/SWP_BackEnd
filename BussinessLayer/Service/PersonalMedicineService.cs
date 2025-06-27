@@ -14,7 +14,9 @@ using NPOI.OpenXmlFormats.Dml;
 namespace BussinessLayer.Service
 {
     public class PersonalmedicineService(IPersonalMedicineRepository PersonalmedicineRepository, IParentRepository parentRepository,
-        IMedicineRepository medicineRepository,IStudentRepo studentRepo, IMapper mapper) : IPersonalmedicineService
+        IMedicineRepository medicineRepository,IStudentRepo studentRepo,IClassRoomRepository classRoomRepository,
+        IMedicineScheduleRepository medicineScheduleRepository,IMedicineCategoryRepository medicineCategoryRepository,
+        IMapper mapper) : IPersonalmedicineService
     {
         public Task AddPersonalmedicineAsync(AddPersonalMedicineDTO Personalmedicine)
         {
@@ -124,6 +126,47 @@ namespace BussinessLayer.Service
             {
                 return task.Result.Where(md => md.Isapproved == (isApproved == 1)).ToList();
             });
+        }
+
+        public Task<List<PersonalMedicineRequestDTO>> GetRequest()
+        {
+            var personalMedicinesList = PersonalmedicineRepository.GetAllAsync();
+            List<PersonalMedicineRequestDTO> personalMedicineRequests = new List<PersonalMedicineRequestDTO>();
+            foreach(var personalMedicine in personalMedicinesList.Result)
+            {
+                if (personalMedicine.Isdeleted == false)
+                {
+                    Classroom classRoom = classRoomRepository.GetAllAsync().Result.FirstOrDefault(c => c.Classid == personalMedicine.Student.Classid);
+                    var studentname = personalMedicine.Student.Fullname;
+                    var medicine = personalMedicine.Medicine;
+                    var type = medicineCategoryRepository.GetByIdAsync(medicine.Medicinecategoryid).Result?.Medicinecategoryname ?? "Unknown";
+
+
+                    var schedulelist = medicineScheduleRepository.GetAllAsync().Result
+                        .Where(s => s.Personalmedicineid == personalMedicine.Personalmedicineid).ToList();
+                    var request = new PersonalMedicineRequestDTO
+                    {
+                        Studentid = personalMedicine.Studentid ,
+                        StudentName = studentname,
+                        ParentId = personalMedicine.Parentid,
+                        ParentName = personalMedicine.Parent.Fullname,
+                        ClassName = classRoom.Classname,
+                        MedicineName = medicine.Medicinename,
+                        MedicineType = type,
+                        Quantity = personalMedicine.Quantity,
+                        ExpiryDate = personalMedicine.ExpiryDate.HasValue ? DateOnly.FromDateTime(personalMedicine.ExpiryDate.Value) : DateOnly.MinValue,
+                        Note = personalMedicine.Note ?? string.Empty,
+                        PhoneNumber = personalMedicine.Parent.Phone,
+                        PreferedTime = schedulelist,
+                        isApproved = personalMedicine.Isapproved,
+                        CreatedDate = personalMedicine.Createddate
+                    };
+                    personalMedicineRequests.Add(request);
+                }
+            }
+            var task = Task.FromResult(personalMedicineRequests);
+            return task;
+
         }
     }
 }

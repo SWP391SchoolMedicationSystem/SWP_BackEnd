@@ -16,5 +16,10 @@ namespace DataAccessLayer.Repository
         {
             _dbset = context.Set<Medicine>();
         }
+        public new Task<List<Medicine>> GetAllAsync()
+        {
+            return _dbset.Include(m => m.Medicinecategory)
+                         .ToListAsync();
+        }
     }
 }
