@@ -21,7 +21,7 @@ namespace DataAccessLayer.DTO
         public bool status { get; set; }
         public string Note { get; set; }
         public string PhoneNumber { get; set; }
-        public List<Medicineschedule> PreferedTime { get; set; } = new List<Medicineschedule>();
+        public List<PersonalMedicineScheduleDTO> PreferedTime { get; set; } = new List<PersonalMedicineScheduleDTO>();
         public bool isApproved { get; set; }
         public DateTime CreatedDate { get; set; }
 

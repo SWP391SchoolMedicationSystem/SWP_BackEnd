@@ -16,7 +16,7 @@ namespace BussinessLayer.Service
     public class PersonalmedicineService(IPersonalMedicineRepository PersonalmedicineRepository, IParentRepository parentRepository,
         IMedicineRepository medicineRepository,IStudentRepo studentRepo,IClassRoomRepository classRoomRepository,
         IMedicineScheduleRepository medicineScheduleRepository,IMedicineCategoryRepository medicineCategoryRepository,
-        IMapper mapper) : IPersonalmedicineService
+        IScheduleDetailRepo scheduleDetailRepo, IMapper mapper) : IPersonalmedicineService
     {
         public Task AddPersonalmedicineAsync(AddPersonalMedicineDTO Personalmedicine)
         {
@@ -132,7 +132,7 @@ namespace BussinessLayer.Service
         {
             var personalMedicinesList = PersonalmedicineRepository.GetAllAsync();
             List<PersonalMedicineRequestDTO> personalMedicineRequests = new List<PersonalMedicineRequestDTO>();
-            foreach(var personalMedicine in personalMedicinesList.Result)
+            foreach (var personalMedicine in personalMedicinesList.Result)
             {
                 if (personalMedicine.Isdeleted == false)
                 {
@@ -141,9 +141,9 @@ namespace BussinessLayer.Service
                     var medicine = personalMedicine.Medicine;
                     var type = medicineCategoryRepository.GetByIdAsync(medicine.Medicinecategoryid).Result?.Medicinecategoryname ?? "Unknown";
 
-
                     var schedulelist = medicineScheduleRepository.GetAllAsync().Result
                         .Where(s => s.Personalmedicineid == personalMedicine.Personalmedicineid).ToList();
+                    var schedule = mapper.Map<List<PersonalMedicineScheduleDTO>>(schedulelist);
                     var request = new PersonalMedicineRequestDTO
                     {
                         Studentid = personalMedicine.Studentid ,
@@ -157,7 +157,7 @@ namespace BussinessLayer.Service
                         ExpiryDate = personalMedicine.ExpiryDate.HasValue ? DateOnly.FromDateTime(personalMedicine.ExpiryDate.Value) : DateOnly.MinValue,
                         Note = personalMedicine.Note ?? string.Empty,
                         PhoneNumber = personalMedicine.Parent.Phone,
-                        PreferedTime = schedulelist,
+                        PreferedTime = schedule,
                         isApproved = personalMedicine.Isapproved,
                         CreatedDate = personalMedicine.Createddate
                     };
