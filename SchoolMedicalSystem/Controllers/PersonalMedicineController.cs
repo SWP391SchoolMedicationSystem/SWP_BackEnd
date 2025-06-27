@@ -2,12 +2,15 @@
 using BussinessLayer.IService;
 using DataAccessLayer.DTO;
 using DataAccessLayer.DTO.PersonalMedicine;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using NPOI.XSSF.UserModel;
 
 namespace SchoolMedicalSystem.Controllers
 {
-    [Route("api/[controller]")]
+    [Microsoft.AspNetCore.Mvc.Route("api/[controller]")]
     [ApiController]
     public class PersonalMedicineController(IPersonalmedicineService PersonalmedicineService, IMapper mapper) : ControllerBase
     {
@@ -93,6 +96,33 @@ namespace SchoolMedicalSystem.Controllers
             return Ok(Personalmedicines);
 
         }
+        [HttpGet("approval/{isApproved}")]
+        public async Task<IActionResult> GetPersonalmedicinesByApproval(int isApproved)
+        {
+            var Personalmedicines = await PersonalmedicineService.GetPersonalmedicinesByApprovalAsync(isApproved);
+            return Ok(Personalmedicines);
+        }
+        [HttpGet("requests")]
+        public async Task<ActionResult<List<PersonalMedicineRequestDTO>>> GetRequest()
+        {
+            try
+            {
+                var requests = await PersonalmedicineService.GetRequest();
+                if (requests == null || !requests.Any())
+                    return NotFound("No requests found.");
+                return new JsonResult(new
+                {
+                    status = "success",
+                    result = requests
+                });
 
+
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, $"Internal server error: {e.Message}");
+            }
+
+        }
     }
 }

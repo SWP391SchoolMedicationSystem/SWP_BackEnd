@@ -14,7 +14,9 @@ using NPOI.OpenXmlFormats.Dml;
 namespace BussinessLayer.Service
 {
     public class PersonalmedicineService(IPersonalMedicineRepository PersonalmedicineRepository, IParentRepository parentRepository,
-        IMedicineRepository medicineRepository,IStudentRepo studentRepo, IMapper mapper) : IPersonalmedicineService
+        IMedicineRepository medicineRepository,IStudentRepo studentRepo,IClassRoomRepository classRoomRepository,
+        IMedicineScheduleRepository medicineScheduleRepository,IMedicineCategoryRepository medicineCategoryRepository,
+        IScheduleDetailRepo scheduleDetailRepo, IMapper mapper) : IPersonalmedicineService
     {
         public Task AddPersonalmedicineAsync(AddPersonalMedicineDTO Personalmedicine)
         {
@@ -124,6 +126,51 @@ namespace BussinessLayer.Service
             {
                 return task.Result.Where(md => md.Isapproved == (isApproved == 1)).ToList();
             });
+        }
+
+        public async Task<List<PersonalMedicineRequestDTO>> GetRequest()
+        {
+            var personalMedicinesList = await PersonalmedicineRepository.GetAllAsync();
+            List<PersonalMedicineRequestDTO> personalMedicineRequests = new List<PersonalMedicineRequestDTO>();
+            var ScheduleDetailList = await scheduleDetailRepo.GetAllAsync();
+
+            foreach (var personalMedicine in personalMedicinesList)
+            {
+                if (personalMedicine.Isdeleted == false)
+                {
+                    List<Scheduledetail> scheduledetails = new List<Scheduledetail>();
+                    Classroom classRoom = classRoomRepository.GetAllAsync().Result.FirstOrDefault(c => c.Classid == personalMedicine.Student.Classid);
+                    var studentname = personalMedicine.Student.Fullname;
+                    var medicine = personalMedicine.Medicine;
+                    var type = medicineCategoryRepository.GetByIdAsync(medicine.Medicinecategoryid).Result?.Medicinecategoryname ?? "Unknown";
+                    var MedicineScheduleList = medicineScheduleRepository.GetAllAsync().Result.Where(ms => ms.Personalmedicineid == personalMedicine.Personalmedicineid).ToList();
+                    foreach (var schedule in MedicineScheduleList) {
+                        scheduledetails.Add(ScheduleDetailList.FirstOrDefault(sd => sd.Scheduledetailid == schedule.Scheduledetails));
+                    }
+                    var scheduling = mapper.Map<List<ScheduleDetailDTO>>(scheduledetails);
+                    var request = new PersonalMedicineRequestDTO
+                    {
+                        Studentid = personalMedicine.Studentid ,
+                        StudentName = studentname,
+                        ParentId = personalMedicine.Parentid,
+                        ParentName = personalMedicine.Parent.Fullname,
+                        ClassName = classRoom.Classname,
+                        MedicineName = medicine.Medicinename,
+                        MedicineType = type,
+                        Quantity = personalMedicine.Quantity,
+                        ExpiryDate = personalMedicine.ExpiryDate.HasValue ? DateOnly.FromDateTime(personalMedicine.ExpiryDate.Value) : DateOnly.MinValue,
+                        Note = personalMedicine.Note ?? string.Empty,
+                        PhoneNumber = personalMedicine.Parent.Phone,
+                        PreferedTime = scheduling,
+                        isApproved = personalMedicine.Isapproved,
+                        CreatedDate = personalMedicine.Createddate
+                    };
+                    personalMedicineRequests.Add(request);
+                }
+            }
+            var task = Task.FromResult(personalMedicineRequests);
+            return await task;
+
         }
     }
 }

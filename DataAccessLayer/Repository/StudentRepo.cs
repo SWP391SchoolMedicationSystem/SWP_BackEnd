@@ -20,6 +20,12 @@ namespace DataAccessLayer.Repository
             _mapper = mapper;
             _dbset = context.Set<Student>();
         }
+        public List<Student> GetAllStudents()
+        {
+            return _dbset.Include(s => s.Parent)
+                         .Include(s => s.Class)
+                         .ToList();
+        }
 
     }
 }
