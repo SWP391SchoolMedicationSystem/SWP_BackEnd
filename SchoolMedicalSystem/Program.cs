@@ -107,7 +107,7 @@ builder.Services.AddScoped<IMedicineRepository, MedicineRepository>();
 builder.Services.AddScoped<IMedicineService, MedicineService>();
 builder.Services.AddScoped<IMedicineCategoryRepository, MedicineCategoryRepository>();
 builder.Services.AddScoped<IMedicineScheduleRepository, MedicineScheduleRepository>();
-
+builder.Services.AddScoped<IScheduleDetailRepo, ScheduleDetailRepo>();
 #endregion
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

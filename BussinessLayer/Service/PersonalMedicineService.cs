@@ -128,22 +128,26 @@ namespace BussinessLayer.Service
             });
         }
 
-        public Task<List<PersonalMedicineRequestDTO>> GetRequest()
+        public async Task<List<PersonalMedicineRequestDTO>> GetRequest()
         {
-            var personalMedicinesList = PersonalmedicineRepository.GetAllAsync();
+            var personalMedicinesList = await PersonalmedicineRepository.GetAllAsync();
             List<PersonalMedicineRequestDTO> personalMedicineRequests = new List<PersonalMedicineRequestDTO>();
-            foreach (var personalMedicine in personalMedicinesList.Result)
+            var ScheduleDetailList = await scheduleDetailRepo.GetAllAsync();
+
+            foreach (var personalMedicine in personalMedicinesList)
             {
                 if (personalMedicine.Isdeleted == false)
                 {
+                    List<Scheduledetail> scheduledetails = new List<Scheduledetail>();
                     Classroom classRoom = classRoomRepository.GetAllAsync().Result.FirstOrDefault(c => c.Classid == personalMedicine.Student.Classid);
                     var studentname = personalMedicine.Student.Fullname;
                     var medicine = personalMedicine.Medicine;
                     var type = medicineCategoryRepository.GetByIdAsync(medicine.Medicinecategoryid).Result?.Medicinecategoryname ?? "Unknown";
-
-                    var schedulelist = medicineScheduleRepository.GetAllAsync().Result
-                        .Where(s => s.Personalmedicineid == personalMedicine.Personalmedicineid).ToList();
-                    var schedule = mapper.Map<List<PersonalMedicineScheduleDTO>>(schedulelist);
+                    var MedicineScheduleList = medicineScheduleRepository.GetAllAsync().Result.Where(ms => ms.Personalmedicineid == personalMedicine.Personalmedicineid).ToList();
+                    foreach (var schedule in MedicineScheduleList) {
+                        scheduledetails.Add(ScheduleDetailList.FirstOrDefault(sd => sd.Scheduledetailid == schedule.Scheduledetails));
+                    }
+                    var scheduling = mapper.Map<List<ScheduleDetailDTO>>(scheduledetails);
                     var request = new PersonalMedicineRequestDTO
                     {
                         Studentid = personalMedicine.Studentid ,
@@ -157,7 +161,7 @@ namespace BussinessLayer.Service
                         ExpiryDate = personalMedicine.ExpiryDate.HasValue ? DateOnly.FromDateTime(personalMedicine.ExpiryDate.Value) : DateOnly.MinValue,
                         Note = personalMedicine.Note ?? string.Empty,
                         PhoneNumber = personalMedicine.Parent.Phone,
-                        PreferedTime = schedule,
+                        PreferedTime = scheduling,
                         isApproved = personalMedicine.Isapproved,
                         CreatedDate = personalMedicine.Createddate
                     };
@@ -165,7 +169,7 @@ namespace BussinessLayer.Service
                 }
             }
             var task = Task.FromResult(personalMedicineRequests);
-            return task;
+            return await task;
 
         }
     }
