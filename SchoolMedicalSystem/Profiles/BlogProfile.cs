@@ -14,6 +14,7 @@ namespace SchoolMedicalSystem.Profiles
             CreateMap<CreateBlogDTO, Blog>().ReverseMap();
             CreateMap<UpdateBlogDTO, Blog>().ReverseMap();
             CreateMap<Blog, ApproveBlogDTO>().ReverseMap();
+            CreateMap<BlogImageUploadDTO, Blog>().ReverseMap();
         }
     }
 }
