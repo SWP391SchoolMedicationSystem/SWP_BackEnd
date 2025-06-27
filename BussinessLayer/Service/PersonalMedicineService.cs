@@ -136,7 +136,7 @@ namespace BussinessLayer.Service
 
             foreach (var personalMedicine in personalMedicinesList)
             {
-                if (personalMedicine.Isdeleted == false)
+                if (!personalMedicine.Isdeleted)
                 {
                     List<Scheduledetail> scheduledetails = new List<Scheduledetail>();
                     Classroom classRoom = classRoomRepository.GetAllAsync().Result.FirstOrDefault(c => c.Classid == personalMedicine.Student.Classid);
