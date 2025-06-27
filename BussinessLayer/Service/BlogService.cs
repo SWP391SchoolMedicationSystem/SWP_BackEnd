@@ -127,7 +127,7 @@ namespace BussinessLayer.Service
                 _blogRepo.Save();
             }
         }
-        public async Task UploadBlogImageAsync(BlogImageUploadDTO dto)
+        public async Task<string> UploadBlogImageAsync(BlogImageUploadDTO dto)
         {
             var blog = await _blogRepo.GetByIdAsync(dto.BlogId);
             if (blog == null) throw new Exception("Blog not found.");
@@ -144,14 +144,15 @@ namespace BussinessLayer.Service
 
             // Save image to wwwroot/images/blogs
             var wwwRootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "blogs");
-            Directory.CreateDirectory(wwwRootPath); // ensure folder exists
+            Directory.CreateDirectory(wwwRootPath); //create directory if it doesn't exist
 
-            var fileName = Guid.NewGuid().ToString() + Path.GetExtension(dto.ImageFile.FileName);
-            var filePath = Path.Combine(wwwRootPath, fileName);
+            var fileName = Guid.NewGuid().ToString() + Path.GetExtension(dto.ImageFile.FileName); //generate unique name for image file
+            var filePath = Path.Combine(wwwRootPath, fileName); //get full path for the image file
 
+            // open file stream and copy the uploaded file to the server
             using (var stream = new FileStream(filePath, FileMode.Create))
             {
-                await dto.ImageFile.CopyToAsync(stream);
+                await dto.ImageFile.CopyToAsync(stream); //copy the uploaded file to the server
             }
 
             // Update blog entity
@@ -159,6 +160,8 @@ namespace BussinessLayer.Service
             blog.UpdatedAt = DateTime.Now;
             _blogRepo.Update(blog);
             _blogRepo.Save();
+
+            return blog.Image; //return the image URL
         }
     }            
 }

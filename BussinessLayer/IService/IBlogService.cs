@@ -19,6 +19,6 @@ namespace BussinessLayer.IService
         void ApproveBlog(ApproveBlogDTO dto);
         void RejectBlog(RejectBlogDTO dto);
         Task<List<Blog>> GetPublishedBlogs();
-        public Task UploadBlogImageAsync(BlogImageUploadDTO dto);
+        public Task<string> UploadBlogImageAsync(BlogImageUploadDTO dto);
     }
 }
