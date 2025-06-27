@@ -17,7 +17,6 @@ using Quartz;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-ExcelPackage.License.SetNonCommercialPersonal("Student API");
 builder.Services.AddControllers().AddJsonOptions(opt =>
 {
     opt.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
@@ -106,7 +105,9 @@ builder.Services.AddScoped<IPersonalmedicineService, PersonalmedicineService>();
 builder.Services.AddScoped<IPersonalMedicineRepository, PersonalMedicineRepository>();
 builder.Services.AddScoped<IMedicineRepository, MedicineRepository>();
 builder.Services.AddScoped<IMedicineService, MedicineService>();
-
+builder.Services.AddScoped<IMedicineCategoryRepository, MedicineCategoryRepository>();
+builder.Services.AddScoped<IMedicineScheduleRepository, MedicineScheduleRepository>();
+builder.Services.AddScoped<IScheduleDetailRepo, ScheduleDetailRepo>();
 #endregion
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

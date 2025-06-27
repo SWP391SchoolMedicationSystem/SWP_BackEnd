@@ -22,5 +22,7 @@ namespace BussinessLayer.IService
         Task<List<Personalmedicine>> GetPersonalmedicinesByMedicineIdAsync(int medicineId);
         Task<List<Personalmedicine>> GetPersonalmedicinesByApprovalAsync(int isApproved);
 
+        Task<List<PersonalMedicineRequestDTO>> GetRequest();
+
     }
 }
