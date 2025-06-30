@@ -325,7 +325,7 @@ namespace SchoolMedicalSystem.Controllers
 
                 // Get student information for this email
                 var studentInfo = await _vaccinationEventService.GetStudentByParentEmailAsync(email, eventId);
-                if (studentInfo == null)
+                if (studentInfo == null || !studentInfo.Any())
                     return NotFound("No student found for this email address");
 
                 // Return HTML form

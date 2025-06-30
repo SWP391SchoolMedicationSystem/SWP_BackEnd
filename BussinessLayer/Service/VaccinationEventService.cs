@@ -367,7 +367,7 @@ namespace BussinessLayer.Service
                 var filterStudents = students.Where(s => s.Parent.Email.Equals(email));
 
                 if (filterStudents == null)
-                    return null;
+                    throw new InvalidOperationException("No students found for the given parent email.");
 
                 var list = new List<StudentVaccinationStatusDTO>();
 
