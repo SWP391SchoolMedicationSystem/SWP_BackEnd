@@ -25,5 +25,6 @@ namespace DataAccessLayer.DTO.Medicines
         public string? Createdby { get; set; }
 
         public string? Updatedby { get; set; }
+        public bool IsDeleted { get; set; }
     }
 }

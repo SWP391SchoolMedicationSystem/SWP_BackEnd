@@ -16,5 +16,7 @@ namespace BussinessLayer.IService
         void UpdateMedicine(UpdateMedicineDTO medicine);
         Task<List<MedicineDTO>> SearchMedicinesNameAsync(string searchTerm);
         Task<List<MedicineDTO>> GetMedicinesByCategoryIdAsync(int categoryId);
+        void DeleteMedicine(int id);
+        Task<List<MedicineDTO>> GetAvailableMedicinesAsync();
     }
 }
