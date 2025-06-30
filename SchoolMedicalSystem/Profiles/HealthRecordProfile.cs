@@ -12,6 +12,7 @@ namespace SchoolMedicalSystem.Profiles
             CreateMap<Healthrecord, HealthRecordDto>().ReverseMap();
             CreateMap<HealthRecordDto, Healthrecord>().ReverseMap();
             CreateMap<Healthrecord, CreateHealthRecordDTO>().ReverseMap();
+            
         }
     }
 

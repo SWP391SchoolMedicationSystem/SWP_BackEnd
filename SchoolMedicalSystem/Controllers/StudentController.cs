@@ -8,6 +8,7 @@ using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 using DataAccessLayer.Repository;
 using DataAccessLayer.IRepository;
+using DataAccessLayer.DTO.Students;
 
 namespace SchoolMedicalSystem.Controllers
 {
@@ -61,7 +62,7 @@ namespace SchoolMedicalSystem.Controllers
         }
 
         [HttpPost("AddStudent")]
-        public async Task<IActionResult> AddStudent([FromBody] StudentDTO student)
+        public async Task<IActionResult> AddStudent([FromBody] UpdateStudentDTo student)
         {
             if (student == null)
             {
@@ -80,11 +81,11 @@ namespace SchoolMedicalSystem.Controllers
         }
 
         [HttpPut("UpdateStudent")]
-        public async Task<IActionResult> UpdateStudent([FromBody] UpdateStudent student)
+        public async Task<IActionResult> UpdateStudent([FromBody] UpdateStudentDTo student)
         {
-            if (student == null || student.Student == null)
+            if (student == null)
                 return BadRequest("Student data cannot be null.");
-            var s = await _studentService.UpdateStudentAsync(student.Student, student.Id);
+            var s = await _studentService.UpdateStudentAsync(student);
             if (s == null)
                 return NotFound($"Student with ID {student.Id} not found.");
             return Ok(s);

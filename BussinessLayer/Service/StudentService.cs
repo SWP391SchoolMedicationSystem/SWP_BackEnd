@@ -9,6 +9,7 @@ using AutoMapper;
 using BussinessLayer.IService;
 using DataAccessLayer.DTO;
 using DataAccessLayer.DTO.Parents;
+using DataAccessLayer.DTO.Students;
 using DataAccessLayer.Entity;
 using DataAccessLayer.IRepository;
 using DataAccessLayer.Repository;
@@ -23,7 +24,6 @@ namespace BussinessLayer.Service
     {
         private readonly IStudentRepo _studentrepo;
         private readonly IClassRoomRepository _classroomrepo;
-        private readonly IClassRoomService _classservice;
         private readonly IParentRepository _parentrepo;
         private readonly IMapper _mapper;
         public StudentService(IStudentRepo studentrepo, IClassRoomRepository classRoomRepository,
@@ -35,7 +35,7 @@ namespace BussinessLayer.Service
             _mapper = mapper;
         }
 
-        public async Task<Student> AddStudentAsync(StudentDTO student)
+        public async Task<Student> AddStudentAsync(UpdateStudentDTo student)
         {
             Student addedstudent = _mapper.Map<Student>(student);
             await _studentrepo.AddAsync(addedstudent);
@@ -55,12 +55,15 @@ namespace BussinessLayer.Service
         public async Task<List<StudentDTO>> GetAllStudentsAsync()
         {
             var list = await _studentrepo.GetAllAsync();
-            var returnlist = _mapper.Map<List<StudentDTO>>(list);
-            foreach(var student in returnlist)
+            List<StudentDTO> returnlist = new List<StudentDTO>();
+            foreach (var student in list)
             {
                 var parent = await _parentrepo.GetByIdAsync(student.Parentid);
                 var listparent = _mapper.Map<ParentStudent>(parent);
-                student.listparent.Add(listparent);
+                var studentDTO = _mapper.Map<StudentDTO>(student);
+                studentDTO.parent = listparent;
+                studentDTO.Classname = _classroomrepo.GetByIdAsync(student.Classid).Result.Classname;
+                returnlist.Add(studentDTO);
             }
             return returnlist;
         }
@@ -72,27 +75,33 @@ namespace BussinessLayer.Service
             {
                 throw new KeyNotFoundException($"Student with id {id} not found.");
             }
-            return _mapper.Map<StudentDTO>(student);
+            var studentdto = _mapper.Map<StudentDTO>(student);
+            studentdto.parent = _mapper.Map<ParentStudent>(await _parentrepo.GetByIdAsync(student.Parentid));
+            studentdto.Classname = (await _classroomrepo.GetByIdAsync(student.Classid)).Classname;
+            return studentdto;
         }
 
         public async Task<List<StudentDTO>> GetStudentByParentId(int parentId)
         {
             var students = await _studentrepo.GetAllAsync();
             var filteredStudents = students.Where(s => s.Parentid == parentId && !s.IsDeleted).ToList();
-            var returnlist = _mapper.Map<List<StudentDTO>>(filteredStudents);
+            var returnlist = new List<StudentDTO>();
 
-            foreach (var student in returnlist)
+            foreach (var student in filteredStudents)
             {
                 var parent = await _parentrepo.GetByIdAsync(student.Parentid);
                 var parentdto = _mapper.Map<ParentStudent>(parent);
-                student.listparent.Add(parentdto);
+                var studentDTO = _mapper.Map<StudentDTO>(student);
+                studentDTO.parent = parentdto;
+                studentDTO.Classname = _classroomrepo.GetByIdAsync(student.Classid).Result.Classname;
+                returnlist.Add(studentDTO);
             }
             return returnlist;
         }
 
-        public async Task<Student> UpdateStudentAsync(StudentDTO student, int id)
+        public async Task<Student> UpdateStudentAsync(UpdateStudentDTo student)
         {
-            var s = await _studentrepo.GetByIdAsync(id);
+            var s = await _studentrepo.GetByIdAsync(student.Id);
             if (s == null)
                 return null;
 
@@ -114,39 +123,45 @@ namespace BussinessLayer.Service
         {
             try
             {
-                var parentlist = _parentrepo.GetAll();
-                var classlist = _classroomrepo.GetAll();
+                var parentlist = await _parentrepo.GetAllAsync();
+                var classlist = await _classroomrepo.GetAllAsync();
+                var students = await _studentrepo.GetAllAsync();
                 string errorMessage = string.Empty;
                 foreach (var student in studentlist)
                 {
+
                     if (student != null)
                     {
+                        if (students.FirstOrDefault(s => s.StudentCode == student.studentCode) == null)
 
-                        Classroom classroom = classlist.FirstOrDefault(c => c.Classname == student.className);
-                        Parent parent = parentlist.FirstOrDefault(p => p.Fullname == student.parentName && p.Phone == student.parentphone);
-                        if (parent != null && classroom != null)
                         {
-                            StudentDTO addstudent = new()
+                            Classroom classroom = classlist.FirstOrDefault(c => c.Classname == student.className);
+                            Parent parent = parentlist.FirstOrDefault(p => p.Fullname == student.parentName && p.Phone == student.parentphone);
+                            if (parent != null && classroom != null)
                             {
-                                Fullname = student.fullName,
-                                Age = DateTime.Now.Year - student.birthDate.Year -
-                                      (DateTime.Now.DayOfYear < student.birthDate.DayOfYear ? 1 : 0),
-                                BloodType = student.bloodtype,
-                                Classid = classroom.Classid,
-                                Parentid = parent.Parentid,
-                                Dob = student.birthDate,
-                                Gender = student.gender == "Nam" ? true : student.gender == "Nữ" ? false : throw new ArgumentException("Invalid gender value"),
-                                StudentCode = student.studentCode,
-                            };
-                            Student newstudent = await AddStudentAsync(addstudent);
-                            classroom.Students.Add(newstudent);
-                            parent.Students.Add(newstudent);
-                        }
-                        else
-                        {
-                            errorMessage += ($"Parent or Classroom not found for student: {student.fullName} - {student.className} - {student.parentName} - {student.parentphone}");
+                                UpdateStudentDTo addstudent = new()
+                                {
+                                    Fullname = student.fullName,
+                                    Age = DateTime.Now.Year - student.birthDate.Year -
+                                          (DateTime.Now.DayOfYear < student.birthDate.DayOfYear ? 1 : 0),
+                                    BloodType = student.bloodtype,
+                                    Classid = classroom.Classid,
+                                    Parentid = parent.Parentid,
+                                    Dob = student.birthDate,
+                                    Gender = student.gender == "Nam" ? true : student.gender == "Nữ" ? false : throw new ArgumentException("Invalid gender value"),
+                                    StudentCode = student.studentCode,
+                                };
+                                Student newstudent = await AddStudentAsync(addstudent);
+                                classroom.Students.Add(newstudent);
+                                parent.Students.Add(newstudent);
+                            }
+                            else
+                            {
+                                errorMessage += ($"Parent or Classroom not found for student: {student.fullName} - {student.className} - {student.parentName} - {student.parentphone}\n");
+                            }
                         }
 
+                        else errorMessage += ($"Student already exist: {student.fullName} - {student.className} - {student.parentName} - {student.parentphone}\n");
 
                     }
                 }
@@ -190,12 +205,13 @@ namespace BussinessLayer.Service
                 workbook = new XSSFWorkbook(stream);
             else
                 workbook = new HSSFWorkbook(stream);
-            
+
             //check file sheet
             var sheet = workbook.GetSheetAt(0);
-            for (int i = 1; i <= sheet.LastRowNum; i++) {
+            for (int i = 1; i <= sheet.LastRowNum; i++)
+            {
                 var row = sheet.GetRow(i);
-                if( row == null || row.Cells.All(c => c.CellType == CellType.Blank))
+                if (row == null || row.Cells.All(c => c.CellType == CellType.Blank))
                     continue; // Skip empty rows
                 try
                 {
@@ -218,7 +234,7 @@ namespace BussinessLayer.Service
                 }
                 catch (Exception ex) { Console.WriteLine($"Error processing row {i + 1}: {ex.Message}"); }
             }
-            return (students,"Student insert successfully");
+            return (students, "Student insert successfully");
         }
         private string GetCellStringValue(IRow row, int cellIndex)
         {

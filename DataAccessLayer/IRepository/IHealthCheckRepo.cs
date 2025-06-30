@@ -9,5 +9,8 @@ namespace DataAccessLayer.IRepository
 {
     public interface IHealthCheckRepo : IGenericRepository<Healthcheck>
     {
+        Task<List<Healthcheck>> GetHealthChecksByStudentIdAsync(int studentId);
+        Task<Healthcheck?> GetHealthCheckByIdAsync(int checkId);
+
     }
 }

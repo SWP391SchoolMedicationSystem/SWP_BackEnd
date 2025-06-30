@@ -97,5 +97,12 @@ namespace SchoolMedicalSystem.Controllers
                 return StatusCode(500, $"Error deleting health record: {ex.Message}");
             }
         }
+        [HttpGet]
+        [Route("fullhealthrecord")]
+        public async Task<ActionResult<List<HealthRecordStudentCheck>>> GetFullHealthRecords()
+        {
+            var result = await _healthRecordService.GetHealthRecords();
+            return Ok(result);
+        }
     }
 }
