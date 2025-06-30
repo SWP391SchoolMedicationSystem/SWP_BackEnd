@@ -59,11 +59,11 @@ namespace SchoolMedicalSystem.Controllers
             return Ok(result);
         }
 
-/*        public class HealthRecordContent
-        {
-            public UpdateHealthRecordDTO dto { get; set; }
-            public int id { get; set; }
-        }*/
+        /*        public class HealthRecordContent
+                {
+                    public UpdateHealthRecordDTO dto { get; set; }
+                    public int id { get; set; }
+                }*/
         [HttpPut]
         [Route("update")]
         public IActionResult Update([FromBody] UpdateHealthRecordDTO content, [FromQuery] int id)
@@ -102,6 +102,15 @@ namespace SchoolMedicalSystem.Controllers
         public async Task<ActionResult<List<HealthRecordStudentCheck>>> GetFullHealthRecords()
         {
             var result = await _healthRecordService.GetHealthRecords();
+            return Ok(result);
+        }
+        [HttpGet]
+        [Route("fullhealthrecordByStudentId")]
+        public async Task<ActionResult<HealthRecordStudentCheck>> GetFullHealthRecordsByStudentId([FromQuery] int studentId)
+        {
+            var result = await _healthRecordService.GetHealthRecordsByStudentIdWithCheckAsync(studentId);
+            if (result == null)
+                return NotFound("Health record not found for the specified student.");
             return Ok(result);
         }
     }

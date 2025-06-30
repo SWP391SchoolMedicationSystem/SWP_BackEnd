@@ -105,14 +105,36 @@ namespace BussinessLayer.Service
 
         public Task<List<Healthrecord>> GetHealthRecordsByStudentIdAsync(int studentId)
         {
-            var healthRecords = _healthRecordRepository.GetAllAsync()
-                .Result.Where(hr => hr.Studentid == studentId).ToList();
-            return Task.FromResult(_mapper.Map<List<Healthrecord>>(healthRecords));
+            var healthRecords = _healthRecordRepository.GetAllAsync().Result
+                .Where(c => c.Studentid == studentId)
+                .ToList(); // Convert IEnumerable to List explicitly
+            return Task.FromResult(healthRecords); // Wrap the result in a Task
         }
 
         public Task<HealthRecordStudentCheck> GetHealthRecordsByStudentIdWithCheckAsync(int studentId)
         {
-            throw new NotImplementedException();
+            var healthrecordList = _healthRecordRepository.GetByIdAsync(studentId).Result;
+            List<HealthRecordStudentCheck> healthRecordStudentChecks = new List<HealthRecordStudentCheck>();
+
+                var student = _studentRepository.GetByIdAsync(healthrecordList.Studentid).Result;
+                var staff = _staffRepository.GetByIdAsync(healthrecordList.Staffid).Result;
+                var healthCategory = _healthCategoryRepo.GetByIdAsync(healthrecordList.Healthcategoryid).Result;
+                var vaccinationRecords = _ivaccinationRecordRepository.GetRecordsByStudentAsync(healthrecordList.Studentid).Result;
+                var healthChecks = _healthCheckRepository.GetHealthChecksByStudentIdAsync(healthrecordList.Studentid).Result;
+                HealthRecordStudentCheck check = new HealthRecordStudentCheck
+                {
+                    StudentName = student.Fullname,
+                    HealthCategory = healthCategory.Healthcategoryname,
+                    HealthRecordDate = healthrecordList.Healthrecorddate,
+                    Healthrecordtitle = healthrecordList.Healthrecordtitle,
+                    Healthrecorddescription = healthrecordList.Healthrecorddescription ?? string.Empty,
+                    StaffName = staff.Fullname,
+                    IsConfirm = healthrecordList.Isconfirm,
+                    VaccinationRecords = _mapper.Map<List<VaccinationRecordDTO>>(vaccinationRecords),
+                    HealthChecks = _mapper.Map<List<HealthCheckDTO>>(healthChecks)
+                };
+            
+            return Task.FromResult(check);
         }
 
         public void UpdateHealthRecord(UpdateHealthRecordDTO healthRecorddto, int id)
