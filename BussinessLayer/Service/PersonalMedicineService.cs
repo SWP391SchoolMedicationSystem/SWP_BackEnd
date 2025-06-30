@@ -111,9 +111,9 @@ namespace BussinessLayer.Service
             });
         }
 
-        public void UpdatePersonalmedicine(UpdatePersonalMedicineDTO Personalmedicine)
+        public void UpdatePersonalmedicine(UpdatePersonalMedicineDTO Personalmedicine, int id)
         {
-            var PersonalmedicineEntity = PersonalmedicineRepository.GetByIdAsync(Personalmedicine.Personalmedicineid).Result;
+            var PersonalmedicineEntity = PersonalmedicineRepository.GetByIdAsync(id).Result;
             if (PersonalmedicineEntity == null)
             {
                 throw new KeyNotFoundException("Medicine donation not found.");

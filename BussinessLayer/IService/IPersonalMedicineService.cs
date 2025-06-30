@@ -15,7 +15,7 @@ namespace BussinessLayer.IService
         Task<List<PersonalMedicineDTO>> GetAllPersonalmedicinesAsync();
         Task<PersonalMedicineDTO> GetPersonalmedicineByIdAsync(int id);
         Task AddPersonalmedicineAsync(AddPersonalMedicineDTO Personalmedicine);
-        void UpdatePersonalmedicine(UpdatePersonalMedicineDTO Personalmedicine);
+        void UpdatePersonalmedicine(UpdatePersonalMedicineDTO Personalmedicine, int id);
         void DeletePersonalmedicine(int id);
         Task<List<Personalmedicine>> SearchPersonalmedicinesAsync(string searchTerm);
         Task<List<Personalmedicine>> GetPersonalmedicinesByParentIdAsync(int parentId);
