@@ -34,11 +34,16 @@ namespace BussinessLayer.Service
         {
             if (_staffservice.GetStaffByIdAsync(healthCheckDto.Staffid) != null
                 && _studentService.GetAllStudentsAsync()
-                    .Result.FirstOrDefault(s => s.Studentid == healthCheckDto.Studentid) != null)
+                    .Result.FirstOrDefault(s => s.StudentId == healthCheckDto.Studentid) != null)
             {
+
+                if (healthCheckDto.Visionleft == 10) healthCheckDto.Visionleft = (decimal?)9.99;
+                if (healthCheckDto.Visionright == 10) healthCheckDto.Visionright = (decimal)9.99;
                 Healthcheck healthcheck = _mapper.Map<Healthcheck>(healthCheckDto);
+                healthcheck.Createdat = DateTime.Now;
+
                 await _healthCheckRepository.AddAsync(healthcheck); // Use AddAsync instead of Add
-                healthcheck.Createdat = DateTime.Now; // Set the creation date
+                // Set the creation date
                 _healthCheckRepository.Save(); // Ensure changes are saved
                 return healthcheck; // Return the created healthcheck object
             }

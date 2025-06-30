@@ -13,10 +13,10 @@ namespace BussinessLayer.Service
     public class ClassroomService : IClassRoomService
     {
         private readonly IClassRoomRepository _classroomRepository;
-        public ClassroomService(IClassRoomRepository classroomRepository, IMapper mapper)
+        public ClassroomService(IClassRoomRepository classroomRepository)
         {
             _classroomRepository = classroomRepository;
-            _mapper = mapper;
+
         }
 
         public async void DeleteClassRoom(int id)

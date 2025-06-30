@@ -5,6 +5,7 @@ namespace DataAccessLayer.Entity;
 
 public partial class Staff
 {
+
     public int Staffid { get; set; }
 
     public string Fullname { get; set; } = null!;
@@ -34,8 +35,6 @@ public partial class Staff
     public virtual ICollection<Healthcheck> Healthchecks { get; set; } = new List<Healthcheck>();
 
     public virtual ICollection<Healthrecord> Healthrecords { get; set; } = new List<Healthrecord>();
-    public virtual ICollection<Healthcheck> Healthchecks { get; set; } = new List<Healthcheck>();
-
 
     public virtual ICollection<Healthstatus> Healthstatuses { get; set; } = new List<Healthstatus>();
 

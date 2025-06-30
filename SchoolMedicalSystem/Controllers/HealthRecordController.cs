@@ -43,7 +43,7 @@ namespace SchoolMedicalSystem.Controllers
 
         [HttpGet]
         [Route("getById")]
-        public async Task<ActionResult<HealthRecordDTO>> GetById([FromQuery] int id)
+        public async Task<ActionResult<HealthRecordDto>> GetById([FromQuery] int id)
         {
             var result = await _healthRecordService.GetHealthRecordByIdAsync(id);
             if (result == null)

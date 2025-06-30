@@ -17,12 +17,12 @@ namespace SchoolMedicalSystem.Controllers
             _mapper = mapper;
         }
         [HttpGet]
-        public async Task<List<HealthCheckDTO>> GetAllHealthChecks()
+        public Task<List<HealthCheckDTO>> GetAllHealthChecks()
         {
             var result = _healthCheckService.GetAllHealthChecksAsync();
             if (result == null || !result.Any())
-                return null;
-            return result;
+                return Task.FromResult<List<HealthCheckDTO>>(null);
+            return Task.FromResult(result);
         }
 
         [HttpPost]

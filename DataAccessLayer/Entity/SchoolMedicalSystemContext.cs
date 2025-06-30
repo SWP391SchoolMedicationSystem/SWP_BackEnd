@@ -568,7 +568,7 @@ public partial class SchoolMedicalSystemContext : DbContext
             entity.Property(e => e.Updatedby)
                 .HasMaxLength(255)
                 .HasColumnName("UPDATEDBY");
-            entity.Property(e => e.IsDeleted).HasColumnName("IS_DELETED");
+            entity.Property(e => e.IsDeleted).HasColumnName("ISDELETED");
 
 
             entity.HasOne(d => d.Medicinecategory).WithMany(p => p.Medicines)

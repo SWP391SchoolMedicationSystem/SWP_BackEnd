@@ -58,9 +58,9 @@ namespace BussinessLayer.Service
             return healthRecords;
         }
 
-        public async Task<HealthRecordDTO> GetHealthRecordByIdAsync(int id)
+        public async Task<HealthRecordDto> GetHealthRecordByIdAsync(int id)
         {
-            HealthRecordDTO healthRecord = _mapper.Map<HealthRecordDTO>(await _healthRecordRepository.GetByIdAsync(id));
+            HealthRecordDto healthRecord = _mapper.Map<HealthRecordDto>(await _healthRecordRepository.GetByIdAsync(id));
             return healthRecord;
         }
 

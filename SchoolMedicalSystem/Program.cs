@@ -107,6 +107,8 @@ builder.Services.AddScoped<IMedicineRepository, MedicineRepository>();
 builder.Services.AddScoped<IMedicineService, MedicineService>();
 builder.Services.AddScoped<IMedicineCategoryRepository, MedicineCategoryRepository>();
 builder.Services.AddScoped<IMedicineScheduleRepository, MedicineScheduleRepository>();
+builder.Services.AddScoped<IHealthCheckRepo, HealthCheckRepository>();
+builder.Services.AddScoped<IHealthCheckService, HealthCheckService>();
 builder.Services.AddScoped<IScheduleDetailRepo, ScheduleDetailRepo>();
 #endregion
 
