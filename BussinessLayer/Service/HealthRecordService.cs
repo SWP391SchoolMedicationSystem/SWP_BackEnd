@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices.JavaScript;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -105,15 +106,16 @@ namespace BussinessLayer.Service
 
         public Task<List<Healthrecord>> GetHealthRecordsByStudentIdAsync(int studentId)
         {
-            var healthRecords = _healthRecordRepository.GetAllAsync().Result
-                .Where(c => c.Studentid == studentId)
+            var healthRecords = _healthRecordRepository.GetAllAsync().Result;
+                var news = healthRecords.Where(c => c.Studentid == studentId)
                 .ToList(); // Convert IEnumerable to List explicitly
-            return Task.FromResult(healthRecords); // Wrap the result in a Task
+            return Task.FromResult(news); // Wrap the result in a Task
         }
 
         public Task<HealthRecordStudentCheck> GetHealthRecordsByStudentIdWithCheckAsync(int studentId)
         {
-            var healthrecordList = _healthRecordRepository.GetByIdAsync(studentId).Result;
+            var List = _healthRecordRepository.GetAll();
+            var healthrecordList = List.FirstOrDefault(h => h.Studentid == studentId);
             List<HealthRecordStudentCheck> healthRecordStudentChecks = new List<HealthRecordStudentCheck>();
 
                 var student = _studentRepository.GetByIdAsync(healthrecordList.Studentid).Result;
