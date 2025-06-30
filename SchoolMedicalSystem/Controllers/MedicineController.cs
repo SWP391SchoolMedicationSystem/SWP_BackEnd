@@ -90,5 +90,35 @@ namespace SchoolMedicalSystem.Controllers
                 return NotFound("No medicines found for the specified category.");
             return Ok(medicines);
         }
+        [HttpDelete]
+        [Route("DeleteMedicine")]
+        public IActionResult DeleteMedicine([FromQuery] int id)
+        {
+            if (id <= 0)
+                return BadRequest("Invalid medicine ID.");
+            try
+            {
+                _medicineService.DeleteMedicine(id);
+                return Ok("Medicine deleted successfully.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error deleting medicine: {ex.Message}");
+            }
+        }
+        [HttpGet]
+        [Route("GetAvailableMedicines")]
+        public async Task<IActionResult> GetAvailableMedicines()
+        {
+            try
+            {
+                var medicines = await _medicineService.GetAvailableMedicinesAsync();
+                return Ok(medicines);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
     }
 }
