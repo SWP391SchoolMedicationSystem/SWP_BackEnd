@@ -8,7 +8,7 @@ namespace BussinessLayer.Utils
 {
     public class TokenRequest
     {
-        public string Credential { get; set; }
+        public string Credential { get; set; } = null!;
 
     }
 }

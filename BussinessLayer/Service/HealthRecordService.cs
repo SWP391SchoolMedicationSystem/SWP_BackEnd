@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices.JavaScript;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
 using BussinessLayer.IService;
 using BussinessLayer.Utils.Configurations;
+using DataAccessLayer.DTO;
 using DataAccessLayer.DTO.HealthRecords;
 using DataAccessLayer.Entity;
 using DataAccessLayer.IRepository;
@@ -18,16 +20,26 @@ namespace BussinessLayer.Service
     public class HealthRecordService : IHealthRecordService
     {
         private readonly IHealthRecordRepository _healthRecordRepository;
+        private readonly IVaccinationRecordRepository _ivaccinationRecordRepository;
+        private readonly IHealthCheckRepo _healthCheckRepository;
+        private readonly IStudentRepo _studentRepository;
+        private readonly IHealthCategoryRepo _healthCategoryRepo;
+        private readonly IStaffRepository _staffRepository;
         private readonly IMapper _mapper;
-        private readonly AppSetting _appSettings;
-        private readonly IHttpContextAccessor _httpContextAccessor;
-        public HealthRecordService(IHealthRecordRepository healthRecordRepository, IMapper mapper,
+
+        public HealthRecordService(IHealthRecordRepository healthRecordRepository,IVaccinationRecordRepository vaccinationRecordRepo,
+            IHealthCheckRepo healthCheckRepository, IStudentRepo studentRepository,IHealthCategoryRepo healthCategoryRepo,
+            IStaffRepository staffRepository,IParentRepository parentRepository,
+            IMapper mapper,
             IOptionsMonitor<AppSetting> option, IHttpContextAccessor httpContextAccessor)
         {
             _healthRecordRepository = healthRecordRepository;
+            _ivaccinationRecordRepository = vaccinationRecordRepo;
+            _healthCheckRepository = healthCheckRepository;
             _mapper = mapper;
-            _appSettings = option.CurrentValue;
-            _httpContextAccessor = httpContextAccessor;
+            _studentRepository = studentRepository;
+            _healthCategoryRepo = healthCategoryRepo;
+            _staffRepository = staffRepository;
         }
         public Task AddHealthRecordAsync(CreateHealthRecordDTO healthRecorddto)
         {
@@ -58,17 +70,73 @@ namespace BussinessLayer.Service
             return healthRecords;
         }
 
-        public async Task<HealthRecordDTO> GetHealthRecordByIdAsync(int id)
+        public async Task<HealthRecordDto> GetHealthRecordByIdAsync(int id)
         {
-            HealthRecordDTO healthRecord = _mapper.Map<HealthRecordDTO>(await _healthRecordRepository.GetByIdAsync(id));
+            HealthRecordDto healthRecord = _mapper.Map<HealthRecordDto>(await _healthRecordRepository.GetByIdAsync(id));
             return healthRecord;
+        }
+
+        public Task<List<HealthRecordStudentCheck>> GetHealthRecords()
+        {
+            var healthrecordList = _healthRecordRepository.GetAllAsync().Result;
+            List<HealthRecordStudentCheck> healthRecordStudentChecks = new List<HealthRecordStudentCheck>();
+            foreach (var healthRecord in healthrecordList)
+            {
+                var student = _studentRepository.GetByIdAsync(healthRecord.Studentid).Result;
+                var staff = _staffRepository.GetByIdAsync(healthRecord.Staffid).Result;
+                var healthCategory = _healthCategoryRepo.GetByIdAsync(healthRecord.Healthcategoryid).Result;
+                var vaccinationRecords = _ivaccinationRecordRepository.GetRecordsByStudentAsync(healthRecord.Studentid).Result;
+                var healthChecks = _healthCheckRepository.GetHealthChecksByStudentIdAsync(healthRecord.Studentid).Result;
+                HealthRecordStudentCheck check = new HealthRecordStudentCheck
+                {
+                    StudentName = student.Fullname,
+                    HealthCategory = healthCategory.Healthcategoryname,
+                    HealthRecordDate = healthRecord.Healthrecorddate,
+                    Healthrecordtitle = healthRecord.Healthrecordtitle,
+                    Healthrecorddescription = healthRecord.Healthrecorddescription ?? string.Empty,
+                    StaffName = staff.Fullname,
+                    IsConfirm = healthRecord.Isconfirm,
+                    VaccinationRecords = _mapper.Map<List<VaccinationRecordDTO>>(vaccinationRecords),
+                    HealthChecks = _mapper.Map<List<HealthCheckDTO>>(healthChecks)
+                };
+                healthRecordStudentChecks.Add(check);
+            }
+            return Task.FromResult(healthRecordStudentChecks);
         }
 
         public Task<List<Healthrecord>> GetHealthRecordsByStudentIdAsync(int studentId)
         {
-            var healthRecords = _healthRecordRepository.GetAllAsync()
-                .Result.Where(hr => hr.Studentid == studentId).ToList();
-            return Task.FromResult(_mapper.Map<List<Healthrecord>>(healthRecords));
+            var healthRecords = _healthRecordRepository.GetAllAsync().Result;
+                var news = healthRecords.Where(c => c.Studentid == studentId)
+                .ToList(); // Convert IEnumerable to List explicitly
+            return Task.FromResult(news); // Wrap the result in a Task
+        }
+
+        public Task<HealthRecordStudentCheck> GetHealthRecordsByStudentIdWithCheckAsync(int studentId)
+        {
+            var List = _healthRecordRepository.GetAll();
+            var healthrecordList = List.FirstOrDefault(h => h.Studentid == studentId);
+            List<HealthRecordStudentCheck> healthRecordStudentChecks = new List<HealthRecordStudentCheck>();
+
+                var student = _studentRepository.GetByIdAsync(healthrecordList.Studentid).Result;
+                var staff = _staffRepository.GetByIdAsync(healthrecordList.Staffid).Result;
+                var healthCategory = _healthCategoryRepo.GetByIdAsync(healthrecordList.Healthcategoryid).Result;
+                var vaccinationRecords = _ivaccinationRecordRepository.GetRecordsByStudentAsync(healthrecordList.Studentid).Result;
+                var healthChecks = _healthCheckRepository.GetHealthChecksByStudentIdAsync(healthrecordList.Studentid).Result;
+                HealthRecordStudentCheck check = new HealthRecordStudentCheck
+                {
+                    StudentName = student.Fullname,
+                    HealthCategory = healthCategory.Healthcategoryname,
+                    HealthRecordDate = healthrecordList.Healthrecorddate,
+                    Healthrecordtitle = healthrecordList.Healthrecordtitle,
+                    Healthrecorddescription = healthrecordList.Healthrecorddescription ?? string.Empty,
+                    StaffName = staff.Fullname,
+                    IsConfirm = healthrecordList.Isconfirm,
+                    VaccinationRecords = _mapper.Map<List<VaccinationRecordDTO>>(vaccinationRecords),
+                    HealthChecks = _mapper.Map<List<HealthCheckDTO>>(healthChecks)
+                };
+            
+            return Task.FromResult(check);
         }
 
         public void UpdateHealthRecord(UpdateHealthRecordDTO healthRecorddto, int id)

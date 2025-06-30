@@ -39,9 +39,13 @@ public partial class Student
 
     public virtual ICollection<Healthstatus> Healthstatuses { get; set; } = new List<Healthstatus>();
 
+    public virtual ICollection<MedicalForm> MedicalForms { get; set; } = new List<MedicalForm>();
+
     public virtual Parent Parent { get; set; } = null!;
 
     public virtual ICollection<Personalmedicine> Personalmedicines { get; set; } = new List<Personalmedicine>();
+
+    public virtual ICollection<StudentSpecialNeed> StudentSpecialNeeds { get; set; } = new List<StudentSpecialNeed>();
 
     public virtual ICollection<Vaccinationrecord> Vaccinationrecords { get; set; } = new List<Vaccinationrecord>();
 }

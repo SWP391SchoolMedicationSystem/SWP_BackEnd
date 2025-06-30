@@ -5,6 +5,7 @@ namespace DataAccessLayer.Entity;
 
 public partial class Staff
 {
+
     public int Staffid { get; set; }
 
     public string Fullname { get; set; } = null!;

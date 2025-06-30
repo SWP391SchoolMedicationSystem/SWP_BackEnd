@@ -44,13 +44,13 @@ namespace SchoolMedicalSystem.Controllers
             }
         }
         [HttpPut("Personalmedicine")]
-        public IActionResult UpdatePersonalmedicine(int id, [FromBody] UpdatePersonalMedicineDTO PersonalmedicineDto)
+        public IActionResult UpdatePersonalmedicine(int id ,[FromBody] UpdatePersonalMedicineDTO PersonalmedicineDto)
         {
             if (PersonalmedicineDto == null)
                 return BadRequest("Invalid data.");
             try
             {
-                PersonalmedicineService.UpdatePersonalmedicine(PersonalmedicineDto);
+                PersonalmedicineService.UpdatePersonalmedicine(PersonalmedicineDto, id);
                 return Ok("Medicine donation updated successfully.");
             }
             catch (Exception ex)

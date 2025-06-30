@@ -9,14 +9,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DataAccessLayer.Repository
 {
-    public class UserRepository : GenericRepository<User>, IUserRepository
+    public class UserRepository(SchoolMedicalSystemContext context) : GenericRepository<User>(context), IUserRepository
     {
-        private readonly DbSet<User> _dbset;
-        public UserRepository(SchoolMedicalSystemContext context) : base(context)
-        {
-            _dbset = context.Set<User>();
-        }
-        public Task<List<User>> GetAllAsync()
+        private readonly DbSet<User> _dbset = context.Set<User>();
+
+        public new Task<List<User>> GetAllAsync()
         {
             return _dbset
                 .Include(x => x.Parents)

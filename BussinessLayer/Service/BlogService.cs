@@ -69,7 +69,7 @@ namespace BussinessLayer.Service
                     entity.UpdatedBy = dto.UpdatedBy;
                     entity.Status = dto.Status;
                     entity.IsDeleted = dto.IsDeleted;
-                    entity.Image = dto.Image;
+//                    entity.Image = dto.Image;
 
                     _blogRepo.Update(entity);
                     _blogRepo.Save();

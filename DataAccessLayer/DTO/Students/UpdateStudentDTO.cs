@@ -3,23 +3,21 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using DataAccessLayer.DTO.Parents;
-using DataAccessLayer.Entity;
 
-namespace DataAccessLayer.DTO
+namespace DataAccessLayer.DTO.Students
 {
-    public class StudentDTO
+    public class UpdateStudentDTo
     {
-        public int StudentId { get; set; }
+        public int Id { get; set; }
         public string? StudentCode { get; set; }
         public string Fullname { get; set; } = null!;
+        public int Age { get; set; }
         public string? BloodType { get; set; }
+        public bool Gender { get; set; }
         public int Classid { get; set; }
         public int Parentid { get; set; }
-        public int Age { get; set; }
         public DateOnly Dob { get; set; }
-        public bool Gender { get; set; }
-        public List<ParentStudent> listparent { get; set; } = new List<ParentStudent>();
+        public DateOnly UpdatedAt { get; set; } = DateOnly.FromDateTime(DateTime.Now);
 
     }
 }

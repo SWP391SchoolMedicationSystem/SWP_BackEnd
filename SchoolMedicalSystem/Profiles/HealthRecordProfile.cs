@@ -9,9 +9,10 @@ namespace SchoolMedicalSystem.Profiles
     {
         public HealthRecordProfile()
         {
-            CreateMap<Healthrecord, HealthRecordDTO>().ReverseMap();
-            CreateMap<HealthRecordDTO, Healthrecord>().ReverseMap();
+            CreateMap<Healthrecord, HealthRecordDto>().ReverseMap();
+            CreateMap<HealthRecordDto, Healthrecord>().ReverseMap();
             CreateMap<Healthrecord, CreateHealthRecordDTO>().ReverseMap();
+            
         }
     }
 

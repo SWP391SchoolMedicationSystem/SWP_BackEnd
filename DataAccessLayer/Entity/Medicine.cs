@@ -23,6 +23,8 @@ public partial class Medicine
 
     public string? Updatedby { get; set; }
 
+    public bool IsDeleted { get; set; }
+
     public virtual Medicinecategory Medicinecategory { get; set; } = null!;
 
     public virtual ICollection<Personalmedicine> Personalmedicines { get; set; } = new List<Personalmedicine>();

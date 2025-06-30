@@ -18,5 +18,6 @@ namespace DataAccessLayer.DTO.Medicines
         public int Quantity { get; set; }
         public DateTime? Updatedat { get; set; }
         public string? Updatedby { get; set; }
+        public bool IsDeleted { get; set; }
     }
 }
