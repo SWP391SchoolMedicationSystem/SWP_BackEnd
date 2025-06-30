@@ -16,5 +16,6 @@ namespace DataAccessLayer.Repository
         {
             _dbset = context.Set<Parent>();
         }
+
     }
 }

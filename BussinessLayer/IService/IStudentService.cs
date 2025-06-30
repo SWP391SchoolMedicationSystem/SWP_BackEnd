@@ -5,16 +5,20 @@ using System.Text;
 using System.Threading.Tasks;
 using DataAccessLayer.DTO;
 using DataAccessLayer.Entity;
+using Microsoft.AspNetCore.Http;
 
 namespace BussinessLayer.IService
 {
     public interface IStudentService
     {
-        Task<List<Student>> GetAllStudentsAsync();
+        Task<List<StudentDTO>> GetAllStudentsAsync();
         Task<StudentDTO> GetStudentByIdAsync(int id);
         Task<Student> AddStudentAsync(StudentDTO student);
-        void DeleteStudent(int id);
-        Task UploadStudentList(List<InsertStudent> studentlist); //NEW
+        Task DeleteStudent(int id);
+        Task<string> UploadStudentList(List<InsertStudent> studentlist);
+        Task<Student> UpdateStudentAsync(StudentDTO student, int id);
+        Task<List<StudentDTO>> GetStudentByParentId(int parentId);
+        public (List<InsertStudent>, string) ProcessExcelFile(IFormFile file);
 
     }
 }

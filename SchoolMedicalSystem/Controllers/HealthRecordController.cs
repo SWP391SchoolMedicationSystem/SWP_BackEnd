@@ -1,5 +1,5 @@
 ﻿using BussinessLayer.IService;
-using DataAccessLayer.DTO;
+using DataAccessLayer.DTO.HealthRecords;
 using DataAccessLayer.Entity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,14 +17,20 @@ namespace SchoolMedicalSystem.Controllers
         }
 
         [HttpPost]
-        [Route("add")]
-        public async Task<IActionResult> AddHealthRecord([FromBody] HealthRecordDTO dto)
+        [Route("healthrecord")]
+        public async Task<IActionResult> AddHealthRecord([FromBody] CreateHealthRecordDTO dto)
         {
             if (dto == null)
                 return BadRequest("Health record data is null.");
-
-            await _healthRecordService.AddHealthRecordAsync(dto);
-            return Ok("Health record added successfully.");
+            try
+            {
+                await _healthRecordService.AddHealthRecordAsync(dto);
+                return Ok("Health record added successfully.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Can't add health record: {ex.Message}");
+            }
         }
 
         [HttpGet]
@@ -36,8 +42,8 @@ namespace SchoolMedicalSystem.Controllers
         }
 
         [HttpGet]
-        [Route("getById/{id}")]
-        public async Task<ActionResult<HealthRecordDTO>> GetById(int id)
+        [Route("getById")]
+        public async Task<ActionResult<HealthRecordDTO>> GetById([FromQuery] int id)
         {
             var result = await _healthRecordService.GetHealthRecordByIdAsync(id);
             if (result == null)
@@ -46,30 +52,50 @@ namespace SchoolMedicalSystem.Controllers
         }
 
         [HttpGet]
-        [Route("getByStudentId/{studentId}")]
-        public async Task<ActionResult<List<Healthrecord>>> GetByStudentId(int studentId)
+        [Route("getByStudentId")]
+        public async Task<ActionResult<List<Healthrecord>>> GetByStudentId([FromQuery] int studentId)
         {
             var result = await _healthRecordService.GetHealthRecordsByStudentIdAsync(studentId);
             return Ok(result);
         }
 
-        [HttpPut]
-        [Route("update/{id}")]
-        public IActionResult Update([FromBody] HealthRecordDTO dto, int id)
+/*        public class HealthRecordContent
         {
-            if (dto == null)
+            public UpdateHealthRecordDTO dto { get; set; }
+            public int id { get; set; }
+        }*/
+        [HttpPut]
+        [Route("update")]
+        public IActionResult Update([FromBody] UpdateHealthRecordDTO content, [FromQuery] int id)
+        {
+            if (content == null)
                 return BadRequest("Invalid data.");
-
-            _healthRecordService.UpdateHealthRecord(dto, id);
-            return Ok("Health record updated.");
+            try
+            {
+                _healthRecordService.UpdateHealthRecord(content, id);
+                return Ok("Health record updated.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error updating health record: {ex.Message}");
+            }
         }
 
         [HttpDelete]
-        [Route("delete/{id}")]
-        public IActionResult Delete(int id)
+        [Route("delete")]
+        public IActionResult Delete([FromQuery] int id)
         {
-            _healthRecordService.DeleteHealthRecord(id);
-            return Ok("Health record deleted.");
+            if (id <= 0)
+                return BadRequest("Invalid health record ID.");
+            try
+            {
+                _healthRecordService.DeleteHealthRecord(id);
+                return Ok("Health record deleted.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error deleting health record: {ex.Message}");
+            }
         }
     }
 }

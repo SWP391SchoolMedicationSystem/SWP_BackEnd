@@ -6,11 +6,10 @@ namespace SchoolMedicalSystem.Profiles
 {
     public class StudentProfile : Profile
     {
-        public StudentProfile()
-        {
+        public StudentProfile() {
             CreateMap<StudentDTO, Student>().ReverseMap();
-
-
+            CreateMap<StudentParentDTO, Student>().ReverseMap();
+        
         }
     }
 }

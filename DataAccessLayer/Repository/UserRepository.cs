@@ -18,6 +18,7 @@ namespace DataAccessLayer.Repository
             return _dbset
                 .Include(x => x.Parents)
                 .Include(x => x.Staff)
+                .Where(x => x.IsDeleted == false)
                 .ToListAsync();
         }
     }

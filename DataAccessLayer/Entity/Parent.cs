@@ -11,7 +11,7 @@ public partial class Parent
 
     public string? Email { get; set; }
 
-    public int? Phone { get; set; }
+    public string? Phone { get; set; }
 
     public string Address { get; set; } = null!;
 
@@ -27,7 +27,13 @@ public partial class Parent
 
     public int Userid { get; set; }
 
+    public virtual ICollection<Consultationrequest> Consultationrequests { get; set; } = new List<Consultationrequest>();
+
+    public virtual ICollection<Form> Forms { get; set; } = new List<Form>();
+
     public virtual ICollection<NotificationParentDetail> NotificationParentDetails { get; set; } = new List<NotificationParentDetail>();
+
+    public virtual ICollection<Personalmedicine> Personalmedicines { get; set; } = new List<Personalmedicine>();
 
     public virtual ICollection<Student> Students { get; set; } = new List<Student>();
 

@@ -11,7 +11,7 @@ public partial class Classroom
 
     public string Classname { get; set; } = null!;
 
-    public int Staffid { get; set; }
+    public string Teachername { get; set; } = null!;
 
     public bool IsDeleted { get; set; }
 
@@ -22,8 +22,6 @@ public partial class Classroom
     public string? Modifiedby { get; set; }
 
     public DateTime? Modifieddate { get; set; }
-
-    public virtual Staff Staff { get; set; } = null!;
 
     public virtual ICollection<Student> Students { get; set; } = new List<Student>();
 }

@@ -17,6 +17,7 @@ namespace BussinessLayer.IService
         void UpdateStaff(StaffUpdate staff);
         void DeleteStaff(int id);
         Task<String> GenerateToken(LoginDTO login);
+
         Task<string> ValidateGoogleToken(string token);
     }
 }

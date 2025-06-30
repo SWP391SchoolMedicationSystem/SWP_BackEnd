@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using BussinessLayer.IService;
 using BussinessLayer.Utils.Configurations;
-using DataAccessLayer.DTO;
+using DataAccessLayer.DTO.Blogs;
 using DataAccessLayer.Entity;
 using DataAccessLayer.IRepository;
 using DataAccessLayer.Repository;
@@ -35,35 +35,36 @@ namespace BussinessLayer.Service
         }
         public async Task<List<Blog>> GetAllBlogsAsync()
         {
-            List<Blog> blogs = _mapper.Map<List<Blog>>(await _blogRepo.GetAllAsync());
+            List<Blog> blogs = await _blogRepo.GetAllAsync();
             return blogs;
         }
         public async Task<Blog> GetBlogByIdAsync(int id)
         {
             return await _blogRepo.GetByIdAsync(id);
         }
-        public async Task AddBlogAsync(BlogDTO dto)
+        public async Task AddBlogAsync(CreateBlogDTO dto)
         {
-            if (dto != null)
-            {
+
                 Blog blog = _mapper.Map<Blog>(dto);
+                blog.Status = "Draft";
+                blog.CreatedAt = DateTime.Now;
                 await _blogRepo.AddAsync(blog);
                 _blogRepo.Save();
-            }
+
         }
-        public void UpdateBlog(BlogDTO dto, int id)
+        public void UpdateBlog(UpdateBlogDTO dto)
         {
             if (dto != null)
             {
-                var entity = _blogRepo.GetByIdAsync(id).Result;
+                var entity = _blogRepo.GetByIdAsync(dto.BlogID).Result;
                 if (entity != null)
                 {
                     entity.Title = dto.Title;
                     entity.Content = dto.Content;
-                    entity.ApprovedBy = dto.ApprovedBy;
-                    entity.ApprovedOn = dto.ApprovedOn;
-                    entity.CreatedBy = dto.CreatedBy;
-                    entity.CreatedAt = DateTime.Now;
+                    //                    entity.ApprovedBy = dto.ApprovedBy;
+                    //                    entity.ApprovedOn = dto.ApprovedOn;
+                    //                    entity.CreatedBy = dto.CreatedBy;
+                    //                   entity.CreatedAt = DateTime.Now;
                     entity.UpdatedAt = DateTime.Now;
                     entity.UpdatedBy = dto.UpdatedBy;
                     entity.Status = dto.Status;
@@ -80,16 +81,87 @@ namespace BussinessLayer.Service
             var entity = _blogRepo.GetByIdAsync(id).Result;
             if (entity != null)
             {
-                _blogRepo.Delete(id);
+                entity.IsDeleted = true;
+                _blogRepo.Update(entity);
                 _blogRepo.Save();
             }
         }
         public Task<List<Blog>> SearchBlogsAsync(string searchTerm)
         {
             var blogs = _blogRepo.GetAllAsync().Result;
-            return Task.FromResult(blogs.Where(b => b.Title.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
-                                                     b.Content.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)).ToList());
+            return Task.FromResult(blogs.Where(b => b.Title.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)).ToList());
         }
+        public void ApproveBlog(ApproveBlogDTO dto)
+        {
+            var blog = _blogRepo.GetByIdAsync(dto.BlogId).Result;
+            if (blog != null)
+            {
+                blog.ApprovedBy = dto.ApprovedBy;
+                blog.ApprovedOn = DateTime.Now;
+                blog.Status = "Published";
+                _blogRepo.Update(blog);
+                _blogRepo.Save();
+            }
+        }
+        public async Task<List<Blog>> GetPublishedBlogs()
+        {
+            var blogs = await _blogRepo.GetAllAsync();
+            return blogs
+                .Where(b =>
+                    b.IsDeleted != true &&
+//                    b.ApprovedBy != null &&
+ //                   b.ApprovedOn != null &&
+                    b.Status != null &&
+                    (b.Status.Equals("Published", StringComparison.OrdinalIgnoreCase)))
+                .ToList();
+        }
+        public void RejectBlog(RejectBlogDTO dto)
+        {
+            var blog = _blogRepo.GetByIdAsync(dto.BlogId).Result;
+            if (blog != null)
+            {
+                blog.ApprovedBy = dto.ApprovedBy;
+                blog.ApprovedOn = DateTime.Now;
+                blog.Status = "Rejected";
+                _blogRepo.Update(blog);
+                _blogRepo.Save();
+            }
+        }
+        public async Task<string> UploadBlogImageAsync(BlogImageUploadDTO dto)
+        {
+            var blog = await _blogRepo.GetByIdAsync(dto.BlogId);
+            if (blog == null) throw new Exception("Blog not found.");
 
-    }
+            //only jpg, jpeg, png file allow
+            var allowedExtensions = new[] { ".jpg", ".jpeg", ".png" };
+            var fileExtension = Path.GetExtension(dto.ImageFile.FileName).ToLower();
+            if (!allowedExtensions.Contains(fileExtension))
+                throw new Exception("Only JPG and PNG files are allowed.");
+
+            //size < 2mb
+            if (dto.ImageFile.Length > 2 * 1024 * 1024)
+                throw new Exception("File size must be less than 2MB.");
+
+            // Save image to wwwroot/images/blogs
+            var wwwRootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "blogs");
+            Directory.CreateDirectory(wwwRootPath); //create directory if it doesn't exist
+
+            var fileName = Guid.NewGuid().ToString() + Path.GetExtension(dto.ImageFile.FileName); //generate unique name for image file
+            var filePath = Path.Combine(wwwRootPath, fileName); //get full path for the image file
+
+            // open file stream and copy the uploaded file to the server
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await dto.ImageFile.CopyToAsync(stream); //copy the uploaded file to the server
+            }
+
+            // Update blog entity
+            blog.Image = $"/images/blogs/{fileName}";
+            blog.UpdatedAt = DateTime.Now;
+            _blogRepo.Update(blog);
+            _blogRepo.Save();
+
+            return blog.Image; //return the image URL
+        }
+    }            
 }

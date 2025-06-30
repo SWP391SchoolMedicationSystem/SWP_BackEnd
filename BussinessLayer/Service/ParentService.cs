@@ -21,7 +21,9 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace BussinessLayer.Service
 {
-    public class ParentService(IParentRepository parentRepository, IUserRepository userRepository,
+    public class ParentService(
+        IStudentRepo studentRepo,
+        IParentRepository parentRepository, IUserRepository userRepository,
         IMapper mapper,
         IOptionsMonitor<AppSetting> option, IHttpContextAccessor httpContextAccessor) : IParentService
     {
@@ -56,7 +58,7 @@ namespace BussinessLayer.Service
 
                 var newParent = mapper.Map<Parent>(parent);
                 newParent.CreatedDate = DateTime.Now;
-                UserDTo userdto = new()
+                UserDTO userdto = new()
                 {
                     isStaff = false,
                     Email = parent.Email,
@@ -84,34 +86,39 @@ namespace BussinessLayer.Service
             catch (Exception ex)
             {
                 // Log the exception or handle it as needed
-                throw new InvalidOperationException("An error occurred while adding the parent.", ex);
+                throw new Exception("An error occurred while adding the parent.", ex);
             }
         }
 
-        public void DeleteParent(int id)
+        public async void DeleteParent(int id)
         {
-            if(parentRepository.GetByIdAsync(id) != null)
+            var parent = await parentRepository.GetByIdAsync(id);
+            if ( parent != null)
             {
-                parentRepository.Delete(id);
+                var user = (await userRepository.GetAllAsync())
+                    .FirstOrDefault(u => u.UserId == parent.Userid);
+                user.IsDeleted = true;
+                userRepository.Update(user);
+                parent.IsDeleted = true;
                 parentRepository.Save();   
             }
 
         }
-        public void UpdateParent(ParentUpdate parent)
+        public void UpdateParent(ParentUpdate parentdto)
         {
-            Parent newparent = parentRepository.GetByIdAsync(parent.Parentid).Result;
+            Parent parent = (Parent) parentRepository.GetByIdAsync(parentdto.Parentid).Result;
             if (parent != null)
             {
                 // Only assign if value is not null/empty/0
-                if (!string.IsNullOrWhiteSpace(parent.Address))
-                    newparent.Address = parent.Address;
-                if (!string.IsNullOrWhiteSpace(newparent.Email))
-                    newparent.Email = parent.Email;
-                if (!string.IsNullOrWhiteSpace(parent.Fullname))
-                    newparent.Fullname = parent.Fullname;
-                if (newparent.Phone != 0)
-                    newparent.Phone = parent.Phone;
-                parentRepository.Update(newparent);
+                if (!string.IsNullOrWhiteSpace(parentdto.Address))
+                    parent.Address = parentdto.Address;
+                if (!string.IsNullOrWhiteSpace(parentdto.Email))
+                    parent.Email = parentdto.Email;
+                if (!string.IsNullOrWhiteSpace(parentdto.Fullname))
+                    parent.Fullname = parentdto.Fullname;
+                if (!string.IsNullOrWhiteSpace(parentdto.Phone))
+                    parent.Phone = parentdto.Phone;
+                parentRepository.Update(parent);
                 parentRepository.Save();
             }
         }
@@ -120,33 +127,34 @@ namespace BussinessLayer.Service
 
         public async Task<string> GenerateToken(LoginDTO login)
         {
+
             try
             {
                 var parentlist = await parentRepository.GetAllAsync();
                 var userlist = await userRepository.GetAllAsync();
-                User? user = userlist.FirstOrDefault(x => x.Email == login.Email);
+                User user = userlist.FirstOrDefault(x => x.Email == login.Email);
 
                 if (user != null &&
                     VerifyPasswordHash(login.Password, user.Hash, user.Salt))
                 {
-                    Parent? parent = parentlist.FirstOrDefault(x => x.Userid == user.UserId) ?? throw new InvalidOperationException("Parent not found for the given user.");
+                    Parent parent = parentlist.FirstOrDefault(x => x.Userid == user.UserId);
                     var jwtTokenHandler = new JwtSecurityTokenHandler();
+
                     var secretKeyBytes = Encoding.UTF8.GetBytes(_appSettings.SecretKey);
                     string status = parent.IsDeleted ? "Tạm ngừng" : "Hoạt động";
-
                     var tokenDescription = new SecurityTokenDescriptor
                     {
-                        Subject = new ClaimsIdentity(
-                        [
-                            new Claim("Id", parent.Parentid.ToString()),
-                            new Claim("Fullname", parent.Fullname ?? string.Empty),
-                            new Claim("Email", parent.Email ?? string.Empty),
-                            new Claim("Phone", parent.Phone?.ToString() ?? string.Empty),
-                            new Claim("Address", parent.Address ?? string.Empty),
-                            new Claim("Status", status),
-                            new Claim("Role", "Parent"),
-                            new Claim("DateCreated", parent.CreatedDate?.ToString() ?? string.Empty)
-                        ]),
+                        Subject = new ClaimsIdentity(new[] {
+               new Claim("Id", parent.Parentid.ToString()),
+                new Claim("Fullname", parent.Fullname),
+                new Claim("Email", parent.Email ?? string.Empty),
+                new Claim("Phone", parent.Phone.ToString()),
+                new Claim("Address", parent.Address),
+                new Claim("Status", status),
+                new Claim("Role", "Parent"),
+                new Claim("DateCreated", parent.CreatedDate.ToString())
+           }),
+
                         Expires = DateTime.UtcNow.AddMinutes(180),
                         SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(secretKeyBytes),
                         SecurityAlgorithms.HmacSha512Signature)
@@ -168,8 +176,16 @@ namespace BussinessLayer.Service
 
         public async Task<List<ParentDTO>> GetAllParentsAsync()
         {
-            List<ParentDTO> list = mapper.Map<List<ParentDTO>>(await parentRepository.GetAllAsync()); 
-            return list;
+            List<Parent> list = await parentRepository.GetAllAsync();
+            var parentlist = mapper.Map<List<ParentDTO>>(list);
+            foreach(ParentDTO parent in parentlist)
+            {
+                var studentlist = studentRepo.GetAll().Where(s => s.Parentid == parent.Parentid);
+                var studentdto = mapper.Map<List<StudentParentDTO>>(studentlist);
+                parent.Students = studentdto;
+            }
+            
+            return parentlist;
         }
 
         public async Task<ParentDTO> GetParentByIdAsync(int id)
@@ -184,7 +200,7 @@ namespace BussinessLayer.Service
 
             var payload = await GoogleJsonWebSignature.ValidateAsync(token, new GoogleJsonWebSignature.ValidationSettings
             {
-                Audience = [_appSettings.GoogleClientId]
+                Audience = new[] { _appSettings.GoogleClientId }
     
 });
             string email = payload.Email;
@@ -195,6 +211,51 @@ namespace BussinessLayer.Service
             return await GenerateToken(parentLogin);
         }
 
+        public async Task<string> GenerateGoogleToken(LoginGoogleDTO login)
+        {
+            try
+            {
+                var parentlist = await parentRepository.GetAllAsync();
+                var userlist = await userRepository.GetAllAsync();
+                User user = userlist.FirstOrDefault(x => x.Email == login.Email);
 
+                if (user != null)
+                {
+                    Parent parent = parentlist.FirstOrDefault(x => x.Userid == user.UserId);
+                    var jwtTokenHandler = new JwtSecurityTokenHandler();
+
+                    var secretKeyBytes = Encoding.UTF8.GetBytes(_appSettings.SecretKey);
+                    string status = parent.IsDeleted ? "Tạm ngừng" : "Hoạt động";
+                    var tokenDescription = new SecurityTokenDescriptor
+                    {
+                        Subject = new ClaimsIdentity(new[] {
+               new Claim("Id", parent.Parentid.ToString()),
+                new Claim("Fullname", parent.Fullname),
+                new Claim("Email", parent.Email ?? string.Empty),
+                new Claim("Phone", parent.Phone.ToString()),
+                new Claim("Address", parent.Address),
+                new Claim("Status", status),
+                new Claim("Role", "Parent"),
+                new Claim("DateCreated", parent.CreatedDate.ToString())
+           }),
+
+                        Expires = DateTime.UtcNow.AddMinutes(180),
+                        SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(secretKeyBytes),
+                        SecurityAlgorithms.HmacSha512Signature)
+                    };
+
+                    var principal = new ClaimsPrincipal(tokenDescription.Subject);
+                    httpContextAccessor.HttpContext.User = principal;
+                    Console.WriteLine(httpContextAccessor.HttpContext.User.Identity.Name);
+                    var tokenParent = jwtTokenHandler.CreateToken(tokenDescription);
+                    return jwtTokenHandler.WriteToken(tokenParent);
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+            return null;
+        }
     }
 }

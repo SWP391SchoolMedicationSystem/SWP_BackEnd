@@ -1,6 +1,8 @@
 using System.Text;
 using System.Text.Json.Serialization;
 using BussinessLayer.IService;
+using BussinessLayer.QuartzJob.Job;
+using BussinessLayer.QuartzJob.Scheduler;
 using BussinessLayer.Service;
 using BussinessLayer.Utils.Configurations;
 using DataAccessLayer.Entity;
@@ -10,11 +12,11 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using OfficeOpenXml;
+using Quartz;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-ExcelPackage.License.SetNonCommercialPersonal("Student API");
 builder.Services.AddControllers().AddJsonOptions(opt =>
 {
     opt.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
@@ -27,11 +29,21 @@ builder.Services.AddCors(options =>
                           .AllowAnyHeader());
     options.AddPolicy("AllowReact", policy =>
     {
-        policy.WithOrigins("http://localhost:3000")
+        policy.WithOrigins("http://localhost:3000") 
               .AllowAnyHeader()
               .AllowAnyMethod();
     });
 });
+#region Quartz Scheduler Configuration
+// SETUP QUARTZ SCHEDULER
+builder.Services.AddQuartz();
+builder.Services.AddTransient<NotifyScheduler>();
+builder.Services.AddQuartzHostedService(opt =>
+{
+    opt.WaitForJobsToComplete = true;
+});
+builder.Services.AddTransient<NotifyJob>();
+#endregion
 builder.Services.Configure<AppSetting>(builder.Configuration.GetSection("AppSetting"));
 var googleclient = builder.Configuration["AppSetting:GoogleClientId"];
 var secretkey = builder.Configuration["AppSetting:SecretKey"];
@@ -57,14 +69,16 @@ builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
 builder.Services.AddDbContext<SchoolMedicalSystemContext>(options =>
     options.UseSqlServer(
-        builder.Configuration.GetConnectionString("SchoolMedicalSystemContext")
+        builder.Configuration.GetConnectionString("SchoolMedicalSystemContext") 
         ?? throw new InvalidOperationException("Connection string 'SchoolMedicalSystemContext' not found.")));
+
+#region AddScoped
 builder.Services.AddScoped<IParentRepository, ParentRepository>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IStaffService, StaffService>();
 builder.Services.AddScoped<IStaffRepository, StaffRepository>();
 builder.Services.AddScoped<IEmailRepo, EmailRepository>();
-builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IUserRepository,UserRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IParentService, ParentService>();
 builder.Services.AddScoped<IBlogRepo, BlogRepo>();
@@ -81,8 +95,21 @@ builder.Services.AddScoped<IClassRoomRepository, ClassRoomRepository>();
 builder.Services.AddScoped<IClassRoomService, ClassroomService>();
 builder.Services.AddScoped<IStudentRepo, StudentRepo>();
 builder.Services.AddScoped<IStudentService, StudentService>();
-builder.Services.AddScoped<IHealthCheckRepo, HealthCheckRepository>();
-builder.Services.AddScoped<IHealthCheckService, HealthCheckService>();
+builder.Services.AddScoped<IRoleRepository, RoleRepository>();
+builder.Services.AddScoped<IVaccinationRecordRepository, VaccinationRecordRepository>();
+builder.Services.AddScoped<IVaccinationRecordService, VaccinationRecordService>();
+builder.Services.AddScoped<IVaccinationEventRepository, VaccinationEventRepository>();
+builder.Services.AddScoped<IVaccinationEventService, VaccinationEventService>();
+builder.Services.AddScoped<IOtpRepo, OtpRepo>();
+builder.Services.AddScoped<IPersonalmedicineService, PersonalmedicineService>();
+builder.Services.AddScoped<IPersonalMedicineRepository, PersonalMedicineRepository>();
+builder.Services.AddScoped<IMedicineRepository, MedicineRepository>();
+builder.Services.AddScoped<IMedicineService, MedicineService>();
+builder.Services.AddScoped<IMedicineCategoryRepository, MedicineCategoryRepository>();
+builder.Services.AddScoped<IMedicineScheduleRepository, MedicineScheduleRepository>();
+builder.Services.AddScoped<IScheduleDetailRepo, ScheduleDetailRepo>();
+#endregion
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -100,9 +127,9 @@ app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 
-
+//app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapControllers();
-
+    app.MapControllers();
+app.UseStaticFiles();
 app.Run();

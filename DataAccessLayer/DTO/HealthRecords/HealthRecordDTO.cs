@@ -1,4 +1,4 @@
-﻿namespace DataAccessLayer.DTO
+﻿namespace DataAccessLayer.DTO.HealthRecords
 {
     public class HealthRecordDto
     {

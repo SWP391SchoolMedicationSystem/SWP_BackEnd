@@ -11,7 +11,7 @@ public partial class Staff
 
     public string? Email { get; set; }
 
-    public int? Phone { get; set; }
+    public string? Phone { get; set; }
 
     public int Roleid { get; set; }
 
@@ -27,7 +27,11 @@ public partial class Staff
 
     public int Userid { get; set; }
 
-    public virtual ICollection<Classroom> Classrooms { get; set; } = new List<Classroom>();
+    public virtual ICollection<Consultationrequest> Consultationrequests { get; set; } = new List<Consultationrequest>();
+
+    public virtual ICollection<Form> Forms { get; set; } = new List<Form>();
+
+    public virtual ICollection<Healthcheck> Healthchecks { get; set; } = new List<Healthcheck>();
 
     public virtual ICollection<Healthrecord> Healthrecords { get; set; } = new List<Healthrecord>();
     public virtual ICollection<Healthcheck> Healthchecks { get; set; } = new List<Healthcheck>();
@@ -36,8 +40,6 @@ public partial class Staff
     public virtual ICollection<Healthstatus> Healthstatuses { get; set; } = new List<Healthstatus>();
 
     public virtual ICollection<Notificationstaffdetail> Notificationstaffdetails { get; set; } = new List<Notificationstaffdetail>();
-
-    public virtual ICollection<Personalmedicine> Personalmedicines { get; set; } = new List<Personalmedicine>();
 
     public virtual Role Role { get; set; } = null!;
 

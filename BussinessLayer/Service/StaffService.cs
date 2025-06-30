@@ -16,7 +16,10 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace BussinessLayer.Service
 {
-    public class StaffService(IMapper mapper, IStaffRepository staffRepository, IUserRepository userRepository, IHttpContextAccessor httpContextAccessor, IOptionsMonitor<AppSetting> option) :
+    public class StaffService(IMapper mapper, 
+        IStaffRepository staffRepository, IUserRepository userRepository, 
+       IRoleRepository roleRepository 
+       ,IHttpContextAccessor httpContextAccessor, IOptionsMonitor<AppSetting> option) :
         IStaffService
     {
         private readonly AppSetting _appSettings = option.CurrentValue;
@@ -55,11 +58,17 @@ namespace BussinessLayer.Service
                     Salt = salt,
                 };
                 user.Staff.Add(staff);
+                var listrole = roleRepository.GetAllAsync();
+                Role role = listrole.Result.FirstOrDefault(r => r.Roleid == register.RoleID);
+                role.Staff.Add(staff);
                 await userRepository.AddAsync(user);
                 staff.Userid = user.UserId;
                 await staffRepository.AddAsync(staff);
+                roleRepository.Save();
                 userRepository.Save();
                 staffRepository.Save();
+
+
                 transaction.Commit();
 
 
@@ -71,17 +80,21 @@ namespace BussinessLayer.Service
             }
         }
 
-        public void DeleteStaff(int id)
+        public async void DeleteStaff(int id)
         {
-            if (GetStaffByIdAsync(id) == null)
+            var staff = await staffRepository.GetByIdAsync(id);
+            if (staff == null)
             {
                 throw new KeyNotFoundException($"Staff with ID {id} not found.");
             }
             else
-            { 
-            staffRepository.Delete(id);
+            {
+                var user = (await userRepository.GetAllAsync()).
+                    FirstOrDefault(u => u.UserId == staff.Userid);
+                staff.IsDeleted = true;
+                user.IsDeleted = true;
                 staffRepository.Save();
-
+                userRepository.Save();
             }
 
         }
@@ -106,7 +119,7 @@ namespace BussinessLayer.Service
                     }
                     else if (staff.Roleid == 2)
                     {
-                        role = "Teacher";
+                        role = "Manager";
                     }
                     else if (staff.Roleid == 3)
                     {
@@ -114,7 +127,7 @@ namespace BussinessLayer.Service
                     }
                     else
                     {
-                        role = "Manager";
+                        role = "Other";
                     }
                     var secretKeyBytes = Encoding.UTF8.GetBytes(_appSettings.SecretKey);
                     string status = staff.IsDeleted ? "Tạm ngừng" : "Hoạt động";
@@ -148,6 +161,8 @@ namespace BussinessLayer.Service
             }
             return null;
         }
+
+ 
 
         public async Task<List<StaffDTO>> GetAllStaffAsync()
         {

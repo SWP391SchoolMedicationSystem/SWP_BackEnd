@@ -14,7 +14,7 @@ namespace DataAccessLayer.DTO.Parents
 
         public string? Email { get; set; }
 
-        public int? Phone { get; set; }
+        public string? Phone { get; set; }
 
         public string Address { get; set; } = null!;
 
@@ -24,6 +24,6 @@ namespace DataAccessLayer.DTO.Parents
 
         public bool IsDeleted { get; set; }
 
-        public List<StudentDTO> Students { get; set; } = new List<StudentDTO>();
+        public List<StudentParentDTO> Students { get; set; } = new List<StudentParentDTO>();
     }
 }
