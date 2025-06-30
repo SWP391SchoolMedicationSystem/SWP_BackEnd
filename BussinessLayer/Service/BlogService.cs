@@ -127,5 +127,41 @@ namespace BussinessLayer.Service
                 _blogRepo.Save();
             }
         }
+        public async Task<string> UploadBlogImageAsync(BlogImageUploadDTO dto)
+        {
+            var blog = await _blogRepo.GetByIdAsync(dto.BlogId);
+            if (blog == null) throw new Exception("Blog not found.");
+
+            //only jpg, jpeg, png file allow
+            var allowedExtensions = new[] { ".jpg", ".jpeg", ".png" };
+            var fileExtension = Path.GetExtension(dto.ImageFile.FileName).ToLower();
+            if (!allowedExtensions.Contains(fileExtension))
+                throw new Exception("Only JPG and PNG files are allowed.");
+
+            //size < 2mb
+            if (dto.ImageFile.Length > 2 * 1024 * 1024)
+                throw new Exception("File size must be less than 2MB.");
+
+            // Save image to wwwroot/images/blogs
+            var wwwRootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "blogs");
+            Directory.CreateDirectory(wwwRootPath); //create directory if it doesn't exist
+
+            var fileName = Guid.NewGuid().ToString() + Path.GetExtension(dto.ImageFile.FileName); //generate unique name for image file
+            var filePath = Path.Combine(wwwRootPath, fileName); //get full path for the image file
+
+            // open file stream and copy the uploaded file to the server
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await dto.ImageFile.CopyToAsync(stream); //copy the uploaded file to the server
+            }
+
+            // Update blog entity
+            blog.Image = $"/images/blogs/{fileName}";
+            blog.UpdatedAt = DateTime.Now;
+            _blogRepo.Update(blog);
+            _blogRepo.Save();
+
+            return blog.Image; //return the image URL
+        }
     }            
 }

@@ -3,6 +3,7 @@ using BussinessLayer.Service;
 using DataAccessLayer.DTO.Blogs;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using NPOI.HPSF;
 
 namespace SchoolMedicalSystem.Controllers
 {
@@ -137,6 +138,23 @@ namespace SchoolMedicalSystem.Controllers
             catch (Exception ex)
             {
                 return StatusCode(500, $"Error searching blogs: {ex.Message}");
+            }
+        }
+        [HttpPost("upload-image")]
+        public async Task<IActionResult> UploadImage([FromForm] BlogImageUploadDTO dto)
+        {
+            try
+            {
+                var imageUrl = await _blogService.UploadBlogImageAsync(dto);
+                return Ok(new
+                {
+                    message = "Image uploaded successfully.",
+                    imageUrl = imageUrl
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Error: {ex.Message}");
             }
         }
     }
