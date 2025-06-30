@@ -30,13 +30,13 @@ namespace SchoolMedicalSystem.Controllers
         }
 
         [HttpPost("student")]
-        public Task<IActionResult> UploadStudent(IFormFile file)
+        public Task<string> UploadStudent(IFormFile file)
         {
             try
             {
                 var list = _studentService.ProcessExcelFile(file);
-                _studentService.UploadStudentList(list.Item1);
-                return Task.FromResult<IActionResult>(Ok(list.Item2));
+                
+                return _studentService.UploadStudentList(list.Item1);
             }
             catch (Exception ex) {}
             return null;

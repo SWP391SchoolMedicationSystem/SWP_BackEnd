@@ -110,16 +110,18 @@ namespace BussinessLayer.Service
             return s;
         }
 
-        public async Task UploadStudentList(List<InsertStudent> studentlist)
+        public async Task<string> UploadStudentList(List<InsertStudent> studentlist)
         {
             try
             {
                 var parentlist = _parentrepo.GetAll();
                 var classlist = _classroomrepo.GetAll();
+                string errorMessage = string.Empty;
                 foreach (var student in studentlist)
                 {
                     if (student != null)
                     {
+
                         Classroom classroom = classlist.FirstOrDefault(c => c.Classname == student.className);
                         Parent parent = parentlist.FirstOrDefault(p => p.Fullname == student.parentName && p.Phone == student.parentphone);
                         if (parent != null && classroom != null)
@@ -135,22 +137,35 @@ namespace BussinessLayer.Service
                                 Dob = student.birthDate,
                                 Gender = student.gender == "Nam" ? true : student.gender == "Nữ" ? false : throw new ArgumentException("Invalid gender value"),
                                 StudentCode = student.studentCode,
-
                             };
                             Student newstudent = await AddStudentAsync(addstudent);
                             classroom.Students.Add(newstudent);
                             parent.Students.Add(newstudent);
-
                         }
+                        else
+                        {
+                            errorMessage += ($"Parent or Classroom not found for student: {student.fullName} - {student.className} - {student.parentName} - {student.parentphone}");
+                        }
+
+
                     }
                 }
                 _classroomrepo.Save();
                 _parentrepo.Save();
                 _studentrepo.Save();
+                if (errorMessage != string.Empty)
+                {
+                    return errorMessage;
+                }
+                return "Student insert successfully";
+            }
+            catch (InvalidOperationException ex)
+            {
+                throw new InvalidOperationException($"Error uploading student list: {ex.Message}", ex);
             }
             catch (Exception e)
             {
-                throw new Exception($"Error uploading student list: {e.Message}", e);
+                throw new Exception($"Unexpected error uploading student list: {e.Message}", e);
             }
         }
         public (List<InsertStudent>, string) ProcessExcelFile(IFormFile file)
