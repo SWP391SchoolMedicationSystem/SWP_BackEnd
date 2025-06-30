@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AutoMapper;
 using BussinessLayer.IService;
 using DataAccessLayer.DTO.StudentSpecialNeeds;
 using DataAccessLayer.Entity;
@@ -12,34 +13,69 @@ namespace BussinessLayer.Service
 {
     public class StudentSpecialNeedService : IStudentSpecialNeedService
     {
+        private readonly IStudentSpecialNeedRepo _studentNeedRepository;
+        private readonly IStudentRepo _studentRepository;
+        private readonly IMapper _mapper;
+        public StudentSpecialNeedService(IStudentSpecialNeedRepo studentNeedRepository, IStudentRepo studentRepo, IMapper mapper)
+        {
+            _studentNeedRepository = studentNeedRepository;
+            _studentRepository = studentRepo;
+            _mapper = mapper;
+        }
+
         public void AddStudentSpecialNeed(CreateSpecialStudentNeedDTO studentSpecialNeed)
         {
             throw new NotImplementedException();
         }
 
-        public void DeleteStudentSpecialNeed(int id)
+        public async Task<List<StudentSpecialNeedDTO>> GetAllStudentSpecialNeedsAsync()
         {
-            throw new NotImplementedException();
+            var studentSpecialNeeds = await _studentNeedRepository.GetAllAsync();
+            var dtos = _mapper.Map<List<StudentSpecialNeedDTO>>(studentSpecialNeeds);
+            return dtos;
         }
 
-        public Task<List<StudentSpecialNeedDTO>> GetAllStudentSpecialNeedsAsync()
+        public async Task<StudentSpecialNeedDTO> GetStudentSpecialNeedByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            var studentSpecialNeed = await _studentNeedRepository.GetByIdAsync(id);
+            if (studentSpecialNeed == null)
+            {
+                throw new KeyNotFoundException("Student special need not found.");
+            }
+            var dto = _mapper.Map<StudentSpecialNeedDTO>(studentSpecialNeed);
+            return dto;
         }
 
-        public Task<StudentSpecialNeedDTO> GetStudentSpecialNeedByIdAsync(int id)
+        public async Task<List<StudentSpecialNeedDTO>> GetStudentSpecialNeedsByCategoryIdAsync(int categoryId)
         {
-            throw new NotImplementedException();
+            var studentSpecialNeeds = await _studentNeedRepository.GetAllAsync();
+            var filteredNeeds = studentSpecialNeeds.Where(s => s.SpecialNeedCategoryId == categoryId).ToList();
+            var dtos = _mapper.Map<List<StudentSpecialNeedDTO>>(filteredNeeds);
+            return dtos;
         }
 
-        public Task<List<StudentSpecialNeedDTO>> SearchStudentSpecialNeedsAsync(string searchTerm)
+        public Task<List<StudentSpecialNeedDTO>> GetStudentSpecialNeedsByStudentIdAsync(int studentId)
         {
-            throw new NotImplementedException();
+            var studentSpecialNeeds = _studentNeedRepository.GetAllAsync().Result;
+            var filteredNeeds = studentSpecialNeeds.Where(s => s.StudentId == studentId).ToList();
+            var dtos = _mapper.Map<List<StudentSpecialNeedDTO>>(filteredNeeds);
+            return Task.FromResult(dtos);
         }
 
         public void UpdateStudentSpecialNeed(UpdateStudentSpecialNeedDTO studentSpecialNeed)
         {
-            throw new NotImplementedException();
+            if (studentSpecialNeed == null)
+            {
+                throw new ArgumentNullException(nameof(studentSpecialNeed), "Student special need cannot be null.");
+            }
+            var entity = _mapper.Map<StudentSpecialNeed>(studentSpecialNeed);
+            var existingEntity = _studentNeedRepository.GetByIdAsync(entity.StudentSpecialNeedId).Result;
+            if (existingEntity == null)
+            {
+                throw new KeyNotFoundException("Student special need not found.");
+            }
+            _studentNeedRepository.Update(entity);
+            _studentNeedRepository.Save();
         }
     }
 }
