@@ -1,4 +1,5 @@
 using System;
+using System.Reflection;
 using AutoMapper;
 using BussinessLayer.IService;
 using BussinessLayer.Utils.Configurations;
@@ -6,7 +7,10 @@ using DataAccessLayer.DTO;
 using DataAccessLayer.Entity;
 using DataAccessLayer.IRepository;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using NPOI.POIFS.Properties;
+using Scriban;
 
 namespace BussinessLayer.Service
 {
@@ -14,11 +18,11 @@ namespace BussinessLayer.Service
     {
         private readonly IVaccinationEventRepository _vaccinationEventRepository;
         private readonly IVaccinationRecordRepository _vaccinationRecordRepository;
+        private readonly IParentService _parentService;
         private readonly IEmailService _emailService;
         private readonly IEmailRepo _emailRepo;
         private readonly IMapper _mapper;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly AppSetting _appSettings;
 
         public VaccinationEventService(
             IVaccinationEventRepository vaccinationEventRepository,
@@ -27,7 +31,7 @@ namespace BussinessLayer.Service
             IEmailRepo emailRepo,
             IMapper mapper,
             IHttpContextAccessor httpContextAccessor,
-            IOptionsMonitor<AppSetting> options)
+            IParentService parentService)
         {
             _vaccinationEventRepository = vaccinationEventRepository;
             _vaccinationRecordRepository = vaccinationRecordRepository;
@@ -35,7 +39,7 @@ namespace BussinessLayer.Service
             _emailRepo = emailRepo;
             _mapper = mapper;
             _httpContextAccessor = httpContextAccessor;
-            _appSettings = options.CurrentValue;
+            _parentService = parentService;
         }
 
         public async Task<List<VaccinationEventDTO>> GetAllEventsAsync()
@@ -167,7 +171,7 @@ namespace BussinessLayer.Service
                     parent => new EmailDTO
                     {
                         To = parent.Email!,
-                        Subject = emailTemplate.Subject.Replace("{EventName}", eventInfo.Vaccinationeventname),
+                        Subject = emailTemplate.Subject,
                         Body = emailTemplate.Body
                             .Replace("{EventName}", eventInfo.Vaccinationeventname)
                             .Replace("{EventDate}", eventInfo.Eventdate.ToString("dd/MM/yyyy"))
@@ -212,7 +216,7 @@ namespace BussinessLayer.Service
                     parent => new EmailDTO
                     {
                         To = parent.Email!,
-                        Subject = emailTemplate.Subject.Replace("{EventName}", eventInfo.Vaccinationeventname),
+                        Subject = emailTemplate.Subject,
                         Body = emailTemplate.Body
                             .Replace("{EventName}", eventInfo.Vaccinationeventname)
                             .Replace("{EventDate}", eventInfo.Eventdate.ToString("dd/MM/yyyy"))
@@ -240,47 +244,50 @@ namespace BussinessLayer.Service
         {
             try
             {
-                // Check if record already exists
-                var existingRecord = await _vaccinationRecordRepository.GetRecordByStudentAndEventAsync(dto.StudentId, dto.VaccinationEventId);
-
-                if (existingRecord != null)
+                foreach (StudentVaccinationResponseDTO student in dto.Responses)
                 {
-                    // Update existing record
-                    existingRecord.Willattend = dto.WillAttend;
-                    existingRecord.Reasonfordecline = dto.ReasonForDecline;
-                    existingRecord.Parentconsent = dto.ParentConsent;
-                    existingRecord.Responsedate = DateTime.Now;
-                    existingRecord.Updatedat = DateTime.Now;
-                    existingRecord.Updatedby = dto.ParentId.ToString();
-                    existingRecord.Confirmedbyparent = dto.WillAttend;
+                    // Check if record already exists
+                    var existingRecord = await _vaccinationRecordRepository.GetRecordByStudentAndEventAsync(student.StudentId, dto.VaccinationEventId);
 
-                    _vaccinationRecordRepository.Update(existingRecord);
-                    await _vaccinationRecordRepository.SaveChangesAsync();
-                }
-                else
-                {
-                    // Create new record
-                    var newRecord = new Vaccinationrecord
+                    if (existingRecord != null)
                     {
-                        Studentid = dto.StudentId,
-                        Vaccinationeventid = dto.VaccinationEventId,
-                        Vaccinename = "To be determined", // Will be set when actual vaccination occurs
-                        Dosenumber = 1,
-                        Vaccinationdate = DateOnly.FromDateTime(DateTime.Now), // Will be updated when actual vaccination occurs
-                        Confirmedbyparent = dto.WillAttend,
-                        Willattend = dto.WillAttend,
-                        Reasonfordecline = dto.ReasonForDecline,
-                        Parentconsent = dto.ParentConsent,
-                        Responsedate = DateTime.Now,
-                        Isdeleted = false,
-                        Createdat = DateTime.Now,
-                        Updatedat = DateTime.Now,
-                        Createdby = dto.ParentId.ToString(),
-                        Updatedby = dto.ParentId.ToString()
-                    };
+                        // Update existing record
+                        existingRecord.Willattend = student.WillAttend;
+                        existingRecord.Reasonfordecline = student.ReasonForDecline;
+                        existingRecord.Parentconsent = dto.ParentConsent;
+                        existingRecord.Responsedate = DateTime.Now;
+                        existingRecord.Updatedat = DateTime.Now;
+                        existingRecord.Updatedby = dto.ParentId.ToString();
+                        existingRecord.Confirmedbyparent = student.WillAttend;
 
-                    await _vaccinationRecordRepository.AddAsync(newRecord);
-                    await _vaccinationRecordRepository.SaveChangesAsync();
+                        _vaccinationRecordRepository.Update(existingRecord);
+                        await _vaccinationRecordRepository.SaveChangesAsync();
+                    }
+                    else
+                    {
+                        // Create new record
+                        var newRecord = new Vaccinationrecord
+                        {
+                            Studentid = student.StudentId,
+                            Vaccinationeventid = dto.VaccinationEventId,
+                            Vaccinename = "To be determined", // Will be set when actual vaccination occurs
+                            Dosenumber = 1,
+                            Vaccinationdate = DateOnly.FromDateTime(DateTime.Now), // Will be updated when actual vaccination occurs
+                            Confirmedbyparent = student.WillAttend,
+                            Willattend = student.WillAttend,
+                            Reasonfordecline = student.ReasonForDecline,
+                            Parentconsent = dto.ParentConsent,
+                            Responsedate = DateTime.Now,
+                            Isdeleted = false,
+                            Createdat = DateTime.Now,
+                            Updatedat = DateTime.Now,
+                            Createdby = dto.ParentId.ToString(),
+                            Updatedby = dto.ParentId.ToString()
+                        };
+
+                        await _vaccinationRecordRepository.AddAsync(newRecord);
+                        await _vaccinationRecordRepository.SaveChangesAsync();
+                    }
                 }
 
                 return true;
@@ -302,11 +309,17 @@ namespace BussinessLayer.Service
                 responses.Add(new ParentVaccinationResponseDTO
                 {
                     ParentId = record.Student.Parentid,
-                    StudentId = record.Studentid,
                     VaccinationEventId = record.Vaccinationeventid,
-                    WillAttend = record.Willattend ?? false,
-                    ReasonForDecline = record.Reasonfordecline,
-                    ParentConsent = record.Parentconsent ?? false
+                    ParentConsent = record.Parentconsent ?? false,
+                    Responses = new List<StudentVaccinationResponseDTO>
+                    {
+                        new StudentVaccinationResponseDTO
+                        {
+                            StudentId = record.Studentid,
+                            WillAttend = record.Willattend ?? false,
+                            ReasonForDecline = record.Reasonfordecline
+                        }
+                    }
                 });
             }
 
@@ -346,25 +359,32 @@ namespace BussinessLayer.Service
             return eventDtos;
         }
 
-        public async Task<StudentVaccinationStatusDTO?> GetStudentByParentEmailAsync(string email, int eventId)
+        public async Task<List<StudentVaccinationStatusDTO>?> GetStudentByParentEmailAsync(string email, int eventId)
         {
             try
             {
                 var students = await _vaccinationEventRepository.GetStudentsForEventAsync(eventId);
-                var student = students.FirstOrDefault(s => s.Parent?.Email == email);
+                var filterStudents = students.Where(s => s.Parent.Email.Equals(email));
 
-                if (student == null)
+                if (filterStudents == null)
                     return null;
 
-                return new StudentVaccinationStatusDTO
+                var list = new List<StudentVaccinationStatusDTO>();
+
+                foreach (var student in filterStudents)
                 {
-                    StudentId = student.Studentid,
-                    StudentName = student.Fullname,
-                    ParentName = student.Parent?.Fullname ?? "",
-                    ParentEmail = student.Parent?.Email ?? "",
-                    ClassName = student.Class?.Classname ?? "",
-                    ParentId = student.Parentid
-                };
+                    list.Add(new StudentVaccinationStatusDTO
+                    {
+                        StudentId = student.Studentid,
+                        StudentName = student.Fullname,
+                        ParentName = student.Parent?.Fullname ?? "",
+                        ParentEmail = student.Parent?.Email ?? "",
+                        ClassName = student.Class?.Classname ?? "",
+                        ParentId = student.Parentid
+                    });
+                }
+
+                return list;
             }
             catch (Exception ex)
             {
@@ -381,6 +401,39 @@ namespace BussinessLayer.Service
                          _httpContextAccessor.HttpContext?.Request.Host;
 
             return $"{baseUrl}/api/VaccinationEvent/Respond?email={Uri.EscapeDataString(email)}&eventId={eventId}";
+        }
+
+        public async Task<string> FillEmailTemplateData(string email, VaccinationEventDTO eventInfo)
+        {
+            var emailTemplate = _emailService.GetTemplateByID(6);
+            var parent = await _parentService.GetParentByEmailForEvent(email);
+            var scribanTemplate = Template.Parse(emailTemplate.Body);
+            var students = parent.Students
+                .Select(s => new
+                {
+                    name = s.Fullname,
+                    id = s.StudentId
+                }).ToList();
+
+            string result = await scribanTemplate.RenderAsync(new
+            {
+                @event = new
+                {
+                    id = eventInfo.VaccinationEventId,
+                    name = eventInfo.VaccinationEventName,
+                    date = eventInfo.EventDate,
+                    location = eventInfo.Location,
+                    description = eventInfo.Description
+                },
+                parent = new
+                {
+                    name = parent.FullName,
+                    id = parent.ParentId,
+                    students = students
+                },
+            }, member => member.Name);
+
+            return result;
         }
     }
 }

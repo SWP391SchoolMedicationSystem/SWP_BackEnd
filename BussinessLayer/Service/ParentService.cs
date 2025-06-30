@@ -194,6 +194,28 @@ namespace BussinessLayer.Service
             return parent;
         }
 
+        public async Task<ParentDTO> GetParentByEmailAsync(string email)
+        {
+            var parents = await parentRepository.GetAllAsync();
+            var parent = parents.FirstOrDefault(p => p.Email == email);
+            if (parent == null) return null;
+            ParentDTO parentdto = mapper.Map<ParentDTO>(parent);
+
+            var studentlist = studentRepo.GetAll().Where(s => s.Parentid == parent.Parentid);
+            var studentdto = mapper.Map<List<StudentParentDTO>>(studentlist);
+            parentdto.Students = studentdto;
+            return parentdto;
+        }
+
+        public async Task<ParentVaccineEvent> GetParentByEmailForEvent(string email)
+        {
+            var parent = await parentRepository.GetParentForEvent(email);
+            if (parent == null) return null;
+            ParentVaccineEvent parentEvent = mapper.Map<ParentVaccineEvent>(parent);
+
+            return parentEvent;
+        }
+
 
         public async Task<string> ValidateGoogleToken(string token)
         {

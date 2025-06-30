@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using DataAccessLayer.DTO;
+using DataAccessLayer.DTO.Parents;
 using DataAccessLayer.Entity;
 
 namespace SchoolMedicalSystem.Profiles
@@ -9,7 +10,7 @@ namespace SchoolMedicalSystem.Profiles
         public StudentProfile() {
             CreateMap<StudentDTO, Student>().ReverseMap();
             CreateMap<StudentParentDTO, Student>().ReverseMap();
-        
+            CreateMap<Student, StudentVaccineEvent>().ReverseMap();
         }
     }
 }
