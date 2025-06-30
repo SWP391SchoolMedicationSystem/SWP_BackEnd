@@ -44,7 +44,7 @@ namespace SchoolMedicalSystem.Controllers
             }
         }
         [HttpPut("Personalmedicine")]
-        public IActionResult UpdatePersonalmedicine([FromBody] int id,UpdatePersonalMedicineDTO PersonalmedicineDto)
+        public IActionResult UpdatePersonalmedicine(int id ,[FromBody] UpdatePersonalMedicineDTO PersonalmedicineDto)
         {
             if (PersonalmedicineDto == null)
                 return BadRequest("Invalid data.");
