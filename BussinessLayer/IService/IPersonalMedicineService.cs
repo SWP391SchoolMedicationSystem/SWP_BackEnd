@@ -13,7 +13,7 @@ namespace BussinessLayer.IService
     {
 
         Task<List<PersonalMedicineDTO>> GetAllPersonalmedicinesAsync();
-        Task<Personalmedicine> GetPersonalmedicineByIdAsync(int id);
+        Task<PersonalMedicineDTO> GetPersonalmedicineByIdAsync(int id);
         Task AddPersonalmedicineAsync(AddPersonalMedicineDTO Personalmedicine);
         void UpdatePersonalmedicine(UpdatePersonalMedicineDTO Personalmedicine);
         void DeletePersonalmedicine(int id);
