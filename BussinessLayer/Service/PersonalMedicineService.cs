@@ -65,12 +65,20 @@ namespace BussinessLayer.Service
         public async Task<List<PersonalMedicineDTO>> GetAllPersonalmedicinesAsync()
         {
             var personalMedicines = await PersonalmedicineRepository.GetAllAsync();
-            return mapper.Map<List<PersonalMedicineDTO>>(personalMedicines);
+            var dtolist = mapper.Map<List<PersonalMedicineDTO>>(personalMedicines);
+            foreach( var item in dtolist)
+            {
+                item.Phone = parentRepository.GetByIdAsync(item.Parentid).Result?.Phone ?? "No phone number";
+            }
+            return dtolist;
         }
 
-        public Task<Personalmedicine> GetPersonalmedicineByIdAsync(int id)
+        public async Task<PersonalMedicineDTO> GetPersonalmedicineByIdAsync(int id)
         {
-            return PersonalmedicineRepository.GetByIdAsync(id);
+            var personalMedicines = await PersonalmedicineRepository.GetByIdAsync(id);
+            var dto = mapper.Map<PersonalMedicineDTO>(personalMedicines);
+            dto.Phone = parentRepository.GetByIdAsync(dto.Parentid).Result?.Phone ?? "No phone number";
+            return dto;
         }
 
         public Task<List<Personalmedicine>> GetPersonalmedicinesByMedicineIdAsync(int medicineId)
@@ -103,9 +111,9 @@ namespace BussinessLayer.Service
             });
         }
 
-        public void UpdatePersonalmedicine(UpdatePersonalMedicineDTO Personalmedicine)
+        public void UpdatePersonalmedicine(UpdatePersonalMedicineDTO Personalmedicine, int id)
         {
-            var PersonalmedicineEntity = PersonalmedicineRepository.GetByIdAsync(Personalmedicine.Personalmedicineid).Result;
+            var PersonalmedicineEntity = PersonalmedicineRepository.GetByIdAsync(id).Result;
             if (PersonalmedicineEntity == null)
             {
                 throw new KeyNotFoundException("Medicine donation not found.");
@@ -136,7 +144,7 @@ namespace BussinessLayer.Service
 
             foreach (var personalMedicine in personalMedicinesList)
             {
-                if (personalMedicine.Isdeleted == false)
+                if (!personalMedicine.Isdeleted)
                 {
                     List<Scheduledetail> scheduledetails = new List<Scheduledetail>();
                     Classroom classRoom = classRoomRepository.GetAllAsync().Result.FirstOrDefault(c => c.Classid == personalMedicine.Student.Classid);

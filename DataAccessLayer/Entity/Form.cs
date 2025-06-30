@@ -31,7 +31,7 @@ public partial class Form
 
     public DateTime? Modifieddate { get; set; }
 
-    public virtual Formcategory? Formcategory { get; set; }
+    public virtual Formcategory1? Formcategory { get; set; }
 
     public virtual Parent? Parent { get; set; }
 

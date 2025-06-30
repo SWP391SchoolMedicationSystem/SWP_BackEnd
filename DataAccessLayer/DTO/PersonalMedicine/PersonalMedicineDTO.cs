@@ -11,7 +11,8 @@ namespace DataAccessLayer.DTO.PersonalMedicine
     {
         public int Medicineid { get; set; }
 
-        public int? Parentid { get; set; }
+        public int Parentid { get; set; }
+        public string Phone { get; set; } = null!;
 
         public int? Studentid { get; set; }
 

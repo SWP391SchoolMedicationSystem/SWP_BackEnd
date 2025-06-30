@@ -1,10 +1,8 @@
 ﻿using AutoMapper;
 using BussinessLayer.IService;
-using BussinessLayer.Service;
 using BussinessLayer.Utils;
 using DataAccessLayer.DTO;
 using Google.Apis.Auth;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 
@@ -21,8 +19,8 @@ namespace SchoolMedicalSystem.Controllers
             var usersDto = mapper.Map<List<UserDTO>>(users);
             return Ok(users);
         }
-    
-    [HttpPost("user")]
+
+        [HttpPost("user")]
         public async Task<IActionResult> Login([FromBody] LoginDTO login)
         {
             if (login == null)
