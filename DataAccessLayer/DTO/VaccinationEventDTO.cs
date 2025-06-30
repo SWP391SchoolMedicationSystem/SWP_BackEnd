@@ -72,19 +72,25 @@ namespace DataAccessLayer.DTO
         [Required(ErrorMessage = "Parent ID is required")]
         public int ParentId { get; set; }
 
-        [Required(ErrorMessage = "Student ID is required")]
-        public int StudentId { get; set; }
-
         [Required(ErrorMessage = "Vaccination event ID is required")]
         public int VaccinationEventId { get; set; }
 
-        [Required(ErrorMessage = "Response is required")]
+        [Required(ErrorMessage = "Parent consent is required")]
+        public bool ParentConsent { get; set; }
+
+        [Required(ErrorMessage = "Responses are required")]
+        public List<StudentVaccinationResponseDTO> Responses { get; set; } = new();
+    }
+
+    public class StudentVaccinationResponseDTO
+    {
+        [Required]
+        public int StudentId { get; set; }
+
+        [Required]
         public bool WillAttend { get; set; }
 
         public string? ReasonForDecline { get; set; }
-
-        [Required(ErrorMessage = "Parent consent is required")]
-        public bool ParentConsent { get; set; }
     }
 
     public class VaccinationEventSummaryDTO
@@ -117,6 +123,9 @@ namespace DataAccessLayer.DTO
 
     public class SendVaccinationEmailDTO
     {
+        [Required(ErrorMessage = "Parent IDs are required")]
+        public List<int> parentIds { get; set; }
+
         [Required(ErrorMessage = "Vaccination event ID is required")]
         public int VaccinationEventId { get; set; }
 
