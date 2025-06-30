@@ -27,7 +27,9 @@ public partial class SchoolMedicalSystemContext : DbContext
 
     public virtual DbSet<Form> Forms { get; set; }
 
-    public virtual DbSet<Formcategory> Formcategories { get; set; }
+    public virtual DbSet<FormCategory> FormCategories { get; set; }
+
+    public virtual DbSet<Formcategory1> Formcategories1 { get; set; }
 
     public virtual DbSet<Healthcategory> Healthcategories { get; set; }
 
@@ -38,6 +40,8 @@ public partial class SchoolMedicalSystemContext : DbContext
     public virtual DbSet<Healthstatus> Healthstatuses { get; set; }
 
     public virtual DbSet<Healthstatuscategory> Healthstatuscategories { get; set; }
+
+    public virtual DbSet<MedicalForm> MedicalForms { get; set; }
 
     public virtual DbSet<Medicine> Medicines { get; set; }
 
@@ -61,9 +65,13 @@ public partial class SchoolMedicalSystemContext : DbContext
 
     public virtual DbSet<Scheduledetail> Scheduledetails { get; set; }
 
+    public virtual DbSet<SpecialNeedsCategory> SpecialNeedsCategories { get; set; }
+
     public virtual DbSet<Staff> Staff { get; set; }
 
     public virtual DbSet<Student> Students { get; set; }
+
+    public virtual DbSet<StudentSpecialNeed> StudentSpecialNeeds { get; set; }
 
     public virtual DbSet<User> Users { get; set; }
 
@@ -284,7 +292,17 @@ public partial class SchoolMedicalSystemContext : DbContext
                 .HasConstraintName("FK__FORM__STAFFID__540C7B00");
         });
 
-        modelBuilder.Entity<Formcategory>(entity =>
+        modelBuilder.Entity<FormCategory>(entity =>
+        {
+            entity.HasKey(e => e.CategoryId).HasName("PK__FormCate__19093A2B1228B687");
+
+            entity.HasIndex(e => e.CategoryName, "UQ__FormCate__8517B2E093CC4633").IsUnique();
+
+            entity.Property(e => e.CategoryId).HasColumnName("CategoryID");
+            entity.Property(e => e.CategoryName).HasMaxLength(100);
+        });
+
+        modelBuilder.Entity<Formcategory1>(entity =>
         {
             entity.HasKey(e => e.Categoryid).HasName("PK__FORMCATE__A50F989615FD6522");
 
@@ -496,6 +514,33 @@ public partial class SchoolMedicalSystemContext : DbContext
                 .HasColumnName("UPDATED_AT");
         });
 
+        modelBuilder.Entity<MedicalForm>(entity =>
+        {
+            entity.HasKey(e => e.FormId).HasName("PK__MedicalF__FB05B7BDEC7279B2");
+
+            entity.Property(e => e.FormId).HasColumnName("FormID");
+            entity.Property(e => e.CategoryId).HasColumnName("CategoryID");
+            entity.Property(e => e.ResponderId).HasColumnName("ResponderID");
+            entity.Property(e => e.ResponseTimestamp).HasColumnType("datetime");
+            entity.Property(e => e.Status)
+                .HasMaxLength(50)
+                .HasDefaultValue("Chờ duyệt");
+            entity.Property(e => e.StudentId).HasColumnName("StudentID");
+            entity.Property(e => e.SubmissionTimestamp)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
+
+            entity.HasOne(d => d.Category).WithMany(p => p.MedicalForms)
+                .HasForeignKey(d => d.CategoryId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_MedicalForms_Category");
+
+            entity.HasOne(d => d.Student).WithMany(p => p.MedicalForms)
+                .HasForeignKey(d => d.StudentId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_MedicalForms_Student");
+        });
+
         modelBuilder.Entity<Medicine>(entity =>
         {
             entity.HasKey(e => e.Medicineid).HasName("PK__Medicine__FA10A9A3835E2AA7");
@@ -523,6 +568,8 @@ public partial class SchoolMedicalSystemContext : DbContext
             entity.Property(e => e.Updatedby)
                 .HasMaxLength(255)
                 .HasColumnName("UPDATEDBY");
+            entity.Property(e => e.IsDeleted).HasColumnName("IS_DELETED");
+
 
             entity.HasOne(d => d.Medicinecategory).WithMany(p => p.Medicines)
                 .HasForeignKey(d => d.Medicinecategoryid)
@@ -798,6 +845,16 @@ public partial class SchoolMedicalSystemContext : DbContext
                 .HasColumnName("STARTTIME");
         });
 
+        modelBuilder.Entity<SpecialNeedsCategory>(entity =>
+        {
+            entity.HasKey(e => e.SpecialNeedCategoryId).HasName("PK__SpecialN__BAED81C08E28A5A5");
+
+            entity.HasIndex(e => e.CategoryName, "UQ__SpecialN__8517B2E096E4C7CF").IsUnique();
+
+            entity.Property(e => e.SpecialNeedCategoryId).HasColumnName("SpecialNeedCategoryID");
+            entity.Property(e => e.CategoryName).HasMaxLength(150);
+        });
+
         modelBuilder.Entity<Staff>(entity =>
         {
             entity.HasKey(e => e.Staffid).HasName("PK__STAFF__28B5063BD3A1C1CF");
@@ -879,6 +936,25 @@ public partial class SchoolMedicalSystemContext : DbContext
                 .HasForeignKey(d => d.Parentid)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_STUDENT_PARENTID");
+        });
+
+        modelBuilder.Entity<StudentSpecialNeed>(entity =>
+        {
+            entity.HasKey(e => e.StudentSpecialNeedId).HasName("PK__StudentS__00E0B0F5120DA1CF");
+
+            entity.Property(e => e.StudentSpecialNeedId).HasColumnName("StudentSpecialNeedID");
+            entity.Property(e => e.SpecialNeedCategoryId).HasColumnName("SpecialNeedCategoryID");
+            entity.Property(e => e.StudentId).HasColumnName("StudentID");
+
+            entity.HasOne(d => d.SpecialNeedCategory).WithMany(p => p.StudentSpecialNeeds)
+                .HasForeignKey(d => d.SpecialNeedCategoryId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_StudentSpecialNeeds_Category");
+
+            entity.HasOne(d => d.Student).WithMany(p => p.StudentSpecialNeeds)
+                .HasForeignKey(d => d.StudentId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_StudentSpecialNeeds_Student");
         });
 
         modelBuilder.Entity<User>(entity =>
