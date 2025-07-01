@@ -43,7 +43,7 @@ namespace SchoolMedicalSystem.Controllers
                 return StatusCode(500, $"Error adding medicine donation: {ex.Message}");
             }
         }
-        [HttpPut("Personalmedicine")]
+        [HttpPut("Personalmedicine/{id}")]
         public IActionResult UpdatePersonalmedicine(int id ,[FromBody] UpdatePersonalMedicineDTO PersonalmedicineDto)
         {
             if (PersonalmedicineDto == null)
