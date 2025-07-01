@@ -8,6 +8,7 @@ using BussinessLayer.IService;
 using DataAccessLayer.DTO.StudentSpecialNeeds;
 using DataAccessLayer.Entity;
 using DataAccessLayer.IRepository;
+using Microsoft.EntityFrameworkCore;
 
 namespace BussinessLayer.Service
 {
@@ -16,16 +17,36 @@ namespace BussinessLayer.Service
         private readonly IStudentSpecialNeedRepo _studentNeedRepository;
         private readonly IStudentRepo _studentRepository;
         private readonly IMapper _mapper;
-        public StudentSpecialNeedService(IStudentSpecialNeedRepo studentNeedRepository, IStudentRepo studentRepo, IMapper mapper)
+        private readonly IStudentSpecialNeedCategoryRepo _studentSpecialNeedCategoryRepo;
+        public StudentSpecialNeedService(IStudentSpecialNeedRepo studentNeedRepository, IStudentRepo studentRepo, IMapper mapper, IStudentSpecialNeedCategoryRepo studentSpecialNeedCategoryRepo)
         {
             _studentNeedRepository = studentNeedRepository;
             _studentRepository = studentRepo;
             _mapper = mapper;
+            _studentSpecialNeedCategoryRepo = studentSpecialNeedCategoryRepo;
         }
 
         public void AddStudentSpecialNeed(CreateSpecialStudentNeedDTO studentSpecialNeed)
         {
-            throw new NotImplementedException();
+            if (studentSpecialNeed == null)
+                throw new ArgumentNullException(nameof(studentSpecialNeed));
+
+            var entity = _mapper.Map<StudentSpecialNeed>(studentSpecialNeed);
+
+            var student = _studentRepository.GetByIdAsync(entity.StudentId).Result;
+            if (student == null)
+                throw new KeyNotFoundException("Student not found.");
+
+            var category = _studentSpecialNeedCategoryRepo.GetByIdAsync(entity.SpecialNeedCategoryId).Result;
+            if(category == null)
+                throw new KeyNotFoundException("Student not found.");
+
+            _studentNeedRepository.Add(entity);
+            _studentNeedRepository.Save();
+
+            // Assign navigation properties to the tracked entity (optional, for internal use)
+            entity.Student = student;
+            entity.SpecialNeedCategory = category;
         }
 
         public async Task<List<StudentSpecialNeedDTO>> GetAllStudentSpecialNeedsAsync()
