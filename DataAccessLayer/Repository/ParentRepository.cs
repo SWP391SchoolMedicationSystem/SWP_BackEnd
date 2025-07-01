@@ -33,5 +33,17 @@ namespace DataAccessLayer.Repository
                                      .FirstOrDefaultAsync(p => p.Students.Any(s => s.Studentid == studentId) && !p.IsDeleted);
             return parent ?? throw new KeyNotFoundException($"Parent for student with id {studentId} not found.");
         }
+        public async Task<Parent> GetByIdAsync(int id)
+        {
+            var parent = await _dbset.IgnoreAutoIncludes()
+                                     .Include(p => p.Students)
+                                     .
+                FirstOrDefaultAsync(p => p.Parentid == id && !p.IsDeleted);
+            if (parent == null)
+            {
+                throw new KeyNotFoundException($"Parent with id {id} not found.");
+            }
+            return parent;
+        }
     }
 }

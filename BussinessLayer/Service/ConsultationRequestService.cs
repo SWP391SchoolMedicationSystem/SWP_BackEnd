@@ -12,7 +12,9 @@ using DataAccessLayer.Repository;
 
 namespace BussinessLayer.Service
 {
-    public class ConsultationRequestService(IConsulationRepository consulationRepository, IConsultationTypeRepo consultationTypeRepo, IMapper mapper) : IConsultationService
+    public class ConsultationRequestService(IConsulationRepository consulationRepository, IConsultationTypeRepo consultationTypeRepo,
+        IParentRepository parentRepository, IStaffRepository staffRepository, IStudentRepo studentRepo,
+        IMapper mapper) : IConsultationService
     {
         public async Task<Consultationrequest> AddConsultationRequest(ConsultationRequestDTO request)
         {
@@ -38,7 +40,8 @@ namespace BussinessLayer.Service
         }
         public Task<List<Consultationrequest>> GetAllConsultationRequestsAsync()
         {
-            return consulationRepository.GetAllAsync();
+            var consultation = consulationRepository.GetAllAsync();
+            return consultation;
         }
         public Task<Consultationrequest> GetConsultationRequestByIdAsync(int id)
         {

@@ -110,6 +110,12 @@ builder.Services.AddScoped<IMedicineScheduleRepository, MedicineScheduleReposito
 builder.Services.AddScoped<IHealthCheckRepo, HealthCheckRepository>();
 builder.Services.AddScoped<IHealthCheckService, HealthCheckService>();
 builder.Services.AddScoped<IScheduleDetailRepo, ScheduleDetailRepo>();
+builder.Services.AddScoped<IHealthCheckService, HealthCheckService>();
+builder.Services.AddScoped<IHealthCheckRepo, HealthCheckRepository>();
+builder.Services.AddScoped<IConsultationTypeRepo, ConsultationTypeRepo>();
+builder.Services.AddScoped<IConsultationTypeService, ConsultationTypeService>();
+builder.Services.AddScoped<IConsulationRepository, ConsultationRepository>();
+builder.Services.AddScoped<IConsultationService, ConsultationRequestService>();
 builder.Services.AddScoped<IScheduleDetailService, ScheduleDetailService>();
 builder.Services.AddScoped<IHealthCategoryRepo, HealthCategoryRepository>();
 builder.Services.AddScoped<IStudentSpecialNeedService, StudentSpecialNeedService>();

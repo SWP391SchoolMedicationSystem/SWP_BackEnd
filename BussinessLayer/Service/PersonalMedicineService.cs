@@ -126,6 +126,10 @@ namespace BussinessLayer.Service
                 PersonalmedicineEntity.Receiveddate = Personalmedicine.Receiveddate;
                 PersonalmedicineEntity.ExpiryDate = Personalmedicine.ExpiryDate;
                 PersonalmedicineEntity.Status = Personalmedicine.Status;
+                if(PersonalmedicineEntity.Status)
+                {
+                    PersonalmedicineEntity.Isapproved = true;
+                }
                 PersonalmedicineEntity.Note = Personalmedicine.Note;
                 PersonalmedicineEntity.Modifieddate = DateTime.Now;
                 PersonalmedicineRepository.Update(PersonalmedicineEntity);
