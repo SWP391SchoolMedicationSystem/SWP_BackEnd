@@ -35,6 +35,7 @@ namespace BussinessLayer.Service
             }
 
             PersonalmedicineEntity.Status = false;
+            PersonalmedicineEntity.Createdby = "Admin";
             PersonalmedicineEntity.Createddate = DateTime.Now;
             PersonalmedicineEntity.Medicine = medicineRepository.GetByIdAsync(Personalmedicine.Medicineid).Result;
             if (PersonalmedicineEntity.Medicine == null)

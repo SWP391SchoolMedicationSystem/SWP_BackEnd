@@ -44,6 +44,7 @@ namespace SchoolMedicalSystem.Controllers
             }
         }
         [HttpPut("Personalmedicine/{id}")]
+
         public IActionResult UpdatePersonalmedicine(int id ,[FromBody] UpdatePersonalMedicineDTO PersonalmedicineDto)
         {
             if (PersonalmedicineDto == null)
