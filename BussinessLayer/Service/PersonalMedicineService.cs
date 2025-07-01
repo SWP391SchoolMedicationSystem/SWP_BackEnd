@@ -121,8 +121,17 @@ namespace BussinessLayer.Service
             }
             else
             {
+                PersonalmedicineEntity.Medicineid = Personalmedicine.Medicineid;
+                PersonalmedicineEntity.Parentid = Personalmedicine.Parentid;
+                PersonalmedicineEntity.Studentid = Personalmedicine.Studentid;
+
+                PersonalmedicineEntity.Quantity = Personalmedicine.Quantity;
+                PersonalmedicineEntity.Receiveddate = Personalmedicine.Receiveddate;
+                PersonalmedicineEntity.ExpiryDate = Personalmedicine.ExpiryDate;
+                PersonalmedicineEntity.Status = Personalmedicine.Status;
+                PersonalmedicineEntity.Note = Personalmedicine.Note;
                 PersonalmedicineEntity.Modifieddate = DateTime.Now;
-                medicineRepository.Update(PersonalmedicineEntity.Medicine);
+                PersonalmedicineRepository.Update(PersonalmedicineEntity);
 
             }
 
