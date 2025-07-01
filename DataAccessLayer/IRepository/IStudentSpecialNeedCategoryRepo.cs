@@ -7,8 +7,7 @@ using DataAccessLayer.Entity;
 
 namespace DataAccessLayer.IRepository
 {
-    public interface IParentRepository : IGenericRepository<Parent>
+    public interface IStudentSpecialNeedCategoryRepo : IGenericRepository<SpecialNeedsCategory>
     {
-        Task<Parent> GetParentForEvent(string email);
     }
 }

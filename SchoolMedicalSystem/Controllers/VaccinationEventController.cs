@@ -12,11 +12,13 @@ namespace SchoolMedicalSystem.Controllers
     public class VaccinationEventController : ControllerBase
     {
         private readonly IVaccinationEventService _vaccinationEventService;
+        private readonly IEmailService _emailService;
         private readonly IMapper _mapper;
 
-        public VaccinationEventController(IVaccinationEventService vaccinationEventService, IMapper mapper)
+        public VaccinationEventController(IVaccinationEventService vaccinationEventService, IMapper mapper, IEmailService emailService)
         {
             _vaccinationEventService = vaccinationEventService;
+            _emailService = emailService;
             _mapper = mapper;
         }
 
@@ -212,17 +214,17 @@ namespace SchoolMedicalSystem.Controllers
         // This endpoint is used to send vaccination emails to specific parents
         [HttpPost("send-email-specific")]
         public async Task<IActionResult> SendVaccinationEmailToSpecificParents(
-            [FromBody] SendVaccinationEmailDTO dto, [FromQuery] List<int> parentIds)
+            [FromBody] SendVaccinationEmailDTO dto)
         {
             try
             {
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
 
-                if (parentIds == null || !parentIds.Any())
+                if (dto.parentIds == null || !dto.parentIds.Any())
                     return BadRequest("Parent IDs are required.");
 
-                var result = await _vaccinationEventService.SendVaccinationEmailToSpecificParentsAsync(dto, parentIds);
+                var result = await _vaccinationEventService.SendVaccinationEmailToSpecificParentsAsync(dto, dto.parentIds);
 
                 if (result == null)
                     return BadRequest("Not found Event info or Email template");
@@ -323,129 +325,11 @@ namespace SchoolMedicalSystem.Controllers
 
                 // Get student information for this email
                 var studentInfo = await _vaccinationEventService.GetStudentByParentEmailAsync(email, eventId);
-                if (studentInfo == null)
+                if (studentInfo == null || !studentInfo.Any())
                     return NotFound("No student found for this email address");
 
                 // Return HTML form
-                var htmlForm = $@"
-<!DOCTYPE html>
-<html lang='vi'>
-<head>
-    <meta charset='UTF-8'>
-    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
-    <title>Phản hồi về sự kiện tiêm chủng</title>
-    <style>
-        body {{ font-family: Arial, sans-serif; line-height: 1.6; margin: 0; padding: 20px; background-color: #f5f5f5; }}
-        .container {{ max-width: 600px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }}
-        h1 {{ color: #2c3e50; text-align: center; margin-bottom: 30px; }}
-        .event-info {{ background-color: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 30px; }}
-        .form-group {{ margin-bottom: 20px; }}
-        label {{ display: block; margin-bottom: 5px; font-weight: bold; color: #333; }}
-        input[type='text'], input[type='email'], textarea, select {{ width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 16px; }}
-        textarea {{ height: 100px; resize: vertical; }}
-        .radio-group {{ margin: 10px 0; }}
-        .radio-group label {{ display: inline; margin-right: 20px; font-weight: normal; }}
-        button {{ background-color: #3498db; color: white; padding: 12px 30px; border: none; border-radius: 5px; font-size: 16px; cursor: pointer; }}
-        button:hover {{ background-color: #2980b9; }}
-        .success {{ color: #27ae60; }}
-        .error {{ color: #e74c3c; }}
-        #reasonField {{ display: none; }}
-    </style>
-</head>
-<body>
-    <div class='container'>
-        <h1>Phản hồi về sự kiện tiêm chủng</h1>
-        
-        <div class='event-info'>
-            <h3>Sự kiện: {eventInfo.VaccinationEventName}</h3>
-            <p><strong>Ngày diễn ra:</strong> {eventInfo.EventDate:dd/MM/yyyy}</p>
-            <p><strong>Địa điểm:</strong> {eventInfo.Location}</p>
-            <p><strong>Học sinh:</strong> {studentInfo.StudentName}</p>
-            <p><strong>Phụ huynh:</strong> {studentInfo.ParentName}</p>
-        </div>
-
-        <form id='responseForm'>
-            <input type='hidden' id='parentId' value='{studentInfo.ParentId}'>
-            <input type='hidden' id='studentId' value='{studentInfo.StudentId}'>
-            <input type='hidden' id='eventId' value='{eventId}'>
-            <input type='hidden' id='email' value='{email}'>
-
-            <div class='form-group'>
-                <label>Bạn có muốn cho con tham gia tiêm chủng không?</label>
-                <div class='radio-group'>
-                    <label><input type='radio' name='willAttend' value='true' onchange='toggleReasonField()'> Có, tôi đồng ý</label>
-                    <label><input type='radio' name='willAttend' value='false' onchange='toggleReasonField()'> Không, tôi không đồng ý</label>
-                </div>
-            </div>
-
-            <div class='form-group' id='reasonField'>
-                <label for='reasonForDecline'>Lý do không tham gia:</label>
-                <textarea id='reasonForDecline' name='reasonForDecline' placeholder='Vui lòng nêu rõ lý do...'></textarea>
-            </div>
-
-            <div class='form-group'>
-                <label>Xác nhận đồng ý:</label>
-                <div class='radio-group'>
-                    <label><input type='checkbox' id='parentConsent' name='parentConsent'> Tôi xác nhận đã đọc và hiểu thông tin về sự kiện tiêm chủng</label>
-                </div>
-            </div>
-
-            <div class='form-group'>
-                <button type='submit'>Gửi phản hồi</button>
-            </div>
-        </form>
-
-        <div id='result'></div>
-    </div>
-
-    <script>
-        function toggleReasonField() {{
-            const willAttend = document.querySelector('input[name=""willAttend""]:checked').value;
-            const reasonField = document.getElementById('reasonField');
-            if (willAttend === 'false') {{
-                reasonField.style.display = 'block';
-            }} else {{
-                reasonField.style.display = 'none';
-            }}
-        }}
-
-        document.getElementById('responseForm').addEventListener('submit', async function(e) {{
-            e.preventDefault();
-            
-            const formData = {{
-                parentId: parseInt(document.getElementById('parentId').value),
-                studentId: parseInt(document.getElementById('studentId').value),
-                vaccinationEventId: parseInt(document.getElementById('eventId').value),
-                willAttend: document.querySelector('input[name=""willAttend""]:checked').value === 'true',
-                reasonForDecline: document.getElementById('reasonForDecline').value,
-                parentConsent: document.getElementById('parentConsent').checked
-            }};
-
-            try {{
-                const response = await fetch('/api/VaccinationEvent/respond', {{
-                    method: 'POST',
-                    headers: {{
-                        'Content-Type': 'application/json',
-                    }},
-                    body: JSON.stringify(formData)
-                }});
-
-                const result = await response.text();
-                const resultDiv = document.getElementById('result');
-                
-                if (response.ok) {{
-                    resultDiv.innerHTML = '<p class=""success"">Phản hồi của bạn đã được gửi thành công. Cảm ơn bạn!</p>';
-                    document.getElementById('responseForm').style.display = 'none';
-                }} else {{
-                    resultDiv.innerHTML = '<p class=""error"">Có lỗi xảy ra: ' + result + '</p>';
-                }}
-            }} catch (error) {{
-                document.getElementById('result').innerHTML = '<p class=""error"">Có lỗi xảy ra khi gửi phản hồi.</p>';
-            }}
-        }});
-    </script>
-</body>
-</html>";
+                var htmlForm = await _vaccinationEventService.FillEmailTemplateData(email, eventInfo);
 
                 return Content(htmlForm, "text/html");
             }

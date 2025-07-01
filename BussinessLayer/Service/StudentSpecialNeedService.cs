@@ -8,6 +8,8 @@ using BussinessLayer.IService;
 using DataAccessLayer.DTO.StudentSpecialNeeds;
 using DataAccessLayer.Entity;
 using DataAccessLayer.IRepository;
+using DataAccessLayer.Repository;
+using Microsoft.EntityFrameworkCore;
 
 namespace BussinessLayer.Service
 {
@@ -16,16 +18,20 @@ namespace BussinessLayer.Service
         private readonly IStudentSpecialNeedRepo _studentNeedRepository;
         private readonly IStudentRepo _studentRepository;
         private readonly IMapper _mapper;
-        public StudentSpecialNeedService(IStudentSpecialNeedRepo studentNeedRepository, IStudentRepo studentRepo, IMapper mapper)
+        private readonly IStudentSpecialNeedCategoryRepo _studentSpecialNeedCategoryRepo;
+        public StudentSpecialNeedService(IStudentSpecialNeedRepo studentNeedRepository, IStudentRepo studentRepo, IMapper mapper, IStudentSpecialNeedCategoryRepo studentSpecialNeedCategoryRepo)
         {
             _studentNeedRepository = studentNeedRepository;
             _studentRepository = studentRepo;
             _mapper = mapper;
+            _studentSpecialNeedCategoryRepo = studentSpecialNeedCategoryRepo;
         }
 
         public void AddStudentSpecialNeed(CreateSpecialStudentNeedDTO studentSpecialNeed)
         {
-            throw new NotImplementedException();
+            StudentSpecialNeed student = _mapper.Map<StudentSpecialNeed>(studentSpecialNeed);
+            _studentNeedRepository.AddAsync(student);
+            _studentNeedRepository.Save();
         }
 
         public async Task<List<StudentSpecialNeedDTO>> GetAllStudentSpecialNeedsAsync()

@@ -30,15 +30,15 @@ namespace SchoolMedicalSystem.Profiles
                 .ForMember(dest => dest.Organizedby, opt => opt.MapFrom(src => src.OrganizedBy));
 
             // VaccinationRecord mappings
-            CreateMap<Vaccinationrecord, ParentVaccinationResponseDTO>()
-                .ForMember(dest => dest.ParentId, opt => opt.MapFrom(src => src.Student.Parentid))
-                .ForMember(dest => dest.StudentId, opt => opt.MapFrom(src => src.Studentid))
-                .ForMember(dest => dest.VaccinationEventId, opt => opt.MapFrom(src => src.Vaccinationeventid));
+            //CreateMap<Vaccinationrecord, ParentVaccinationResponseDTO>()
+            //    .ForMember(dest => dest.ParentId, opt => opt.MapFrom(src => src.Student.Parentid))
+            //    .ForMember(dest => dest.StudentId, opt => opt.MapFrom(src => src.Studentid))
+            //    .ForMember(dest => dest.VaccinationEventId, opt => opt.MapFrom(src => src.Vaccinationeventid));
 
-            CreateMap<ParentVaccinationResponseDTO, Vaccinationrecord>()
-                .ForMember(dest => dest.Studentid, opt => opt.MapFrom(src => src.StudentId))
-                .ForMember(dest => dest.Vaccinationeventid, opt => opt.MapFrom(src => src.VaccinationEventId))
-                .ForMember(dest => dest.Confirmedbyparent, opt => opt.MapFrom(src => src.WillAttend));
+            //CreateMap<ParentVaccinationResponseDTO, Vaccinationrecord>()
+            //    .ForMember(dest => dest.Studentid, opt => opt.MapFrom(src => src.StudentId))
+            //    .ForMember(dest => dest.Vaccinationeventid, opt => opt.MapFrom(src => src.VaccinationEventId))
+            //    .ForMember(dest => dest.Confirmedbyparent, opt => opt.MapFrom(src => src.WillAttend));
         }
     }
 } 
