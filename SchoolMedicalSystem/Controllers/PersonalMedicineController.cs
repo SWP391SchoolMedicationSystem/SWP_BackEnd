@@ -23,7 +23,7 @@ namespace SchoolMedicalSystem.Controllers
         [HttpGet("Personalmedicine/{id}")]
         public async Task<IActionResult> GetPersonalmedicineById(int id)
         {
-            var Personalmedicines = await PersonalmedicineService.GetPersonalmedicinesByMedicineIdAsync(id);
+            var Personalmedicines = await PersonalmedicineService.GetPersonalmedicineByIdAsync(id);
             if (Personalmedicines == null)
                 return NotFound("Medicine donation not found.");
             return Ok(Personalmedicines);

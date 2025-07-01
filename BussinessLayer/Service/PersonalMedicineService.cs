@@ -82,22 +82,20 @@ namespace BussinessLayer.Service
             return dto;
         }
 
-        public Task<List<Personalmedicine>> GetPersonalmedicinesByMedicineIdAsync(int medicineId)
+        public Task<List<PersonalMedicineDTO>> GetPersonalmedicinesByMedicineIdAsync(int medicineId)
         {
-            var Personalmedicines = PersonalmedicineRepository.GetAllAsync();
-            return Personalmedicines.ContinueWith(task =>
-            {
-                return task.Result.Where(md => md.Medicineid == medicineId).ToList();
-            });
+            var personalMedicines = PersonalmedicineRepository.GetAllAsync().Result;
+            var mappedMedicines = mapper.Map<List<PersonalMedicineDTO>>(personalMedicines);
+
+            return Task.FromResult(mappedMedicines.Where(md => md.Medicineid == medicineId).ToList());
         }
 
-        public Task<List<Personalmedicine>> GetPersonalmedicinesByParentIdAsync(int parentId)
+        public Task<List<PersonalMedicineDTO>> GetPersonalmedicinesByParentIdAsync(int parentId)
         {
-            var Personalmedicines = PersonalmedicineRepository.GetAllAsync();
-            return Personalmedicines.ContinueWith(task =>
-            {
-                return task.Result.Where(md => md.Parentid == parentId).ToList();
-            });
+            var personalMedicines = PersonalmedicineRepository.GetAllAsync().Result;
+            var mappedMedicines = mapper.Map<List<PersonalMedicineDTO>>(personalMedicines);
+
+            return Task.FromResult(mappedMedicines.Where(md => md.Parentid == parentId).ToList());
         }
 
         public Task<List<Personalmedicine>> SearchPersonalmedicinesAsync(string searchTerm)
@@ -123,7 +121,7 @@ namespace BussinessLayer.Service
             {
                 PersonalmedicineEntity.Medicineid = Personalmedicine.Medicineid;
                 PersonalmedicineEntity.Studentid = Personalmedicine.Studentid;
-
+                PersonalmedicineEntity.Parentid = Personalmedicine.Parentid;
                 PersonalmedicineEntity.Quantity = Personalmedicine.Quantity;
                 PersonalmedicineEntity.Receiveddate = Personalmedicine.Receiveddate;
                 PersonalmedicineEntity.ExpiryDate = Personalmedicine.ExpiryDate;
@@ -131,6 +129,7 @@ namespace BussinessLayer.Service
                 PersonalmedicineEntity.Note = Personalmedicine.Note;
                 PersonalmedicineEntity.Modifieddate = DateTime.Now;
                 PersonalmedicineRepository.Update(PersonalmedicineEntity);
+                PersonalmedicineRepository.Save();
 
             }
 
