@@ -8,6 +8,7 @@ using BussinessLayer.IService;
 using DataAccessLayer.DTO.StudentSpecialNeeds;
 using DataAccessLayer.Entity;
 using DataAccessLayer.IRepository;
+using DataAccessLayer.Repository;
 using Microsoft.EntityFrameworkCore;
 
 namespace BussinessLayer.Service
@@ -28,25 +29,9 @@ namespace BussinessLayer.Service
 
         public void AddStudentSpecialNeed(CreateSpecialStudentNeedDTO studentSpecialNeed)
         {
-            if (studentSpecialNeed == null)
-                throw new ArgumentNullException(nameof(studentSpecialNeed));
-
-            var entity = _mapper.Map<StudentSpecialNeed>(studentSpecialNeed);
-
-            var student = _studentRepository.GetByIdAsync(entity.StudentId).Result;
-            if (student == null)
-                throw new KeyNotFoundException("Student not found.");
-
-            var category = _studentSpecialNeedCategoryRepo.GetByIdAsync(entity.SpecialNeedCategoryId).Result;
-            if(category == null)
-                throw new KeyNotFoundException("Student not found.");
-
-            _studentNeedRepository.Add(entity);
+            StudentSpecialNeed student = _mapper.Map<StudentSpecialNeed>(studentSpecialNeed);
+            _studentNeedRepository.AddAsync(student);
             _studentNeedRepository.Save();
-
-            // Assign navigation properties to the tracked entity (optional, for internal use)
-            entity.Student = student;
-            entity.SpecialNeedCategory = category;
         }
 
         public async Task<List<StudentSpecialNeedDTO>> GetAllStudentSpecialNeedsAsync()
