@@ -43,15 +43,15 @@ namespace SchoolMedicalSystem.Controllers
                 return StatusCode(500, $"Error adding medicine donation: {ex.Message}");
             }
         }
-        [HttpPut("Personalmedicine/{id}")]
+        [HttpPut("Personalmedicine")]
 
-        public IActionResult UpdatePersonalmedicine(int id ,[FromBody] UpdatePersonalMedicineDTO PersonalmedicineDto)
+        public IActionResult UpdatePersonalmedicine([FromBody] UpdatePersonalMedicineDTO PersonalmedicineDto)
         {
             if (PersonalmedicineDto == null)
                 return BadRequest("Invalid data.");
             try
             {
-                PersonalmedicineService.UpdatePersonalmedicine(PersonalmedicineDto, id);
+                PersonalmedicineService.UpdatePersonalmedicine(PersonalmedicineDto);
                 return Ok("Medicine donation updated successfully.");
             }
             catch (Exception ex)

@@ -112,9 +112,9 @@ namespace BussinessLayer.Service
             });
         }
 
-        public void UpdatePersonalmedicine(UpdatePersonalMedicineDTO Personalmedicine, int id)
+        public void UpdatePersonalmedicine(UpdatePersonalMedicineDTO Personalmedicine)
         {
-            var PersonalmedicineEntity = PersonalmedicineRepository.GetByIdAsync(id).Result;
+            var PersonalmedicineEntity = PersonalmedicineRepository.GetByIdAsync(Personalmedicine.personalMedicineId).Result;
             if (PersonalmedicineEntity == null)
             {
                 throw new KeyNotFoundException("Medicine donation not found.");
@@ -122,7 +122,6 @@ namespace BussinessLayer.Service
             else
             {
                 PersonalmedicineEntity.Medicineid = Personalmedicine.Medicineid;
-                PersonalmedicineEntity.Parentid = Personalmedicine.Parentid;
                 PersonalmedicineEntity.Studentid = Personalmedicine.Studentid;
 
                 PersonalmedicineEntity.Quantity = Personalmedicine.Quantity;

@@ -10,5 +10,6 @@ namespace DataAccessLayer.IRepository
     public interface IParentRepository : IGenericRepository<Parent>
     {
         Task<Parent> GetParentForEvent(string email);
+        Task<Parent> GetByStudentIdAsync(int studentId);
     }
 }

@@ -27,5 +27,11 @@ namespace DataAccessLayer.Repository
             }
             return parent;
         }
+        public async Task<Parent> GetByStudentIdAsync(int studentId)
+        {
+            var parent = await _dbset.Include(p => p.Students)
+                                     .FirstOrDefaultAsync(p => p.Students.Any(s => s.Studentid == studentId) && !p.IsDeleted);
+            return parent ?? throw new KeyNotFoundException($"Parent for student with id {studentId} not found.");
+        }
     }
 }
