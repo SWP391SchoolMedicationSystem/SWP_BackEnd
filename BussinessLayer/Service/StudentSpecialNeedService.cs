@@ -80,7 +80,10 @@ namespace BussinessLayer.Service
             {
                 throw new KeyNotFoundException("Student special need not found.");
             }
-            _studentNeedRepository.Update(entity);
+            existingEntity.StudentId = entity.StudentId;
+            existingEntity.SpecialNeedCategoryId = entity.SpecialNeedCategoryId;
+            existingEntity.Notes = entity.Notes;
+            _studentNeedRepository.Update(existingEntity);
             _studentNeedRepository.Save();
         }
     }

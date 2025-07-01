@@ -122,6 +122,8 @@ builder.Services.AddScoped<IStudentSpecialNeedService, StudentSpecialNeedService
 builder.Services.AddScoped<IStudentSpecialNeedRepo, StudentSpecialNeedRepo>();
 builder.Services.AddScoped<IStudentSpecialNeedService, StudentSpecialNeedService>();
 builder.Services.AddScoped<IStudentSpecialNeedCategoryRepo, StudentSpecialNeedCategoryRepo>();
+builder.Services.AddScoped<ISpecialNeedCategoryService, SpecialNeedCategoryService>();
+builder.Services.AddScoped<IStudentSpecialNeedCategoryRepo, StudentSpecialNeedCategoryRepo>();
 #endregion
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
