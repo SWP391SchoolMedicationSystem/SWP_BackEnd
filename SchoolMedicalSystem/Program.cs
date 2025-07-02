@@ -1,5 +1,6 @@
 using System.Text;
 using System.Text.Json.Serialization;
+using BussinessLayer.Hubs;
 using BussinessLayer.IService;
 using BussinessLayer.QuartzJob.Job;
 using BussinessLayer.QuartzJob.Scheduler;
@@ -21,6 +22,7 @@ builder.Services.AddControllers().AddJsonOptions(opt =>
 {
     opt.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
 });
+builder.Services.AddSignalR();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAllOrigins",
@@ -29,7 +31,7 @@ builder.Services.AddCors(options =>
                           .AllowAnyHeader());
     options.AddPolicy("AllowReact", policy =>
     {
-        policy.WithOrigins("http://localhost:3000") 
+        policy.WithOrigins("http://localhost:3000")
               .AllowAnyHeader()
               .AllowAnyMethod();
     });
@@ -69,7 +71,7 @@ builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
 builder.Services.AddDbContext<SchoolMedicalSystemContext>(options =>
     options.UseSqlServer(
-        builder.Configuration.GetConnectionString("SchoolMedicalSystemContext") 
+        builder.Configuration.GetConnectionString("SchoolMedicalSystemContext")
         ?? throw new InvalidOperationException("Connection string 'SchoolMedicalSystemContext' not found.")));
 
 #region AddScoped
@@ -78,7 +80,7 @@ builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IStaffService, StaffService>();
 builder.Services.AddScoped<IStaffRepository, StaffRepository>();
 builder.Services.AddScoped<IEmailRepo, EmailRepository>();
-builder.Services.AddScoped<IUserRepository,UserRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IParentService, ParentService>();
 builder.Services.AddScoped<IBlogRepo, BlogRepo>();
@@ -141,11 +143,12 @@ if (app.Environment.IsDevelopment())
 app.UseSwagger();
 app.UseSwaggerUI();
 
-app.UseHttpsRedirection();
+app.UseHttpsRedirection();  
 
 //app.UseAuthentication();
 app.UseAuthorization();
 
-    app.MapControllers();
+app.MapControllers();
+app.MapHub<ChatHubs>("/chathub");
 app.UseStaticFiles();
 app.Run();
