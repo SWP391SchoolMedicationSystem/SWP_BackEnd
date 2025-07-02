@@ -853,6 +853,8 @@ public partial class SchoolMedicalSystemContext : DbContext
 
             entity.Property(e => e.SpecialNeedCategoryId).HasColumnName("SpecialNeedCategoryID");
             entity.Property(e => e.CategoryName).HasMaxLength(150);
+            entity.Property(e => e.IsDelete).HasColumnName("ISDELETED");
+
         });
 
         modelBuilder.Entity<Staff>(entity =>
@@ -945,6 +947,8 @@ public partial class SchoolMedicalSystemContext : DbContext
             entity.Property(e => e.StudentSpecialNeedId).HasColumnName("StudentSpecialNeedID");
             entity.Property(e => e.SpecialNeedCategoryId).HasColumnName("SpecialNeedCategoryID");
             entity.Property(e => e.StudentId).HasColumnName("StudentID");
+            entity.Property(e => e.IsDelete).HasColumnName("ISDELETED");
+
 
             entity.HasOne(d => d.SpecialNeedCategory).WithMany(p => p.StudentSpecialNeeds)
                 .HasForeignKey(d => d.SpecialNeedCategoryId)
