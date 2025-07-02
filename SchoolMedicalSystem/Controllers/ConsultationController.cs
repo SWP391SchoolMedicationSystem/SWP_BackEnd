@@ -1,6 +1,6 @@
 ﻿using BussinessLayer.IService;
 using BussinessLayer.Service;
-using DataAccessLayer.DTO;
+using DataAccessLayer.DTO.Consultations;
 using DataAccessLayer.Entity;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -24,7 +24,7 @@ namespace SchoolMedicalSystem.Controllers
             return Ok(types);
         }
         [HttpPost("consultationrequest")]
-        public async Task<IActionResult> AddConsultationRequest([FromBody] ConsultationRequestDTO request)
+        public async Task<IActionResult> AddConsultationRequest([FromBody] CreateConsultationDTO request)
         {
             if (request == null)
             {
@@ -34,7 +34,7 @@ namespace SchoolMedicalSystem.Controllers
             return CreatedAtAction(nameof(GetAllConsultationRequests), new { id = createdRequest.Consultationid }, createdRequest);
         }
         [HttpPost("consultationtype")]
-        public async Task<IActionResult> AddConsultationType([FromBody] ConsultationTypeDTO consultationType)
+        public async Task<IActionResult> AddConsultationType([FromBody] CreateonsultationTypeDTO consultationType)
         {
             if (consultationType == null)
             {

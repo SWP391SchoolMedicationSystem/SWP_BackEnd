@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using DataAccessLayer.DTO;
+using DataAccessLayer.DTO.Consultations;
 using DataAccessLayer.Entity;
 
 namespace BussinessLayer.IService
@@ -13,7 +13,7 @@ namespace BussinessLayer.IService
         Task<List<Consultationtype>> GetAllConsultationTypesAsync();
 
         Task<Consultationtype> GetConsultationTypeByIdAsync(int id);
-        Task<Consultationtype> AddConsultationTypeAsync(ConsultationTypeDTO consultationType);
+        Task<Consultationtype> AddConsultationTypeAsync(CreateonsultationTypeDTO consultationType);
         Task<Consultationtype> UpdateConsultationTypeAsync(Consultationtype consultationType);
         void DeleteConsultationType(int id);
     }

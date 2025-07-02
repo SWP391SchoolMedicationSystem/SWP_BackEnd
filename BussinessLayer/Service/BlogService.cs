@@ -19,6 +19,7 @@ namespace BussinessLayer.Service
     {
         private readonly IBlogRepo _blogRepo;
         private readonly IMapper _mapper;
+        private readonly IStaffRepository _staffRepository;
         private readonly AppSetting _appSettings;
         private readonly IHttpContextAccessor _httpContextAccessor;
         //        private readonly IStaffRepository _staffRepository;
@@ -26,21 +27,38 @@ namespace BussinessLayer.Service
             IBlogRepo blogRepo,
             IMapper mapper,
             IOptionsMonitor<AppSetting> option,
+            IStaffRepository staffRepository,
             IHttpContextAccessor httpContextAccessor)
         {
             _blogRepo = blogRepo;
+            _staffRepository = staffRepository;
             _mapper = mapper;
             _appSettings = option.CurrentValue;
             _httpContextAccessor = httpContextAccessor;
         }
-        public async Task<List<Blog>> GetAllBlogsAsync()
+        public async Task<List<BlogDTO>> GetAllBlogsAsync()
         {
             List<Blog> blogs = await _blogRepo.GetAllAsync();
-            return blogs;
+            List<BlogDTO> blogDTOs = _mapper.Map<List<BlogDTO>>(blogs);
+            foreach (var blog in blogDTOs)
+            {
+                // Set the image URL to be absolute
+                blog.UpdatedByName = blog.UpdatedBy != null ? _staffRepository.GetByIdAsync(blog.UpdatedBy.Value).Result?.Fullname : "Chưa Update";
+                blog.CreatedByName = blog.CreatedBy != null ? _staffRepository.GetByIdAsync(blog.CreatedBy.Value).Result?.Fullname : "Unknown";
+                blog.ApprovedByName = blog.ApprovedBy != null ? _staffRepository.GetByIdAsync(blog.ApprovedBy.Value).Result?.Fullname : "Chưa được approved";
+            }
+            return blogDTOs;
         }
-        public async Task<Blog> GetBlogByIdAsync(int id)
+        public async Task<BlogDTO> GetBlogByIdAsync(int id)
         {
-            return await _blogRepo.GetByIdAsync(id);
+            var blog = await _blogRepo.GetByIdAsync(id);
+            BlogDTO blogDTOs = _mapper.Map<BlogDTO>(blog);
+
+            blogDTOs.UpdatedByName = blogDTOs.UpdatedBy != null ? _staffRepository.GetByIdAsync(blog.UpdatedBy.Value).Result?.Fullname : "Chưa Update";
+            blogDTOs.CreatedByName = blogDTOs.CreatedBy != null ? _staffRepository.GetByIdAsync(blog.CreatedBy).Result?.Fullname : "Unknown";
+            blogDTOs.ApprovedByName = blogDTOs.ApprovedBy != null ? _staffRepository.GetByIdAsync(blog.ApprovedBy.Value).Result?.Fullname : "Chưa được approved";
+            return blogDTOs;
+
         }
         public async Task AddBlogAsync(CreateBlogDTO dto)
         {
@@ -86,10 +104,19 @@ namespace BussinessLayer.Service
                 _blogRepo.Save();
             }
         }
-        public Task<List<Blog>> SearchBlogsAsync(string searchTerm)
+        public Task<List<BlogDTO>> SearchBlogsAsync(string searchTerm)
         {
-            var blogs = _blogRepo.GetAllAsync().Result;
-            return Task.FromResult(blogs.Where(b => b.Title.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)).ToList());
+            var blogs = _blogRepo.GetAllAsync().Result.Where(b => b.Title.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)).ToList();
+            List<BlogDTO> blogDTOs = _mapper.Map<List<BlogDTO>>(blogs);
+            foreach (var blog in blogDTOs)
+            {
+                // Set the image URL to be absolute
+                blog.UpdatedByName = blog.UpdatedBy != null ? _staffRepository.GetByIdAsync(blog.UpdatedBy.Value).Result?.Fullname : "Chưa Update";
+                blog.CreatedByName = blog.CreatedBy != null ? _staffRepository.GetByIdAsync(blog.CreatedBy.Value).Result?.Fullname : "Unknown";
+                blog.ApprovedByName = blog.ApprovedBy != null ? _staffRepository.GetByIdAsync(blog.ApprovedBy.Value).Result?.Fullname : "Chưa được approved";
+            }
+            return Task.FromResult(blogDTOs);
+
         }
         public void ApproveBlog(ApproveBlogDTO dto)
         {
@@ -103,17 +130,26 @@ namespace BussinessLayer.Service
                 _blogRepo.Save();
             }
         }
-        public async Task<List<Blog>> GetPublishedBlogs()
+        public Task<List<BlogDTO>> GetPublishedBlogs()
         {
-            var blogs = await _blogRepo.GetAllAsync();
-            return blogs
-                .Where(b =>
+            var blogs = _blogRepo.GetAllAsync().Result.Where(b =>
                     b.IsDeleted != true &&
 //                    b.ApprovedBy != null &&
  //                   b.ApprovedOn != null &&
                     b.Status != null &&
                     (b.Status.Equals("Published", StringComparison.OrdinalIgnoreCase)))
                 .ToList();
+            List<BlogDTO> blogDTOs = _mapper.Map<List<BlogDTO>>(blogs);
+            foreach (var blog in blogDTOs)
+            {
+                // Set the image URL to be absolute
+                blog.UpdatedByName = blog.UpdatedBy != null ? _staffRepository.GetByIdAsync(blog.UpdatedBy.Value).Result?.Fullname : "Chưa Update";
+                blog.CreatedByName = blog.CreatedBy != null ? _staffRepository.GetByIdAsync(blog.CreatedBy.Value).Result?.Fullname : "Unknown";
+                blog.ApprovedByName = blog.ApprovedBy != null ? _staffRepository.GetByIdAsync(blog.ApprovedBy.Value).Result?.Fullname : "Chưa được approved";
+            }
+            return Task.FromResult(blogDTOs);
+
+
         }
         public void RejectBlog(RejectBlogDTO dto)
         {

@@ -25,6 +25,7 @@ namespace SchoolMedicalSystem.Controllers
             return Task.FromResult(result);
         }
 
+
         [HttpPost]
         public async Task<IActionResult> AddHealthCheck([FromBody] HealthCheckDTO healthCheckDto)
         {

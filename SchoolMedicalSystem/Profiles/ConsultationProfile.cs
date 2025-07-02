@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using DataAccessLayer.DTO;
+using DataAccessLayer.DTO.Consultations;
 
 namespace SchoolMedicalSystem.Profiles
 {
@@ -7,9 +7,9 @@ namespace SchoolMedicalSystem.Profiles
     {
         public ConsultationProfile()
         {
-            CreateMap<DataAccessLayer.Entity.Consultationrequest, ConsultationRequestDTO>()
+            CreateMap<DataAccessLayer.Entity.Consultationrequest, CreateConsultationDTO>()
                 .ReverseMap();
-            CreateMap<DataAccessLayer.Entity.Consultationtype,ConsultationTypeDTO>().ReverseMap();
+            CreateMap<DataAccessLayer.Entity.Consultationtype,CreateonsultationTypeDTO>().ReverseMap();
                 
         }
     }

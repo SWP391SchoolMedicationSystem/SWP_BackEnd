@@ -9,6 +9,7 @@ namespace DataAccessLayer.DTO.PersonalMedicine
 {
     public class PersonalMedicineDTO
     {
+        public int Personalmedicineid { get; set; }
         public int Medicineid { get; set; }
 
         public int Parentid { get; set; }

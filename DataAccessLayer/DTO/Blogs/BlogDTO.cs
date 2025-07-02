@@ -13,14 +13,17 @@ namespace DataAccessLayer.DTO.Blogs
         public string Content { get; set; } = null!;
 
         public int? ApprovedBy { get; set; }
+        public string ApprovedByName { get; set; } = null!;
 
         public DateTime? ApprovedOn { get; set; }
 
-        public int CreatedBy { get; set; }
+        public int? CreatedBy { get; set; }
+        public string CreatedByName { get; set; } = null!;
 
         public DateTime CreatedAt { get; set; }
 
         public int? UpdatedBy { get; set; }
+        public string UpdatedByName { get; set; } = null!;
 
         public DateTime? UpdatedAt { get; set; }
 

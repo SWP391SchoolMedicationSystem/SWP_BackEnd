@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
 using BussinessLayer.IService;
-using DataAccessLayer.DTO;
+using DataAccessLayer.DTO.Consultations;
 using DataAccessLayer.Entity;
 using DataAccessLayer.IRepository;
 using DataAccessLayer.Repository;
@@ -16,7 +16,7 @@ namespace BussinessLayer.Service
         IParentRepository parentRepository, IStaffRepository staffRepository, IStudentRepo studentRepo,
         IMapper mapper) : IConsultationService
     {
-        public async Task<Consultationrequest> AddConsultationRequest(ConsultationRequestDTO request)
+        public async Task<Consultationrequest> AddConsultationRequest(CreateConsultationDTO request)
         {
 
             var type = consultationTypeRepo.GetByIdAsync(request.Requesttypeid);
@@ -28,6 +28,12 @@ namespace BussinessLayer.Service
             consulationRepository.Save();
             return Task.FromResult(consultationRequest).Result;
         }
+
+        public Task ApproveRequest(int id)
+        {
+            throw new NotImplementedException();
+        }
+
         public void DeleteConsultationRequest(int id)
         {
             Task<Consultationrequest> entity = consulationRepository.GetByIdAsync(id);
@@ -47,6 +53,17 @@ namespace BussinessLayer.Service
         {
             return consulationRepository.GetByIdAsync(id);
         }
+
+        public Task<List<CreateConsultationDTO>> GetPendingRequest()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task RejectRequest(int id)
+        {
+            throw new NotImplementedException();
+        }
+
         public Task<Consultationrequest> UpdateConsulationRequest(Consultationrequest consultationRequest)
         {
             var existingRequest = consulationRepository.GetByIdAsync(consultationRequest.Consultationid);

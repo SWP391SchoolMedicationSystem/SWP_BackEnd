@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DataAccessLayer.DTO
+namespace DataAccessLayer.DTO.Consultations
 {
-    public class ConsultationRequestDTO
+    public class CreateConsultationDTO
     {
 
         public int Parentid { get; set; }
@@ -18,8 +18,6 @@ namespace DataAccessLayer.DTO
         public string Title { get; set; } = null!;
 
         public string? Description { get; set; }
-
-        public string Status { get; set; } = null!;
 
 
     }
