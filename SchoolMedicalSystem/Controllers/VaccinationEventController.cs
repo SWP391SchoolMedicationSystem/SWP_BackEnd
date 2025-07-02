@@ -214,17 +214,17 @@ namespace SchoolMedicalSystem.Controllers
         // This endpoint is used to send vaccination emails to specific parents
         [HttpPost("send-email-specific")]
         public async Task<IActionResult> SendVaccinationEmailToSpecificParents(
-            [FromBody] SendVaccinationEmailDTO dto)
+            [FromBody] SendVaccineEmailListDTO dto)
         {
             try
             {
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
 
-                if (dto.parentIds == null || !dto.parentIds.Any())
+                if (dto.ParentIds == null || !dto.ParentIds.Any())
                     return BadRequest("Parent IDs are required.");
 
-                var result = await _vaccinationEventService.SendVaccinationEmailToSpecificParentsAsync(dto, dto.parentIds);
+                var result = await _vaccinationEventService.SendVaccinationEmailToSpecificParentsAsync(dto.sendVaccinationEmailDTO, dto.ParentIds);
 
                 if (result == null)
                     return BadRequest("Not found Event info or Email template");

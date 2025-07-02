@@ -123,8 +123,6 @@ namespace DataAccessLayer.DTO
 
     public class SendVaccinationEmailDTO
     {
-        [Required(ErrorMessage = "Parent IDs are required")]
-        public List<int> parentIds { get; set; }
 
         [Required(ErrorMessage = "Vaccination event ID is required")]
         public int VaccinationEventId { get; set; }
@@ -133,5 +131,14 @@ namespace DataAccessLayer.DTO
         public int EmailTemplateId { get; set; }
 
         public string? CustomMessage { get; set; }
+    }
+
+    public class SendVaccineEmailListDTO
+    {
+        [Required(ErrorMessage = "Vaccination event ID is required")]
+        public List<int> ParentIds { get; set; } = new();
+
+        [Required(ErrorMessage = "Vaccination event ID is required")]
+        public SendVaccinationEmailDTO sendVaccinationEmailDTO { get; set; } = new();
     }
 } 
