@@ -15,5 +15,6 @@ namespace DataAccessLayer.DTO.StudentSpecialNeeds
         public int SpecialNeedCategoryId { get; set; }
 
         public string? Notes { get; set; }
+        public bool IsDelete { get; set; }
     }
 }

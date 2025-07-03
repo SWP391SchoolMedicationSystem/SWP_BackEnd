@@ -99,6 +99,7 @@ namespace BussinessLayer.Service
             existingEntity.StudentId = entity.StudentId;
             existingEntity.SpecialNeedCategoryId = entity.SpecialNeedCategoryId;
             existingEntity.Notes = entity.Notes;
+            existingEntity.IsDelete = entity.IsDelete;
             _studentNeedRepository.Update(existingEntity);
             _studentNeedRepository.Save();
         }

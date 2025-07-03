@@ -61,6 +61,7 @@ namespace BussinessLayer.Service
             }
             existingCategory.CategoryName = category.CategoryName;
             existingCategory.Description = category.Description;
+            existingCategory.IsDelete = category.IsDelete;
             _specialNeedCategoryRepository.Update(existingCategory);
             _specialNeedCategoryRepository.Save();
         }
