@@ -30,6 +30,7 @@ namespace DataAccessLayer.DTO.PersonalMedicine
         public string? Approvedby { get; set; }
 
         public string? Note { get; set; }
+        public bool IsDeleted {get; set;}
 
     }
 }
