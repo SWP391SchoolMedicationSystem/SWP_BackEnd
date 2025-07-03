@@ -21,7 +21,6 @@ namespace DataAccessLayer.Repository
             return _dbset.Include(p => p.Medicine)
                          .Include(p => p.Parent)
                          .Include(p => p.Student)
-                         .Where(p => !p.Isdeleted)
                          .ToListAsync();
         }
     }
