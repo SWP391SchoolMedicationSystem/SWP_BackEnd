@@ -76,7 +76,7 @@ namespace SchoolMedicalSystem.Controllers
                 return StatusCode(500, $"Error deleting medicine donation: {ex.Message}");
             }
         }
-        [HttpPost("approve")]
+        [HttpPut("approve")]
         public async Task<IActionResult> ApprovePersonalMedicineRequest(ApprovalPersonalMedicineDTO dto)
         {
             try{
@@ -88,7 +88,7 @@ namespace SchoolMedicalSystem.Controllers
                 return StatusCode(500, $"Internal server error: {e.Message}");
             }
         }
-        [HttpPost("reject")]
+        [HttpPut("reject")]
         public async Task<IActionResult> RejectPersonalMedicineRequest(ApprovalPersonalMedicineDTO dto)
         {
             try
