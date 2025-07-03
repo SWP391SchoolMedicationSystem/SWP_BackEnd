@@ -70,29 +70,37 @@ namespace BussinessLayer.Service
                 _blogRepo.Save();
 
         }
-        public void UpdateBlog(UpdateBlogDTO dto)
+        public async Task UpdateBlog(UpdateBlogDTO dto)
         {
+            var entity = await _blogRepo.GetByIdAsync(dto.BlogID);
             if (dto != null)
             {
-                var entity = _blogRepo.GetByIdAsync(dto.BlogID).Result;
-                if (entity != null)
+                try
                 {
-                    entity.Title = dto.Title;
-                    entity.Content = dto.Content;
-                    //                    entity.ApprovedBy = dto.ApprovedBy;
-                    //                    entity.ApprovedOn = dto.ApprovedOn;
-                    //                    entity.CreatedBy = dto.CreatedBy;
-                    //                   entity.CreatedAt = DateTime.Now;
-                    entity.UpdatedAt = DateTime.Now;
-                    entity.UpdatedBy = dto.UpdatedBy;
-                    entity.Status = dto.Status;
-                    entity.IsDeleted = dto.IsDeleted;
-//                    entity.Image = dto.Image;
+                    if (entity != null)
+                    {
+                        entity.Title = dto.Title;
+                        entity.Content = dto.Content;
+                        //                    entity.ApprovedBy = dto.ApprovedBy;
+                        //                    entity.ApprovedOn = dto.ApprovedOn;
+                        //                    entity.CreatedBy = dto.CreatedBy;
+                        //                   entity.CreatedAt = DateTime.Now;
+                        entity.UpdatedAt = DateTime.Now;
+                        entity.UpdatedBy = dto.UpdatedBy;
+                        entity.Status = dto.Status;
+                        entity.IsDeleted = dto.IsDeleted;
+                        //                    entity.Image = dto.Image;
 
-                    _blogRepo.Update(entity);
-                    _blogRepo.Save();
+                        _blogRepo.Update(entity);
+                        _blogRepo.Save();
+                    }
+                }
+                catch (Exception e)
+                {
+                    throw new Exception("Error updating blog. Please try again later.");
                 }
             }
+
         }
         public void DeleteBlog(int id)
         {

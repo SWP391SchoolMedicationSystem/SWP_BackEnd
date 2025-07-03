@@ -8,6 +8,7 @@ namespace DataAccessLayer.DTO.Blogs
 {
     public class BlogDTO
     {
+        public int BlogId { get; set; }
         public string Title { get; set; } = null!;
 
         public string Content { get; set; } = null!;

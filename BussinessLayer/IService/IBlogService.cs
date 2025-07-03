@@ -13,7 +13,7 @@ namespace BussinessLayer.IService
         Task<List<BlogDTO>> GetAllBlogsAsync();
         Task<BlogDTO> GetBlogByIdAsync(int id);
         Task AddBlogAsync(CreateBlogDTO dto);
-        void UpdateBlog(UpdateBlogDTO dto);
+        Task UpdateBlog(UpdateBlogDTO dto);
         void DeleteBlog(int id);
         Task<List<BlogDTO>> SearchBlogsAsync(string searchTerm);
         void ApproveBlog(ApproveBlogDTO dto);
