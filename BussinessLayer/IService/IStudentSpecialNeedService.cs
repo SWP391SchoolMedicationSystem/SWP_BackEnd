@@ -15,6 +15,6 @@ namespace BussinessLayer.IService
         void UpdateStudentSpecialNeed(UpdateStudentSpecialNeedDTO studentSpecialNeed);
         Task<List<StudentSpecialNeedDTO>> GetStudentSpecialNeedsByStudentIdAsync(int studentId);
         Task<List<StudentSpecialNeedDTO>> GetStudentSpecialNeedsByCategoryIdAsync(int categoryId);
-        //        void DeleteStudentSpecialNeed(int id);
+           void DeleteStudentSpecialNeed(int id);
     }
 }

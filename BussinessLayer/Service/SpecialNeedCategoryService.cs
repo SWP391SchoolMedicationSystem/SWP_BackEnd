@@ -65,15 +65,20 @@ namespace BussinessLayer.Service
             _specialNeedCategoryRepository.Save();
         }
 
-        /*        public async Task DeleteSpecialNeedCategoryAsync(int id)
-       {
-           var category = await _specialNeedCategoryRepository.GetByIdAsync(id);
-           if (category == null)
-           {
-               throw new KeyNotFoundException("Special need category not found.");
-           }
-           _specialNeedCategoryRepository.Delete(category);
-           await _specialNeedCategoryRepository.SaveAsync();
-       }*/
+        public void DeleteCategoryAsync(int id)
+        {
+            if (id <= 0)
+            {
+                throw new ArgumentException("Invalid category ID.", nameof(id));
+            }
+            var category = _specialNeedCategoryRepository.GetByIdAsync(id).Result;
+            if (category == null)
+            {
+                throw new KeyNotFoundException("Special need category not found.");
+            }
+            category.IsDelete = true;
+            _specialNeedCategoryRepository.Update(category);
+            _specialNeedCategoryRepository.Save();
+        }
     }
 }

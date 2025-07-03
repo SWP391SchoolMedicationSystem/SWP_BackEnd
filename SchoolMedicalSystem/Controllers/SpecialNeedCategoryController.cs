@@ -67,5 +67,24 @@ namespace SchoolMedicalSystem.Controllers
                 return StatusCode(500, $"Error updating category: {ex.Message}");
             }
         }
+        [HttpDelete("DeleteCategory")]
+        public IActionResult DeleteCategory([FromQuery] int id)
+        {
+            if (id <= 0)
+                return BadRequest("Invalid category ID.");
+            try
+            {
+                _specialNeedCategoryService.DeleteCategoryAsync(id);
+                return Ok("Category deleted successfully.");
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound("Category not found.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error deleting category: {ex.Message}");
+            }
+        }
     }
 }
