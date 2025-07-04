@@ -65,12 +65,12 @@ namespace BussinessLayer.Service
         public async Task<List<PersonalMedicineDTO>> GetAllPersonalmedicinesAsync()
         {
             var personalMedicines = await PersonalmedicineRepository.GetAllAsync();
-            var dtolist = mapper.Map<List<PersonalMedicineDTO>>(personalMedicines);
+            var dtolist = mapper.Map<List<PersonalMedicineDTO>>(personalMedicines).Where(p => p.IsDeleted == false);
             foreach (var item in dtolist)
             {
                 item.Phone = parentRepository.GetByIdAsync(item.Parentid).Result?.Phone ?? "No phone number";
             }
-            return dtolist;
+            return dtolist.ToList();
         }
 
         public async Task<PersonalMedicineDTO> GetPersonalmedicineByIdAsync(int id)
