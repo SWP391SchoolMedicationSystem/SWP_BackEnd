@@ -20,18 +20,24 @@ namespace BussinessLayer.Service
         private readonly IBlogRepo _blogRepo;
         private readonly IMapper _mapper;
         private readonly IStaffRepository _staffRepository;
+        private readonly IParentRepository _parentRepository;
+        private readonly IUserRepository _userRepository;
         private readonly AppSetting _appSettings;
         private readonly IHttpContextAccessor _httpContextAccessor;
         //        private readonly IStaffRepository _staffRepository;
         public BlogService(
             IBlogRepo blogRepo,
+            IUserRepository userRepository,
+            IParentRepository parentRepository,
             IMapper mapper,
             IOptionsMonitor<AppSetting> option,
             IStaffRepository staffRepository,
             IHttpContextAccessor httpContextAccessor)
         {
+            _userRepository = userRepository;
             _blogRepo = blogRepo;
             _staffRepository = staffRepository;
+            _parentRepository = parentRepository;
             _mapper = mapper;
             _appSettings = option.CurrentValue;
             _httpContextAccessor = httpContextAccessor;
@@ -42,37 +48,78 @@ namespace BussinessLayer.Service
             List<BlogDTO> blogDTOs = _mapper.Map<List<BlogDTO>>(blogs);
             foreach (var blog in blogDTOs)
             {
-                // Set the image URL to be absolute
-                blog.UpdatedByName = blog.UpdatedBy != null ? _staffRepository.GetByIdAsync(blog.UpdatedBy.Value).Result?.Fullname : "Chưa Update";
-                blog.CreatedByName = blog.CreatedBy != null ? _staffRepository.GetByIdAsync(blog.CreatedBy.Value).Result?.Fullname : "Unknown";
-                blog.ApprovedByName = blog.ApprovedBy != null ? _staffRepository.GetByIdAsync(blog.ApprovedBy.Value).Result?.Fullname : "Chưa được approved";
+                if (blog.CreatedBy != null)
+                {
+                    if (_userRepository.GetByIdAsync(blog.CreatedBy.Value).Result.IsStaff)
+                        blog.CreatedByName = _staffRepository.GetAllAsync().Result.FirstOrDefault(s => s.Userid == blog.CreatedBy)?.Fullname ?? "Unknown";
+                    else
+                        blog.CreatedByName = _parentRepository.GetAllAsync().Result.FirstOrDefault(s => s.Userid == blog.CreatedBy)?.Fullname ?? "Unknown";
+                }
+
+                if (blog.UpdatedBy != null)
+                {
+                    if (_userRepository.GetByIdAsync(blog.UpdatedBy.Value).Result.IsStaff)
+                        blog.UpdatedByName = _staffRepository.GetAllAsync().Result.FirstOrDefault(s => s.Userid == blog.UpdatedBy)?.Fullname ?? "Unknown";
+                    else
+                        blog.UpdatedByName = _parentRepository.GetAllAsync().Result.FirstOrDefault(s => s.Userid == blog.UpdatedBy)?.Fullname ?? "Unknown";
+                }
+
+                if (blog.ApprovedBy != null)
+                {
+                    if (_userRepository.GetByIdAsync(blog.ApprovedBy.Value).Result.IsStaff)
+                        blog.ApprovedByName = _staffRepository.GetAllAsync().Result.FirstOrDefault(s => s.Userid == blog.ApprovedBy)?.Fullname ?? "Unknown";
+                    else
+                        blog.ApprovedByName = _parentRepository.GetAllAsync().Result.FirstOrDefault(s => s.Userid == blog.ApprovedBy)?.Fullname ?? "Unknown";
+                }
             }
             return blogDTOs;
         }
         public async Task<BlogDTO> GetBlogByIdAsync(int id)
         {
-            var blog = await _blogRepo.GetByIdAsync(id);
-            BlogDTO blogDTOs = _mapper.Map<BlogDTO>(blog);
+            var blogfindbyID = await _blogRepo.GetByIdAsync(id);
+            BlogDTO blog = _mapper.Map<BlogDTO>(blogfindbyID);
 
-            blogDTOs.UpdatedByName = blogDTOs.UpdatedBy != null ? _staffRepository.GetByIdAsync(blog.UpdatedBy.Value).Result?.Fullname : "Chưa Update";
-            blogDTOs.CreatedByName = blogDTOs.CreatedBy != null ? _staffRepository.GetByIdAsync(blog.CreatedBy).Result?.Fullname : "Unknown";
-            blogDTOs.ApprovedByName = blogDTOs.ApprovedBy != null ? _staffRepository.GetByIdAsync(blog.ApprovedBy.Value).Result?.Fullname : "Chưa được approved";
-            return blogDTOs;
+            if (blog.CreatedBy != null && blog.CreatedBy != 0)
+            {
+                if (_userRepository.GetByIdAsync(blog.CreatedBy.Value).Result.IsStaff)
+                    blog.CreatedByName = _staffRepository.GetAllAsync().Result.FirstOrDefault(s => s.Userid == blog.CreatedBy)?.Fullname ?? "Unknown";
+                else
+                    blog.CreatedByName = _parentRepository.GetAllAsync().Result.FirstOrDefault(s => s.Userid == blog.CreatedBy)?.Fullname ?? "Unknown";
+            } else blog.CreatedByName = "Unknown";
+
+            if (blog.UpdatedBy != null && blog.UpdatedBy != 0)
+            {
+                if (_userRepository.GetByIdAsync(blog.UpdatedBy.Value).Result.IsStaff)
+                    blog.UpdatedByName = _staffRepository.GetAllAsync().Result.FirstOrDefault(s => s.Userid == blog.UpdatedBy)?.Fullname ?? "Unknown";
+                else
+                    blog.UpdatedByName = _parentRepository.GetAllAsync().Result.FirstOrDefault(s => s.Userid == blog.UpdatedBy)?.Fullname ?? "Unknown";
+            }
+            else blog.UpdatedByName = "Unknown";
+
+            if (blog.ApprovedBy != null && blog.ApprovedBy != 0)
+            {
+                if (_userRepository.GetByIdAsync(blog.ApprovedBy.Value).Result.IsStaff)
+                    blog.ApprovedByName = _staffRepository.GetAllAsync().Result.FirstOrDefault(s => s.Userid == blog.ApprovedBy)?.Fullname ?? "Unknown";
+                else
+                    blog.ApprovedByName = _parentRepository.GetAllAsync().Result.FirstOrDefault(s => s.Userid == blog.ApprovedBy)?.Fullname ?? "Unknown";
+            }
+            else blog.ApprovedByName = "Unknown";
+            return blog;
 
         }
         public async Task AddBlogAsync(CreateBlogDTO dto)
         {
 
-                Blog blog = _mapper.Map<Blog>(dto);
-                blog.Status = "Draft";
-                blog.CreatedAt = DateTime.Now;
-                await _blogRepo.AddAsync(blog);
-                _blogRepo.Save();
+            Blog blog = _mapper.Map<Blog>(dto);
+            blog.Status = "Draft";
+            blog.CreatedAt = DateTime.Now;
+            await _blogRepo.AddAsync(blog);
+            _blogRepo.Save();
 
         }
         public async Task UpdateBlog(UpdateBlogDTO dto)
         {
-            var entity = await _blogRepo.GetByIdAsync(dto.BlogID);
+            var entity = _blogRepo.GetByIdAsync(dto.BlogID).Result;
             if (dto != null)
             {
                 try
@@ -119,9 +166,29 @@ namespace BussinessLayer.Service
             foreach (var blog in blogDTOs)
             {
                 // Set the image URL to be absolute
-                blog.UpdatedByName = blog.UpdatedBy != null ? _staffRepository.GetByIdAsync(blog.UpdatedBy.Value).Result?.Fullname : "Chưa Update";
-                blog.CreatedByName = blog.CreatedBy != null ? _staffRepository.GetByIdAsync(blog.CreatedBy.Value).Result?.Fullname : "Unknown";
-                blog.ApprovedByName = blog.ApprovedBy != null ? _staffRepository.GetByIdAsync(blog.ApprovedBy.Value).Result?.Fullname : "Chưa được approved";
+                if (blog.CreatedBy != null)
+                {
+                    if (_userRepository.GetByIdAsync(blog.CreatedBy.Value).Result.IsStaff)
+                        blog.CreatedByName = _staffRepository.GetAllAsync().Result.FirstOrDefault(s => s.Userid == blog.CreatedBy)?.Fullname ?? "Unknown";
+                    else
+                        blog.CreatedByName = _parentRepository.GetAllAsync().Result.FirstOrDefault(s => s.Userid == blog.CreatedBy)?.Fullname ?? "Unknown";
+                }
+
+                if (blog.UpdatedBy != null)
+                {
+                    if (_userRepository.GetByIdAsync(blog.UpdatedBy.Value).Result.IsStaff)
+                        blog.UpdatedByName = _staffRepository.GetAllAsync().Result.FirstOrDefault(s => s.Userid == blog.UpdatedBy)?.Fullname ?? "Unknown";
+                    else
+                        blog.UpdatedByName = _parentRepository.GetAllAsync().Result.FirstOrDefault(s => s.Userid == blog.UpdatedBy)?.Fullname ?? "Unknown";
+                }
+
+                if (blog.ApprovedBy != null)
+                {
+                    if (_userRepository.GetByIdAsync(blog.ApprovedBy.Value).Result.IsStaff)
+                        blog.ApprovedByName = _staffRepository.GetAllAsync().Result.FirstOrDefault(s => s.Userid == blog.ApprovedBy)?.Fullname ?? "Unknown";
+                    else
+                        blog.ApprovedByName = _parentRepository.GetAllAsync().Result.FirstOrDefault(s => s.Userid == blog.ApprovedBy)?.Fullname ?? "Unknown";
+                }
             }
             return Task.FromResult(blogDTOs);
 
@@ -142,8 +209,8 @@ namespace BussinessLayer.Service
         {
             var blogs = _blogRepo.GetAllAsync().Result.Where(b =>
                     b.IsDeleted != true &&
-//                    b.ApprovedBy != null &&
- //                   b.ApprovedOn != null &&
+                    //                    b.ApprovedBy != null &&
+                    //                   b.ApprovedOn != null &&
                     b.Status != null &&
                     (b.Status.Equals("Published", StringComparison.OrdinalIgnoreCase)))
                 .ToList();
@@ -151,9 +218,29 @@ namespace BussinessLayer.Service
             foreach (var blog in blogDTOs)
             {
                 // Set the image URL to be absolute
-                blog.UpdatedByName = blog.UpdatedBy != null ? _staffRepository.GetByIdAsync(blog.UpdatedBy.Value).Result?.Fullname : "Chưa Update";
-                blog.CreatedByName = blog.CreatedBy != null ? _staffRepository.GetByIdAsync(blog.CreatedBy.Value).Result?.Fullname : "Unknown";
-                blog.ApprovedByName = blog.ApprovedBy != null ? _staffRepository.GetByIdAsync(blog.ApprovedBy.Value).Result?.Fullname : "Chưa được approved";
+                if (blog.CreatedBy != null)
+                {
+                    if (_userRepository.GetByIdAsync(blog.CreatedBy.Value).Result.IsStaff)
+                        blog.CreatedByName = _staffRepository.GetAllAsync().Result.FirstOrDefault(s => s.Userid == blog.CreatedBy)?.Fullname ?? "Unknown";
+                    else
+                        blog.CreatedByName = _parentRepository.GetAllAsync().Result.FirstOrDefault(s => s.Userid == blog.CreatedBy)?.Fullname ?? "Unknown";
+                }
+
+                if (blog.UpdatedBy != null)
+                {
+                    if (_userRepository.GetByIdAsync(blog.UpdatedBy.Value).Result.IsStaff)
+                        blog.UpdatedByName = _staffRepository.GetAllAsync().Result.FirstOrDefault(s => s.Userid == blog.UpdatedBy)?.Fullname ?? "Unknown";
+                    else
+                        blog.UpdatedByName = _parentRepository.GetAllAsync().Result.FirstOrDefault(s => s.Userid == blog.UpdatedBy)?.Fullname ?? "Unknown";
+                }
+
+                if (blog.ApprovedBy != null)
+                {
+                    if (_userRepository.GetByIdAsync(blog.ApprovedBy.Value).Result.IsStaff)
+                        blog.ApprovedByName = _staffRepository.GetAllAsync().Result.FirstOrDefault(s => s.Userid == blog.ApprovedBy)?.Fullname ?? "Unknown";
+                    else
+                        blog.ApprovedByName = _parentRepository.GetAllAsync().Result.FirstOrDefault(s => s.Userid == blog.ApprovedBy)?.Fullname ?? "Unknown";
+                }
             }
             return Task.FromResult(blogDTOs);
 
@@ -207,5 +294,5 @@ namespace BussinessLayer.Service
 
             return blog.Image; //return the image URL
         }
-    }            
+    }
 }

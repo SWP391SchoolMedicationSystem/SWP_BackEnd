@@ -6,16 +6,13 @@ using System.Threading.Tasks;
 
 namespace DataAccessLayer.DTO.Consultations
 {
-    public class ConsultationDTO
+    public class UpdateConsultationDTO
     {
         public int Consultationid { get; set; }
 
         public int Parentid { get; set; }
-        public string ParentName { get; set; } = null!;
-        public int? Staffid { get; set; }
-        public string Staffname { get; set; } = null!;
+
         public int Studentid { get; set; }
-        public string StudentName { get; set; } = null!;
 
         public int Requesttypeid { get; set; }
 
@@ -29,16 +26,13 @@ namespace DataAccessLayer.DTO.Consultations
 
         public string Status { get; set; } = null!;
 
+        public int? Staffid { get; set; }
 
         public bool Isdelete { get; set; }
 
         public int Createdby { get; set; }
-        public string CreateByName { get; set; } = null!;
-
-        public DateTime Createddate { get; set; }
-
         public int? Modifiedby { get; set; }
 
-        public DateTime? Modifieddate { get; set; }
+
     }
 }

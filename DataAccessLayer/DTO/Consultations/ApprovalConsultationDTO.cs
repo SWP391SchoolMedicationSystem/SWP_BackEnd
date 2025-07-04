@@ -6,10 +6,13 @@ using System.Threading.Tasks;
 
 namespace DataAccessLayer.DTO.Consultations
 {
-    public class CreateonsultationTypeDTO
+    public class ApprovalConsultationDTO
     {
-        public string Typename { get; set; } = null!;
+        public int Consultationid { get; set; }
 
-        public string? Description { get; set; }
+        public int? Staffid { get; set; }
+
+        public int? Modifiedby { get; set; }
+
     }
 }

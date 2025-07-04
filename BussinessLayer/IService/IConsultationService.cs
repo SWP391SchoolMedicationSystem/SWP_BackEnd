@@ -11,13 +11,13 @@ namespace BussinessLayer.IService
     public interface IConsultationService
     {
         Task<Consultationrequest> AddConsultationRequest(CreateConsultationDTO request);
-        Task<Consultationrequest> UpdateConsulationRequest(Consultationrequest consultationRequest);
+        Task<Consultationrequest> UpdateConsulationRequest(UpdateConsultationDTO consultationRequest);
         void DeleteConsultationRequest(int id);
-        Task<List<Consultationrequest>> GetAllConsultationRequestsAsync();
-        Task<Consultationrequest> GetConsultationRequestByIdAsync(int id);
-        Task<List<CreateConsultationDTO>> GetPendingRequest();
-        Task ApproveRequest(int id);
-        Task RejectRequest(int id);
+        Task<List<ConsultationDTO>> GetAllConsultationRequestsAsync();
+        Task<ConsultationDTO> GetConsultationRequestByIdAsync(int id);
+        Task<List<ConsultationDTO>> GetPendingRequest();
+        Task ApproveRequest(ApprovalConsultationDTO dto);
+        Task RejectRequest(ApprovalConsultationDTO dto);
 
 
     }

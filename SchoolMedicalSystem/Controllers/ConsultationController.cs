@@ -34,7 +34,7 @@ namespace SchoolMedicalSystem.Controllers
             return CreatedAtAction(nameof(GetAllConsultationRequests), new { id = createdRequest.Consultationid }, createdRequest);
         }
         [HttpPost("consultationtype")]
-        public async Task<IActionResult> AddConsultationType([FromBody] CreateonsultationTypeDTO consultationType)
+        public async Task<IActionResult> AddConsultationType([FromBody] CreateConsultationTypeDTO consultationType)
         {
             if (consultationType == null)
             {
@@ -44,7 +44,7 @@ namespace SchoolMedicalSystem.Controllers
             return CreatedAtAction(nameof(GetAllConsultationTypes), new { id = createdType.Typeid }, createdType);
         }
         [HttpPut("consultationrequest")]
-        public async Task<IActionResult> UpdateConsultationRequest([FromBody] Consultationrequest request)
+        public async Task<IActionResult> UpdateConsultationRequest([FromBody] UpdateConsultationDTO request)
         {
             if (request == null || request.Consultationid <= 0)
             {
@@ -89,6 +89,32 @@ namespace SchoolMedicalSystem.Controllers
                 return BadRequest("Invalid consultation type ID.");
             }
             typeservice.DeleteConsultationType(id);
+            return NoContent();
+        }
+        [HttpGet("pendingrequests")]
+        public async Task<IActionResult> GetPendingRequests()
+        {
+            var pendingRequests = await requestservice.GetPendingRequest();
+            return Ok(pendingRequests);
+        }
+        [HttpPost("approve")]
+        public async Task<IActionResult> ApproveRequest([FromBody] ApprovalConsultationDTO dto)
+        {
+            if (dto == null || dto.Consultationid <= 0)
+            {
+                return BadRequest("Invalid request data.");
+            }
+            await requestservice.ApproveRequest(dto);
+            return NoContent();
+        }
+        [HttpPost("reject")]
+        public async Task<IActionResult> RejectRequest([FromBody] ApprovalConsultationDTO dto)
+        {
+            if (dto == null || dto.Consultationid <= 0)
+            {
+                return BadRequest("Invalid request data.");
+            }
+            await requestservice.RejectRequest(dto);
             return NoContent();
         }
     }

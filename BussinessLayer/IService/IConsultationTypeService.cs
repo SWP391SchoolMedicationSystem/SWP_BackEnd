@@ -13,7 +13,7 @@ namespace BussinessLayer.IService
         Task<List<Consultationtype>> GetAllConsultationTypesAsync();
 
         Task<Consultationtype> GetConsultationTypeByIdAsync(int id);
-        Task<Consultationtype> AddConsultationTypeAsync(CreateonsultationTypeDTO consultationType);
+        Task<Consultationtype> AddConsultationTypeAsync(CreateConsultationTypeDTO consultationType);
         Task<Consultationtype> UpdateConsultationTypeAsync(Consultationtype consultationType);
         void DeleteConsultationType(int id);
     }

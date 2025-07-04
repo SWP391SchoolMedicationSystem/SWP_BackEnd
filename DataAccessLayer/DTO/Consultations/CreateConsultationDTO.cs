@@ -16,6 +16,8 @@ namespace DataAccessLayer.DTO.Consultations
         public int Requesttypeid { get; set; }
 
         public string Title { get; set; } = null!;
+        public int Createdby { get; set; }
+        
 
         public string? Description { get; set; }
 

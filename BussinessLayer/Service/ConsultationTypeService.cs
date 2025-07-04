@@ -15,7 +15,7 @@ namespace BussinessLayer.Service
     public class ConsultationTypeService(IConsultationTypeRepo _consultationtype, IMapper mapper) : IConsultationTypeService
     {
 
-        public async Task<Consultationtype> AddConsultationTypeAsync(CreateonsultationTypeDTO consultationType)
+        public async Task<Consultationtype> AddConsultationTypeAsync(CreateConsultationTypeDTO consultationType)
         {
             var entity = mapper.Map<Consultationtype>(consultationType);
             await _consultationtype.AddAsync(entity);
