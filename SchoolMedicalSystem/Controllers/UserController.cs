@@ -90,7 +90,7 @@ namespace SchoolMedicalSystem.Controllers
                 }
                 return Ok("Can't find");
             }
-            catch (InvalidJwtException)
+            catch (Exception)
             {
                 return Unauthorized("Token không hợp lệ.");
             }
