@@ -1,19 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace DataAccessLayer.Entity;
+namespace SchoolMedicalSystem.Entity;
 
-public partial class VaccinationEvent
+public partial class Vaccine
 {
-    public int EventId { get; set; }
+    public int VaccineId { get; set; }
 
-    public string EventName { get; set; } = null!;
+    public string VaccineName { get; set; } = null!;
 
-    public DateTime EventDate { get; set; }
+    public string TargetDisease { get; set; } = null!;
 
-    public string Location { get; set; } = null!;
+    public string? Manufacturer { get; set; }
+
+    public bool IsMandatory { get; set; }
+
+    public string? TargetAudience { get; set; }
 
     public string? Description { get; set; }
+
+    public string? MoreInfoUrl { get; set; }
 
     public bool IsDeleted { get; set; }
 

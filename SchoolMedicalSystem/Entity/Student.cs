@@ -1,23 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace DataAccessLayer.Entity;
+namespace SchoolMedicalSystem.Entity;
 
-public partial class Staff
+public partial class Student
 {
-    public int Staffid { get; set; }
+    public int Studentid { get; set; }
 
     public string Fullname { get; set; } = null!;
 
-    public string? Email { get; set; }
+    public int Age { get; set; }
 
-    public string? Phone { get; set; }
+    public DateOnly Dob { get; set; }
 
-    public int Roleid { get; set; }
+    public bool Gender { get; set; }
 
-    public int Userid { get; set; }
+    public int Classid { get; set; }
+
+    public int Parentid { get; set; }
 
     public bool IsDeleted { get; set; }
+
+    public string? StudentCode { get; set; }
+
+    public string? BloodType { get; set; }
 
     public DateTime? CreatedAt { get; set; }
 
@@ -29,19 +35,15 @@ public partial class Staff
 
     public virtual ICollection<AccidentReport> AccidentReports { get; set; } = new List<AccidentReport>();
 
-    public virtual ICollection<Form> Forms { get; set; } = new List<Form>();
+    public virtual Classroom Class { get; set; } = null!;
 
     public virtual ICollection<HealthRecord> HealthRecords { get; set; } = new List<HealthRecord>();
 
     public virtual ICollection<Healthcheck> Healthchecks { get; set; } = new List<Healthcheck>();
 
-    public virtual ICollection<Notificationstaffdetail> Notificationstaffdetails { get; set; } = new List<Notificationstaffdetail>();
+    public virtual Parent Parent { get; set; } = null!;
 
     public virtual ICollection<Personalmedicine> Personalmedicines { get; set; } = new List<Personalmedicine>();
 
-    public virtual Role Role { get; set; } = null!;
-
     public virtual ICollection<StudentVaccinationRecord> StudentVaccinationRecords { get; set; } = new List<StudentVaccinationRecord>();
-
-    public virtual User User { get; set; } = null!;
 }

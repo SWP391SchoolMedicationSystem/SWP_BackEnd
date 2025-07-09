@@ -10,13 +10,13 @@ namespace BussinessLayer.IService
 {
     public interface IHealthRecordService
     {
-        Task<List<Healthrecord>> GetAllHealthRecordsAsync();
+        Task<List<HealthRecord>> GetAllHealthRecordsAsync();
         Task<HealthRecordDto> GetHealthRecordByIdAsync(int id);
         Task AddHealthRecordAsync(CreateHealthRecordDTO healthRecorddto);
         void UpdateHealthRecord(UpdateHealthRecordDTO healthRecorddto, int id);
         void DeleteHealthRecord(int id);
         Task<List<HealthRecordStudentCheck>> GetHealthRecords();
         Task<HealthRecordStudentCheck> GetHealthRecordsByStudentIdWithCheckAsync(int studentId);
-        Task<List<Healthrecord>> GetHealthRecordsByStudentIdAsync(int studentId); // Added missing method  
+        Task<List<HealthRecord>> GetHealthRecordsByStudentIdAsync(int studentId); // Added missing method  
     }
 }

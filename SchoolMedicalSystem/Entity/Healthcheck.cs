@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace DataAccessLayer.Entity;
+namespace SchoolMedicalSystem.Entity;
 
 public partial class Healthcheck
 {

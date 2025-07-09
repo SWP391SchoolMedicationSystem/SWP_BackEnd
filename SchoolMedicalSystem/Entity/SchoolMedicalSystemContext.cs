@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 
-namespace DataAccessLayer.Entity;
+namespace SchoolMedicalSystem.Entity;
 
 public partial class SchoolMedicalSystemContext : DbContext
 {

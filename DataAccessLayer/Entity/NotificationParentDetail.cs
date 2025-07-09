@@ -17,12 +17,6 @@ public partial class NotificationParentDetail
 
     public DateTime? CreatedDate { get; set; }
 
-    public DateTime? ModifiedDate { get; set; }
-
-    public string? CreatedBy { get; set; }
-
-    public string? ModifiedBy { get; set; }
-
     public virtual Notification Notification { get; set; } = null!;
 
     public virtual Parent Parent { get; set; } = null!;

@@ -21,31 +21,29 @@ public partial class Student
 
     public bool IsDeleted { get; set; }
 
-    public DateTime? CreatedAt { get; set; }
-
-    public DateTime? UpdatedAt { get; set; }
-
     public string? StudentCode { get; set; }
 
     public string? BloodType { get; set; }
 
+    public DateTime? CreatedAt { get; set; }
+
+    public DateTime? UpdatedAt { get; set; }
+
+    public int? CreatedByUserId { get; set; }
+
+    public int? ModifiedByUserId { get; set; }
+
+    public virtual ICollection<AccidentReport> AccidentReports { get; set; } = new List<AccidentReport>();
+
     public virtual Classroom Class { get; set; } = null!;
 
-    public virtual ICollection<Consultationrequest> Consultationrequests { get; set; } = new List<Consultationrequest>();
+    public virtual ICollection<HealthRecord> HealthRecords { get; set; } = new List<HealthRecord>();
 
     public virtual ICollection<Healthcheck> Healthchecks { get; set; } = new List<Healthcheck>();
-
-    public virtual ICollection<Healthrecord> Healthrecords { get; set; } = new List<Healthrecord>();
-
-    public virtual ICollection<Healthstatus> Healthstatuses { get; set; } = new List<Healthstatus>();
-
-    public virtual ICollection<MedicalForm> MedicalForms { get; set; } = new List<MedicalForm>();
 
     public virtual Parent Parent { get; set; } = null!;
 
     public virtual ICollection<Personalmedicine> Personalmedicines { get; set; } = new List<Personalmedicine>();
 
-    public virtual ICollection<StudentSpecialNeed> StudentSpecialNeeds { get; set; } = new List<StudentSpecialNeed>();
-
-    public virtual ICollection<Vaccinationrecord> Vaccinationrecords { get; set; } = new List<Vaccinationrecord>();
+    public virtual ICollection<StudentVaccinationRecord> StudentVaccinationRecords { get; set; } = new List<StudentVaccinationRecord>();
 }

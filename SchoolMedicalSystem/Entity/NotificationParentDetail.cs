@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace DataAccessLayer.Entity;
+namespace SchoolMedicalSystem.Entity;
 
-public partial class Notificationstaffdetail
+public partial class NotificationParentDetail
 {
     public int NotificationId { get; set; }
 
-    public int Staffid { get; set; }
+    public int ParentId { get; set; }
 
     public string? Message { get; set; }
 
@@ -19,5 +19,5 @@ public partial class Notificationstaffdetail
 
     public virtual Notification Notification { get; set; } = null!;
 
-    public virtual Staff Staff { get; set; } = null!;
+    public virtual Parent Parent { get; set; } = null!;
 }

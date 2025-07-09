@@ -7,7 +7,7 @@ public partial class Classroom
 {
     public int Classid { get; set; }
 
-    public int Grade { get; set; }
+    public string Grade { get; set; } = null!;
 
     public string Classname { get; set; } = null!;
 
@@ -15,13 +15,13 @@ public partial class Classroom
 
     public bool IsDeleted { get; set; }
 
-    public string? Createdby { get; set; }
-
     public DateTime? Createddate { get; set; }
 
-    public string? Modifiedby { get; set; }
+    public int? CreatedByUserId { get; set; }
 
     public DateTime? Modifieddate { get; set; }
+
+    public int? ModifiedByUserId { get; set; }
 
     public virtual ICollection<Student> Students { get; set; } = new List<Student>();
 }
