@@ -15,6 +15,10 @@ public partial class StudentVaccinationRecord
 
     public string ParentalConsentStatus { get; set; } = null!;
 
+    public string? ReasonForDecline { get; set; }
+
+    public DateTime? ConsentResponseDate { get; set; }
+
     public DateTime? ConsentDate { get; set; }
 
     public DateTime? DateAdministered { get; set; }

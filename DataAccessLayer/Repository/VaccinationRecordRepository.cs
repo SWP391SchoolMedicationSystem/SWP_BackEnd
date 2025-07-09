@@ -2,10 +2,11 @@ using System;
 using DataAccessLayer.Entity;
 using DataAccessLayer.IRepository;
 using Microsoft.EntityFrameworkCore;
+using static DataAccessLayer.Ultis.Constants;
 
 namespace DataAccessLayer.Repository
 {
-    public class VaccinationRecordRepository : GenericRepository<Vaccinationrecord>, IVaccinationRecordRepository
+    public class VaccinationRecordRepository : GenericRepository<StudentVaccinationRecord>, IVaccinationRecordRepository
     {
         private readonly SchoolMedicalSystemContext _context;
 
@@ -14,57 +15,51 @@ namespace DataAccessLayer.Repository
             _context = context;
         }
 
-        public async Task<List<Vaccinationrecord>> GetRecordsByEventAsync(int eventId)
+        public async Task<List<StudentVaccinationRecord>> GetRecordsByEventAsync(int eventId)
         {
-            return await _context.Vaccinationrecords
+            return await _context.StudentVaccinationRecords
                 .Include(r => r.Student)
                     .ThenInclude(s => s.Parent)
                 .Include(r => r.Student)
                     .ThenInclude(s => s.Class)
-                .Where(r => r.Vaccinationeventid == eventId && !r.Isdeleted)
+                .Where(r => r.EventId == eventId && !r.IsDeleted)
                 .ToListAsync();
         }
 
-        public async Task<List<Vaccinationrecord>> GetRecordsByStudentAsync(int studentId)
+        public async Task<List<StudentVaccinationRecord>> GetRecordsByStudentAsync(int studentId)
         {
-            return await _context.Vaccinationrecords
-                .Include(r => r.Vaccinationevent)
-                .Where(r => r.Studentid == studentId && !r.Isdeleted)
-                .OrderByDescending(r => r.Vaccinationdate)
+            return await _context.StudentVaccinationRecords
+                .Include(r => r.Event)
+                .Where(r => r.StudentId == studentId && !r.IsDeleted)
+                .OrderByDescending(r => r.DateAdministered)
                 .ToListAsync();
         }
 
-        public async Task<Vaccinationrecord?> GetRecordByStudentAndEventAsync(int studentId, int eventId)
+        public async Task<StudentVaccinationRecord?> GetRecordByStudentAndEventAsync(int studentId, int eventId)
         {
-            return await _context.Vaccinationrecords
+            return await _context.StudentVaccinationRecords
                 .Include(r => r.Student)
                     .ThenInclude(s => s.Parent)
-                .Include(r => r.Vaccinationevent)
-                .FirstOrDefaultAsync(r => r.Studentid == studentId && r.Vaccinationeventid == eventId && !r.Isdeleted);
+                .Include(r => r.Event)
+                .FirstOrDefaultAsync(r => r.StudentId == studentId && r.EventId == eventId && !r.IsDeleted);
         }
 
         public async Task<int> GetConfirmedCountAsync(int eventId)
         {
-            return await _context.Vaccinationrecords
-                .CountAsync(r => r.Vaccinationeventid == eventId && r.Willattend == true && !r.Isdeleted);
+            return await _context.StudentVaccinationRecords
+                .CountAsync(r => r.EventId == eventId && r.ParentalConsentStatus == FormStatus.Accepted && !r.IsDeleted);
         }
 
         public async Task<int> GetDeclinedCountAsync(int eventId)
         {
-            return await _context.Vaccinationrecords
-                .CountAsync(r => r.Vaccinationeventid == eventId && r.Willattend == false && !r.Isdeleted);
+            return await _context.StudentVaccinationRecords
+                .CountAsync(r => r.EventId == eventId && r.ParentalConsentStatus == FormStatus.Rejected && !r.IsDeleted);
         }
 
         public async Task<int> GetPendingCountAsync(int eventId)
         {
-            var totalStudents = await _context.Students.CountAsync(s => !s.IsDeleted);
-            var respondedStudents = await _context.Vaccinationrecords
-                .Where(r => r.Vaccinationeventid == eventId && !r.Isdeleted)
-                .Select(r => r.Studentid)
-                .Distinct()
-                .CountAsync();
-
-            return totalStudents - respondedStudents;
+            return await _context.StudentVaccinationRecords
+                .CountAsync(r => r.EventId == eventId && r.ParentalConsentStatus == FormStatus.Pending && !r.IsDeleted);
         }
     }
 } 

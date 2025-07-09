@@ -5,6 +5,7 @@ using DataAccessLayer.IRepository;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection.Metadata;
 using DataAccessLayer.Ultis;
+using static DataAccessLayer.Ultis.Constants;
 namespace DataAccessLayer.Repository
 {
     public class VaccinationEventRepository : GenericRepository<VaccinationEvent>, IVaccinationEventRepository
@@ -106,11 +107,11 @@ namespace DataAccessLayer.Repository
                            ParentEmail = p.Email ?? "",
                            ClassName = c.Classname,
                            ParentalConsentStatus = vr.ParentalConsentStatus,
-                           ReasonForDecline = vr.Reasonfordecline,
-                           ResponseDate = vr.Responsedate,
-                           Status = vr == null ? "Pending" :
-                                   vr.Willattend == true ? "Confirmed" :
-                                   vr.Willattend == false ? "Declined" : "Pending"
+                           ReasonForDecline = vr.ReasonForDecline,
+                           ResponseDate = vr.ConsentResponseDate,
+                           Status = vr.ParentalConsentStatus == null ? FormStatus.Pending :
+                                   vr.ParentalConsentStatus == FormStatus.Accepted ? FormStatus.Accepted :
+                                   vr.ParentalConsentStatus == FormStatus.Rejected ? FormStatus.Rejected : FormStatus.Pending
                        };
 
             return await query.ToListAsync();
@@ -118,9 +119,9 @@ namespace DataAccessLayer.Repository
 
         public async Task<VaccinationEventSummaryDTO> GetEventSummaryAsync(int eventId)
         {
-            var eventInfo = await _context.Vaccinationevents
-                .Where(e => e.EventId == eventId && !e.Isdeleted)
-                .Select(e => new { e.Vaccinationeventname, e.Eventdate, e.Location })
+            var eventInfo = await _context.VaccinationEvents
+                .Where(e => e.EventId == eventId && !e.IsDeleted)
+                .Select(e => new { e.EventName, e.EventDate, e.Location })
                 .FirstOrDefaultAsync();
 
             if (eventInfo == null)
@@ -135,8 +136,8 @@ namespace DataAccessLayer.Repository
             return new VaccinationEventSummaryDTO
             {
                 VaccinationEventId = eventId,
-                VaccinationEventName = eventInfo.Vaccinationeventname,
-                EventDate = eventInfo.Eventdate,
+                VaccinationEventName = eventInfo.EventName,
+                EventDate = eventInfo.EventDate,
                 Location = eventInfo.Location,
                 TotalStudents = totalStudents,
                 ConfirmedCount = confirmedCount,
@@ -182,15 +183,15 @@ namespace DataAccessLayer.Repository
         public async Task<int> GetDeclinedCountAsync(int eventId)
         {
             return await _context.StudentVaccinationRecords
-                .CountAsync(r => r.EventId == eventId && r.Willattend == false && !r.Isdeleted);
+                .CountAsync(r => r.EventId == eventId && r.ParentalConsentStatus == FormStatus.Rejected && !r.IsDeleted);
         }
 
         public async Task<int> GetPendingCountAsync(int eventId)
         {
             var totalStudents = await _context.Students.CountAsync(s => !s.IsDeleted);
             var respondedStudents = await _context.StudentVaccinationRecords
-                .Where(r => r.EventId == eventId && !r.Isdeleted)
-                .Select(r => r.Studentid)
+                .Where(r => r.EventId == eventId && !r.IsDeleted)
+                .Select(r => r.StudentId)
                 .Distinct()
                 .CountAsync();
 

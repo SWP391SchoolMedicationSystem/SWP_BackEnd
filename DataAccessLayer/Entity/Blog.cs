@@ -15,6 +15,10 @@ public partial class Blog
 
     public DateTime? ApprovedOn { get; set; }
 
+    public DateTime? ResponseDate { get; set; }
+
+    public string? ReasonForDecline { get; set; }
+
     public int CreatedBy { get; set; }
 
     public DateTime CreatedAt { get; set; }

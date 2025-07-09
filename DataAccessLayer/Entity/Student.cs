@@ -45,7 +45,6 @@ public partial class Student
 
     public virtual ICollection<Personalmedicine> Personalmedicines { get; set; } = new List<Personalmedicine>();
 
-
     public virtual ICollection<StudentSpecialNeed> StudentSpecialNeeds { get; set; } = new List<StudentSpecialNeed>();
 
     public virtual ICollection<StudentVaccinationRecord> StudentVaccinationRecords { get; set; } = new List<StudentVaccinationRecord>();

@@ -9,12 +9,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DataAccessLayer.Repository
 {
-    public class MedicineCategoryRepository : GenericRepository<Medicinecategory>, IMedicineCategoryRepository
+    public class MedicineCategoryRepository : GenericRepository<MedicineCategory>, IMedicineCategoryRepository
     {
-        private readonly DbSet<Medicinecategory> _dbSet;
+        private readonly DbSet<MedicineCategory> _dbSet;
         public MedicineCategoryRepository(SchoolMedicalSystemContext context) : base(context)
         {
-            _dbSet = context.Set<Medicinecategory>();
+            _dbSet = context.Set<MedicineCategory>();
         }
     }
 }

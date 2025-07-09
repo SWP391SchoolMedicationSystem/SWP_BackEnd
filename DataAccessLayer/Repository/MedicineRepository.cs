@@ -9,16 +9,16 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DataAccessLayer.Repository
 {
-    public class MedicineRepository : GenericRepository<Medicine>, IMedicineRepository
+    public class MedicineRepository : GenericRepository<MedicineCatalog>, IMedicineRepository
     {
-        private readonly DbSet<Medicine> _dbset;
+        private readonly DbSet<MedicineCatalog> _dbset;
         public MedicineRepository(SchoolMedicalSystemContext context) : base(context)
         {
-            _dbset = context.Set<Medicine>();
+            _dbset = context.Set<MedicineCatalog>();
         }
-        public new Task<List<Medicine>> GetAllAsync()
+        public new Task<List<MedicineCatalog>> GetAllAsync()
         {
-            return _dbset.Include(m => m.Medicinecategory)
+            return _dbset.Include(m => m.MedicineCategory)
                          .ToListAsync();
         }
     }

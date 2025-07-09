@@ -222,7 +222,7 @@ namespace BussinessLayer.Service
 
         public async Task<List<VaccinationEmailTemplate>> GetEmailAllTemplate()
         {
-            return await _context.VaccinationEmailTemplate.ToListAsync();
+            return await _context.Vacc.ToListAsync();
         }
 
         public EmailDTO GetTemplateByID(int templateId)

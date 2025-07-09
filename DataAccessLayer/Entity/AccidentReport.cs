@@ -23,6 +23,8 @@ public partial class AccidentReport
 
     public string Status { get; set; } = null!;
 
+    public DateTime? ReviewDate { get; set; }
+
     public bool IsNotifiedParent { get; set; }
 
     public DateTime? ParentNotificationDate { get; set; }

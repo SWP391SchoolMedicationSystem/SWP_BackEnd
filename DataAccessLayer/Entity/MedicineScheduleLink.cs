@@ -19,6 +19,10 @@ public partial class MedicineScheduleLink
 
     public string Status { get; set; } = null!;
 
+    public DateTime? ApprovalDate { get; set; }
+
+    public string? ReasonForDecline { get; set; }
+
     public bool IsDeleted { get; set; }
 
     public int? ModifiedByUserId { get; set; }

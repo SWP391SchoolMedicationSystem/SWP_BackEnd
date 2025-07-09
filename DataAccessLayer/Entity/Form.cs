@@ -23,6 +23,8 @@ public partial class Form
 
     public string? Reasonfordecline { get; set; }
 
+    public DateTime? ResponseDate { get; set; }
+
     public DateTime? Createddate { get; set; }
 
     public DateTime? Modifieddate { get; set; }

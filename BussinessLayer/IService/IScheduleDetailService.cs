@@ -10,8 +10,8 @@ namespace BussinessLayer.IService
 {
     public interface IScheduleDetailService 
     {
-        public Task<List<Scheduledetail>> GetAllScheduleDetailsAsync();
-        public Task<Scheduledetail> GetScheduleDetailByIdAsync(int id);
+        public Task<List<ScheduleDetail>> GetAllScheduleDetailsAsync();
+        public Task<ScheduleDetail> GetScheduleDetailByIdAsync(int id);
         public Task AddScheduleDetailAsync(ScheduleDetailDTO scheduleDetail);
         public Task UpdateScheduleDetailAsync(ScheduleDetailDTO scheduleDetail,int id);
         public Task DeleteScheduleDetailAsync(int id);
