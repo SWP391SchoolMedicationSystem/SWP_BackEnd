@@ -60,7 +60,6 @@ namespace BussinessLayer.Service
                 user.Staff.Add(staff);
                 var listrole = roleRepository.GetAllAsync();
                 Role role = listrole.Result.FirstOrDefault(r => r.Roleid == register.RoleID);
-                role.Staff.Add(staff);
                 await userRepository.AddAsync(user);
                 staff.Userid = user.UserId;
                 await staffRepository.AddAsync(staff);
