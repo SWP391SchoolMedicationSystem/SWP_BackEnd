@@ -7,7 +7,7 @@ using DataAccessLayer.Entity;
 
 namespace DataAccessLayer.IRepository
 {
-    public interface IHealthRecordRepository : IGenericRepository<Healthrecord>
+    public interface IHealthRecordRepository : IGenericRepository<HealthRecord>
     {
     }
 }

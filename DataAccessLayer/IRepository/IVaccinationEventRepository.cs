@@ -4,16 +4,16 @@ using DataAccessLayer.Entity;
 
 namespace DataAccessLayer.IRepository
 {
-    public interface IVaccinationEventRepository : IGenericRepository<Vaccinationevent>
+    public interface IVaccinationEventRepository : IGenericRepository<VaccinationEvent>
     {
-        Task<List<Vaccinationevent>> GetAllActiveEventsAsync();
-        Task<Vaccinationevent?> GetEventWithRecordsAsync(int eventId);
-        Task<List<Vaccinationevent>> GetEventsByDateRangeAsync(DateTime startDate, DateTime endDate);
-        Task<List<Vaccinationevent>> GetUpcomingEventsAsync();
+        Task<List<VaccinationEvent>> GetAllActiveEventsAsync();
+        Task<VaccinationEvent?> GetEventWithRecordsAsync(int eventId);
+        Task<List<VaccinationEvent>> GetEventsByDateRangeAsync(DateTime startDate, DateTime endDate);
+        Task<List<VaccinationEvent>> GetUpcomingEventsAsync();
         Task<bool> EventExistsAsync(int eventId);
-        Task<List<Vaccinationrecord>> GetRecordsByEventAsync(int eventId);
-        Task<List<Vaccinationrecord>> GetRecordsByStudentAsync(int studentId);
-        Task<Vaccinationrecord?> GetRecordByStudentAndEventAsync(int studentId, int eventId);
+        Task<List<StudentVaccinationRecord>> GetRecordsByEventAsync(int eventId);
+        Task<List<StudentVaccinationRecord>> GetRecordsByStudentAsync(int studentId);
+        Task<StudentVaccinationRecord?> GetRecordByStudentAndEventAsync(int studentId, int eventId);
         Task<List<StudentVaccinationStatusDTO>> GetStudentResponsesForEventAsync(int eventId);
         Task<VaccinationEventSummaryDTO> GetEventSummaryAsync(int eventId);
         Task<List<Parent>> GetParentsForEventAsync(int eventId);

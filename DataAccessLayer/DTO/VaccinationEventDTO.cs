@@ -115,7 +115,7 @@ namespace DataAccessLayer.DTO
         public string ParentName { get; set; } = null!;
         public string ParentEmail { get; set; } = null!;
         public string ClassName { get; set; } = null!;
-        public bool? WillAttend { get; set; }
+        public string? ParentalConsentStatus { get; set; }
         public string? ReasonForDecline { get; set; }
         public DateTime? ResponseDate { get; set; }
         public string Status { get; set; } = null!; // "Confirmed", "Declined", "Pending"

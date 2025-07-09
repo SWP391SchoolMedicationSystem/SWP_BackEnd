@@ -7,7 +7,7 @@ using DataAccessLayer.Entity;
 
 namespace DataAccessLayer.IRepository
 {
-    public interface IScheduleDetailRepo : IGenericRepository<Scheduledetail>
+    public interface IScheduleDetailRepo : IGenericRepository<ScheduleDetail>
     {
     }
 }

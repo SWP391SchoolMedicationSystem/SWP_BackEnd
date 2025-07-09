@@ -3,11 +3,13 @@ using System;
 using DataAccessLayer.Entity;
 using DataAccessLayer.IRepository;
 using Microsoft.EntityFrameworkCore;
-
+using System.Reflection.Metadata;
+using DataAccessLayer.Ultis;
 namespace DataAccessLayer.Repository
 {
-    public class VaccinationEventRepository : GenericRepository<Vaccinationevent>, IVaccinationEventRepository
-    {
+    public class VaccinationEventRepository : GenericRepository<VaccinationEvent>, IVaccinationEventRepository
+{    
+
         private readonly SchoolMedicalSystemContext _context;
 
         public VaccinationEventRepository(SchoolMedicalSystemContext context) : base(context)
@@ -15,75 +17,75 @@ namespace DataAccessLayer.Repository
             _context = context;
         }
 
-        public async Task<List<Vaccinationevent>> GetAllActiveEventsAsync()
+        public async Task<List<VaccinationEvent>> GetAllActiveEventsAsync()
         {
-            return await _context.Vaccinationevents
-                .Where(e => !e.Isdeleted)
-                .OrderByDescending(e => e.Eventdate)
+            return await _context.VaccinationEvents
+                .Where(e => !e.IsDeleted)
+                .OrderByDescending(e => e.EventDate)
                 .ToListAsync();
         }
 
-        public async Task<Vaccinationevent?> GetEventWithRecordsAsync(int eventId)
+        public async Task<VaccinationEvent?> GetEventWithRecordsAsync(int eventId)
         {
-            return await _context.Vaccinationevents
-                .Include(e => e.Vaccinationrecords)
+            return await _context.VaccinationEvents
+                .Include(e => e.StudentVaccinationRecords)
                     .ThenInclude(r => r.Student)
                         .ThenInclude(s => s.Parent)
-                .Include(e => e.Vaccinationrecords)
+                .Include(e => e.StudentVaccinationRecords)
                     .ThenInclude(r => r.Student)
                         .ThenInclude(s => s.Class)
-                .FirstOrDefaultAsync(e => e.Vaccinationeventid == eventId && !e.Isdeleted);
+                .FirstOrDefaultAsync(e => e.EventId == eventId && !e.IsDeleted);
         }
 
-        public async Task<List<Vaccinationevent>> GetEventsByDateRangeAsync(DateTime startDate, DateTime endDate)
+        public async Task<List<VaccinationEvent>> GetEventsByDateRangeAsync(DateTime startDate, DateTime endDate)
         {
-            return await _context.Vaccinationevents
-                .Where(e => !e.Isdeleted && e.Eventdate >= startDate && e.Eventdate <= endDate)
-                .OrderBy(e => e.Eventdate)
+            return await _context.VaccinationEvents
+                .Where(e => !e.IsDeleted && e.EventDate >= startDate && e.EventDate <= endDate)
+                .OrderBy(e => e.EventDate)
                 .ToListAsync();
         }
 
-        public async Task<List<Vaccinationevent>> GetUpcomingEventsAsync()
+        public async Task<List<VaccinationEvent>> GetUpcomingEventsAsync()
         {
-            return await _context.Vaccinationevents
-                .Where(e => !e.Isdeleted && e.Eventdate > DateTime.Now)
-                .OrderBy(e => e.Eventdate)
+            return await _context.VaccinationEvents
+                .Where(e => !e.IsDeleted && e.EventDate > DateTime.Now)
+                .OrderBy(e => e.EventDate)
                 .ToListAsync();
         }
 
         public async Task<bool> EventExistsAsync(int eventId)
         {
-            return await _context.Vaccinationevents
-                .AnyAsync(e => e.Vaccinationeventid == eventId && !e.Isdeleted);
+            return await _context.VaccinationEvents
+                .AnyAsync(e => e.EventId == eventId && !e.IsDeleted);
         }
 
-        public async Task<List<Vaccinationrecord>> GetRecordsByEventAsync(int eventId)
+        public async Task<List<StudentVaccinationRecord>> GetRecordsByEventAsync(int eventId)
         {
-            return await _context.Vaccinationrecords
+            return await _context.StudentVaccinationRecords
                 .Include(r => r.Student)
                     .ThenInclude(s => s.Parent)
                 .Include(r => r.Student)
                     .ThenInclude(s => s.Class)
-                .Where(r => r.Vaccinationeventid == eventId && !r.Isdeleted)
+                .Where(r => r.StudentVaccinationId == eventId && !r.IsDeleted)
                 .ToListAsync();
         }
 
-        public async Task<List<Vaccinationrecord>> GetRecordsByStudentAsync(int studentId)
+        public async Task<List<StudentVaccinationRecord>> GetRecordsByStudentAsync(int studentId)
         {
-            return await _context.Vaccinationrecords
-                .Include(r => r.Vaccinationevent)
-                .Where(r => r.Studentid == studentId && !r.Isdeleted)
-                .OrderByDescending(r => r.Vaccinationdate)
+            return await _context.StudentVaccinationRecords
+                .Include(r => r.Event)
+                .Where(r => r.StudentId == studentId && !r.IsDeleted)
+                .OrderByDescending(r => r.ConsentDate)
                 .ToListAsync();
         }
 
-        public async Task<Vaccinationrecord?> GetRecordByStudentAndEventAsync(int studentId, int eventId)
+        public async Task<StudentVaccinationRecord?> GetRecordByStudentAndEventAsync(int studentId, int eventId)
         {
-            return await _context.Vaccinationrecords
+            return await _context.StudentVaccinationRecords
                 .Include(r => r.Student)
                     .ThenInclude(s => s.Parent)
-                .Include(r => r.Vaccinationevent)
-                .FirstOrDefaultAsync(r => r.Studentid == studentId && r.Vaccinationeventid == eventId && !r.Isdeleted);
+                .Include(r => r.Event)
+                .FirstOrDefaultAsync(r => r.StudentId == studentId && r.EventId == eventId && !r.IsDeleted);
         }
 
         public async Task<List<StudentVaccinationStatusDTO>> GetStudentResponsesForEventAsync(int eventId)
@@ -91,10 +93,10 @@ namespace DataAccessLayer.Repository
             var query = from s in _context.Students
                        join p in _context.Parents on s.Parentid equals p.Parentid
                        join c in _context.Classrooms on s.Classid equals c.Classid
-                       join vr in _context.Vaccinationrecords on s.Studentid equals vr.Studentid into vrGroup
+                       join vr in _context.StudentVaccinationRecords on s.Studentid equals vr.StudentId into vrGroup
                        from vr in vrGroup.DefaultIfEmpty()
                        where !s.IsDeleted && !p.IsDeleted && !c.IsDeleted
-                       && (vr == null || (vr.Vaccinationeventid == eventId && !vr.Isdeleted))
+                       && (vr == null || (vr.EventId == eventId && !vr.IsDeleted))
                        select new StudentVaccinationStatusDTO
                        {
                            StudentId = s.Studentid,
@@ -103,7 +105,7 @@ namespace DataAccessLayer.Repository
                            ParentName = p.Fullname,
                            ParentEmail = p.Email ?? "",
                            ClassName = c.Classname,
-                           WillAttend = vr.Willattend,
+                           ParentalConsentStatus = vr.ParentalConsentStatus,
                            ReasonForDecline = vr.Reasonfordecline,
                            ResponseDate = vr.Responsedate,
                            Status = vr == null ? "Pending" :
@@ -117,7 +119,7 @@ namespace DataAccessLayer.Repository
         public async Task<VaccinationEventSummaryDTO> GetEventSummaryAsync(int eventId)
         {
             var eventInfo = await _context.Vaccinationevents
-                .Where(e => e.Vaccinationeventid == eventId && !e.Isdeleted)
+                .Where(e => e.EventId == eventId && !e.Isdeleted)
                 .Select(e => new { e.Vaccinationeventname, e.Eventdate, e.Location })
                 .FirstOrDefaultAsync();
 
@@ -173,21 +175,21 @@ namespace DataAccessLayer.Repository
 
         public async Task<int> GetConfirmedCountAsync(int eventId)
         {
-            return await _context.Vaccinationrecords
-                .CountAsync(r => r.Vaccinationeventid == eventId && r.Willattend == true && !r.Isdeleted);
+            return await _context.StudentVaccinationRecords
+                .CountAsync(r => r.EventId == eventId && r.ParentalConsentStatus == Constants.FormStatus.Accepted  && !r.IsDeleted);
         }
 
         public async Task<int> GetDeclinedCountAsync(int eventId)
         {
-            return await _context.Vaccinationrecords
-                .CountAsync(r => r.Vaccinationeventid == eventId && r.Willattend == false && !r.Isdeleted);
+            return await _context.StudentVaccinationRecords
+                .CountAsync(r => r.EventId == eventId && r.Willattend == false && !r.Isdeleted);
         }
 
         public async Task<int> GetPendingCountAsync(int eventId)
         {
             var totalStudents = await _context.Students.CountAsync(s => !s.IsDeleted);
-            var respondedStudents = await _context.Vaccinationrecords
-                .Where(r => r.Vaccinationeventid == eventId && !r.Isdeleted)
+            var respondedStudents = await _context.StudentVaccinationRecords
+                .Where(r => r.EventId == eventId && !r.Isdeleted)
                 .Select(r => r.Studentid)
                 .Distinct()
                 .CountAsync();

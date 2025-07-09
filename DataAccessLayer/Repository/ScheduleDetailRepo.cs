@@ -9,12 +9,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DataAccessLayer.Repository
 {
-    public class ScheduleDetailRepo : GenericRepository<Scheduledetail>, IScheduleDetailRepo
+    public class ScheduleDetailRepo : GenericRepository<ScheduleDetail>, IScheduleDetailRepo
     {
-        private readonly DbSet<Scheduledetail> _dbSet;
+        private readonly DbSet<ScheduleDetail> _dbSet;
         public ScheduleDetailRepo(SchoolMedicalSystemContext context) : base(context)
         {
-            _dbSet = context.Set<Scheduledetail>();
+            _dbSet = context.Set<ScheduleDetail>();
         }
     }
 }

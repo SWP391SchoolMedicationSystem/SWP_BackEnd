@@ -7,7 +7,7 @@ using DataAccessLayer.Entity;
 using DataAccessLayer.IRepository;
 namespace DataAccessLayer.Repository
 {
-    public class HealthRecordRepository : GenericRepository<Healthrecord>, IHealthRecordRepository
+    public class HealthRecordRepository : GenericRepository<HealthRecord>, IHealthRecordRepository
     {
         public HealthRecordRepository(SchoolMedicalSystemContext context) : base(context)
         {
