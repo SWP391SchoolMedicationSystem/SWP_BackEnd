@@ -13,6 +13,7 @@ namespace SchoolMedicalSystem.Profiles
             CreateMap<StudentParentDTO, Student>().ReverseMap();
             CreateMap<Student, StudentVaccineEvent>().ReverseMap();
             CreateMap<UpdateStudentDTo, Student>().ReverseMap();
+            CreateMap<AddStudentDTO, Student>().ReverseMap();
         }
     }
 }
