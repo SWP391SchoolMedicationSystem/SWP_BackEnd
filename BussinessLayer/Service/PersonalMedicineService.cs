@@ -21,7 +21,6 @@ namespace BussinessLayer.Service
         public Task AddPersonalmedicineAsync(AddPersonalMedicineDTO Personalmedicine)
         {
             var PersonalmedicineEntity = mapper.Map<Personalmedicine>(Personalmedicine);
-            PersonalmedicineEntity.Medicine = medicineRepository.GetByIdAsync(Personalmedicine.Medicineid).Result;
 
             PersonalmedicineEntity.Parent = parentRepository.GetByIdAsync(Personalmedicine.Parentid.Value).Result;
             if (PersonalmedicineEntity.Parent == null)
