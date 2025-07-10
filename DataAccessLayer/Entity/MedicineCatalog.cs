@@ -19,6 +19,14 @@ public partial class MedicineCatalog
 
     public bool IsDeleted { get; set; }
 
+    public DateTime? CreatedAt { get; set; }
+
+    public DateTime? ModifiedAt { get; set; }
+
+    public int? CreatedByUserId { get; set; }
+
+    public int? ModifiedByUserId { get; set; }
+
     public virtual MedicineCategory? MedicineCategory { get; set; }
 
     public virtual ICollection<MedicineStorage> MedicineStorages { get; set; } = new List<MedicineStorage>();

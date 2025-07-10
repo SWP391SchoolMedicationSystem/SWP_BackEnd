@@ -8,15 +8,16 @@ namespace DataAccessLayer.DTO.Medicines
 {
     public class CreateMedicineDTO
     {
-        public string Medicinename { get; set; } = null!;
+        public string MedicineName { get; set; } = null!;
 
-        public int Medicinecategoryid { get; set; }
+        public int? MedicineCategoryId { get; set; }
 
-        public string Type { get; set; } = null!;
+        public string? Usage { get; set; }
 
-        public int Quantity { get; set; }
+        public string? DefaultDosage { get; set; }
 
-        public DateTime? Createdat { get; set; }
-        public string? Createdby { get; set; }
+        public string? SideEffects { get; set; }
+
+        public int? CreatedByUserId { get; set; }
     }
 }

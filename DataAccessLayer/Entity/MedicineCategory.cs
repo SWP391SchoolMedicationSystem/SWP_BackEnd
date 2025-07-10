@@ -13,5 +13,13 @@ public partial class MedicineCategory
 
     public bool IsDeleted { get; set; }
 
+    public DateTime? CreatedAt { get; set; }
+
+    public DateTime? ModifiedAt { get; set; }
+
+    public int? CreatedByUserId { get; set; }
+
+    public int? ModifiedByUserId { get; set; }
+
     public virtual ICollection<MedicineCatalog> MedicineCatalogs { get; set; } = new List<MedicineCatalog>();
 }

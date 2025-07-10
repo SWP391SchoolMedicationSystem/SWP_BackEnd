@@ -27,9 +27,11 @@ public partial class Healthcheck
 
     public bool Isdeleted { get; set; }
 
-    public DateTime? Createdat { get; set; }
+    public DateTime? CreatedAt { get; set; }
 
-    public DateTime? Updatedat { get; set; }
+    public DateTime? ModifiedAt { get; set; }
+
+    public int? CreatedByUserId { get; set; }
 
     public int? ModifiedByUserId { get; set; }
 

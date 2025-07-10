@@ -47,6 +47,8 @@ namespace BussinessLayer.Service
             if (healthRecorddto != null)
             {
                 HealthRecord healthRecord = _mapper.Map<HealthRecord>(healthRecorddto);
+                healthRecord.Status = FormStatus.Pending;
+                healthRecord.CreatedAt = DateTime.Now;  
                 _healthRecordRepository.AddAsync(healthRecord);
                 _healthRecordRepository.Save();
             }
@@ -145,15 +147,15 @@ namespace BussinessLayer.Service
             var entity = _healthRecordRepository.GetByIdAsync(id).Result;
             if (entity != null)
             {
-                entity.StudentId = healthRecorddto.StudentID;
-                entity.HealthCategoryId = healthRecorddto.HealthCategoryID;
+                entity.StudentId = healthRecorddto.StudentId;
+                entity.HealthCategoryId = healthRecorddto.HealthCategoryId;
                 entity.HealthRecordDate = healthRecorddto.HealthRecordDate;
-                entity.HealthRecordTitle = healthRecorddto.Healthrecordtitle;
-                entity.HealthRecordDescription = healthRecorddto.Healthrecorddescription;
-                entity.StaffId = healthRecorddto.Staffid;
+                entity.HealthRecordTitle = healthRecorddto.HealthRecordTitle;
+                entity.HealthRecordDescription = healthRecorddto.HealthRecordDescription;
+                entity.StaffId = healthRecorddto.StaffId;
                 entity.Status = healthRecorddto.Status;
-                entity.ModifiedByUserId = healthRecorddto.ModifiedBy;
-                entity.Modifieddate = DateTime.Now;
+                entity.ModifiedByUserId = healthRecorddto.ModifiedByUserId;
+                entity.ModifiedAt = DateTime.Now;
                 _healthRecordRepository.Update(entity);
                 _healthRecordRepository.Save();
             }

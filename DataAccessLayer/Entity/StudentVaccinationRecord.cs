@@ -33,7 +33,9 @@ public partial class StudentVaccinationRecord
 
     public int? ModifiedByUserId { get; set; }
 
-    public DateTime? ModifiedDate { get; set; }
+    public DateTime? CreatedAt { get; set; }
+
+    public DateTime? ModifiedAt { get; set; }
 
     public virtual Staff? AdministeredByStaff { get; set; }
 

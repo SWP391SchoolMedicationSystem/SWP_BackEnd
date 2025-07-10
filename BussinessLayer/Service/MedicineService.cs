@@ -14,16 +14,19 @@ namespace BussinessLayer.Service
     public class MedicineService : IMedicineService
     {
         private readonly IMedicineRepository _medicineRepository;
+        private readonly IMedicineCategoryRepository _medicineCategoryRepository;
         private readonly IMapper _mapper;
-        public MedicineService(IMedicineRepository medicineRepository, IMapper mapper)
+        public MedicineService(IMedicineRepository medicineRepository,IMedicineCategoryRepository medicineCategoryRepository, IMapper mapper)
         {
             _medicineRepository = medicineRepository;
+            _medicineCategoryRepository = medicineCategoryRepository;
             _mapper = mapper;
         }
         public void AddMedicine(CreateMedicineDTO medicine)
         {
             MedicineCatalog entity = _mapper.Map<MedicineCatalog>(medicine);
             entity.IsDeleted = false;
+            entity.CreatedAt = DateTime.Now;
             _medicineRepository.AddAsync(entity);
             _medicineRepository.Save();
         }
@@ -43,14 +46,25 @@ namespace BussinessLayer.Service
         {
             var medicines = await _medicineRepository.GetAllAsync();
             var dtos = _mapper.Map<List<MedicineDTO>>(medicines);
+            var allCategories = _medicineCategoryRepository.GetAllAsync().Result;
+            foreach (var item in dtos)
+            {
+                item.MedicineCategoryName = allCategories.FirstOrDefault(c => c.MedicineCategoryId == item.MedicineCategoryId)?.ToString() ?? "Unknown Category";
+            }
             return dtos;
         }
 
         public async Task<List<MedicineDTO>> GetAvailableMedicinesAsync()
         {
             var allMedicines = await _medicineRepository.GetAllAsync();
+
             var medicines = allMedicines.Where(m => !m.IsDeleted).ToList();
-            var lists = _mapper.Map<List<MedicineDTO>>(medicines);  
+            var lists = _mapper.Map<List<MedicineDTO>>(medicines);
+            var allCategories = _medicineCategoryRepository.GetAllAsync().Result;
+            foreach (var item in lists)
+            {
+                item.MedicineCategoryName = allCategories.FirstOrDefault(c => c.MedicineCategoryId == item.MedicineCategoryId)?.ToString() ?? "Unknown Category";
+            }
             return lists;
         }
 
@@ -58,6 +72,9 @@ namespace BussinessLayer.Service
         {
             var medicines = await _medicineRepository.GetByIdAsync(id);
             var dto = _mapper.Map<MedicineDTO>(medicines);
+            var allCategories = _medicineCategoryRepository.GetAllAsync().Result;
+            dto.MedicineCategoryName = allCategories.FirstOrDefault(c => c.MedicineCategoryId == item.MedicineCategoryId)?.ToString() ?? "Unknown Category";
+
             return dto;
         }
 
@@ -65,7 +82,14 @@ namespace BussinessLayer.Service
         {
             var medicines = await _medicineRepository.GetAllAsync();
             var filtered = medicines.Where(m => m.MedicineCategoryId == categoryId).ToList();
-            return _mapper.Map<List<MedicineDTO>>(filtered);
+            var list = _mapper.Map<List<MedicineDTO>>(filtered);
+            var allCategories = _medicineCategoryRepository.GetAllAsync().Result;
+            foreach (var item in list)
+            {
+                item.MedicineCategoryName = allCategories.FirstOrDefault(c => c.MedicineCategoryId == item.MedicineCategoryId)?.ToString() ?? "Unknown Category";
+            }
+            return list;
+
         }
 
         public async Task<List<MedicineDTO>> SearchMedicinesNameAsync(string searchTerm)
@@ -75,7 +99,13 @@ namespace BussinessLayer.Service
                 .Where(m => m.MedicineName.Contains(searchTerm, StringComparison.OrdinalIgnoreCase))
                 .ToList();
 
-            return _mapper.Map<List<MedicineDTO>>(filtered);
+            var list = _mapper.Map<List<MedicineDTO>>(filtered);
+            var allCategories = _medicineCategoryRepository.GetAllAsync().Result;
+            foreach (var item in list)
+            {
+                item.MedicineCategoryName = allCategories.FirstOrDefault(c => c.MedicineCategoryId == item.MedicineCategoryId)?.ToString() ?? "Unknown Category";
+            }
+            return list;
         }
 
         public void UpdateMedicine(UpdateMedicineDTO medicine)
@@ -90,8 +120,8 @@ namespace BussinessLayer.Service
                     entity.DefaultDosage = medicine.DefaultDosage;
                     entity.SideEffects = medicine.SideEffects;
                     entity.Usage = medicine.Usage;
-                    entity.mo = DateTime.Now;
-                    entity.Updatedby = medicine.Updatedby;
+                    entity.ModifiedByUserId = medicine.ModifiedByUserId;
+                    entity.ModifiedAt = DateTime.Now;
                     _medicineRepository.Update(entity);
                     _medicineRepository.Save();
                 }

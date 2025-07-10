@@ -11,7 +11,7 @@ public partial class AccidentReport
 
     public int ReportedByStaffId { get; set; }
 
-    public DateTime ReportDate { get; set; }
+    public DateTime CreatedAt { get; set; }
 
     public string AccidentType { get; set; } = null!;
 
@@ -31,9 +31,11 @@ public partial class AccidentReport
 
     public bool IsDeleted { get; set; }
 
+    public int? CreatedByUserId { get; set; }
+
     public int? ModifiedByUserId { get; set; }
 
-    public DateTime? ModifiedDate { get; set; }
+    public DateTime? ModifiedAt { get; set; }
 
     public virtual Staff ReportedByStaff { get; set; } = null!;
 

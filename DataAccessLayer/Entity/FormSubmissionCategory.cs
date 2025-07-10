@@ -13,11 +13,11 @@ public partial class FormSubmissionCategory
 
     public int? CreatedByUserId { get; set; }
 
-    public DateTime? CreatedDate { get; set; }
+    public DateTime? CreatedAt { get; set; }
 
     public int? ModifiedByUserId { get; set; }
 
-    public DateTime? ModifiedDate { get; set; }
+    public DateTime? ModifiedAt { get; set; }
 
     public virtual ICollection<Form> Forms { get; set; } = new List<Form>();
 }

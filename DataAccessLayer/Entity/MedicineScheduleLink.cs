@@ -25,9 +25,13 @@ public partial class MedicineScheduleLink
 
     public bool IsDeleted { get; set; }
 
-    public int? ModifiedByUserId { get; set; }
+    public DateTime? CreatedAt { get; set; }
 
-    public DateTime? ModifiedDate { get; set; }
+    public DateTime? ModifiedAt { get; set; }
+
+    public int? CreatedByUserId { get; set; }
+
+    public int? ModifiedByUserId { get; set; }
 
     public virtual Personalmedicine PersonalMedicine { get; set; } = null!;
 

@@ -27,7 +27,7 @@ public partial class Student
 
     public DateTime? CreatedAt { get; set; }
 
-    public DateTime? UpdatedAt { get; set; }
+    public DateTime? ModifiedAt { get; set; }
 
     public int? CreatedByUserId { get; set; }
 

@@ -13,5 +13,11 @@ public partial class Role
 
     public DateTime? CreatedAt { get; set; }
 
+    public DateTime? ModifiedAt { get; set; }
+
+    public int? CreatedByUserId { get; set; }
+
+    public int? ModifiedByUserId { get; set; }
+
     public virtual ICollection<Staff> Staff { get; set; } = new List<Staff>();
 }

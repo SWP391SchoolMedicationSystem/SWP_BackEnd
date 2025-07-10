@@ -17,6 +17,10 @@ public partial class Notification
 
     public int? CreatedByUserId { get; set; }
 
+    public DateTime? ModifiedAt { get; set; }
+
+    public int? ModifiedByUserId { get; set; }
+
     public virtual ICollection<NotificationParentDetail> NotificationParentDetails { get; set; } = new List<NotificationParentDetail>();
 
     public virtual ICollection<Notificationstaffdetail> Notificationstaffdetails { get; set; } = new List<Notificationstaffdetail>();

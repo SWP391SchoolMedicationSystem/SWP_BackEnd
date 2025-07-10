@@ -15,7 +15,7 @@ public partial class NotificationParentDetail
 
     public bool IsDeleted { get; set; }
 
-    public DateTime? CreatedDate { get; set; }
+    public DateTime? CreatedAt { get; set; }
 
     public virtual Notification Notification { get; set; } = null!;
 

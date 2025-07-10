@@ -13,13 +13,13 @@ public partial class EmailTemplate
 
     public string? Body { get; set; }
 
-    public DateTime? CreatedDate { get; set; }
+    public DateTime? CreatedAt { get; set; }
 
-    public DateTime? UpdatedDate { get; set; }
+    public DateTime? ModifiedAt { get; set; }
 
-    public string? CreatedBy { get; set; }
+    public int? CreatedByUserId { get; set; }
 
-    public string? UpdatedBy { get; set; }
+    public int? ModifiedByUserId { get; set; }
 
     public bool IsDeleted { get; set; }
 }

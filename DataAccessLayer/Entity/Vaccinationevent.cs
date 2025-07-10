@@ -9,6 +9,8 @@ public partial class VaccinationEvent
 
     public string EventName { get; set; } = null!;
 
+    public string? Organizer { get; set; }
+
     public DateTime EventDate { get; set; }
 
     public string Location { get; set; } = null!;
@@ -19,11 +21,11 @@ public partial class VaccinationEvent
 
     public int? CreatedByUserId { get; set; }
 
-    public DateTime? CreatedDate { get; set; }
+    public DateTime? CreatedAt { get; set; }
 
     public int? ModifiedByUserId { get; set; }
 
-    public DateTime? ModifiedDate { get; set; }
+    public DateTime? ModifiedAt { get; set; }
 
     public virtual ICollection<StudentVaccinationRecord> StudentVaccinationRecords { get; set; } = new List<StudentVaccinationRecord>();
 

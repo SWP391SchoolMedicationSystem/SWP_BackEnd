@@ -15,11 +15,11 @@ public partial class Classroom
 
     public bool IsDeleted { get; set; }
 
-    public DateTime? Createddate { get; set; }
+    public DateTime? CreatedAt { get; set; }
+
+    public DateTime? ModifiedAt { get; set; }
 
     public int? CreatedByUserId { get; set; }
-
-    public DateTime? Modifieddate { get; set; }
 
     public int? ModifiedByUserId { get; set; }
 

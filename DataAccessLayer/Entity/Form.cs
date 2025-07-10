@@ -25,9 +25,13 @@ public partial class Form
 
     public DateTime? ResponseDate { get; set; }
 
-    public DateTime? Createddate { get; set; }
+    public DateTime? CreatedAt { get; set; }
 
-    public DateTime? Modifieddate { get; set; }
+    public DateTime? ModifiedAt { get; set; }
+
+    public int? CreatedByUserId { get; set; }
+
+    public int? ModifiedByUserId { get; set; }
 
     public virtual FormSubmissionCategory Formcategory { get; set; } = null!;
 

@@ -19,9 +19,9 @@ public partial class Parent
 
     public bool IsDeleted { get; set; }
 
-    public DateTime? CreatedDate { get; set; }
+    public DateTime? CreatedAt { get; set; }
 
-    public DateTime? ModifiedDate { get; set; }
+    public DateTime? ModifiedAt { get; set; }
 
     public int? CreatedByUserId { get; set; }
 
@@ -30,6 +30,8 @@ public partial class Parent
     public virtual ICollection<Form> Forms { get; set; } = new List<Form>();
 
     public virtual ICollection<NotificationParentDetail> NotificationParentDetails { get; set; } = new List<NotificationParentDetail>();
+
+    public virtual ICollection<Personalmedicine> Personalmedicines { get; set; } = new List<Personalmedicine>();
 
     public virtual ICollection<Student> Students { get; set; } = new List<Student>();
 

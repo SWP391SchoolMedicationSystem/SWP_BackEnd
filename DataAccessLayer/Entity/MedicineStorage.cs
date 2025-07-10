@@ -21,6 +21,14 @@ public partial class MedicineStorage
 
     public string? Notes { get; set; }
 
+    public DateTime? CreatedAt { get; set; }
+
+    public DateTime? ModifiedAt { get; set; }
+
+    public int? CreatedByUserId { get; set; }
+
+    public int? ModifiedByUserId { get; set; }
+
     public virtual MedicineCatalog Medicine { get; set; } = null!;
 
     public virtual Staff Staff { get; set; } = null!;

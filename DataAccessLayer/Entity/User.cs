@@ -17,6 +17,10 @@ public partial class User
 
     public bool IsDeleted { get; set; }
 
+    public DateTime? CreatedAt { get; set; }
+
+    public DateTime? ModifiedAt { get; set; }
+
     public virtual ICollection<Parent> Parents { get; set; } = new List<Parent>();
 
     public virtual ICollection<Staff> Staff { get; set; } = new List<Staff>();

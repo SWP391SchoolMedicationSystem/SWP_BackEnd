@@ -9,6 +9,8 @@ public partial class Personalmedicine
 
     public int Studentid { get; set; }
 
+    public int Parentid { get; set; }
+
     public string Medicinename { get; set; } = null!;
 
     public int Quantity { get; set; }
@@ -23,13 +25,17 @@ public partial class Personalmedicine
 
     public bool Isdeleted { get; set; }
 
-    public DateTime? Createddate { get; set; }
+    public DateTime? CreatedAt { get; set; }
 
-    public DateTime? Modifieddate { get; set; }
+    public DateTime? ModifiedAt { get; set; }
+
+    public int? CreatedByUserId { get; set; }
 
     public int? ModifiedByUserId { get; set; }
 
     public virtual ICollection<MedicineScheduleLink> MedicineScheduleLinks { get; set; } = new List<MedicineScheduleLink>();
+
+    public virtual Parent Parent { get; set; } = null!;
 
     public virtual Staff Staff { get; set; } = null!;
 

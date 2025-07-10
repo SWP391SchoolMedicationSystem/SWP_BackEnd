@@ -21,5 +21,7 @@ namespace DataAccessLayer.DTO.Medicines
 
         public string? SideEffects { get; set; }
         public bool IsDeleted { get; set; }
+        public int? ModifiedByUserId { get; set; }
+
     }
 }
