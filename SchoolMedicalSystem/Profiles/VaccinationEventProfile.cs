@@ -9,7 +9,7 @@ namespace SchoolMedicalSystem.Profiles
         public VaccinationEventProfile()
         {
             // Entity to DTO mappings
-            CreateMap<Vaccinationevent, VaccinationEventDTO>()
+            CreateMap<VaccinationEvent, VaccinationEventDTO>()
                 .ForMember(dest => dest.VaccinationEventId, opt => opt.MapFrom(src => src.Vaccinationeventid))
                 .ForMember(dest => dest.VaccinationEventName, opt => opt.MapFrom(src => src.Vaccinationeventname))
                 .ForMember(dest => dest.OrganizedBy, opt => opt.MapFrom(src => src.Organizedby))
@@ -20,11 +20,11 @@ namespace SchoolMedicalSystem.Profiles
                 .ForMember(dest => dest.IsDeleted, opt => opt.MapFrom(src => src.Isdeleted));
 
             // DTO to Entity mappings
-            CreateMap<CreateVaccinationEventDTO, Vaccinationevent>()
-                .ForMember(dest => dest.Vaccinationeventname, opt => opt.MapFrom(src => src.VaccinationEventName))
-                .ForMember(dest => dest.Organizedby, opt => opt.MapFrom(src => src.OrganizedBy));
+            CreateMap<CreateVaccinationEventDTO, VaccinationEvent>()
+                .ForMember(dest => dest.EventName, opt => opt.MapFrom(src => src.VaccinationEventName))
+                .ForMember(dest => dest., opt => opt.MapFrom(src => src.OrganizedBy));
 
-            CreateMap<UpdateVaccinationEventDTO, Vaccinationevent>()
+            CreateMap<UpdateVaccinationEventDTO, VaccinationEvent>()
                 .ForMember(dest => dest.Vaccinationeventid, opt => opt.MapFrom(src => src.VaccinationEventId))
                 .ForMember(dest => dest.Vaccinationeventname, opt => opt.MapFrom(src => src.VaccinationEventName))
                 .ForMember(dest => dest.Organizedby, opt => opt.MapFrom(src => src.OrganizedBy));

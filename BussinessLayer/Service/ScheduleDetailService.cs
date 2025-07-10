@@ -15,7 +15,7 @@ namespace BussinessLayer.Service
     {
         public Task AddScheduleDetailAsync(ScheduleDetailDTO scheduleDetail)
         {
-            scheduleDetailRepo.AddAsync(mapper.Map<Scheduledetail>(scheduleDetail));
+            scheduleDetailRepo.AddAsync(mapper.Map<ScheduleDetail>(scheduleDetail));
             scheduleDetailRepo.Save();
             return Task.CompletedTask;
         }
@@ -25,18 +25,18 @@ namespace BussinessLayer.Service
             var scheduleDetail = scheduleDetailRepo.GetByIdAsync(id);
             if (scheduleDetail != null)
             {
-                scheduleDetailRepo.Delete(scheduleDetail.Result.Scheduledetailid);
+                scheduleDetailRepo.Delete(scheduleDetail.Result.ScheduleDetailId);
                 scheduleDetailRepo.Save();
             }
             return Task.CompletedTask;
         }
 
-        public Task<List<Scheduledetail>> GetAllScheduleDetailsAsync()
+        public Task<List<ScheduleDetail>> GetAllScheduleDetailsAsync()
         {
             return scheduleDetailRepo.GetAllAsync();
         }
 
-        public Task<Scheduledetail> GetScheduleDetailByIdAsync(int id)
+        public Task<ScheduleDetail> GetScheduleDetailByIdAsync(int id)
         {
             return scheduleDetailRepo.GetByIdAsync(id);
         }
@@ -49,9 +49,8 @@ namespace BussinessLayer.Service
                 if (entity != null)
                 {
 
-                    entity.Starttime = scheduleDetail.Starttime;
-                    entity.Endtime = scheduleDetail.Endtime;
-                    entity.Dayinweek = scheduleDetail.Dayinweek;
+                    entity.TimeSlot = scheduleDetail.Starttime;
+                    entity.DayOfWeek = scheduleDetail.Dayinweek;
                     scheduleDetailRepo.Update(entity);
                     scheduleDetailRepo.Save();
                 }

@@ -8,7 +8,7 @@ namespace SchoolMedicalSystem.Profiles
     {
         public ScheduleProfile()
         {
-            CreateMap<Scheduledetail, ScheduleDetailDTO>().ReverseMap();    
+            CreateMap<ScheduleDetail, ScheduleDetailDTO>().ReverseMap();    
         }
     }
 }

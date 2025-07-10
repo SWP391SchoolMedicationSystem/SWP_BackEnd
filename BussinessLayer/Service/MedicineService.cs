@@ -22,7 +22,7 @@ namespace BussinessLayer.Service
         }
         public void AddMedicine(CreateMedicineDTO medicine)
         {
-            Medicine entity = _mapper.Map<Medicine>(medicine);
+            MedicineCatalog entity = _mapper.Map<MedicineCatalog>(medicine);
             entity.IsDeleted = false;
             _medicineRepository.AddAsync(entity);
             _medicineRepository.Save();
@@ -64,7 +64,7 @@ namespace BussinessLayer.Service
         public async Task<List<MedicineDTO>> GetMedicinesByCategoryIdAsync(int categoryId)
         {
             var medicines = await _medicineRepository.GetAllAsync();
-            var filtered = medicines.Where(m => m.Medicinecategoryid == categoryId).ToList();
+            var filtered = medicines.Where(m => m.MedicineCategoryId == categoryId).ToList();
             return _mapper.Map<List<MedicineDTO>>(filtered);
         }
 
@@ -72,7 +72,7 @@ namespace BussinessLayer.Service
         {
             var medicines = await _medicineRepository.GetAllAsync();
             var filtered = medicines
-                .Where(m => m.Medicinename.Contains(searchTerm, StringComparison.OrdinalIgnoreCase))
+                .Where(m => m.MedicineName.Contains(searchTerm, StringComparison.OrdinalIgnoreCase))
                 .ToList();
 
             return _mapper.Map<List<MedicineDTO>>(filtered);
@@ -82,14 +82,15 @@ namespace BussinessLayer.Service
         {
             if (medicine != null)
             {
-                var entity = _medicineRepository.GetByIdAsync(medicine.Medicineid).Result;
+                var entity = _medicineRepository.GetByIdAsync(medicine.MedicineId).Result;
                 if (entity != null)
                 {
-                    entity.Medicinename = medicine.Medicinename;
-                    entity.Medicinecategoryid = medicine.Medicinecategoryid;
-                    entity.Type = medicine.Type;
-                    entity.Quantity = medicine.Quantity;
-                    entity.Updatedat = DateTime.Now;
+                    entity.MedicineName = medicine.MedicineName;
+                    entity.MedicineCategoryId = medicine.MedicineCategoryId;
+                    entity.DefaultDosage = medicine.DefaultDosage;
+                    entity.SideEffects = medicine.SideEffects;
+                    entity.Usage = medicine.Usage;
+                    entity.mo = DateTime.Now;
                     entity.Updatedby = medicine.Updatedby;
                     _medicineRepository.Update(entity);
                     _medicineRepository.Save();

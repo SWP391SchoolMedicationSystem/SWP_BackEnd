@@ -12,6 +12,8 @@ namespace DataAccessLayer.DTO.Blogs
         public string Title { get; set; } = null!;
 
         public string Content { get; set; } = null!;
+        public string? ReasonForDecline { get; set; }
+
 
         public int? UpdatedBy { get; set; }
 

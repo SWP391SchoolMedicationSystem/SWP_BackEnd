@@ -12,7 +12,7 @@ namespace SchoolMedicalSystem.Profiles
             CreateMap<PersonalMedicineDTO,Personalmedicine>().ReverseMap();
             CreateMap<UpdatePersonalMedicineDTO, Personalmedicine>().ReverseMap();
             CreateMap<AddPersonalMedicineDTO, Personalmedicine>().ReverseMap();
-            CreateMap<Medicineschedule, PersonalMedicineScheduleDTO>().ReverseMap();
+            CreateMap<MedicineScheduleLink, PersonalMedicineScheduleDTO>().ReverseMap();
         }
     }
 }

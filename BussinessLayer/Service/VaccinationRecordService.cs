@@ -30,15 +30,15 @@ namespace BussinessLayer.Service
 
         public async Task AddVaccinationRecordAsync(VaccinationRecordDTO record)
         {
-           await _vaccinationRecordRepo.AddAsync(_mapper.Map<Vaccinationrecord>(record));
+           await _vaccinationRecordRepo.AddAsync(_mapper.Map<StudentVaccinationRecord>(record));
         }
 
         public async void DeleteVaccinationRecord(int id)
         {
-            Vaccinationrecord vaccinationrecord = await _vaccinationRecordRepo.GetByIdAsync(id);
+            StudentVaccinationRecord vaccinationrecord = await _vaccinationRecordRepo.GetByIdAsync(id);
             if (vaccinationrecord != null)
             {
-                vaccinationrecord.Isdeleted = true;
+                vaccinationrecord.IsDeleted = true;
                 _vaccinationRecordRepo.Update(vaccinationrecord);
                 _vaccinationRecordRepo.Save();
             }
@@ -60,14 +60,14 @@ namespace BussinessLayer.Service
             return recordlist;
         }
 
-        public async Task<Vaccinationrecord> GetVaccinationRecordById(int id)
+        public async Task<StudentVaccinationRecord> GetVaccinationRecordById(int id)
         {
             return await _vaccinationRecordRepo.GetByIdAsync(id) ?? throw new Exception("Vaccination record not found");
         }
 
         public void UpdateVaccinationRecord(VaccinationRecordDTO record)
         {
-             _vaccinationRecordRepo.Update(_mapper.Map<Vaccinationrecord>(record));
+             _vaccinationRecordRepo.Update(_mapper.Map<StudentVaccinationRecord>(record));
             _vaccinationRecordRepo.Save();
 
         }

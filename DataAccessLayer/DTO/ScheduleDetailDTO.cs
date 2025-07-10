@@ -12,6 +12,5 @@ namespace DataAccessLayer.DTO
 
         public TimeOnly Starttime { get; set; }
 
-        public TimeOnly Endtime { get; set; }
     }
 }

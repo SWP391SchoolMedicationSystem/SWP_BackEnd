@@ -8,16 +8,18 @@ namespace DataAccessLayer.DTO.Medicines
 {
     public class UpdateMedicineDTO
     {
-        public int Medicineid { get; set; }
-        public string Medicinename { get; set; } = null!;
 
-        public int Medicinecategoryid { get; set; }
+    public int MedicineId { get; set; }
 
-        public string Type { get; set; } = null!;
+        public string MedicineName { get; set; } = null!;
 
-        public int Quantity { get; set; }
-        public DateTime? Updatedat { get; set; }
-        public string? Updatedby { get; set; }
+        public int? MedicineCategoryId { get; set; }
+
+        public string? Usage { get; set; }
+
+        public string? DefaultDosage { get; set; }
+
+        public string? SideEffects { get; set; }
         public bool IsDeleted { get; set; }
     }
 }

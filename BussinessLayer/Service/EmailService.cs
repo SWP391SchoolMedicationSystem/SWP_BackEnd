@@ -220,9 +220,9 @@ namespace BussinessLayer.Service
             return await SendBulkEmailsAsync(emailDtos, batchSize);
         }
 
-        public async Task<List<VaccinationEmailTemplate>> GetEmailAllTemplate()
+        public async Task<List<EmailTemplate>> GetEmailAllTemplate()
         {
-            return await _context.Vacc.ToListAsync();
+            return await _context.EmailTemplates.ToListAsync();
         }
 
         public EmailDTO GetTemplateByID(int templateId)

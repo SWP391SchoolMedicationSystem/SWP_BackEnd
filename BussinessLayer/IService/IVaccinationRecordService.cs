@@ -11,7 +11,7 @@ namespace BussinessLayer.IService
     public interface IVaccinationRecordService
     {
         Task<List<VaccinationRecordStudentEvent>> GetAllVaccinationRecords();
-        Task<Vaccinationrecord> GetVaccinationRecordById(int id);
+        Task<StudentVaccinationRecord> GetVaccinationRecordById(int id);
         Task AddVaccinationRecordAsync(VaccinationRecordDTO record);
         void UpdateVaccinationRecord(VaccinationRecordDTO record);
         void DeleteVaccinationRecord(int id);

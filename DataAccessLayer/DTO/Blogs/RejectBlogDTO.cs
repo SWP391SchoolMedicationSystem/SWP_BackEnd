@@ -10,6 +10,6 @@ namespace DataAccessLayer.DTO.Blogs
     {
         public int BlogId { get; set; }
         public int? ApprovedBy { get; set; }
-        public string Message { get; set; } = null!; // Reason for rejection
+        public string? ReasonForDecline { get; set; }
     }
 }
