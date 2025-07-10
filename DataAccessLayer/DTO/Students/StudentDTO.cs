@@ -10,15 +10,37 @@ namespace DataAccessLayer.DTO.Students
 {
     public class StudentDTO
     {
-        public int StudentId { get; set; }
-        public string? StudentCode { get; set; }
+        public int Studentid { get; set; }
+
+        public string? StudentCode { get; set; } = null!;
+
         public string Fullname { get; set; } = null!;
-        public string? BloodType { get; set; }
-        public string Classname { get; set; }
+
         public int Age { get; set; }
+
         public DateOnly Dob { get; set; }
-        public bool Gender { get; set; }
-        public ParentStudent parent { get; set; }
+
+        public string Gender { get; set; } = null!;
+
+        public int Classid { get; set; }
+        public string ClassName { get; set; } = null!;
+
+        public int Parentid { get; set; }
+        public ParentStudent Parent { get; set; } = null!;
+
+
+        public bool IsDeleted { get; set; }
+
+
+        public string? BloodType { get; set; }
+
+        public DateTime? CreatedAt { get; set; }
+
+        public DateTime? ModifiedAt { get; set; }
+
+        public int? CreatedByUserId { get; set; }
+
+        public int? ModifiedByUserId { get; set; }
 
     }
 }

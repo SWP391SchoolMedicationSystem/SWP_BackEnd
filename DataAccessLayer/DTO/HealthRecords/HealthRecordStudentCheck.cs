@@ -14,8 +14,8 @@ namespace DataAccessLayer.DTO.HealthRecords
         public string Healthrecordtitle { get; set; } = null!;
         public string Healthrecorddescription { get; set; } = null!;
         public string StaffName { get; set; }
-        public List<VaccinationRecordDTO> VaccinationRecords { get; set; } = new List<VaccinationRecordDTO>();
-        public List<HealthCheckDTO> HealthChecks { get; set; } = new List<HealthCheckDTO>();
+        public List<VaccinationRecordDTO>? VaccinationRecords { get; set; } = new List<VaccinationRecordDTO>();
+        public List<HealthCheckDTO>? HealthChecks { get; set; } = new List<HealthCheckDTO>();
         public string Status { get; set; }
     }
 }

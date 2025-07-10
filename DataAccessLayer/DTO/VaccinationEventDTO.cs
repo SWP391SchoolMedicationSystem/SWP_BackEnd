@@ -5,17 +5,28 @@ namespace DataAccessLayer.DTO
 {
     public class VaccinationEventDTO
     {
-        public int VaccinationEventId { get; set; }
-        public string VaccinationEventName { get; set; } = null!;
-        public string Location { get; set; } = null!;
-        public string OrganizedBy { get; set; } = null!;
-        public DateTime EventDate { get; set; }
-        public string Description { get; set; } = null!;
-        public DateTime CreatedDate { get; set; }
-        public DateTime ModifiedDate { get; set; }
-        public string CreatedBy { get; set; } = null!;
-        public string ModifiedBy { get; set; } = null!;
-        public bool IsDeleted { get; set; }
+    public int EventId { get; set; }
+
+    public string EventName { get; set; } = null!;
+
+    public string? Organizer { get; set; }
+
+    public DateTime EventDate { get; set; }
+
+    public string Location { get; set; } = null!;
+
+    public string? Description { get; set; }
+
+    public bool IsDeleted { get; set; }
+
+    public int? CreatedByUserId { get; set; }
+
+    public DateTime? CreatedAt { get; set; }
+
+    public int? ModifiedByUserId { get; set; }
+
+    public DateTime? ModifiedAt { get; set; }
+
         public int TotalStudents { get; set; }
         public int ConfirmedCount { get; set; }
         public int DeclinedCount { get; set; }
@@ -26,7 +37,7 @@ namespace DataAccessLayer.DTO
     {
         [Required(ErrorMessage = "Vaccination event name is required")]
         [StringLength(255, ErrorMessage = "Event name cannot exceed 255 characters")]
-        public string VaccinationEventName { get; set; } = null!;
+        public string EventName { get; set; } = null!;
 
         [Required(ErrorMessage = "Location is required")]
         [StringLength(255, ErrorMessage = "Location cannot exceed 255 characters")]
@@ -34,23 +45,24 @@ namespace DataAccessLayer.DTO
 
         [Required(ErrorMessage = "Organized by is required")]
         [StringLength(255, ErrorMessage = "Organized by cannot exceed 255 characters")]
-        public string OrganizedBy { get; set; } = null!;
+        public string? Organizer { get; set; }
 
         [Required(ErrorMessage = "Event date is required")]
         public DateTime EventDate { get; set; }
 
         [Required(ErrorMessage = "Description is required")]
-        public string Description { get; set; } = null!;
+        public string? Description { get; set; }
+        public int? CreatedByUserId { get; set; }
     }
 
     public class UpdateVaccinationEventDTO
     {
         [Required(ErrorMessage = "Vaccination event ID is required")]
-        public int VaccinationEventId { get; set; }
+        public int EventId { get; set; }
 
         [Required(ErrorMessage = "Vaccination event name is required")]
         [StringLength(255, ErrorMessage = "Event name cannot exceed 255 characters")]
-        public string VaccinationEventName { get; set; } = null!;
+        public string EventName { get; set; } = null!;
 
         [Required(ErrorMessage = "Location is required")]
         [StringLength(255, ErrorMessage = "Location cannot exceed 255 characters")]
@@ -58,13 +70,14 @@ namespace DataAccessLayer.DTO
 
         [Required(ErrorMessage = "Organized by is required")]
         [StringLength(255, ErrorMessage = "Organized by cannot exceed 255 characters")]
-        public string OrganizedBy { get; set; } = null!;
+        public string? Organizer { get; set; }
 
         [Required(ErrorMessage = "Event date is required")]
         public DateTime EventDate { get; set; }
 
         [Required(ErrorMessage = "Description is required")]
-        public string Description { get; set; } = null!;
+        public string? Description { get; set; }
+        public int? ModifiedByUserId { get; set; }      
     }
 
     public class ParentVaccinationResponseDTO
@@ -73,13 +86,15 @@ namespace DataAccessLayer.DTO
         public int ParentId { get; set; }
 
         [Required(ErrorMessage = "Vaccination event ID is required")]
-        public int VaccinationEventId { get; set; }
+        public int EventId { get; set; }
 
         [Required(ErrorMessage = "Parent consent is required")]
-        public bool ParentConsent { get; set; }
+        public string ParentalConsentStatus { get; set; } = null!;
 
         [Required(ErrorMessage = "Responses are required")]
         public List<StudentVaccinationResponseDTO> Responses { get; set; } = new();
+
+        public int ModifiedByUserId { get; set; }
     }
 
     public class StudentVaccinationResponseDTO
@@ -87,18 +102,24 @@ namespace DataAccessLayer.DTO
         [Required]
         public int StudentId { get; set; }
 
+        public string ParentalConsentStatus { get; set; } = null!;
+
         [Required]
-        public bool WillAttend { get; set; }
+        public DateTime? ConsentResponseDate { get; set; }
 
         public string? ReasonForDecline { get; set; }
     }
 
     public class VaccinationEventSummaryDTO
     {
-        public int VaccinationEventId { get; set; }
-        public string VaccinationEventName { get; set; } = null!;
+        public int EventId { get; set; }
+
+        public string EventName { get; set; } = null!;
+
         public DateTime EventDate { get; set; }
+
         public string Location { get; set; } = null!;
+
         public int TotalStudents { get; set; }
         public int ConfirmedCount { get; set; }
         public int DeclinedCount { get; set; }
@@ -117,7 +138,7 @@ namespace DataAccessLayer.DTO
         public string ClassName { get; set; } = null!;
         public string? ParentalConsentStatus { get; set; }
         public string? ReasonForDecline { get; set; }
-        public DateTime? ResponseDate { get; set; }
+        public DateTime? ConsentResponseDate { get; set; }
         public string Status { get; set; } = null!; // "Confirmed", "Declined", "Pending"
     }
 

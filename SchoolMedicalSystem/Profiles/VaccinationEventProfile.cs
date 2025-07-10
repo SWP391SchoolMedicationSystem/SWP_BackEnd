@@ -9,26 +9,10 @@ namespace SchoolMedicalSystem.Profiles
         public VaccinationEventProfile()
         {
             // Entity to DTO mappings
-            CreateMap<VaccinationEvent, VaccinationEventDTO>()
-                .ForMember(dest => dest.VaccinationEventId, opt => opt.MapFrom(src => src.Vaccinationeventid))
-                .ForMember(dest => dest.VaccinationEventName, opt => opt.MapFrom(src => src.Vaccinationeventname))
-                .ForMember(dest => dest.OrganizedBy, opt => opt.MapFrom(src => src.Organizedby))
-                .ForMember(dest => dest.CreatedDate, opt => opt.MapFrom(src => src.Createddate))
-                .ForMember(dest => dest.ModifiedDate, opt => opt.MapFrom(src => src.Modifieddate))
-                .ForMember(dest => dest.CreatedBy, opt => opt.MapFrom(src => src.Createdby))
-                .ForMember(dest => dest.ModifiedBy, opt => opt.MapFrom(src => src.Modifiedby))
-                .ForMember(dest => dest.IsDeleted, opt => opt.MapFrom(src => src.Isdeleted));
-
+            CreateMap<VaccinationEvent, VaccinationEventDTO>().ReverseMap();
             // DTO to Entity mappings
-            CreateMap<CreateVaccinationEventDTO, VaccinationEvent>()
-                .ForMember(dest => dest.EventName, opt => opt.MapFrom(src => src.VaccinationEventName))
-                .ForMember(dest => dest., opt => opt.MapFrom(src => src.OrganizedBy));
-
-            CreateMap<UpdateVaccinationEventDTO, VaccinationEvent>()
-                .ForMember(dest => dest.Vaccinationeventid, opt => opt.MapFrom(src => src.VaccinationEventId))
-                .ForMember(dest => dest.Vaccinationeventname, opt => opt.MapFrom(src => src.VaccinationEventName))
-                .ForMember(dest => dest.Organizedby, opt => opt.MapFrom(src => src.OrganizedBy));
-
+            CreateMap<CreateVaccinationEventDTO, VaccinationEvent>().ReverseMap();
+            CreateMap<UpdateVaccinationEventDTO, VaccinationEvent>().ReverseMap();
             // VaccinationRecord mappings
             //CreateMap<Vaccinationrecord, ParentVaccinationResponseDTO>()
             //    .ForMember(dest => dest.ParentId, opt => opt.MapFrom(src => src.Student.Parentid))

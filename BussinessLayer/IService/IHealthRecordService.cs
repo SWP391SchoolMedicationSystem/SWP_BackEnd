@@ -10,7 +10,7 @@ namespace BussinessLayer.IService
 {
     public interface IHealthRecordService
     {
-        Task<List<HealthRecord>> GetAllHealthRecordsAsync();
+        Task<List<HealthRecordDto>> GetAllHealthRecordsAsync();
         Task<HealthRecordDto> GetHealthRecordByIdAsync(int id);
         Task AddHealthRecordAsync(CreateHealthRecordDTO healthRecorddto);
         void UpdateHealthRecord(UpdateHealthRecordDTO healthRecorddto, int id);

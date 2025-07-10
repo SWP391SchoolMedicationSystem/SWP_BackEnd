@@ -73,7 +73,7 @@ namespace BussinessLayer.Service
             var medicines = await _medicineRepository.GetByIdAsync(id);
             var dto = _mapper.Map<MedicineDTO>(medicines);
             var allCategories = _medicineCategoryRepository.GetAllAsync().Result;
-            dto.MedicineCategoryName = allCategories.FirstOrDefault(c => c.MedicineCategoryId == item.MedicineCategoryId)?.ToString() ?? "Unknown Category";
+            dto.MedicineCategoryName = allCategories.FirstOrDefault(c => c.MedicineCategoryId == dto.MedicineCategoryId)?.ToString() ?? "Unknown Category";
 
             return dto;
         }

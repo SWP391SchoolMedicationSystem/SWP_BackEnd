@@ -61,7 +61,9 @@ namespace BussinessLayer.Service
             }
             existingCategory.CategoryName = category.CategoryName;
             existingCategory.Description = category.Description;
-            existingCategory.IsDelete = category.IsDelete;
+            existingCategory.IsDeleted = category.IsDelete;
+            existingCategory.ModifiedAt = DateTime.Now;
+            existingCategory.ModifiedByUserId = category.ModifiedByUserId;  
             _specialNeedCategoryRepository.Update(existingCategory);
             _specialNeedCategoryRepository.Save();
         }
@@ -77,7 +79,7 @@ namespace BussinessLayer.Service
             {
                 throw new KeyNotFoundException("Special need category not found.");
             }
-            category.IsDelete = true;
+            category.IsDeleted = true;
             _specialNeedCategoryRepository.Update(category);
             _specialNeedCategoryRepository.Save();
         }

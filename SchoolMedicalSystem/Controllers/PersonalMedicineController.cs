@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using NPOI.XSSF.UserModel;
+using static BussinessLayer.Utils.Constants;
 
 namespace SchoolMedicalSystem.Controllers
 {
@@ -119,7 +120,7 @@ namespace SchoolMedicalSystem.Controllers
         [HttpGet("pending")]
         public async Task<IActionResult> GetPendingRequest()
         {
-            var Personalmedicines = PersonalmedicineService.GetAllPersonalmedicinesAsync().Result.Where(p => !p.Status);
+            var Personalmedicines = PersonalmedicineService.GetAllPersonalmedicinesAsync().Result.Where(p => p.DeliveryStatus == PersonalMedicineStatus.Pending);
             return Ok(Personalmedicines);
         }
         [HttpGet("approval")]
@@ -132,9 +133,9 @@ namespace SchoolMedicalSystem.Controllers
 
 
         [HttpGet("medicine/{medicineId}")]
-        public async Task<IActionResult> GetPersonalmedicinesByMedicineId(int medicineId)
+        public async Task<IActionResult> GetPersonalmedicinesByMedicineId(string medicineName)
         {
-            var Personalmedicines = await PersonalmedicineService.GetPersonalmedicinesByMedicineIdAsync(medicineId);
+            var Personalmedicines = await PersonalmedicineService.GetPersonalmedicinesByMedicineNameAsync(medicineName);
             return Ok(Personalmedicines);
 
         }

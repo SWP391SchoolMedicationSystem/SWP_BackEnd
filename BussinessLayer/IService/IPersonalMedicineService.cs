@@ -22,7 +22,7 @@ namespace BussinessLayer.IService
 
         Task<List<Personalmedicine>> SearchPersonalmedicinesAsync(string searchTerm);
         Task<List<PersonalMedicineDTO>> GetPersonalmedicinesByParentIdAsync(int parentId);
-        Task<List<PersonalMedicineDTO>> GetPersonalmedicinesByMedicineIdAsync(int medicineId);
+        Task<List<PersonalMedicineDTO>> GetPersonalmedicinesByMedicineNameAsync(string medicineName);
         Task<List<PersonalMedicineDTO>> GetPersonalmedicinesByApprovalAsync();
 
         Task<List<PersonalMedicineRequestDTO>> GetRequest();

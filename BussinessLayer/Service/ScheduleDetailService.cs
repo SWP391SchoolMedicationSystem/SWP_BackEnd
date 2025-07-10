@@ -49,8 +49,12 @@ namespace BussinessLayer.Service
                 if (entity != null)
                 {
 
-                    entity.TimeSlot = scheduleDetail.Starttime;
+                    entity.StartTime = scheduleDetail.Starttime;
+                    entity.EndTime = scheduleDetail.Endtime;
                     entity.DayOfWeek = scheduleDetail.Dayinweek;
+                    entity.ModifiedAt = DateTime.Now;
+                    entity.ModifiedByUserId = scheduleDetail.ModifiedByUserId;
+                    entity.Notes = scheduleDetail.Notes;
                     scheduleDetailRepo.Update(entity);
                     scheduleDetailRepo.Save();
                 }

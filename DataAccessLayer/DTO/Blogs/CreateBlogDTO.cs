@@ -12,7 +12,7 @@ namespace DataAccessLayer.DTO.Blogs
 
         public string Content { get; set; } = null!;
 
-        public int CreatedBy { get; set; } //FE return 
+        public int CreatedByUserId { get; set; }
 
         public string? Image { get; set; }
     }

@@ -10,7 +10,9 @@ namespace DataAccessLayer.DTO.PersonalMedicine
     {
         public int Personalmedicineid { get; set; }
 
-        public string? Approvedby { get; set; }
+        public string DeliveryStatus { get; set; } = null!;
+
+        public int ApprovedBy { get; set; }
 
 
     }

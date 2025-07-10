@@ -8,9 +8,9 @@ namespace SchoolMedicalSystem.Profiles
     {
         public VaccinationRecordProfile()
         {
-            CreateMap<Vaccinationrecord, VaccinationRecordDTO>()
+            CreateMap<StudentVaccinationRecord, VaccinationRecordDTO>()
                 .ReverseMap();
-            CreateMap<VaccinationRecordStudentEvent,Vaccinationrecord>().ReverseMap();
+            CreateMap<VaccinationRecordStudentEvent, StudentVaccinationRecord>().ReverseMap();
         }
     }
 }

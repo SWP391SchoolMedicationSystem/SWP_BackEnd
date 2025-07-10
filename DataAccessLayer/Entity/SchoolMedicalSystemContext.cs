@@ -479,6 +479,8 @@ public partial class SchoolMedicalSystemContext : DbContext
             entity.Property(e => e.ModifiedByUserId).HasColumnName("ModifiedByUserID");
             entity.Property(e => e.Title).HasMaxLength(255);
             entity.Property(e => e.Type).HasMaxLength(50);
+            entity.Property(e => e.Message).HasMaxLength(500);
+
         });
 
         modelBuilder.Entity<NotificationParentDetail>(entity =>
@@ -487,10 +489,6 @@ public partial class SchoolMedicalSystemContext : DbContext
 
             entity.ToTable("NotificationParentDetail");
 
-            entity.Property(e => e.CreatedAt)
-                .HasDefaultValueSql("(getdate())")
-                .HasColumnType("datetime");
-            entity.Property(e => e.IsDeleted).HasColumnName("isDeleted");
             entity.Property(e => e.IsRead).HasColumnName("isRead");
             entity.Property(e => e.Message).HasMaxLength(500);
 
@@ -501,6 +499,14 @@ public partial class SchoolMedicalSystemContext : DbContext
             entity.HasOne(d => d.Parent).WithMany(p => p.NotificationParentDetails)
                 .HasForeignKey(d => d.ParentId)
                 .HasConstraintName("FK_NotificationParentDetail_Parent");
+            entity.Property(e => e.CreatedAt)
+    .HasDefaultValueSql("(getdate())")
+    .HasColumnType("datetime");
+            entity.Property(e => e.CreatedByUserId).HasColumnName("CreatedByUserID");
+            entity.Property(e => e.IsDeleted).HasColumnName("isDeleted");
+            entity.Property(e => e.ModifiedAt).HasColumnType("datetime");
+            entity.Property(e => e.ModifiedByUserId).HasColumnName("ModifiedByUserID");
+
         });
 
         modelBuilder.Entity<Notificationstaffdetail>(entity =>
@@ -510,10 +516,6 @@ public partial class SchoolMedicalSystemContext : DbContext
             entity.ToTable("NOTIFICATIONSTAFFDETAILS");
 
             entity.Property(e => e.Staffid).HasColumnName("STAFFID");
-            entity.Property(e => e.CreatedAt)
-                .HasDefaultValueSql("(getdate())")
-                .HasColumnType("datetime");
-            entity.Property(e => e.IsDeleted).HasColumnName("isDeleted");
             entity.Property(e => e.IsRead).HasColumnName("isRead");
             entity.Property(e => e.Message).HasMaxLength(500);
 
@@ -524,6 +526,14 @@ public partial class SchoolMedicalSystemContext : DbContext
             entity.HasOne(d => d.Staff).WithMany(p => p.Notificationstaffdetails)
                 .HasForeignKey(d => d.Staffid)
                 .HasConstraintName("FK_NOTIFICATIONSTAFFDETAILS_STAFF");
+            entity.Property(e => e.CreatedAt)
+.HasDefaultValueSql("(getdate())")
+.HasColumnType("datetime");
+            entity.Property(e => e.CreatedByUserId).HasColumnName("CreatedByUserID");
+            entity.Property(e => e.IsDeleted).HasColumnName("isDeleted");
+            entity.Property(e => e.ModifiedAt).HasColumnType("datetime");
+            entity.Property(e => e.ModifiedByUserId).HasColumnName("ModifiedByUserID");
+
         });
 
         modelBuilder.Entity<Otp>(entity =>
@@ -586,6 +596,8 @@ public partial class SchoolMedicalSystemContext : DbContext
             entity.Property(e => e.CreatedAt)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime");
+            entity.Property(e => e.Note).HasColumnName("NOTE");
+
             entity.Property(e => e.CreatedByUserId).HasColumnName("CreatedByUserID");
             entity.Property(e => e.DeliveryStatus)
                 .HasMaxLength(50)
@@ -791,6 +803,8 @@ public partial class SchoolMedicalSystemContext : DbContext
             entity.Property(e => e.CreatedAt)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime");
+            entity.Property(e => e.Doses).HasColumnName("Doses");
+
             entity.Property(e => e.CreatedByUserId).HasColumnName("CreatedByUserID");
             entity.Property(e => e.DateAdministered).HasColumnType("datetime");
             entity.Property(e => e.EventId).HasColumnName("EventID");

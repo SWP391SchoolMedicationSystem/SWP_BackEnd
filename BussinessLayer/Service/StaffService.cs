@@ -180,7 +180,7 @@ namespace BussinessLayer.Service
         public void UpdateStaff(StaffUpdate staff)
         {
             Staff staffupdated = mapper.Map<Staff>(staff);
-            staffupdated.UpdatedAt = DateTime.Now;
+            staffupdated.ModifiedAt = DateTime.Now;
             staffRepository.Update(staffupdated);
             staffRepository.Save();
         }

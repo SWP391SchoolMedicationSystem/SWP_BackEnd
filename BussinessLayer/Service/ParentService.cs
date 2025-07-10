@@ -58,7 +58,7 @@ namespace BussinessLayer.Service
                 CreatePasswordHash(parent.Password, out byte[] hash, out byte[] salt);
 
                 var newParent = mapper.Map<Parent>(parent);
-                newParent.CreatedDate = DateTime.Now;
+                newParent.CreatedAt = DateTime.Now;
                 UserDTO userdto = new()
                 {
                     isStaff = false,
@@ -153,7 +153,7 @@ namespace BussinessLayer.Service
                 new Claim("Address", parent.Address),
                 new Claim("Status", status),
                 new Claim("Role", "Parent"),
-                new Claim("DateCreated", parent.CreatedDate.ToString())
+                new Claim("DateCreated", parent.CreatedAt.ToString())
            }),
 
                         Expires = DateTime.UtcNow.AddMinutes(180),
@@ -259,7 +259,7 @@ namespace BussinessLayer.Service
                 new Claim("Address", parent.Address),
                 new Claim("Status", status),
                 new Claim("Role", "Parent"),
-                new Claim("DateCreated", parent.CreatedDate.ToString())
+                new Claim("DateCreated", parent.CreatedAt.ToString())
            }),
 
                         Expires = DateTime.UtcNow.AddMinutes(180),

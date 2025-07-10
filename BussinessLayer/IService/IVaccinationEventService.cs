@@ -13,9 +13,9 @@ namespace BussinessLayer.IService
         // CRUD Operations
         Task<List<VaccinationEventDTO>> GetAllEventsAsync();
         Task<VaccinationEventDTO?> GetEventByIdAsync(int eventId);
-        Task<VaccinationEventDTO> CreateEventAsync(CreateVaccinationEventDTO dto, string createdBy);
-        Task<VaccinationEventDTO> UpdateEventAsync(UpdateVaccinationEventDTO dto, string modifiedBy);
-        Task<bool> DeleteEventAsync(int eventId, string deletedBy);
+        Task<VaccinationEventDTO> CreateEventAsync(CreateVaccinationEventDTO dto);
+        Task<VaccinationEventDTO> UpdateEventAsync(UpdateVaccinationEventDTO dto);
+        Task<bool> DeleteEventAsync(int eventId);
         
         // Event Management
         Task<List<VaccinationEventDTO>> GetUpcomingEventsAsync();

@@ -50,25 +50,23 @@ namespace BussinessLayer.Service
         {
             var entity = _mapper.Map<Notification>(dto);
             entity.CreatedAt = DateTime.Now;
-            entity.Createddate = DateTime.Now;
             entity.IsDeleted = false;
 
             _notificationdRepository.AddAsync(entity).GetAwaiter().GetResult();
             _notificationdRepository.Save();
         }
 
-        public void CreateNotificationForParent(CreateNotificationDTO dto)
+        public async void CreateNotificationForParent(CreateNotificationDTO dto)
         {
             try
             {
-                var parentEntities = _parentRepository.GetAll();
+                var parentEntities = await _parentRepository.GetAllAsync();
                 var activeParents = parentEntities.Where(p => !p.IsDeleted).ToList();
 
                 var notification = _mapper.Map<Notification>(dto);
                 notification.CreatedAt = DateTime.Now;
-                notification.Createddate = DateTime.Now;
                 notification.IsDeleted = false;
-                _notificationdRepository.Add(notification);
+                await _notificationdRepository.AddAsync(notification);
                 _notificationdRepository.Save();
 
 
@@ -81,12 +79,12 @@ namespace BussinessLayer.Service
                         Message = dto.Message,
                         IsRead = false,
                         IsDeleted = false,
-                        CreatedDate = DateTime.Now,
-                        CreatedBy = notification.Createdby,
+                        CreatedAt = DateTime.Now,
+                        CreatedByUserId = notification.CreatedByUserId,
                         //                        ModifiedDate = DateTime.Now,
                         //                        ModifiedBy = notification.Modifiedby
                     };
-                    _notificationParentDetailRepo.Add(detail);
+                    await _notificationParentDetailRepo.AddAsync(detail);
                 }
                 _notificationParentDetailRepo.Save();
             }
@@ -105,7 +103,6 @@ namespace BussinessLayer.Service
 
                 var notification = _mapper.Map<Notification>(dto);
                 notification.CreatedAt = DateTime.Now;
-                notification.Createddate = DateTime.Now;
                 notification.IsDeleted = false;
                 _notificationdRepository.Add(notification);
                 _notificationdRepository.Save();
@@ -119,8 +116,8 @@ namespace BussinessLayer.Service
                         Message = dto.Message,
                         IsRead = false,
                         IsDeleted = false,
-                        CreatedDate = DateTime.Now,
-                        CreatedBy = notification.Createdby,
+                        CreatedAt = DateTime.Now,
+                        CreatedByUserId = notification.CreatedByUserId,
                         //                        ModifiedDate = DateTime.Now,
                         //                        ModifiedBy = notification.Modifiedby
                     };
@@ -189,19 +186,20 @@ namespace BussinessLayer.Service
             return notifications;
         }
 
-        public void UpdateNotificationForParent(UpdateNotificationDTO dto, int notificationId)
+        public void UpdateNotificationForParent(UpdateNotificationDTO dto)
         {
             try
             {
-                var notification = _notificationdRepository.GetByIdAsync(notificationId).Result;
+                var notification = _notificationdRepository.GetByIdAsync(dto.NotificationId).Result;
                 if (notification == null || notification.IsDeleted == true)
                 {
                     throw new Exception("Notification not found or has been deleted.");
                 }
                 notification.Title = dto.Title;
                 notification.Type = dto.Type;
-                notification.Modifieddate = DateTime.Now;
-                notification.Modifiedby = dto.Modifiedby;
+                notification.ModifiedAt = DateTime.Now;
+                notification.ModifiedByUserId = dto.ModifiedByUserId;
+                notification.IsDeleted = dto.IsDeleted;
 
                 _notificationdRepository.Update(notification);
                 _notificationdRepository.Save();
@@ -210,7 +208,7 @@ namespace BussinessLayer.Service
 
                 var existingDetails = _notificationParentDetailRepo
                     .GetAll()
-                    .Where(d => d.NotificationId == notificationId)
+                    .Where(d => d.NotificationId == dto.NotificationId)
                     .ToList();
 
                 foreach (var parent in activeParents)
@@ -220,8 +218,8 @@ namespace BussinessLayer.Service
                     if (existingDetail != null)
                     {
                         existingDetail.Message = dto.Message;
-                        existingDetail.ModifiedDate = DateTime.Now;
-                        existingDetail.ModifiedBy = dto.Modifiedby;
+                        existingDetail.ModifiedAt = DateTime.Now;
+                        existingDetail.ModifiedByUserId = dto.ModifiedByUserId;
 
                         _notificationParentDetailRepo.Update(existingDetail);
                     }
@@ -235,10 +233,10 @@ namespace BussinessLayer.Service
                             Message = dto.Message,
                             IsRead = false,
                             IsDeleted = false,
-                            CreatedDate = DateTime.Now,
-                            CreatedBy = notification.Createdby,
-                            ModifiedDate = DateTime.Now,
-                            ModifiedBy = dto.Modifiedby
+                            CreatedAt = DateTime.Now,
+                            CreatedByUserId = notification.CreatedByUserId,
+                            ModifiedAt = DateTime.Now,
+                            ModifiedByUserId = dto.ModifiedByUserId
                         };
 
                         _notificationParentDetailRepo.Add(newDetail);
@@ -253,19 +251,19 @@ namespace BussinessLayer.Service
             }
         }
 
-        public void UpdateNotificationForStaff(UpdateNotificationDTO dto, int id)
+        public void UpdateNotificationForStaff(UpdateNotificationDTO dto)
         {
             try
             {
-                var notification = _notificationdRepository.GetByIdAsync(id).Result;
+                var notification = _notificationdRepository.GetByIdAsync(dto.NotificationId).Result;
                 if (notification == null || notification.IsDeleted == true)
                 {
                     throw new Exception("Notification not found or has been deleted.");
                 }
                 notification.Title = dto.Title;
                 notification.Type = dto.Type;
-                notification.Modifieddate = DateTime.Now;
-                notification.Modifiedby = dto.Modifiedby;
+                notification.ModifiedAt = DateTime.Now;
+                notification.ModifiedByUserId = dto.ModifiedByUserId;
 
                 _notificationdRepository.Update(notification);
                 _notificationdRepository.Save();
@@ -274,7 +272,7 @@ namespace BussinessLayer.Service
 
                 var existingDetails = _notificationStaffDetailRepo
                     .GetAll()
-                    .Where(d => d.NotificationId == id)
+                    .Where(d => d.NotificationId == dto.NotificationId)
                     .ToList();
 
                 foreach (var staff in activeStaffs)
@@ -285,8 +283,8 @@ namespace BussinessLayer.Service
                     {
                         existingDetail.Message = dto.Message;
 
-                        existingDetail.ModifiedDate = DateTime.Now;
-                        existingDetail.ModifiedBy = dto.Modifiedby;
+                        existingDetail.ModifiedAt = DateTime.Now;
+                        existingDetail.ModifiedByUserId = dto.ModifiedByUserId;
 
                         _notificationStaffDetailRepo.Update(existingDetail);
                     }
@@ -300,10 +298,10 @@ namespace BussinessLayer.Service
                             Message = dto.Message,
                             IsRead = false,
                             IsDeleted = false,
-                            CreatedDate = DateTime.Now,
-                            CreatedBy = notification.Createdby,
-                            ModifiedDate = DateTime.Now,
-                            ModifiedBy = dto.Modifiedby
+                            CreatedAt = DateTime.Now,
+                            CreatedByUserId = notification.CreatedByUserId,
+                            ModifiedAt = DateTime.Now,
+                            ModifiedByUserId = dto.ModifiedByUserId
                         };
 
                         _notificationStaffDetailRepo.Add(newDetail);

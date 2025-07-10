@@ -94,13 +94,13 @@ namespace SchoolMedicalSystem.Controllers
         }
         [HttpPut]
         [Route("updateParentNoti/{id}")]
-        public IActionResult UpdateNotificationForParent([FromBody] UpdateNotificationDTO dto, int id)
+        public IActionResult UpdateNotificationForParent([FromBody] UpdateNotificationDTO dto)
         {
-            if (dto == null || id <= 0)
+            if (dto == null || dto.NotificationId <= 0)
                 return BadRequest("Invalid data.");
             try
             {
-                _notificationService.UpdateNotificationForParent(dto, id);
+                _notificationService.UpdateNotificationForParent(dto);
                 return Ok("Notification for parent updated successfully.");
             }
             catch (Exception ex)
@@ -110,13 +110,13 @@ namespace SchoolMedicalSystem.Controllers
         }
         [HttpPut]
         [Route("updateStaffNoti/{id}")]
-        public IActionResult UpdateNotificationForStaff([FromBody] UpdateNotificationDTO dto, int id)
+        public IActionResult UpdateNotificationForStaff([FromBody] UpdateNotificationDTO dto)
         {
-            if (dto == null || id <= 0)
+            if (dto == null || dto.NotificationId <= 0)
                 return BadRequest("Invalid data.");
             try
             {
-                _notificationService.UpdateNotificationForStaff(dto, id);
+                _notificationService.UpdateNotificationForStaff(dto);
                 return Ok("Notification for staff updated successfully.");
             }
             catch (Exception ex)

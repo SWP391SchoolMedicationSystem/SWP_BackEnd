@@ -65,9 +65,9 @@ namespace SchoolMedicalSystem.Controllers
                     return BadRequest(ModelState);
 
                 var createdBy = User.FindFirst(ClaimTypes.Name)?.Value ?? "System";
-                var vaccinationEvent = await _vaccinationEventService.CreateEventAsync(dto, createdBy);
+                var vaccinationEvent = await _vaccinationEventService.CreateEventAsync(dto);
 
-                return CreatedAtAction(nameof(GetEvent), new { id = vaccinationEvent.VaccinationEventId }, vaccinationEvent);
+                return CreatedAtAction(nameof(GetEvent), new { id = vaccinationEvent.EventId }, vaccinationEvent);
             }
             catch (Exception ex)
             {
@@ -85,7 +85,7 @@ namespace SchoolMedicalSystem.Controllers
                     return BadRequest(ModelState);
 
                 var modifiedBy = User.FindFirst(ClaimTypes.Name)?.Value ?? "System";
-                var vaccinationEvent = await _vaccinationEventService.UpdateEventAsync(dto, modifiedBy);
+                var vaccinationEvent = await _vaccinationEventService.UpdateEventAsync(dto);
 
                 return Ok(vaccinationEvent);
             }
@@ -106,7 +106,7 @@ namespace SchoolMedicalSystem.Controllers
             try
             {
                 var deletedBy = User.FindFirst(ClaimTypes.Name)?.Value ?? "System";
-                var result = await _vaccinationEventService.DeleteEventAsync(id, deletedBy);
+                var result = await _vaccinationEventService.DeleteEventAsync(id);
 
                 if (!result)
                     return NotFound("Vaccination event not found.");

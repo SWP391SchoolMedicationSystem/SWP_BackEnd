@@ -14,5 +14,7 @@ namespace DataAccessLayer.DTO.SpecialNeedCategory
 
         public string? Description { get; set; }
         public bool IsDelete { get; set; }
+        public int? ModifiedByUserId { get; set; }
+
     }
 }

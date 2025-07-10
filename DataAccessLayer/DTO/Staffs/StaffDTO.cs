@@ -12,17 +12,22 @@ namespace DataAccessLayer.DTO.Staffs
 
         public string Fullname { get; set; } = null!;
 
-        public string Email { get; set; } = null!;
+        public string? Email { get; set; }
 
-        public string Phone { get; set; } = null!;
+        public string? Phone { get; set; }
 
         public int Roleid { get; set; }
 
-        public DateTime CreatedAt { get; set; }
-
-        public DateTime UpdatedAt { get; set; }
+        public int Userid { get; set; }
 
         public bool IsDeleted { get; set; }
-        public int UserID { get; set; }
+
+        public DateTime? CreatedAt { get; set; }
+
+        public DateTime? ModifiedAt { get; set; }
+
+        public int? CreatedByUserId { get; set; }
+
+        public int? ModifiedByUserId { get; set; }
     }
 }

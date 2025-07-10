@@ -8,16 +8,24 @@ namespace DataAccessLayer.DTO.Students
 {
     public class UpdateStudentDTo
     {
-        public int Id { get; set; }
-        public string? StudentCode { get; set; }
+        public int Studentid { get; set; }
+
+        public string? StudentCode { get; set; } = null!;
+
         public string Fullname { get; set; } = null!;
+
         public int Age { get; set; }
-        public string? BloodType { get; set; }
-        public bool Gender { get; set; }
-        public int Classid { get; set; }
-        public int Parentid { get; set; }
+
         public DateOnly Dob { get; set; }
-        public DateOnly UpdatedAt { get; set; } = DateOnly.FromDateTime(DateTime.Now);
+
+        public string Gender { get; set; } = null!;
+        public string? BloodType { get; set; }
+
+
+        public int Classid { get; set; }
+
+        public int Parentid { get; set; }
+        public int? ModifiedByUserId { get; set; }
 
     }
 }

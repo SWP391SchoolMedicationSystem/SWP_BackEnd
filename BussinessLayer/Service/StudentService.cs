@@ -17,6 +17,7 @@ using Microsoft.AspNetCore.Http;
 using NPOI.HSSF.UserModel;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
+using static BussinessLayer.Utils.Constants;
 
 namespace BussinessLayer.Service
 {
@@ -38,7 +39,10 @@ namespace BussinessLayer.Service
         public async Task<Student> AddStudentAsync(UpdateStudentDTo student)
         {
             Student addedstudent = _mapper.Map<Student>(student);
-            await _studentrepo.AddAsync(addedstudent);
+            if (student.Gender == GenderStatus.Male) addedstudent.Gender = true;
+            else addedstudent.Gender = false;
+
+                await _studentrepo.AddAsync(addedstudent);
             return addedstudent;
         }
 
@@ -61,8 +65,10 @@ namespace BussinessLayer.Service
                 var parent = await _parentrepo.GetByIdAsync(student.Parentid);
                 var listparent = _mapper.Map<ParentStudent>(parent);
                 var studentDTO = _mapper.Map<StudentDTO>(student);
-                studentDTO.parent = listparent;
-                studentDTO.Classname = _classroomrepo.GetByIdAsync(student.Classid).Result.Classname;
+                if (student.Gender) studentDTO.Gender = GenderStatus.Male;
+                else studentDTO.Gender = GenderStatus.Female;
+                studentDTO.Parent = listparent;
+                studentDTO.ClassName = _classroomrepo.GetByIdAsync(student.Classid).Result.Classname;
                 returnlist.Add(studentDTO);
             }
             return returnlist;
@@ -75,10 +81,15 @@ namespace BussinessLayer.Service
             {
                 throw new KeyNotFoundException($"Student with id {id} not found.");
             }
-            var studentdto = _mapper.Map<StudentDTO>(student);
-            studentdto.parent = _mapper.Map<ParentStudent>(await _parentrepo.GetByIdAsync(student.Parentid));
-            studentdto.Classname = (await _classroomrepo.GetByIdAsync(student.Classid)).Classname;
-            return studentdto;
+            var parent = await _parentrepo.GetByIdAsync(student.Parentid);
+            var listparent = _mapper.Map<ParentStudent>(parent);
+            var studentDTO = _mapper.Map<StudentDTO>(student);
+            if (student.Gender) studentDTO.Gender = GenderStatus.Male;
+            else studentDTO.Gender = GenderStatus.Female;
+            studentDTO.Parent = listparent;
+            studentDTO.ClassName = _classroomrepo.GetByIdAsync(student.Classid).Result.Classname;
+            
+            return studentDTO;
         }
 
         public async Task<List<StudentDTO>> GetStudentByParentId(int parentId)
@@ -90,10 +101,12 @@ namespace BussinessLayer.Service
             foreach (var student in filteredStudents)
             {
                 var parent = await _parentrepo.GetByIdAsync(student.Parentid);
-                var parentdto = _mapper.Map<ParentStudent>(parent);
+                var listparent = _mapper.Map<ParentStudent>(parent);
                 var studentDTO = _mapper.Map<StudentDTO>(student);
-                studentDTO.parent = parentdto;
-                studentDTO.Classname = _classroomrepo.GetByIdAsync(student.Classid).Result.Classname;
+                if (student.Gender) studentDTO.Gender = GenderStatus.Male;
+                else studentDTO.Gender = GenderStatus.Female;
+                studentDTO.Parent = listparent;
+                studentDTO.ClassName = _classroomrepo.GetByIdAsync(student.Classid).Result.Classname;
                 returnlist.Add(studentDTO);
             }
             return returnlist;
@@ -101,7 +114,7 @@ namespace BussinessLayer.Service
 
         public async Task<Student> UpdateStudentAsync(UpdateStudentDTo student)
         {
-            var s = await _studentrepo.GetByIdAsync(student.Id);
+            var s = await _studentrepo.GetByIdAsync(student.Studentid);
             if (s == null)
                 return null;
 
@@ -109,11 +122,12 @@ namespace BussinessLayer.Service
             s.Fullname = student.Fullname;
             s.Age = student.Age;
             s.BloodType = student.BloodType;
-            s.Gender = student.Gender;
+            s.Gender = student.Gender == GenderStatus.Male;
             s.Dob = student.Dob;
             s.Classid = student.Classid;
             s.Parentid = student.Parentid;
-            s.UpdatedAt = DateTime.Now;
+            s.ModifiedByUserId = student.ModifiedByUserId;
+            s.ModifiedAt = DateTime.Now;
             _studentrepo.Update(s);
             await _studentrepo.SaveChangesAsync();
             return s;
@@ -148,7 +162,7 @@ namespace BussinessLayer.Service
                                     Classid = classroom.Classid,
                                     Parentid = parent.Parentid,
                                     Dob = student.birthDate,
-                                    Gender = student.gender == "Nam" ? true : student.gender == "Nữ" ? false : throw new ArgumentException("Invalid gender value"),
+                                    Gender = student.gender,
                                     StudentCode = student.studentCode,
                                 };
                                 Student newstudent = await AddStudentAsync(addstudent);

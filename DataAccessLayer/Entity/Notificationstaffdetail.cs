@@ -17,6 +17,12 @@ public partial class Notificationstaffdetail
 
     public DateTime? CreatedAt { get; set; }
 
+    public DateTime? ModifiedAt { get; set; }
+
+    public int? CreatedByUserId { get; set; }
+
+    public int? ModifiedByUserId { get; set; }
+
     public virtual Notification Notification { get; set; } = null!;
 
     public virtual Staff Staff { get; set; } = null!;

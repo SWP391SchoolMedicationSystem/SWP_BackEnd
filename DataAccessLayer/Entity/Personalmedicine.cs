@@ -15,6 +15,8 @@ public partial class Personalmedicine
 
     public int Quantity { get; set; }
 
+    public string Note { get;set; } = null!;
+
     public DateTime Receivedate { get; set; }
 
     public DateTime Expirydate { get; set; }

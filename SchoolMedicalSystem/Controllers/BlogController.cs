@@ -117,7 +117,7 @@ namespace SchoolMedicalSystem.Controllers
             try
             {
                 _blogService.RejectBlog(rejectBlogDto);
-                return Ok(new { Message = rejectBlogDto.Message });
+                return Ok(new { Message = rejectBlogDto.ReasonForDecline });
             }
             catch (Exception ex)
             {

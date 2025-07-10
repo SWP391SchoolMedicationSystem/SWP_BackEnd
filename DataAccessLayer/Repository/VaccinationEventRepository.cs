@@ -108,7 +108,7 @@ namespace DataAccessLayer.Repository
                            ClassName = c.Classname,
                            ParentalConsentStatus = vr.ParentalConsentStatus,
                            ReasonForDecline = vr.ReasonForDecline,
-                           ResponseDate = vr.ConsentResponseDate,
+                           ConsentResponseDate = vr.ConsentResponseDate,
                            Status = vr.ParentalConsentStatus == null ? FormStatus.Pending :
                                    vr.ParentalConsentStatus == FormStatus.Accepted ? FormStatus.Accepted :
                                    vr.ParentalConsentStatus == FormStatus.Rejected ? FormStatus.Rejected : FormStatus.Pending
@@ -135,8 +135,8 @@ namespace DataAccessLayer.Repository
 
             return new VaccinationEventSummaryDTO
             {
-                VaccinationEventId = eventId,
-                VaccinationEventName = eventInfo.EventName,
+                EventId = eventId,
+                EventName = eventInfo.EventName,
                 EventDate = eventInfo.EventDate,
                 Location = eventInfo.Location,
                 TotalStudents = totalStudents,

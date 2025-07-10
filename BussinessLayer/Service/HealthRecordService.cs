@@ -61,15 +61,14 @@ namespace BussinessLayer.Service
 
             if (entity != null)
             {
-                entity.Status = FormStatus.Deleted;
                 _healthRecordRepository.Update(entity);
                 _healthRecordRepository.Save();
             }
         }
 
-        public async Task<List<HealthRecord>> GetAllHealthRecordsAsync()
+        public async Task<List<HealthRecordDto>> GetAllHealthRecordsAsync()
         {
-            List<HealthRecord> healthRecords = _mapper.Map<List<HealthRecord>>(await _healthRecordRepository.GetAllAsync());
+            var healthRecords = _mapper.Map<List<HealthRecordDto>>(await _healthRecordRepository.GetAllAsync());
             return healthRecords;
         }
 
@@ -79,32 +78,37 @@ namespace BussinessLayer.Service
             return healthRecord;
         }
 
-        public Task<List<HealthRecordStudentCheck>> GetHealthRecords()
+        public async Task<List<HealthRecordStudentCheck>> GetHealthRecords()
         {
-            var healthrecordList = _healthRecordRepository.GetAllAsync().Result;
+            var healthrecordList = await _healthRecordRepository.GetAllAsync();
             List<HealthRecordStudentCheck> healthRecordStudentChecks = new List<HealthRecordStudentCheck>();
+            var student = await _studentRepository.GetAllAsync();
+            var staff = await _staffRepository.GetAllAsync();
+            var healthCategory = await _healthCategoryRepo.GetAllAsync();
+            var vaccinationRecords = await _ivaccinationRecordRepository.GetAllAsync();
+            var healthChecks = await _healthCheckRepository.GetAllAsync();
+
             foreach (var healthRecord in healthrecordList)
             {
-                var student = _studentRepository.GetByIdAsync(healthRecord.StudentId).Result;
-                var staff = _staffRepository.GetByIdAsync(healthRecord.StaffId).Result;
-                var healthCategory = _healthCategoryRepo.GetByIdAsync(healthRecord.HealthCategoryId).Result;
-                var vaccinationRecords = _ivaccinationRecordRepository.GetRecordsByStudentAsync(healthRecord.StudentId).Result;
-                var healthChecks = _healthCheckRepository.GetHealthChecksByStudentIdAsync(healthRecord.StudentId).Result;
                 HealthRecordStudentCheck check = new HealthRecordStudentCheck
                 {
-                    StudentName = student.Fullname,
-                    HealthCategory = healthCategory.CategoryName,
+                    StudentName = student.FirstOrDefault(s => s.Studentid == healthRecord.StudentId)?.Fullname ?? "Không tên",
+                    HealthCategory = healthCategory.FirstOrDefault(hc => hc.HealthCategoryId == healthRecord.HealthCategoryId)?.CategoryName ?? "Không xác định",
                     HealthRecordDate = healthRecord.HealthRecordDate,
                     Healthrecordtitle = healthRecord.HealthRecordTitle,
                     Healthrecorddescription = healthRecord.HealthRecordDescription ?? string.Empty,
-                    StaffName = staff.Fullname,
+                    StaffName = staff.FirstOrDefault(s => s.Staffid == healthRecord.StaffId)?.Fullname ?? "Không tên nhân viên",
                     Status = healthRecord.Status,
-                    VaccinationRecords = _mapper.Map<List<VaccinationRecordDTO>>(vaccinationRecords),
-                    HealthChecks = _mapper.Map<List<HealthCheckDTO>>(healthChecks)
+                    VaccinationRecords = vaccinationRecords.FirstOrDefault(vr => vr.StudentId == healthRecord.StudentId) != null
+                        ? _mapper.Map<List<VaccinationRecordDTO>>(vaccinationRecords.Where(vr => vr.StudentId == healthRecord.StudentId).ToList())
+                        : null, // Check thử trước nếu có null thì trả null, không thì mới mapping
+                    HealthChecks = healthChecks.FirstOrDefault(hc => hc.Studentid == healthRecord.StudentId) != null
+                        ? _mapper.Map<List<HealthCheckDTO>>(healthChecks.Where(hc => hc.Studentid == healthRecord.StudentId).ToList())
+                        : null
                 };
                 healthRecordStudentChecks.Add(check);
             }
-            return Task.FromResult(healthRecordStudentChecks);
+            return healthRecordStudentChecks;
         }
 
         public Task<List<HealthRecord>> GetHealthRecordsByStudentIdAsync(int studentId)
@@ -115,31 +119,33 @@ namespace BussinessLayer.Service
             return Task.FromResult(news); // Wrap the result in a Task
         }
 
-        public Task<HealthRecordStudentCheck> GetHealthRecordsByStudentIdWithCheckAsync(int studentId)
+        public async Task<HealthRecordStudentCheck> GetHealthRecordsByStudentIdWithCheckAsync(int studentId)
         {
-            var List = _healthRecordRepository.GetAll();
+            var List = await _healthRecordRepository.GetAllAsync();
             var healthrecordList = List.FirstOrDefault(h => h.StudentId == studentId);
-            List<HealthRecordStudentCheck> healthRecordStudentChecks = new List<HealthRecordStudentCheck>();
+            var student = await _studentRepository.GetAllAsync();
+            var staff = await _staffRepository.GetAllAsync();
+            var healthCategory = await _healthCategoryRepo.GetAllAsync();
+            var vaccinationRecords = await _ivaccinationRecordRepository.GetAllAsync();
+            var healthChecks = await _healthCheckRepository.GetAllAsync();
 
-                var student = _studentRepository.GetByIdAsync(healthrecordList.StudentId).Result;
-                var staff = _staffRepository.GetByIdAsync(healthrecordList.StaffId).Result;
-                var healthCategory = _healthCategoryRepo.GetByIdAsync(healthrecordList.HealthCategoryId).Result;
-                var vaccinationRecords = _ivaccinationRecordRepository.GetRecordsByStudentAsync(healthrecordList.StudentId).Result;
-                var healthChecks = _healthCheckRepository.GetHealthChecksByStudentIdAsync(healthrecordList.StudentId).Result;
                 HealthRecordStudentCheck check = new HealthRecordStudentCheck
                 {
-                    StudentName = student.Fullname,
-                    HealthCategory = healthCategory.CategoryName,
+                    StudentName = student.FirstOrDefault(s => s.Studentid == healthrecordList.StudentId)?.Fullname ?? "Không tên",
+                    HealthCategory = healthCategory.FirstOrDefault(hc => hc.HealthCategoryId == healthrecordList.HealthCategoryId)?.CategoryName ?? "Không xác định",
                     HealthRecordDate = healthrecordList.HealthRecordDate,
                     Healthrecordtitle = healthrecordList.HealthRecordTitle,
                     Healthrecorddescription = healthrecordList.HealthRecordDescription ?? string.Empty,
-                    StaffName = staff.Fullname,
+                    StaffName = staff.FirstOrDefault(s => s.Staffid == healthrecordList.StaffId)?.Fullname ?? "Không tên nhân viên",
                     Status = healthrecordList.Status,
-                    VaccinationRecords = _mapper.Map<List<VaccinationRecordDTO>>(vaccinationRecords),
-                    HealthChecks = _mapper.Map<List<HealthCheckDTO>>(healthChecks)
+                    VaccinationRecords = vaccinationRecords.FirstOrDefault(vr => vr.StudentId == healthrecordList.StudentId) != null
+                        ? _mapper.Map<List<VaccinationRecordDTO>>(vaccinationRecords.Where(vr => vr.StudentId == healthrecordList.StudentId).ToList())
+                        : null, // Check thử trước nếu có null thì trả null, không thì mới mapping
+                    HealthChecks = healthChecks.FirstOrDefault(hc => hc.Studentid == healthrecordList.StudentId) != null
+                        ? _mapper.Map<List<HealthCheckDTO>>(healthChecks.Where(hc => hc.Studentid == healthrecordList.StudentId).ToList())
+                        : null
                 };
-            
-            return Task.FromResult(check);
+            return (check);
         }
 
         public void UpdateHealthRecord(UpdateHealthRecordDTO healthRecorddto, int id)

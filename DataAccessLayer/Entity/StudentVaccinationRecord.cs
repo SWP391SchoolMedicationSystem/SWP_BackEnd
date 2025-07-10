@@ -13,6 +13,8 @@ public partial class StudentVaccinationRecord
 
     public int? EventId { get; set; }
 
+    public int? Doses { get; set; }
+
     public string ParentalConsentStatus { get; set; } = null!;
 
     public string? ReasonForDecline { get; set; }

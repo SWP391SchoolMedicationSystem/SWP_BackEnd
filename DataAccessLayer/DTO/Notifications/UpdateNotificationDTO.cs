@@ -8,6 +8,7 @@ namespace DataAccessLayer.DTO.Notifications
 {
     public class UpdateNotificationDTO
     {
+        public int NotificationId { get; set; }
         public string Title { get; set; } = null!;
 
         public string Type { get; set; } = null!;
@@ -16,8 +17,7 @@ namespace DataAccessLayer.DTO.Notifications
 
         public string? Message { get; set; }
 
-        public string? Modifiedby { get; set; }
+        public int? ModifiedByUserId { get; set; }
 
-        public DateTime? Modifieddate { get; set; }
     }
 }

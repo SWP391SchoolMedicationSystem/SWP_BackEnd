@@ -11,6 +11,11 @@ namespace DataAccessLayer.DTO
         public int Dayinweek { get; set; }
 
         public TimeOnly Starttime { get; set; }
+        public TimeOnly Endtime { get; set; }
+
+        public int? ModifiedByUserId { get; set; }
+        public string? Notes { get; set; }
+
 
     }
 }

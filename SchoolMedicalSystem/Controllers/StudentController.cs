@@ -87,7 +87,7 @@ namespace SchoolMedicalSystem.Controllers
                 return BadRequest("Student data cannot be null.");
             var s = await _studentService.UpdateStudentAsync(student);
             if (s == null)
-                return NotFound($"Student with ID {student.Id} not found.");
+                return NotFound($"Student with ID {student.Studentid} not found.");
             return Ok(s);
         }
 

@@ -45,7 +45,7 @@ namespace BussinessLayer.Service
             {
                 throw new KeyNotFoundException("Student special need not found.");
             }
-            studentSpecialNeed.IsDelete = true;
+            studentSpecialNeed.IsDeleted = true;
             _studentNeedRepository.Update(studentSpecialNeed);
             _studentNeedRepository.Save();
         }
@@ -99,7 +99,7 @@ namespace BussinessLayer.Service
             existingEntity.StudentId = entity.StudentId;
             existingEntity.SpecialNeedCategoryId = entity.SpecialNeedCategoryId;
             existingEntity.Notes = entity.Notes;
-            existingEntity.IsDelete = entity.IsDelete;
+            existingEntity.IsDeleted = entity.IsDeleted;
             _studentNeedRepository.Update(existingEntity);
             _studentNeedRepository.Save();
         }

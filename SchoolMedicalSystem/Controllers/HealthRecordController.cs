@@ -35,7 +35,7 @@ namespace SchoolMedicalSystem.Controllers
 
         [HttpGet]
         [Route("getAll")]
-        public async Task<ActionResult<List<Healthrecord>>> GetAll()
+        public async Task<ActionResult<List<HealthRecord>>> GetAll()
         {
             var result = await _healthRecordService.GetAllHealthRecordsAsync();
             return Ok(result);
@@ -53,7 +53,7 @@ namespace SchoolMedicalSystem.Controllers
 
         [HttpGet]
         [Route("getByStudentId")]
-        public async Task<ActionResult<List<Healthrecord>>> GetByStudentId([FromQuery] int studentId)
+        public async Task<ActionResult<List<HealthRecord>>> GetByStudentId([FromQuery] int studentId)
         {
             var result = await _healthRecordService.GetHealthRecordsByStudentIdAsync(studentId);
             return Ok(result);

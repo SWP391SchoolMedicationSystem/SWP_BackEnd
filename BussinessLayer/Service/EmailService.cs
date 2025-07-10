@@ -243,7 +243,7 @@ namespace BussinessLayer.Service
         public async Task<EmailTemplate> CreateEmailTemplate(EmailDTO request)
         {
             var emailTemplate = _mapper.Map<EmailTemplate>(request);
-            emailTemplate.CreatedDate = DateTime.Now;
+            emailTemplate.CreatedAt = DateTime.Now;
             _context.EmailTemplates.Add(emailTemplate);
             await _context.SaveChangesAsync();
 
@@ -258,7 +258,7 @@ namespace BussinessLayer.Service
             emailTemplate.To = request.To;
             emailTemplate.Subject = request.Subject;
             emailTemplate.Body = request.Body;
-            emailTemplate.UpdatedDate = DateTime.Now;
+            emailTemplate.ModifiedAt = DateTime.Now;
             _context.EmailTemplates.Update(emailTemplate);
             await _context.SaveChangesAsync();
             return emailTemplate;

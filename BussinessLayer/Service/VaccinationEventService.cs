@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Reflection;
 using AutoMapper;
 using BussinessLayer.IService;
@@ -11,6 +11,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NPOI.POIFS.Properties;
 using Scriban;
+using static BussinessLayer.Utils.Constants;
 
 namespace BussinessLayer.Service
 {
@@ -50,10 +51,10 @@ namespace BussinessLayer.Service
             // Add statistics to each event
             foreach (var eventDto in eventDtos)
             {
-                var stats = await GetEventStatisticsAsync(eventDto.VaccinationEventId);
-                eventDto.ConfirmedCount = stats["Confirmed"];
-                eventDto.DeclinedCount = stats["Declined"];
-                eventDto.PendingCount = stats["Pending"];
+                var stats = await GetEventStatisticsAsync(eventDto.EventId);
+                eventDto.ConfirmedCount = stats[FormStatus.Accepted];
+                eventDto.DeclinedCount = stats[FormStatus.Rejected];
+                eventDto.PendingCount = stats[FormStatus.Pending];
                 eventDto.TotalStudents = stats["Total"];
             }
 
@@ -68,22 +69,18 @@ namespace BussinessLayer.Service
 
             var eventDto = _mapper.Map<VaccinationEventDTO>(vaccinationEvent);
             var stats = await GetEventStatisticsAsync(eventId);
-            eventDto.ConfirmedCount = stats["Confirmed"];
-            eventDto.DeclinedCount = stats["Declined"];
-            eventDto.PendingCount = stats["Pending"];
+            eventDto.ConfirmedCount = stats[FormStatus.Accepted];
+            eventDto.DeclinedCount = stats[FormStatus.Rejected];
+            eventDto.PendingCount = stats[FormStatus.Pending];
             eventDto.TotalStudents = stats["Total"];
 
             return eventDto;
         }
 
-        public async Task<VaccinationEventDTO> CreateEventAsync(CreateVaccinationEventDTO dto, string createdBy)
+        public async Task<VaccinationEventDTO> CreateEventAsync(CreateVaccinationEventDTO dto)
         {
-            var vaccinationEvent = _mapper.Map<Vaccinationevent>(dto);
-            vaccinationEvent.Createddate = DateTime.Now;
-            vaccinationEvent.Modifieddate = DateTime.Now;
-            vaccinationEvent.Createdby = createdBy;
-            vaccinationEvent.Modifiedby = createdBy;
-            vaccinationEvent.Isdeleted = false;
+            var vaccinationEvent = _mapper.Map<VaccinationEvent>(dto);
+            vaccinationEvent.CreatedAt = DateTime.Now;
 
             await _vaccinationEventRepository.AddAsync(vaccinationEvent);
             await _vaccinationEventRepository.SaveChangesAsync();
@@ -91,19 +88,19 @@ namespace BussinessLayer.Service
             return _mapper.Map<VaccinationEventDTO>(vaccinationEvent);
         }
 
-        public async Task<VaccinationEventDTO> UpdateEventAsync(UpdateVaccinationEventDTO dto, string modifiedBy)
+        public async Task<VaccinationEventDTO> UpdateEventAsync(UpdateVaccinationEventDTO dto)
         {
-            var existingEvent = await _vaccinationEventRepository.GetByIdAsync(dto.VaccinationEventId);
+            var existingEvent = await _vaccinationEventRepository.GetByIdAsync(dto.EventId);
             if (existingEvent == null)
                 throw new InvalidOperationException("Vaccination event not found.");
 
-            existingEvent.Vaccinationeventname = dto.VaccinationEventName;
+            existingEvent.EventName = dto.EventName;
             existingEvent.Location = dto.Location;
-            existingEvent.Organizedby = dto.OrganizedBy;
-            existingEvent.Eventdate = dto.EventDate;
+            existingEvent.Organizer = dto.Organizer;
+            existingEvent.EventDate = dto.EventDate;
             existingEvent.Description = dto.Description;
-            existingEvent.Modifieddate = DateTime.Now;
-            existingEvent.Modifiedby = modifiedBy;
+            existingEvent.ModifiedAt = DateTime.Now;
+            existingEvent.ModifiedByUserId = dto.ModifiedByUserId;
 
             _vaccinationEventRepository.Update(existingEvent);
             await _vaccinationEventRepository.SaveChangesAsync();
@@ -111,15 +108,14 @@ namespace BussinessLayer.Service
             return _mapper.Map<VaccinationEventDTO>(existingEvent);
         }
 
-        public async Task<bool> DeleteEventAsync(int eventId, string deletedBy)
+        public async Task<bool> DeleteEventAsync(int eventId)
         {
             var existingEvent = await _vaccinationEventRepository.GetByIdAsync(eventId);
             if (existingEvent == null)
                 return false;
 
-            existingEvent.Isdeleted = true;
-            existingEvent.Modifieddate = DateTime.Now;
-            existingEvent.Modifiedby = deletedBy;
+            existingEvent.IsDeleted = true;
+            existingEvent.ModifiedAt = DateTime.Now;
 
             _vaccinationEventRepository.Update(existingEvent);
             await _vaccinationEventRepository.SaveChangesAsync();
@@ -173,8 +169,8 @@ namespace BussinessLayer.Service
                         To = parent.Email!,
                         Subject = emailTemplate.Subject,
                         Body = emailTemplate.Body
-                            .Replace("{EventName}", eventInfo.Vaccinationeventname)
-                            .Replace("{EventDate}", eventInfo.Eventdate.ToString("dd/MM/yyyy"))
+                            .Replace("{EventName}", eventInfo.EventName)
+                            .Replace("{EventDate}", eventInfo.EventDate.ToString("dd/MM/yyyy"))
                             .Replace("{Location}", eventInfo.Location)
                             .Replace("{Description}", eventInfo.Description)
                             .Replace("{CustomMessage}", dto.CustomMessage ?? "")
@@ -218,8 +214,8 @@ namespace BussinessLayer.Service
                         To = parent.Email!,
                         Subject = emailTemplate.Subject,
                         Body = emailTemplate.Body
-                            .Replace("{EventName}", eventInfo.Vaccinationeventname)
-                            .Replace("{EventDate}", eventInfo.Eventdate.ToString("dd/MM/yyyy"))
+                            .Replace("{EventName}", eventInfo.EventName)
+                            .Replace("{EventDate}", eventInfo.EventDate.ToString("dd/MM/yyyy"))
                             .Replace("{Location}", eventInfo.Location)
                             .Replace("{Description}", eventInfo.Description)
                             .Replace("{ParentName}", parent.Fullname)
@@ -247,42 +243,37 @@ namespace BussinessLayer.Service
                 foreach (StudentVaccinationResponseDTO student in dto.Responses)
                 {
                     // Check if record already exists
-                    var existingRecord = await _vaccinationRecordRepository.GetRecordByStudentAndEventAsync(student.StudentId, dto.VaccinationEventId);
+                    var existingRecord = await _vaccinationRecordRepository.GetRecordByStudentAndEventAsync(student.StudentId, dto.EventId);
 
                     if (existingRecord != null)
                     {
                         // Update existing record
-                        existingRecord.Willattend = student.WillAttend;
-                        existingRecord.Reasonfordecline = student.ReasonForDecline;
-                        existingRecord.Parentconsent = dto.ParentConsent;
-                        existingRecord.Responsedate = DateTime.Now;
-                        existingRecord.Updatedat = DateTime.Now;
-                        existingRecord.Updatedby = dto.ParentId.ToString();
-                        existingRecord.Confirmedbyparent = student.WillAttend;
-
+                        existingRecord.ParentalConsentStatus = student.ParentalConsentStatus;
+                        existingRecord.ReasonForDecline = student.ReasonForDecline;
+                        existingRecord.ConsentDate = DateTime.Now;
+                        existingRecord.ModifiedAt = DateTime.Now;
+                        existingRecord.ModifiedByUserId = dto.ModifiedByUserId;
                         _vaccinationRecordRepository.Update(existingRecord);
                         await _vaccinationRecordRepository.SaveChangesAsync();
                     }
                     else
                     {
                         // Create new record
-                        var newRecord = new Vaccinationrecord
+                        var newRecord = new StudentVaccinationRecord
                         {
-                            Studentid = student.StudentId,
-                            Vaccinationeventid = dto.VaccinationEventId,
-                            Vaccinename = "To be determined", // Will be set when actual vaccination occurs
-                            Dosenumber = 1,
-                            Vaccinationdate = DateOnly.FromDateTime(DateTime.Now), // Will be updated when actual vaccination occurs
-                            Confirmedbyparent = student.WillAttend,
-                            Willattend = student.WillAttend,
-                            Reasonfordecline = student.ReasonForDecline,
-                            Parentconsent = dto.ParentConsent,
-                            Responsedate = DateTime.Now,
-                            Isdeleted = false,
-                            Createdat = DateTime.Now,
-                            Updatedat = DateTime.Now,
-                            Createdby = dto.ParentId.ToString(),
-                            Updatedby = dto.ParentId.ToString()
+                            StudentId = student.StudentId,
+                            EventId = dto.EventId,
+                            VaccineId = 1, // Will be set when actual vaccination occurs
+                            Doses = 1,
+                            DateAdministered = DateTime.Now, // Will be updated when actual vaccination occurs
+                            ParentalConsentStatus = student.ParentalConsentStatus,
+                            ReasonForDecline = student.ReasonForDecline,
+                            ConsentResponseDate = DateTime.Now,
+                            IsDeleted = false,
+                            CreatedAt = DateTime.Now,
+                            ModifiedAt = DateTime.Now,
+                            CreatedByUserId = dto.ParentId, //NOTICE: Nhớ check lại khúc này
+                            ModifiedByUserId = dto.ParentId
                         };
 
                         await _vaccinationRecordRepository.AddAsync(newRecord);
@@ -309,15 +300,16 @@ namespace BussinessLayer.Service
                 responses.Add(new ParentVaccinationResponseDTO
                 {
                     ParentId = record.Student.Parentid,
-                    VaccinationEventId = record.Vaccinationeventid,
-                    ParentConsent = record.Parentconsent ?? false,
+                    EventId = record.EventId.Value,
+                    ParentalConsentStatus = record.ParentalConsentStatus,
                     Responses = new List<StudentVaccinationResponseDTO>
                     {
                         new StudentVaccinationResponseDTO
                         {
-                            StudentId = record.Studentid,
-                            WillAttend = record.Willattend ?? false,
-                            ReasonForDecline = record.Reasonfordecline
+                            StudentId = record.StudentId,
+                            ParentalConsentStatus = record.ParentalConsentStatus,
+                            ConsentResponseDate = record.ConsentResponseDate,
+                            ReasonForDecline = record.ReasonForDecline
                         }
                     }
                 });
@@ -335,9 +327,9 @@ namespace BussinessLayer.Service
 
             return new Dictionary<string, int>
             {
-                ["Confirmed"] = confirmedCount,
-                ["Declined"] = declinedCount,
-                ["Pending"] = pendingCount,
+                [FormStatus.Accepted] = confirmedCount,
+                [FormStatus.Rejected] = declinedCount,
+                [FormStatus.Pending] = pendingCount,
                 ["Total"] = totalCount
             };
         }
@@ -349,10 +341,10 @@ namespace BussinessLayer.Service
 
             foreach (var eventDto in eventDtos)
             {
-                var stats = await GetEventStatisticsAsync(eventDto.VaccinationEventId);
-                eventDto.ConfirmedCount = stats["Confirmed"];
-                eventDto.DeclinedCount = stats["Declined"];
-                eventDto.PendingCount = stats["Pending"];
+                var stats = await GetEventStatisticsAsync(eventDto.EventId);
+                eventDto.ConfirmedCount = stats[FormStatus.Accepted];
+                eventDto.DeclinedCount = stats[FormStatus.Rejected];
+                eventDto.PendingCount = stats[FormStatus.Pending];
                 eventDto.TotalStudents = stats["Total"];
             }
 
@@ -419,8 +411,8 @@ namespace BussinessLayer.Service
             {
                 @event = new
                 {
-                    id = eventInfo.VaccinationEventId,
-                    name = eventInfo.VaccinationEventName,
+                    id = eventInfo.EventId,
+                    name = eventInfo.EventName,
                     date = eventInfo.EventDate,
                     location = eventInfo.Location,
                     description = eventInfo.Description
