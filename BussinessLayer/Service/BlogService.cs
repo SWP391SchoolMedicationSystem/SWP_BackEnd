@@ -124,7 +124,7 @@ namespace BussinessLayer.Service
                 var allowedExtensions = new[] { ".jpg", ".jpeg", ".png" };
                 var extension = Path.GetExtension(dto.ImageFile.FileName).ToLower();
                 if (!allowedExtensions.Contains(extension))
-                    throw new Exception("Only JPG and PNG files are allowed.");
+                    throw new Exception("Only JPG and PNG and jpeg files are allowed.");
                 if (dto.ImageFile.Length > 2 * 1024 * 1024)
                     throw new Exception("File size must be less than 2MB.");
 
