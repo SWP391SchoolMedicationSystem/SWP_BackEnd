@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using AutoMapper;
 using BussinessLayer.IService;
 using BussinessLayer.Utils.Configurations;
+using CloudinaryDotNet.Actions;
+using CloudinaryDotNet;
 using DataAccessLayer.DTO.Blogs;
 using DataAccessLayer.Entity;
 using DataAccessLayer.IRepository;
@@ -24,6 +26,7 @@ namespace BussinessLayer.Service
         private readonly IUserRepository _userRepository;
         private readonly AppSetting _appSettings;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly Cloudinary _cloudinary;
         //        private readonly IStaffRepository _staffRepository;
         public BlogService(
             IBlogRepo blogRepo,
@@ -32,7 +35,8 @@ namespace BussinessLayer.Service
             IMapper mapper,
             IOptionsMonitor<AppSetting> option,
             IStaffRepository staffRepository,
-            IHttpContextAccessor httpContextAccessor)
+            IHttpContextAccessor httpContextAccessor,
+            Cloudinary cloudinary)
         {
             _userRepository = userRepository;
             _blogRepo = blogRepo;
@@ -41,6 +45,7 @@ namespace BussinessLayer.Service
             _mapper = mapper;
             _appSettings = option.CurrentValue;
             _httpContextAccessor = httpContextAccessor;
+            _cloudinary = cloudinary;
         }
         public async Task<List<BlogDTO>> GetAllBlogsAsync()
         {
@@ -107,15 +112,38 @@ namespace BussinessLayer.Service
             return blog;
 
         }
-        public async Task AddBlogAsync(CreateBlogDTO dto)
+        public async Task <String> AddBlogAsync(CreateBlogDTO dto)
         {
 
             Blog blog = _mapper.Map<Blog>(dto);
             blog.Status = "Draft";
             blog.CreatedAt = DateTime.Now;
+            string? imageUrl = null;
+            if (dto.ImageFile != null && dto.ImageFile.Length > 0)
+            {
+                var allowedExtensions = new[] { ".jpg", ".jpeg", ".png" };
+                var extension = Path.GetExtension(dto.ImageFile.FileName).ToLower();
+                if (!allowedExtensions.Contains(extension))
+                    throw new Exception("Only JPG and PNG files are allowed.");
+                if (dto.ImageFile.Length > 2 * 1024 * 1024)
+                    throw new Exception("File size must be less than 2MB.");
+
+                using var stream = dto.ImageFile.OpenReadStream();
+                var uploadParams = new ImageUploadParams
+                {
+                    File = new FileDescription(dto.ImageFile.FileName, stream),
+                    Transformation = new Transformation().Crop("scale").Width(500)
+                };
+                var uploadResult = await _cloudinary.UploadAsync(uploadParams);
+                if (uploadResult.StatusCode == System.Net.HttpStatusCode.OK)
+                {
+                    imageUrl = uploadResult.SecureUrl.ToString();
+                    blog.Image = uploadResult.SecureUrl.ToString();
+                }
+            }
             await _blogRepo.AddAsync(blog);
             _blogRepo.Save();
-
+            return imageUrl;
         }
         public async Task UpdateBlog(UpdateBlogDTO dto)
         {
@@ -258,7 +286,7 @@ namespace BussinessLayer.Service
                 _blogRepo.Save();
             }
         }
-        public async Task<string> UploadBlogImageAsync(BlogImageUploadDTO dto)
+/*        public async Task<string> UploadBlogImageAsync(BlogImageUploadDTO dto)
         {
             var blog = await _blogRepo.GetByIdAsync(dto.BlogId);
             if (blog == null) throw new Exception("Blog not found.");
@@ -293,6 +321,6 @@ namespace BussinessLayer.Service
             _blogRepo.Save();
 
             return blog.Image; //return the image URL
-        }
+        }*/
     }
 }

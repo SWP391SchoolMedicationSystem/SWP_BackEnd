@@ -35,14 +35,15 @@ namespace SchoolMedicalSystem.Controllers
         }
         [HttpPost]
         [Route("add")]
-        public async Task<IActionResult> AddBlog([FromBody] CreateBlogDTO blogDto)
+        public async Task<IActionResult> AddBlog([FromForm] CreateBlogDTO blogDto)
         {
             if (blogDto == null)
                 return BadRequest("Blog data is null.");
+
             try
             {
-                await _blogService.AddBlogAsync(blogDto);
-                return Ok("Blog added successfully.");
+                var imageUrl = await _blogService.AddBlogAsync(blogDto);
+                return Ok(new { message = "Blog added successfully.", imageUrl });
             }
             catch (Exception ex)
             {
@@ -138,23 +139,6 @@ namespace SchoolMedicalSystem.Controllers
             catch (Exception ex)
             {
                 return StatusCode(500, $"Error searching blogs: {ex.Message}");
-            }
-        }
-        [HttpPost("upload-image")]
-        public async Task<IActionResult> UploadImage([FromForm] BlogImageUploadDTO dto)
-        {
-            try
-            {
-                var imageUrl = await _blogService.UploadBlogImageAsync(dto);
-                return Ok(new
-                {
-                    message = "Image uploaded successfully.",
-                    imageUrl = imageUrl
-                });
-            }
-            catch (Exception ex)
-            {
-                return BadRequest($"Error: {ex.Message}");
             }
         }
     }

@@ -5,14 +5,17 @@ using BussinessLayer.QuartzJob.Job;
 using BussinessLayer.QuartzJob.Scheduler;
 using BussinessLayer.Service;
 using BussinessLayer.Utils.Configurations;
+using CloudinaryDotNet;
 using DataAccessLayer.Entity;
 using DataAccessLayer.IRepository;
 using DataAccessLayer.Repository;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using OfficeOpenXml;
 using Quartz;
+using SchoolMedicalSystem.Configurations;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -71,6 +74,15 @@ builder.Services.AddDbContext<SchoolMedicalSystemContext>(options =>
     options.UseSqlServer(
         builder.Configuration.GetConnectionString("SchoolMedicalSystemContext") 
         ?? throw new InvalidOperationException("Connection string 'SchoolMedicalSystemContext' not found.")));
+
+builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("CloudinarySettings"));
+
+builder.Services.AddSingleton(provider =>
+{
+    var config = provider.GetRequiredService<IOptions<CloudinarySettings>>().Value;
+    var account = new Account(config.CloudName, config.ApiKey, config.ApiSecret);
+    return new Cloudinary(account);
+});
 
 #region AddScoped
 builder.Services.AddScoped<IParentRepository, ParentRepository>();
