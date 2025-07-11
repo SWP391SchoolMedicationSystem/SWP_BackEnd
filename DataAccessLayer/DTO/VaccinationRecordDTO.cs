@@ -11,12 +11,16 @@ namespace DataAccessLayer.DTO
         public int StudentVaccinationId { get; set; }
 
         public int StudentId { get; set; }
+        public string StudentName { get; set; }
 
         public int VaccineId { get; set; }
+        public string VaccineName { get; set; } 
+
 
         public int? EventId { get; set; }
 
-        public int DoseNumber { get; set; }
+        public string? EventName { get; set; }
+        public int dosenumber { get; set; }
 
         public string ParentalConsentStatus { get; set; } = null!;
 

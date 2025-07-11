@@ -24,12 +24,12 @@ namespace DataAccessLayer.DTO.Medicines
 
         public bool IsDeleted { get; set; }
 
-        public DateTime? CreatedAt { get; set; }
+        public DateTime? createdat { get; set; }
 
-        public DateTime? ModifiedAt { get; set; }
+        public DateTime? updatedat { get; set; }
 
-        public int? CreatedByUserId { get; set; }
+        public int? createdby { get; set; }
 
-        public int? ModifiedByUserId { get; set; }
+        public int? updatedby { get; set; }
     }
 }

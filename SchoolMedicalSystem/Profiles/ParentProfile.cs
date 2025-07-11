@@ -11,7 +11,9 @@ namespace SchoolMedicalSystem.Profiles
         {
             CreateMap<LoginDTO, Parent>().ReverseMap();
             CreateMap<ParentRegister, Parent>().ReverseMap();
-            CreateMap<Parent, ParentDTO>().ReverseMap();
+            CreateMap<ParentDTO, Parent>().
+                ForMember(dest => dest.Students, opt => opt.MapFrom(src => src.Students))
+                .ReverseMap();
             CreateMap<ParentUpdate, Parent>().ReverseMap();
             CreateMap<Parent, ParentUpdate>().ReverseMap();
             CreateMap<Parent, LoginGoogleDTO>().ReverseMap();

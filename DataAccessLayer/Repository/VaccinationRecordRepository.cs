@@ -10,9 +10,23 @@ namespace DataAccessLayer.Repository
     {
         private readonly SchoolMedicalSystemContext _context;
 
+
         public VaccinationRecordRepository(SchoolMedicalSystemContext context) : base(context)
         {
             _context = context;
+        }
+
+        public async Task<List<StudentVaccinationRecord>> GetAllAsync()
+        {
+            return await _context.StudentVaccinationRecords
+                .Include(r => r.Student)
+                    .ThenInclude(s => s.Parent)
+                .Include(r => r.Student)
+                    .ThenInclude(s => s.Class)
+                .Include(r => r.Vaccine)
+                .Include(r => r.Event)
+
+                .ToListAsync();
         }
 
         public async Task<List<StudentVaccinationRecord>> GetRecordsByEventAsync(int eventId)
@@ -22,6 +36,7 @@ namespace DataAccessLayer.Repository
                     .ThenInclude(s => s.Parent)
                 .Include(r => r.Student)
                     .ThenInclude(s => s.Class)
+                    .Include(r => r.Vaccine)
                 .Where(r => r.EventId == eventId && !r.IsDeleted)
                 .ToListAsync();
         }
@@ -40,6 +55,8 @@ namespace DataAccessLayer.Repository
             return await _context.StudentVaccinationRecords
                 .Include(r => r.Student)
                     .ThenInclude(s => s.Parent)
+                .Include(r => r.Vaccine)
+
                 .Include(r => r.Event)
                 .FirstOrDefaultAsync(r => r.StudentId == studentId && r.EventId == eventId && !r.IsDeleted);
         }

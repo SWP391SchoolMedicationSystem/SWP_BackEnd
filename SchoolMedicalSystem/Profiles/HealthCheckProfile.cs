@@ -8,7 +8,10 @@ namespace SchoolMedicalSystem.Profiles
     {
         public HealthCheckProfile()
         {
-            CreateMap<Healthcheck, HealthCheckDTO>().ReverseMap();
+            CreateMap<Healthcheck, HealthCheckDTO>().
+                ForMember(dest => dest.StudentName, opt => opt.MapFrom(src => src.Student.Fullname))
+                .ForMember(dest => dest.StaffName, opt => opt.MapFrom(src => src.Staff.Fullname))
+                .ReverseMap();
         }
 
     }

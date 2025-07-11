@@ -35,13 +35,13 @@ namespace SchoolMedicalSystem.Controllers
         }
         [HttpPost]
         [Route("add")]
-        public async Task<IActionResult> AddBlog([FromForm] CreateBlogDTO blogDto, IFormFile ImageFile)
+        public async Task<IActionResult> AddBlog([FromForm] CreateBlogDTO blogDto)
         {
             if (blogDto == null)
                 return BadRequest("Blog data is null.");
             try
             {
-                var imageUrl = await _blogService.AddBlogAsync(blogDto, ImageFile);
+                var imageUrl = await _blogService.AddBlogAsync(blogDto);
                 return Ok("Blog added successfully.");
             }
             catch (Exception ex)

@@ -31,7 +31,7 @@ builder.Services.AddCors(options =>
                           .AllowAnyHeader());
     options.AddPolicy("AllowReact", policy =>
     {
-        policy.WithOrigins("http://localhost:3000") 
+        policy.WithOrigins("http://localhost:7143") 
               .AllowAnyHeader()
               .AllowAnyMethod();
     });
@@ -130,6 +130,7 @@ builder.Services.AddScoped<IStudentSpecialNeedService, StudentSpecialNeedService
 builder.Services.AddScoped<IStudentSpecialNeedCategoryRepo, StudentSpecialNeedCategoryRepo>();
 builder.Services.AddScoped<ISpecialNeedCategoryService, SpecialNeedCategoryService>();
 builder.Services.AddScoped<IStudentSpecialNeedCategoryRepo, StudentSpecialNeedCategoryRepo>();
+builder.Services.AddScoped<IVaccineRepository, VaccineRepository>();
 #endregion
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
