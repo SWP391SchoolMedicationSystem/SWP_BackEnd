@@ -111,7 +111,7 @@ namespace BussinessLayer.Service
 
             
         }
-        public async Task<string> AddBlogAsync(CreateBlogDTO dto)
+        public async Task<String> AddBlogAsync(CreateBlogDTO dto)
         {
 
             Blog blog = _mapper.Map<Blog>(dto);
