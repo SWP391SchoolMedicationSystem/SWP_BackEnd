@@ -80,7 +80,7 @@ namespace BussinessLayer.Service
                         IsRead = false,
                         IsDeleted = false,
                         CreatedAt = DateTime.Now,
-                        CreatedByUserId = notification.CreatedByUserId,
+                        CreatedByUserId = notification.CreatedByUserId.Value,
                         //                        ModifiedDate = DateTime.Now,
                         //                        ModifiedBy = notification.Modifiedby
                     };
@@ -117,7 +117,7 @@ namespace BussinessLayer.Service
                         IsRead = false,
                         IsDeleted = false,
                         CreatedAt = DateTime.Now,
-                        CreatedByUserId = notification.CreatedByUserId,
+                        CreatedByUserId = notification.CreatedByUserId.Value,
                         //                        ModifiedDate = DateTime.Now,
                         //                        ModifiedBy = notification.Modifiedby
                     };
@@ -234,7 +234,7 @@ namespace BussinessLayer.Service
                             IsRead = false,
                             IsDeleted = false,
                             CreatedAt = DateTime.Now,
-                            CreatedByUserId = notification.CreatedByUserId,
+                            CreatedByUserId = notification.CreatedByUserId.Value,
                             ModifiedAt = DateTime.Now,
                             ModifiedByUserId = dto.ModifiedByUserId
                         };
@@ -299,7 +299,7 @@ namespace BussinessLayer.Service
                             IsRead = false,
                             IsDeleted = false,
                             CreatedAt = DateTime.Now,
-                            CreatedByUserId = notification.CreatedByUserId,
+                            CreatedByUserId = notification.CreatedByUserId.Value,
                             ModifiedAt = DateTime.Now,
                             ModifiedByUserId = dto.ModifiedByUserId
                         };

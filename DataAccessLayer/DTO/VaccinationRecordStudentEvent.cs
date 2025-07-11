@@ -9,22 +9,31 @@ namespace DataAccessLayer.DTO
 {
     public class VaccinationRecordStudentEvent
     {
-        public int Vaccinationrecordid { get; set; }
+        public int StudentVaccinationId { get; set; }
 
-        public int Studentid { get; set; }
-        public int Parentid { get; set; }
+        public int StudentId { get; set; }
 
-        public int Vaccinationeventid { get; set; }
+        public int VaccineId { get; set; }
 
-        public string Vaccinename { get; set; } = null!;
+        public int? EventId { get; set; }
 
-        public int Dosenumber { get; set; }
+        public int DoseNumber { get; set; }
 
-        public DateOnly Vaccinationdate { get; set; }
+        public string ParentalConsentStatus { get; set; } = null!;
 
-        public bool Confirmedbyparent { get; set; }
+        public string? ReasonForDecline { get; set; }
 
-        public bool Isdeleted { get; set; }
+        public DateTime? ConsentResponseDate { get; set; }
+
+        public DateTime? ConsentDate { get; set; }
+
+        public DateTime? DateAdministered { get; set; }
+
+        public int? AdministeredByStaffId { get; set; }
+
+        public string? Notes { get; set; }
+
+        public bool IsDeleted { get; set; }
         public List<StudentDTO> Students { get; set; } = new List<StudentDTO>();
         public List<VaccinationEventDTO> Vaccinationevents { get; set; } = new List<VaccinationEventDTO>();
     }

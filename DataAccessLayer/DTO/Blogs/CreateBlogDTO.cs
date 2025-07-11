@@ -15,6 +15,5 @@ namespace DataAccessLayer.DTO.Blogs
 
         public int CreatedByUserId { get; set; }
 
-        public IFormFile? ImageFile { get; set; }
     }
 }

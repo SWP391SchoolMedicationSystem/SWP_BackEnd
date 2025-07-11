@@ -4,11 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DataAccessLayer.DTO
+namespace DataAccessLayer.DTO.HealthChecks
 {
-    public class HealthCheckDTO
+    public class AddHealthCheckDTO
     {
-        public int Checkid { get; set; }
         public int Studentid { get; set; }
 
         public DateTime Checkdate { get; set; }

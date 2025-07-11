@@ -2,19 +2,25 @@
 {
     public class HealthRecordDto
     {
-        public int HealthRecordId { get; set; }
+        public int healthrecordid { get; set; }
 
-        public int StudentId { get; set; }
+        public int studentid { get; set; }
+        public string StudentName { get; set; } = null!;
 
-        public int HealthCategoryId { get; set; }
+        public int healthcategoryid { get; set; }
+        public string HealthCategoryName { get; set; } = null!;
 
-        public DateTime HealthRecordDate { get; set; }
+        public DateTime healthrecorddate { get; set; }
 
-        public string HealthRecordTitle { get; set; } = null!;
+        public string healthrecordtitle { get; set; } = null!;
 
-        public string? HealthRecordDescription { get; set; }
+        public string? healthrecorddescription { get; set; }
 
-        public int StaffId { get; set; }
+        public int staffID { get; set; }
+        public string staffName { get; set; } = null!;
+
+        public int parentID { get; set; }
+        public string ParentName { get; set; } = null!;
 
         public string Status { get; set; } = null!;
 

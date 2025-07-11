@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using BussinessLayer.IService;
-using DataAccessLayer.DTO;
+using DataAccessLayer.DTO.HealthChecks;
 using Microsoft.AspNetCore.Mvc;
 
 namespace SchoolMedicalSystem.Controllers
@@ -20,14 +20,12 @@ namespace SchoolMedicalSystem.Controllers
         public Task<List<HealthCheckDTO>> GetAllHealthChecks()
         {
             var result = _healthCheckService.GetAllHealthChecksAsync();
-            if (result == null || !result.Any())
-                return Task.FromResult<List<HealthCheckDTO>>(null);
-            return Task.FromResult(result);
+            return result;
         }
 
 
         [HttpPost]
-        public async Task<IActionResult> AddHealthCheck([FromBody] HealthCheckDTO healthCheckDto)
+        public async Task<IActionResult> AddHealthCheck([FromBody] AddHealthCheckDTO healthCheckDto)
         {
             try
             {
@@ -45,7 +43,7 @@ namespace SchoolMedicalSystem.Controllers
             }
         }
         [HttpPut]
-        public async Task<IActionResult> UpdateHealthCheck([FromBody] HealthCheckDTO healthCheckDto)
+        public async Task<IActionResult> UpdateHealthCheck([FromBody] UpdateHealthCheckDTO healthCheckDto)
         {
             if (healthCheckDto == null)
                 return BadRequest("Health check data is null.");

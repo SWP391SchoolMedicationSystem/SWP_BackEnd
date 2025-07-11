@@ -30,7 +30,7 @@ namespace SchoolMedicalSystem.Controllers
                 return BadRequest("Invalid vaccination record data.");
             }
             await _vaccinationRecordService.AddVaccinationRecordAsync(record);
-            return CreatedAtAction(nameof(GetAllVaccinationRecords), new { id = record.Vaccinename }, record);
+            return CreatedAtAction(nameof(GetAllVaccinationRecords), new { id = record.VaccineId }, record);
         }
         [HttpDelete]
         [Route("vaccinationrecord/{id}")]

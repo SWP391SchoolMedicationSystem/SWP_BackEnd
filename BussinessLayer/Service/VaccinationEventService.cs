@@ -264,7 +264,7 @@ namespace BussinessLayer.Service
                             StudentId = student.StudentId,
                             EventId = dto.EventId,
                             VaccineId = 1, // Will be set when actual vaccination occurs
-                            Doses = 1,
+                            DoseNumber = 1,
                             DateAdministered = DateTime.Now, // Will be updated when actual vaccination occurs
                             ParentalConsentStatus = student.ParentalConsentStatus,
                             ReasonForDecline = student.ReasonForDecline,

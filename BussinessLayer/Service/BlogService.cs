@@ -111,26 +111,26 @@ namespace BussinessLayer.Service
 
             
         }
-        public async Task<String> AddBlogAsync(CreateBlogDTO dto)
+        public async Task<String> AddBlogAsync(CreateBlogDTO dto, IFormFile imageFile)
         {
 
             Blog blog = _mapper.Map<Blog>(dto);
             blog.Status = BlogStatus.Draft;
             blog.CreatedAt = DateTime.Now;
             string? imageUrl = null;
-            if (dto.ImageFile != null && dto.ImageFile.Length > 0)
+            if (imageFile != null && imageFile.Length > 0)
             {
                 var allowedExtensions = new[] { ".jpg", ".jpeg", ".png" };
-                var extension = Path.GetExtension(dto.ImageFile.FileName).ToLower();
+                var extension = Path.GetExtension(imageFile.FileName).ToLower();
                 if (!allowedExtensions.Contains(extension))
                     throw new Exception("Only JPG and PNG and jpeg files are allowed.");
-                if (dto.ImageFile.Length > 2 * 1024 * 1024)
+                if (imageFile.Length > 2 * 1024 * 1024)
                     throw new Exception("File size must be less than 2MB.");
 
-                using var stream = dto.ImageFile.OpenReadStream();
+                using var stream = imageFile.OpenReadStream();
                 var uploadParams = new ImageUploadParams
                 {
-                    File = new FileDescription(dto.ImageFile.FileName, stream),
+                    File = new FileDescription(imageFile.FileName, stream),
                     Transformation = new Transformation().Crop("scale").Width(500)
                 };
                 var uploadResult = await _cloudinary.UploadAsync(uploadParams);

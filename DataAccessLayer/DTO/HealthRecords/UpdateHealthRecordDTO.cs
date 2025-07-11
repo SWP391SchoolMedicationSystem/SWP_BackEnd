@@ -8,19 +8,20 @@ namespace DataAccessLayer.DTO.HealthRecords
 {
     public class UpdateHealthRecordDTO
     {
-        public int HealthRecordId { get; set; }
+        public int healthrecordid { get; set; }
 
-        public int StudentId { get; set; }
+        public int studentid { get; set; }
 
-        public int HealthCategoryId { get; set; }
+        public int healthcategoryid { get; set; }
 
-        public DateTime HealthRecordDate { get; set; }
+        public DateTime healthrecorddate { get; set; }
 
-        public string HealthRecordTitle { get; set; } = null!;
+        public string healthrecordtitle { get; set; } = null!;
 
-        public string? HealthRecordDescription { get; set; }
+        public string? healthrecorddescription { get; set; }
 
-        public int StaffId { get; set; }
+        public int staffid { get; set; }
+
         public string Status { get; set; } = null!;
         public int? ModifiedByUserId { get; set; }
     }

@@ -75,7 +75,7 @@ builder.Services.AddDbContext<SchoolMedicalSystemContext>(options =>
         ?? throw new InvalidOperationException("Connection string 'SchoolMedicalSystemContext' not found.")));
 builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("CloudinarySettings"));
 
-builder.Services.AddSingleton(provider =>
+builder.Services.AddSingleton<ICloudinary>(provider =>
 {
     var config = provider.GetRequiredService<IOptions<CloudinarySettings>>().Value;
     var account = new Account(config.CloudName, config.ApiKey, config.ApiSecret);

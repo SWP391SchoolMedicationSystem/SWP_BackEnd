@@ -16,12 +16,12 @@ public partial class NotificationParentDetail
     public bool IsDeleted { get; set; }
 
     public DateTime? CreatedAt { get; set; }
-    public int? CreatedByUserId { get; set; }
 
     public DateTime? ModifiedAt { get; set; }
 
-    public int? ModifiedByUserId { get; set; }
+    public int? CreatedByUserId { get; set; }
 
+    public int? ModifiedByUserId { get; set; }
 
     public virtual Notification Notification { get; set; } = null!;
 

@@ -13,9 +13,6 @@ public partial class Notification
 
     public string Type { get; set; } = null!;
 
-    public string? Message { get; set; }
-
-
     public bool IsDeleted { get; set; }
 
     public int? CreatedByUserId { get; set; }

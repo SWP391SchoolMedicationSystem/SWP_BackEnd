@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using DataAccessLayer.DTO.Blogs;
 using DataAccessLayer.Entity;
+using Microsoft.AspNetCore.Http;
 
 namespace BussinessLayer.IService
 {
@@ -12,7 +13,7 @@ namespace BussinessLayer.IService
     {
         Task<List<BlogDTO>> GetAllBlogsAsync();
         Task<BlogDTO> GetBlogByIdAsync(int id);
-        Task<String> AddBlogAsync(CreateBlogDTO dto);
+        Task<String> AddBlogAsync(CreateBlogDTO dto, IFormFile imageFile);
         Task UpdateBlog(UpdateBlogDTO dto);
         void DeleteBlog(int id);
         Task<List<BlogDTO>> SearchBlogsAsync(string searchTerm);

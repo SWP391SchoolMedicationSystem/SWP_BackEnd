@@ -54,8 +54,8 @@ namespace BussinessLayer.Service
             List<VaccinationRecordStudentEvent> recordlist = _mapper.Map<List<VaccinationRecordStudentEvent>>(list);
             foreach (var record in recordlist)
             {
-                record.Students.Add(_mapper.Map<StudentDTO>(await _studentRepo.GetByIdAsync(record.Studentid)));
-                record.Vaccinationevents.Add(_mapper.Map<VaccinationEventDTO>(await _vaccinationEventRepository.GetByIdAsync(record.Vaccinationeventid)));
+                record.Students.Add(_mapper.Map<StudentDTO>(await _studentRepo.GetByIdAsync(record.StudentId)));
+                record.Vaccinationevents.Add(_mapper.Map<VaccinationEventDTO>(await _vaccinationEventRepository.GetByIdAsync(record.StudentVaccinationId)));
             }
             return recordlist;
         }

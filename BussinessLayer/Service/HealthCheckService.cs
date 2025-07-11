@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
 using BussinessLayer.IService;
-using DataAccessLayer.DTO;
+using DataAccessLayer.DTO.HealthChecks;
 using DataAccessLayer.Entity;
 using DataAccessLayer.IRepository;
 using DataAccessLayer.Repository;
@@ -30,7 +30,7 @@ namespace BussinessLayer.Service
             _mapper = mapper;
         }
 
-        public async Task<Healthcheck> AddHealthCheckAsync(HealthCheckDTO healthCheckDto)
+        public async Task<Healthcheck> AddHealthCheckAsync(AddHealthCheckDTO healthCheckDto)
         {
             if (_staffservice.GetStaffByIdAsync(healthCheckDto.Staffid) != null
                 && _studentService.GetAllStudentsAsync()
@@ -66,68 +66,52 @@ namespace BussinessLayer.Service
             }
         }
 
-        public List<HealthCheckDTO> GetAllHealthChecksAsync()
+        public async Task<List<HealthCheckDTO>> GetAllHealthChecksAsync()
         {
-            var listhealth = _healthCheckRepository.GetAllAsync().Result;
-            var result = new List<HealthCheckDTO>();
-            foreach (var healthcheck in listhealth)
-            {
+            var listhealth = await _healthCheckRepository.GetAllAsync();
+            var studentList = await _studentService.GetAllStudentsAsync();
+            var staffList = await _staffservice.GetAllStaffAsync();
+
+            var result = listhealth
+                .Where(healthcheck => listhealth.Any(h => h.Checkid == healthcheck.Checkid))
+                .Select(healthcheck => new HealthCheckDTO
                 {
-                    if(_healthCheckRepository.GetAllAsync().Result.FirstOrDefault(h => h.Checkid == healthcheck.Checkid) != null)
+                    Checkid = healthcheck.Checkid,
+                    Staffid = healthcheck.Staffid,
+                    StaffName = staffList.FirstOrDefault(s => s.Staffid == healthcheck.Staffid)?.Fullname ?? "Unknown Staff",
+                    Studentid = healthcheck.Studentid,
+                    StudentName = studentList.FirstOrDefault(s => s.Studentid == healthcheck.Studentid)?.Fullname ?? "Unknown Student",
+                    Notes = healthcheck.Notes,
+                    Height = healthcheck.Height,
+                    Weight = healthcheck.Weight,
+                    Visionleft = healthcheck.Visionleft,
+                    Visionright = healthcheck.Visionright,
+                    Bloodpressure = healthcheck.Bloodpressure,
+                    Checkdate = healthcheck.Checkdate
+                })
+                .ToList();
 
-                    result.Add(new HealthCheckDTO
-                    {
-                        Checkid = healthcheck.Checkid,
-                        Staffid = healthcheck.Staffid,
-                        Studentid = healthcheck.Studentid,
-                        Notes = healthcheck.Notes,
-                        Height = healthcheck.Height,
-                        Weight = healthcheck.Weight,
-                        Visionleft = healthcheck.Visionleft,
-                        Visionright = healthcheck.Visionright,
-                        Bloodpressure = healthcheck.Bloodpressure,
-                        Checkdate = healthcheck.Checkdate
-                    });
-                }
-
-            }
             return result;
         }
 
-        public async Task<Healthcheck> UpdateHealthCheckAsync(HealthCheckDTO healthCheckDto)
+        public async Task<Healthcheck> UpdateHealthCheckAsync(UpdateHealthCheckDTO healthCheckDto)
         {
             Healthcheck check = await _healthCheckRepository.GetByIdAsync(healthCheckDto.Checkid);
             if (check != null)
             {
-                if (!string.IsNullOrEmpty(healthCheckDto.Notes))
-                {
                     check.Notes = healthCheckDto.Notes;
-                }
-
-
-                if (healthCheckDto.Height.HasValue)
-                {
                     check.Height = healthCheckDto.Height.Value;
-                }
-                if (healthCheckDto.Weight.HasValue)
-                {
                     check.Weight = healthCheckDto.Weight.Value;
-                }
-                if (healthCheckDto.Visionleft.HasValue)
-                {
                     check.Visionleft = healthCheckDto.Visionleft.Value;
-                }
-                if (healthCheckDto.Visionright.HasValue)
-                {
                     check.Visionright = healthCheckDto.Visionright.Value;
-                }
-                if (!string.IsNullOrEmpty(healthCheckDto.Bloodpressure))
-                {
                     check.Bloodpressure = healthCheckDto.Bloodpressure;
-                }
+                check.Studentid = healthCheckDto.Studentid;
+                check.Staffid = healthCheckDto.Staffid;
+                check.Checkdate = healthCheckDto.Checkdate;
+                check.Isdeleted = healthCheckDto.Isdeleted; // Update Isdeleted status
+                check.ModifiedByUserId = healthCheckDto.ModifiedByUserId; // Update ModifiedByUserId
+                check.ModifiedAt = DateTime.Now; // Update the timestamp
             }
-
-            check.ModifiedAt = DateTime.Now; // Update the timestamp
             _healthCheckRepository.Update(check); // Use Update method to save changes
             _healthCheckRepository.Save(); // Ensure changes are saved
             return check; // Return the updated healthcheck object

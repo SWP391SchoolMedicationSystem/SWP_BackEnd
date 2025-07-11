@@ -7,8 +7,6 @@ public partial class Student
 {
     public int Studentid { get; set; }
 
-    public string? StudentCode { get; set; } = null!;    
-
     public string Fullname { get; set; } = null!;
 
     public int Age { get; set; }
@@ -23,6 +21,7 @@ public partial class Student
 
     public bool IsDeleted { get; set; }
 
+    public string? StudentCode { get; set; }
 
     public string? BloodType { get; set; }
 
