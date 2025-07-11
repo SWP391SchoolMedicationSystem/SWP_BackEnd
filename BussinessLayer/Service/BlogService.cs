@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using AutoMapper;
 using BussinessLayer.IService;
 using BussinessLayer.Utils.Configurations;
+using CloudinaryDotNet;
+using CloudinaryDotNet.Actions;
 using DataAccessLayer.DTO.Blogs;
 using DataAccessLayer.Entity;
 using DataAccessLayer.IRepository;
@@ -25,6 +27,7 @@ namespace BussinessLayer.Service
         private readonly IUserRepository _userRepository;
         private readonly AppSetting _appSettings;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly ICloudinary _cloudinary;
         //        private readonly IStaffRepository _staffRepository;
         public BlogService(
             IBlogRepo blogRepo,
@@ -33,7 +36,8 @@ namespace BussinessLayer.Service
             IMapper mapper,
             IOptionsMonitor<AppSetting> option,
             IStaffRepository staffRepository,
-            IHttpContextAccessor httpContextAccessor)
+            IHttpContextAccessor httpContextAccessor,
+            ICloudinary cloudinary)
         {
             _userRepository = userRepository;
             _blogRepo = blogRepo;
@@ -41,6 +45,7 @@ namespace BussinessLayer.Service
             _parentRepository = parentRepository;
             _mapper = mapper;
             _appSettings = option.CurrentValue;
+            _cloudinary = cloudinary;
             _httpContextAccessor = httpContextAccessor;
         }
         public async Task<List<BlogDTO>> GetAllBlogsAsync()
@@ -106,15 +111,38 @@ namespace BussinessLayer.Service
 
             
         }
-        public async Task AddBlogAsync(CreateBlogDTO dto)
+        public async Task<string> AddBlogAsync(CreateBlogDTO dto)
         {
 
             Blog blog = _mapper.Map<Blog>(dto);
             blog.Status = BlogStatus.Draft;
             blog.CreatedAt = DateTime.Now;
+            string? imageUrl = null;
+            if (dto.ImageFile != null && dto.ImageFile.Length > 0)
+            {
+                var allowedExtensions = new[] { ".jpg", ".jpeg", ".png" };
+                var extension = Path.GetExtension(dto.ImageFile.FileName).ToLower();
+                if (!allowedExtensions.Contains(extension))
+                    throw new Exception("Only JPG and PNG and jpeg files are allowed.");
+                if (dto.ImageFile.Length > 2 * 1024 * 1024)
+                    throw new Exception("File size must be less than 2MB.");
+
+                using var stream = dto.ImageFile.OpenReadStream();
+                var uploadParams = new ImageUploadParams
+                {
+                    File = new FileDescription(dto.ImageFile.FileName, stream),
+                    Transformation = new Transformation().Crop("scale").Width(500)
+                };
+                var uploadResult = await _cloudinary.UploadAsync(uploadParams);
+                if (uploadResult.StatusCode == System.Net.HttpStatusCode.OK)
+                {
+                    imageUrl = uploadResult.SecureUrl.ToString();
+                    blog.Image = uploadResult.SecureUrl.ToString();
+                }
+            }
             await _blogRepo.AddAsync(blog);
             _blogRepo.Save();
-
+            return imageUrl;
         }
         public async Task UpdateBlog(UpdateBlogDTO dto)
         {
@@ -195,9 +223,11 @@ namespace BussinessLayer.Service
             var blog = _blogRepo.GetByIdAsync(dto.BlogId).Result;
             if (blog != null)
             {
+                blog.ResponseDate = DateTime.Now;
                 blog.ApprovedBy = dto.ApprovedBy;
                 blog.ApprovedOn = DateTime.Now;
                 blog.Status = BlogStatus.Accepted;
+                blog.ReasonForDecline = null;
                 _blogRepo.Update(blog);
                 _blogRepo.Save();
             }
@@ -209,7 +239,7 @@ namespace BussinessLayer.Service
                     //                    b.ApprovedBy != null &&
                     //                   b.ApprovedOn != null &&
                     b.Status != null &&
-                    (b.Status.Equals(BlogStatus.Public, StringComparison.OrdinalIgnoreCase)))
+                    (b.Status.Equals(BlogStatus.Accepted, StringComparison.OrdinalIgnoreCase)))
                 .ToList();
             List<BlogDTO> blogDTOs = _mapper.Map<List<BlogDTO>>(blogs);
             var listOfstaff = await _staffRepository.GetAllAsync();
@@ -246,8 +276,8 @@ namespace BussinessLayer.Service
             var blog = _blogRepo.GetByIdAsync(dto.BlogId).Result;
             if (blog != null)
             {
-                blog.ApprovedBy = dto.ApprovedBy;
-                blog.ApprovedOn = DateTime.Now;
+                blog.ReasonForDecline = dto.ReasonForDecline;
+                blog.ResponseDate = DateTime.Now;
                 blog.Status = BlogStatus.Rejected;
                 _blogRepo.Update(blog);
                 _blogRepo.Save();

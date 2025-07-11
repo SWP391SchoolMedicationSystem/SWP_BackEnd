@@ -16,11 +16,9 @@ namespace BussinessLayer.Utils
         }
         public static class BlogStatus
         {
-            public readonly static string Pending = "Chờ phê duyệt";
             public readonly static string Accepted = "Đã Duyệt";
             public readonly static string Rejected = "Từ chối";
             public readonly static string Draft = "Bản thảo";
-            public readonly static string Public = "Công khai";
         }
 
         public static class PersonalMedicineStatus

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 
 namespace DataAccessLayer.DTO.Blogs
 {
@@ -14,6 +15,6 @@ namespace DataAccessLayer.DTO.Blogs
 
         public int CreatedByUserId { get; set; }
 
-        public string? Image { get; set; }
+        public IFormFile? ImageFile { get; set; }
     }
 }

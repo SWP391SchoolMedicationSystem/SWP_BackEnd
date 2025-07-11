@@ -41,7 +41,7 @@ namespace SchoolMedicalSystem.Controllers
                 return BadRequest("Blog data is null.");
             try
             {
-                await _blogService.AddBlogAsync(blogDto);
+                var imageUrl = await _blogService.AddBlogAsync(blogDto);
                 return Ok("Blog added successfully.");
             }
             catch (Exception ex)
