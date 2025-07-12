@@ -8,7 +8,6 @@ namespace DataAccessLayer.DTO.Staffs
 {
     public class StaffUpdate
     {
-        public int Staffid { get; set; }
 
         public string Fullname { get; set; } = null!;
 

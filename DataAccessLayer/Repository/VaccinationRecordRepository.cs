@@ -25,7 +25,8 @@ namespace DataAccessLayer.Repository
                     .ThenInclude(s => s.Class)
                 .Include(r => r.Vaccine)
                 .Include(r => r.Event)
-
+                .Include(b => b.ModifiedByUser).ThenInclude(b => b.StaffUsers)
+                .Include(b => b.CreatedByUser).ThenInclude(b => b.StaffUsers)
                 .ToListAsync();
         }
 

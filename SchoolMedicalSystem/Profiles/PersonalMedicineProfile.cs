@@ -9,7 +9,10 @@ namespace SchoolMedicalSystem.Profiles
     {
         public PersonalMedicineProfile()
         {
-            CreateMap<PersonalMedicineDTO,Personalmedicine>().ReverseMap();
+            CreateMap<Personalmedicine, PersonalMedicineDTO>()
+                .ForMember(dest => dest.CreatedByUserName, opt => opt.MapFrom(src => src.CreatedByUser.StaffUsers.FirstOrDefault(s => s.Userid == src.CreatedByUserId).Fullname))
+                .ForMember(dest => dest.ModifiedByUserName, opt => opt.MapFrom(src => src.ModifiedByUser.StaffUsers.FirstOrDefault(s => s.Userid == src.ModifiedByUserId).Fullname))
+                .ReverseMap();
             CreateMap<UpdatePersonalMedicineDTO, Personalmedicine>().ReverseMap();
             CreateMap<AddPersonalMedicineDTO, Personalmedicine>().ReverseMap();
             CreateMap<MedicineScheduleLink, PersonalMedicineScheduleDTO>().ReverseMap();

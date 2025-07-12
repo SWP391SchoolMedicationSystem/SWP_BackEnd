@@ -50,14 +50,14 @@ namespace SchoolMedicalSystem.Controllers
             }
         }
         [HttpPut]
-        [Route("update")]
-        public IActionResult UpdateBlog([FromBody] UpdateBlogDTO dto)
+        [Route("update{id}")]
+        public IActionResult UpdateBlog([FromBody] UpdateBlogDTO dto, int id)
         {
             if (dto == null)
                 return BadRequest("Invalid data.");
             try
             {
-                _blogService.UpdateBlog(dto);
+                _blogService.UpdateBlog(dto, id);
                 return Ok("Blog updated.");
             }
             catch (Exception ex)
@@ -66,7 +66,7 @@ namespace SchoolMedicalSystem.Controllers
             }
         }
         [HttpDelete]
-        [Route("delete")]
+        [Route("delete{id}")]
         public void DeleteBlog([FromQuery] int id)
         {
             if (id < 0)

@@ -27,7 +27,11 @@ public partial class MedicineCatalog
 
     public int? ModifiedByUserId { get; set; }
 
+    public virtual User? CreatedByUser { get; set; }
+
     public virtual MedicineCategory? MedicineCategory { get; set; }
 
     public virtual ICollection<MedicineStorage> MedicineStorages { get; set; } = new List<MedicineStorage>();
+
+    public virtual User? ModifiedByUser { get; set; }
 }

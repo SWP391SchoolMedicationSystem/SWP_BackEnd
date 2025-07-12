@@ -25,5 +25,7 @@ namespace DataAccessLayer.DTO.HealthChecks
         public string? Bloodpressure { get; set; }
 
         public string? Notes { get; set; }
+        public int CreatedByUserId { get; set; }
+
     }
 }

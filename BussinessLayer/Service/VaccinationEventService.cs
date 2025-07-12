@@ -88,9 +88,9 @@ namespace BussinessLayer.Service
             return _mapper.Map<VaccinationEventDTO>(vaccinationEvent);
         }
 
-        public async Task<VaccinationEventDTO> UpdateEventAsync(UpdateVaccinationEventDTO dto)
+        public async Task<VaccinationEventDTO> UpdateEventAsync(UpdateVaccinationEventDTO dto, int id)
         {
-            var existingEvent = await _vaccinationEventRepository.GetByIdAsync(dto.EventId);
+            var existingEvent = await _vaccinationEventRepository.GetByIdAsync(id);
             if (existingEvent == null)
                 throw new InvalidOperationException("Vaccination event not found.");
 

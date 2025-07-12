@@ -14,7 +14,7 @@ namespace BussinessLayer.IService
         Task<List<VaccinationEventDTO>> GetAllEventsAsync();
         Task<VaccinationEventDTO?> GetEventByIdAsync(int eventId);
         Task<VaccinationEventDTO> CreateEventAsync(CreateVaccinationEventDTO dto);
-        Task<VaccinationEventDTO> UpdateEventAsync(UpdateVaccinationEventDTO dto);
+        Task<VaccinationEventDTO> UpdateEventAsync(UpdateVaccinationEventDTO dto, int id);
         Task<bool> DeleteEventAsync(int eventId);
         
         // Event Management

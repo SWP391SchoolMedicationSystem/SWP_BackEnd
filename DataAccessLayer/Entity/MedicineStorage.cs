@@ -29,7 +29,11 @@ public partial class MedicineStorage
 
     public int? ModifiedByUserId { get; set; }
 
+    public virtual User? CreatedByUser { get; set; }
+
     public virtual MedicineCatalog Medicine { get; set; } = null!;
+
+    public virtual User? ModifiedByUser { get; set; }
 
     public virtual Staff Staff { get; set; } = null!;
 }

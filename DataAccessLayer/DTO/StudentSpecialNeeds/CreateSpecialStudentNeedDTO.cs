@@ -14,8 +14,10 @@ namespace DataAccessLayer.DTO.StudentSpecialNeeds
         public int SpecialNeedCategoryId { get; set; }
 
         public string? Notes { get; set; }
- //       public virtual SpecialNeedsCategory SpecialNeedCategory { get; set; } = null!;
+        public int CreatedByUserId { get; set; }
 
-//        public virtual Student Student { get; set; } = null!;
+        //       public virtual SpecialNeedsCategory SpecialNeedCategory { get; set; } = null!;
+
+        //        public virtual Student Student { get; set; } = null!;
     }
 }

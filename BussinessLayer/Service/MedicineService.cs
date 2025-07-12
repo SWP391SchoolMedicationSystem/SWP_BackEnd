@@ -108,11 +108,11 @@ namespace BussinessLayer.Service
             return list;
         }
 
-        public void UpdateMedicine(UpdateMedicineDTO medicine)
+        public void UpdateMedicine(UpdateMedicineDTO medicine, int id)
         {
             if (medicine != null)
             {
-                var entity = _medicineRepository.GetByIdAsync(medicine.MedicineId).Result;
+                var entity = _medicineRepository.GetByIdAsync(id).Result;
                 if (entity != null)
                 {
                     entity.MedicineName = medicine.MedicineName;

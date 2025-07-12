@@ -57,10 +57,6 @@ namespace BussinessLayer.Service
                     Hash = hash,
                     Salt = salt,
                 };
-                user.Staff.Add(staff);
-                var listrole = roleRepository.GetAllAsync();
-                Role role = listrole.Result.FirstOrDefault(r => r.Roleid == register.RoleID);
-                role.Staff.Add(staff);
                 await userRepository.AddAsync(user);
                 staff.Userid = user.UserId;
                 await staffRepository.AddAsync(staff);
@@ -177,11 +173,15 @@ namespace BussinessLayer.Service
             return staffDTO ?? throw new KeyNotFoundException($"Staff with ID {id} not found.");
         }
 
-        public void UpdateStaff(StaffUpdate staff)
+        public void UpdateStaff(StaffUpdate staff, int id)
         {
-            Staff staffupdated = mapper.Map<Staff>(staff);
-            staffupdated.ModifiedAt = DateTime.Now;
-            staffRepository.Update(staffupdated);
+            var existingStaff = staffRepository.GetByIdAsync(id).Result;
+            existingStaff.Fullname = staff.Fullname;
+            existingStaff.Email = staff.Email;
+            existingStaff.Phone = staff.Phone;
+            existingStaff.Roleid = staff.Roleid;
+            existingStaff.ModifiedAt = DateTime.Now;
+            staffRepository.Update(existingStaff);
             staffRepository.Save();
         }
 

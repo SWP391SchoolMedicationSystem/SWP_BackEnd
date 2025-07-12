@@ -19,6 +19,9 @@ namespace DataAccessLayer.Repository
         public Task<List<Personalmedicine>> GetAllAsync()
         {
             return _dbset.Include(p => p.Student)
+                .Include(b => b.ModifiedByUser).ThenInclude(b => b.StaffUsers)
+                .Include(b => b.CreatedByUser).ThenInclude(b => b.StaffUsers)
+
                          .ToListAsync();
         }
     }

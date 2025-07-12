@@ -37,9 +37,13 @@ public partial class Student
 
     public virtual Classroom Class { get; set; } = null!;
 
+    public virtual User? CreatedByUser { get; set; }
+
     public virtual ICollection<HealthRecord> HealthRecords { get; set; } = new List<HealthRecord>();
 
     public virtual ICollection<Healthcheck> Healthchecks { get; set; } = new List<Healthcheck>();
+
+    public virtual User? ModifiedByUser { get; set; }
 
     public virtual Parent Parent { get; set; } = null!;
 

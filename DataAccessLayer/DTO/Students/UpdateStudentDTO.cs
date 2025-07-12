@@ -8,7 +8,6 @@ namespace DataAccessLayer.DTO.Students
 {
     public class UpdateStudentDTo
     {
-        public int Studentid { get; set; }
 
         public string? StudentCode { get; set; } = null!;
 

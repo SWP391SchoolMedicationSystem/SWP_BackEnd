@@ -51,8 +51,8 @@ namespace SchoolMedicalSystem.Controllers
             }
         }
 
-        [HttpPut("parent")]
-        public IActionResult UpdateParentRequest([FromBody] ParentUpdate parent)
+        [HttpPut("parent/{id}")]
+        public IActionResult UpdateParentRequest([FromBody] ParentUpdate parent, int id)
         {
             try
             {
@@ -60,7 +60,7 @@ namespace SchoolMedicalSystem.Controllers
                 {
                     return BadRequest("Parent data is null.");
                 }
-                _parentservice.UpdateParent(parent);
+                _parentservice.UpdateParent(parent, id);
                 return Ok("Parent request updated successfully.");
             }
             catch (Exception e)

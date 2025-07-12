@@ -14,6 +14,9 @@ namespace SchoolMedicalSystem.Profiles
                            opt => opt.MapFrom(sourceMember => sourceMember.Student.Fullname))
                 .ForMember(destinationMember => destinationMember.staffName, destinationMember => destinationMember
                     .MapFrom(sourceMember => sourceMember.Staff.Fullname))
+                .ForMember(dest => dest.CreatedByUserName, opt => opt.MapFrom(src => src.CreatedByUser.StaffUsers.FirstOrDefault(s => s.Userid == src.CreatedByUserId).Fullname))
+                .ForMember(dest => dest.ModifiedByUserName, opt => opt.MapFrom(src => src.ModifiedByUser.StaffUsers.FirstOrDefault(s => s.Userid == src.ModifiedByUserId).Fullname))
+
                 .ReverseMap()
                 ;
             CreateMap<HealthRecordDto, HealthRecord>().ReverseMap();

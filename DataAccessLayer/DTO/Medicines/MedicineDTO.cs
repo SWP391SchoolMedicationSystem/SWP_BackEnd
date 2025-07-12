@@ -18,18 +18,24 @@ namespace DataAccessLayer.DTO.Medicines
 
         public string? Usage { get; set; }
 
+
         public string? DefaultDosage { get; set; }
 
         public string? SideEffects { get; set; }
 
-        public bool IsDeleted { get; set; }
 
-        public DateTime? createdat { get; set; }
+        public bool Isdeleted { get; set; }
 
-        public DateTime? updatedat { get; set; }
+        public DateTime? CreatedAt { get; set; }
 
-        public int? createdby { get; set; }
+        public DateTime? ModifiedAt { get; set; }
 
-        public int? updatedby { get; set; }
+        public int? CreatedByUserId { get; set; }
+
+        public string? CreatedByUserName { get; set; } = null!;
+
+        public int? ModifiedByUserId { get; set; }
+
+        public string? ModifiedByUserName { get; set; } = null!;
     }
 }

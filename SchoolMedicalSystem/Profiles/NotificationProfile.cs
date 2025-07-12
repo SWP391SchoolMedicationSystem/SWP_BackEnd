@@ -9,7 +9,10 @@ namespace SchoolMedicalSystem.Profiles
     {
         public NotificationProfile()
         {
-            CreateMap<NotificationDTO, Notification>().ForSourceMember(c=> c.Message, opt => opt.DoNotValidate()).ReverseMap();
+            CreateMap<Notification, NotificationDTO>()
+                .ForMember(dest => dest.CreatedByUserName, opt => opt.MapFrom(src => src.CreatedByUser.StaffUsers.FirstOrDefault(s => s.Userid == src.CreatedByUserId).Fullname))
+                .ForMember(dest => dest.ModifiedByUserName, opt => opt.MapFrom(src => src.ModifiedByUser.StaffUsers.FirstOrDefault(s => s.Userid == src.ModifiedByUserId).Fullname))
+                .ReverseMap();
             CreateMap<NotificationParentDetail, Notification>().ReverseMap();
             CreateMap<NotificationParentDetail, NotificationDTO>().ReverseMap();
             CreateMap<CreateNotificationDTO, Notification>().ReverseMap();

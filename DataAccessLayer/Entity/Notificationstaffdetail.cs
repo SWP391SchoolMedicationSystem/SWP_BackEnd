@@ -23,6 +23,10 @@ public partial class Notificationstaffdetail
 
     public int? ModifiedByUserId { get; set; }
 
+    public virtual User? CreatedByUser { get; set; }
+
+    public virtual User? ModifiedByUser { get; set; }
+
     public virtual Notification Notification { get; set; } = null!;
 
     public virtual Staff Staff { get; set; } = null!;

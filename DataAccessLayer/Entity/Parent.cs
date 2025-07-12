@@ -27,7 +27,11 @@ public partial class Parent
 
     public int? ModifiedByUserId { get; set; }
 
+    public virtual User? CreatedByUser { get; set; }
+
     public virtual ICollection<Form> Forms { get; set; } = new List<Form>();
+
+    public virtual User? ModifiedByUser { get; set; }
 
     public virtual ICollection<NotificationParentDetail> NotificationParentDetails { get; set; } = new List<NotificationParentDetail>();
 

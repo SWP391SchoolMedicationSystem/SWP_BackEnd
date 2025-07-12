@@ -75,15 +75,12 @@ public partial class SchoolMedicalSystemContext : DbContext
 
     public virtual DbSet<VaccineOfferedInEvent> VaccineOfferedInEvents { get; set; }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Server=TECOOKIE\\SQLEXPRESS;user=sa;password=12345;Database=SchoolMedicalSystem;TrustServerCertificate=True;");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<AccidentReport>(entity =>
         {
-            entity.HasKey(e => e.ReportId).HasName("PK__Accident__D5BD48E5DAD1B4B7");
+            entity.HasKey(e => e.ReportId).HasName("PK__Accident__D5BD48E5CFEA68A8");
 
             entity.ToTable("AccidentReport");
 
@@ -105,6 +102,14 @@ public partial class SchoolMedicalSystemContext : DbContext
             entity.Property(e => e.StudentId).HasColumnName("StudentID");
             entity.Property(e => e.Title).HasMaxLength(255);
 
+            entity.HasOne(d => d.CreatedByUser).WithMany(p => p.AccidentReportCreatedByUsers)
+                .HasForeignKey(d => d.CreatedByUserId)
+                .HasConstraintName("FK_AccidentReport_CreatedByUser");
+
+            entity.HasOne(d => d.ModifiedByUser).WithMany(p => p.AccidentReportModifiedByUsers)
+                .HasForeignKey(d => d.ModifiedByUserId)
+                .HasConstraintName("FK_AccidentReport_ModifiedByUser");
+
             entity.HasOne(d => d.ReportedByStaff).WithMany(p => p.AccidentReports)
                 .HasForeignKey(d => d.ReportedByStaffId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
@@ -118,7 +123,7 @@ public partial class SchoolMedicalSystemContext : DbContext
 
         modelBuilder.Entity<Blog>(entity =>
         {
-            entity.HasKey(e => e.BlogId).HasName("PK__BLOG__F913A29DA8951413");
+            entity.HasKey(e => e.BlogId).HasName("PK__BLOG__F913A29D1E578196");
 
             entity.ToTable("BLOG");
 
@@ -147,11 +152,24 @@ public partial class SchoolMedicalSystemContext : DbContext
             entity.Property(e => e.Title)
                 .HasMaxLength(255)
                 .HasColumnName("TITLE");
+
+            entity.HasOne(d => d.ApprovedByNavigation).WithMany(p => p.Blogs)
+                .HasForeignKey(d => d.ApprovedBy)
+                .HasConstraintName("FK_BLOG_ApprovedBy");
+
+            entity.HasOne(d => d.CreatedByUser).WithMany(p => p.BlogCreatedByUsers)
+                .HasForeignKey(d => d.CreatedByUserId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_BLOG_CreatedByUser");
+
+            entity.HasOne(d => d.ModifiedByUser).WithMany(p => p.BlogModifiedByUsers)
+                .HasForeignKey(d => d.ModifiedByUserId)
+                .HasConstraintName("FK_BLOG_ModifiedByUser");
         });
 
         modelBuilder.Entity<Classroom>(entity =>
         {
-            entity.HasKey(e => e.Classid).HasName("PK__CLASSROO__96D40B6C55EE0A6D");
+            entity.HasKey(e => e.Classid).HasName("PK__CLASSROO__96D40B6CC1D56AAF");
 
             entity.ToTable("CLASSROOM");
 
@@ -172,11 +190,19 @@ public partial class SchoolMedicalSystemContext : DbContext
             entity.Property(e => e.Teachername)
                 .HasMaxLength(255)
                 .HasColumnName("TEACHERNAME");
+
+            entity.HasOne(d => d.CreatedByUser).WithMany(p => p.ClassroomCreatedByUsers)
+                .HasForeignKey(d => d.CreatedByUserId)
+                .HasConstraintName("FK_CLASSROOM_CreatedByUser");
+
+            entity.HasOne(d => d.ModifiedByUser).WithMany(p => p.ClassroomModifiedByUsers)
+                .HasForeignKey(d => d.ModifiedByUserId)
+                .HasConstraintName("FK_CLASSROOM_ModifiedByUser");
         });
 
         modelBuilder.Entity<EmailTemplate>(entity =>
         {
-            entity.HasKey(e => e.EmailTemplateId).HasName("PK__EmailTem__BC0A387564AAE385");
+            entity.HasKey(e => e.EmailTemplateId).HasName("PK__EmailTem__BC0A3875E3BEE8EA");
 
             entity.ToTable("EmailTemplate");
 
@@ -186,11 +212,19 @@ public partial class SchoolMedicalSystemContext : DbContext
             entity.Property(e => e.CreatedByUserId).HasColumnName("CreatedByUserID");
             entity.Property(e => e.ModifiedAt).HasColumnType("datetime");
             entity.Property(e => e.ModifiedByUserId).HasColumnName("ModifiedByUserID");
+
+            entity.HasOne(d => d.CreatedByUser).WithMany(p => p.EmailTemplateCreatedByUsers)
+                .HasForeignKey(d => d.CreatedByUserId)
+                .HasConstraintName("FK_EmailTemplate_CreatedByUser");
+
+            entity.HasOne(d => d.ModifiedByUser).WithMany(p => p.EmailTemplateModifiedByUsers)
+                .HasForeignKey(d => d.ModifiedByUserId)
+                .HasConstraintName("FK_EmailTemplate_ModifiedByUser");
         });
 
         modelBuilder.Entity<Form>(entity =>
         {
-            entity.HasKey(e => e.FormId).HasName("PK__FORM__85052F68A34BEF3E");
+            entity.HasKey(e => e.FormId).HasName("PK__FORM__85052F6831128D91");
 
             entity.ToTable("FORM");
 
@@ -219,10 +253,18 @@ public partial class SchoolMedicalSystemContext : DbContext
                 .HasMaxLength(255)
                 .HasColumnName("TITLE");
 
+            entity.HasOne(d => d.CreatedByUser).WithMany(p => p.FormCreatedByUsers)
+                .HasForeignKey(d => d.CreatedByUserId)
+                .HasConstraintName("FK_FORM_CreatedByUser");
+
             entity.HasOne(d => d.Formcategory).WithMany(p => p.Forms)
                 .HasForeignKey(d => d.FormcategoryId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_FORM_CATEGORY");
+
+            entity.HasOne(d => d.ModifiedByUser).WithMany(p => p.FormModifiedByUsers)
+                .HasForeignKey(d => d.ModifiedByUserId)
+                .HasConstraintName("FK_FORM_ModifiedByUser");
 
             entity.HasOne(d => d.Parent).WithMany(p => p.Forms)
                 .HasForeignKey(d => d.Parentid)
@@ -236,7 +278,7 @@ public partial class SchoolMedicalSystemContext : DbContext
 
         modelBuilder.Entity<FormSubmissionCategory>(entity =>
         {
-            entity.HasKey(e => e.CategoryId).HasName("PK__FormSubm__19093A2BCF2C1E22");
+            entity.HasKey(e => e.CategoryId).HasName("PK__FormSubm__19093A2B327513E6");
 
             entity.ToTable("FormSubmissionCategory");
 
@@ -251,11 +293,19 @@ public partial class SchoolMedicalSystemContext : DbContext
                 .HasColumnName("IS_DELETED");
             entity.Property(e => e.ModifiedAt).HasColumnType("datetime");
             entity.Property(e => e.ModifiedByUserId).HasColumnName("ModifiedByUserID");
+
+            entity.HasOne(d => d.CreatedByUser).WithMany(p => p.FormSubmissionCategoryCreatedByUsers)
+                .HasForeignKey(d => d.CreatedByUserId)
+                .HasConstraintName("FK_FormSubmissionCategory_CreatedByUser");
+
+            entity.HasOne(d => d.ModifiedByUser).WithMany(p => p.FormSubmissionCategoryModifiedByUsers)
+                .HasForeignKey(d => d.ModifiedByUserId)
+                .HasConstraintName("FK_FormSubmissionCategory_ModifiedByUser");
         });
 
         modelBuilder.Entity<HealthRecord>(entity =>
         {
-            entity.HasKey(e => e.HealthRecordId).HasName("PK__HealthRe__3BE0B89DC8EEFE99");
+            entity.HasKey(e => e.HealthRecordId).HasName("PK__HealthRe__3BE0B89D47D0D0A4");
 
             entity.ToTable("HealthRecord");
 
@@ -275,10 +325,18 @@ public partial class SchoolMedicalSystemContext : DbContext
                 .HasDefaultValue("Đã xác nhận");
             entity.Property(e => e.StudentId).HasColumnName("StudentID");
 
+            entity.HasOne(d => d.CreatedByUser).WithMany(p => p.HealthRecordCreatedByUsers)
+                .HasForeignKey(d => d.CreatedByUserId)
+                .HasConstraintName("FK_HealthRecord_CreatedByUser");
+
             entity.HasOne(d => d.HealthCategory).WithMany(p => p.HealthRecords)
                 .HasForeignKey(d => d.HealthCategoryId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_HEALTHRECORD_HEALTHCATEGORY");
+
+            entity.HasOne(d => d.ModifiedByUser).WithMany(p => p.HealthRecordModifiedByUsers)
+                .HasForeignKey(d => d.ModifiedByUserId)
+                .HasConstraintName("FK_HealthRecord_ModifiedByUser");
 
             entity.HasOne(d => d.Staff).WithMany(p => p.HealthRecords)
                 .HasForeignKey(d => d.StaffId)
@@ -293,7 +351,7 @@ public partial class SchoolMedicalSystemContext : DbContext
 
         modelBuilder.Entity<HealthRecordCategory>(entity =>
         {
-            entity.HasKey(e => e.HealthCategoryId).HasName("PK__HealthRe__2552448E7E0D571E");
+            entity.HasKey(e => e.HealthCategoryId).HasName("PK__HealthRe__2552448EAE2DC243");
 
             entity.ToTable("HealthRecordCategory");
 
@@ -307,11 +365,19 @@ public partial class SchoolMedicalSystemContext : DbContext
             entity.Property(e => e.IsDeleted).HasColumnName("IS_DELETED");
             entity.Property(e => e.ModifiedAt).HasColumnType("datetime");
             entity.Property(e => e.ModifiedByUserId).HasColumnName("ModifiedByUserID");
+
+            entity.HasOne(d => d.CreatedByUser).WithMany(p => p.HealthRecordCategoryCreatedByUsers)
+                .HasForeignKey(d => d.CreatedByUserId)
+                .HasConstraintName("FK_HealthRecordCategory_CreatedByUser");
+
+            entity.HasOne(d => d.ModifiedByUser).WithMany(p => p.HealthRecordCategoryModifiedByUsers)
+                .HasForeignKey(d => d.ModifiedByUserId)
+                .HasConstraintName("FK_HealthRecordCategory_ModifiedByUser");
         });
 
         modelBuilder.Entity<Healthcheck>(entity =>
         {
-            entity.HasKey(e => e.Checkid).HasName("PK__HEALTHCH__7A9DCA6715073E2C");
+            entity.HasKey(e => e.Checkid).HasName("PK__HEALTHCH__7A9DCA675744B9BE");
 
             entity.ToTable("HEALTHCHECK");
 
@@ -348,6 +414,14 @@ public partial class SchoolMedicalSystemContext : DbContext
                 .HasColumnType("decimal(5, 2)")
                 .HasColumnName("WEIGHT");
 
+            entity.HasOne(d => d.CreatedByUser).WithMany(p => p.HealthcheckCreatedByUsers)
+                .HasForeignKey(d => d.CreatedByUserId)
+                .HasConstraintName("FK_HEALTHCHECK_CreatedByUser");
+
+            entity.HasOne(d => d.ModifiedByUser).WithMany(p => p.HealthcheckModifiedByUsers)
+                .HasForeignKey(d => d.ModifiedByUserId)
+                .HasConstraintName("FK_HEALTHCHECK_ModifiedByUser");
+
             entity.HasOne(d => d.Staff).WithMany(p => p.Healthchecks)
                 .HasForeignKey(d => d.Staffid)
                 .OnDelete(DeleteBehavior.ClientSetNull)
@@ -361,7 +435,7 @@ public partial class SchoolMedicalSystemContext : DbContext
 
         modelBuilder.Entity<MedicineCatalog>(entity =>
         {
-            entity.HasKey(e => e.MedicineId).HasName("PK__Medicine__4F2128F0731DCA48");
+            entity.HasKey(e => e.MedicineId).HasName("PK__Medicine__4F2128F038AE495C");
 
             entity.ToTable("MedicineCatalog");
 
@@ -376,14 +450,22 @@ public partial class SchoolMedicalSystemContext : DbContext
             entity.Property(e => e.ModifiedAt).HasColumnType("datetime");
             entity.Property(e => e.ModifiedByUserId).HasColumnName("ModifiedByUserID");
 
+            entity.HasOne(d => d.CreatedByUser).WithMany(p => p.MedicineCatalogCreatedByUsers)
+                .HasForeignKey(d => d.CreatedByUserId)
+                .HasConstraintName("FK_MedicineCatalog_CreatedByUser");
+
             entity.HasOne(d => d.MedicineCategory).WithMany(p => p.MedicineCatalogs)
                 .HasForeignKey(d => d.MedicineCategoryId)
                 .HasConstraintName("FK_MedicineCatalog_Category");
+
+            entity.HasOne(d => d.ModifiedByUser).WithMany(p => p.MedicineCatalogModifiedByUsers)
+                .HasForeignKey(d => d.ModifiedByUserId)
+                .HasConstraintName("FK_MedicineCatalog_ModifiedByUser");
         });
 
         modelBuilder.Entity<MedicineCategory>(entity =>
         {
-            entity.HasKey(e => e.MedicineCategoryId).HasName("PK__Medicine__28C9BEEA01D018B1");
+            entity.HasKey(e => e.MedicineCategoryId).HasName("PK__Medicine__28C9BEEA82AF2934");
 
             entity.ToTable("MedicineCategory");
 
@@ -396,11 +478,19 @@ public partial class SchoolMedicalSystemContext : DbContext
             entity.Property(e => e.Description).HasMaxLength(255);
             entity.Property(e => e.ModifiedAt).HasColumnType("datetime");
             entity.Property(e => e.ModifiedByUserId).HasColumnName("ModifiedByUserID");
+
+            entity.HasOne(d => d.CreatedByUser).WithMany(p => p.MedicineCategoryCreatedByUsers)
+                .HasForeignKey(d => d.CreatedByUserId)
+                .HasConstraintName("FK_MedicineCategory_CreatedByUser");
+
+            entity.HasOne(d => d.ModifiedByUser).WithMany(p => p.MedicineCategoryModifiedByUsers)
+                .HasForeignKey(d => d.ModifiedByUserId)
+                .HasConstraintName("FK_MedicineCategory_ModifiedByUser");
         });
 
         modelBuilder.Entity<MedicineScheduleLink>(entity =>
         {
-            entity.HasKey(e => e.MedicineScheduleLinkId).HasName("PK__Medicine__A1BCB6BC65B77C18");
+            entity.HasKey(e => e.MedicineScheduleLinkId).HasName("PK__Medicine__A1BCB6BC92893C81");
 
             entity.ToTable("MedicineScheduleLink");
 
@@ -420,6 +510,14 @@ public partial class SchoolMedicalSystemContext : DbContext
                 .HasMaxLength(50)
                 .HasDefaultValue("Chờ phê duyệt");
 
+            entity.HasOne(d => d.CreatedByUser).WithMany(p => p.MedicineScheduleLinkCreatedByUsers)
+                .HasForeignKey(d => d.CreatedByUserId)
+                .HasConstraintName("FK_MedicineScheduleLink_CreatedByUser");
+
+            entity.HasOne(d => d.ModifiedByUser).WithMany(p => p.MedicineScheduleLinkModifiedByUsers)
+                .HasForeignKey(d => d.ModifiedByUserId)
+                .HasConstraintName("FK_MedicineScheduleLink_ModifiedByUser");
+
             entity.HasOne(d => d.PersonalMedicine).WithMany(p => p.MedicineScheduleLinks)
                 .HasForeignKey(d => d.PersonalMedicineId)
                 .HasConstraintName("FK_MedicineScheduleLink_PersonalMedicine");
@@ -432,7 +530,7 @@ public partial class SchoolMedicalSystemContext : DbContext
 
         modelBuilder.Entity<MedicineStorage>(entity =>
         {
-            entity.HasKey(e => e.StorageId).HasName("PK__Medicine__8A247E37D290AC53");
+            entity.HasKey(e => e.StorageId).HasName("PK__Medicine__8A247E37424E4BAC");
 
             entity.ToTable("MedicineStorage");
 
@@ -453,10 +551,18 @@ public partial class SchoolMedicalSystemContext : DbContext
                 .HasColumnType("datetime");
             entity.Property(e => e.StaffId).HasColumnName("StaffID");
 
+            entity.HasOne(d => d.CreatedByUser).WithMany(p => p.MedicineStorageCreatedByUsers)
+                .HasForeignKey(d => d.CreatedByUserId)
+                .HasConstraintName("FK_MedicineStorage_CreatedByUser");
+
             entity.HasOne(d => d.Medicine).WithMany(p => p.MedicineStorages)
                 .HasForeignKey(d => d.MedicineId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_MedicineStorage_Medicine");
+
+            entity.HasOne(d => d.ModifiedByUser).WithMany(p => p.MedicineStorageModifiedByUsers)
+                .HasForeignKey(d => d.ModifiedByUserId)
+                .HasConstraintName("FK_MedicineStorage_ModifiedByUser");
 
             entity.HasOne(d => d.Staff).WithMany(p => p.MedicineStorages)
                 .HasForeignKey(d => d.StaffId)
@@ -466,7 +572,7 @@ public partial class SchoolMedicalSystemContext : DbContext
 
         modelBuilder.Entity<Notification>(entity =>
         {
-            entity.HasKey(e => e.NotificationId).HasName("PK__Notifica__20CF2E1266E787CF");
+            entity.HasKey(e => e.NotificationId).HasName("PK__Notifica__20CF2E12784D97AC");
 
             entity.ToTable("Notification");
 
@@ -479,11 +585,19 @@ public partial class SchoolMedicalSystemContext : DbContext
             entity.Property(e => e.ModifiedByUserId).HasColumnName("ModifiedByUserID");
             entity.Property(e => e.Title).HasMaxLength(255);
             entity.Property(e => e.Type).HasMaxLength(50);
+
+            entity.HasOne(d => d.CreatedByUser).WithMany(p => p.NotificationCreatedByUsers)
+                .HasForeignKey(d => d.CreatedByUserId)
+                .HasConstraintName("FK_Notification_CreatedByUser");
+
+            entity.HasOne(d => d.ModifiedByUser).WithMany(p => p.NotificationModifiedByUsers)
+                .HasForeignKey(d => d.ModifiedByUserId)
+                .HasConstraintName("FK_Notification_ModifiedByUser");
         });
 
         modelBuilder.Entity<NotificationParentDetail>(entity =>
         {
-            entity.HasKey(e => new { e.NotificationId, e.ParentId }).HasName("PK__Notifica__CDFCBB047A9AF318");
+            entity.HasKey(e => new { e.NotificationId, e.ParentId }).HasName("PK__Notifica__CDFCBB04C82CDF9F");
 
             entity.ToTable("NotificationParentDetail");
 
@@ -497,6 +611,14 @@ public partial class SchoolMedicalSystemContext : DbContext
             entity.Property(e => e.ModifiedAt).HasColumnType("datetime");
             entity.Property(e => e.ModifiedByUserId).HasColumnName("ModifiedByUserID");
 
+            entity.HasOne(d => d.CreatedByUser).WithMany(p => p.NotificationParentDetailCreatedByUsers)
+                .HasForeignKey(d => d.CreatedByUserId)
+                .HasConstraintName("FK_NotificationParentDetail_CreatedByUser");
+
+            entity.HasOne(d => d.ModifiedByUser).WithMany(p => p.NotificationParentDetailModifiedByUsers)
+                .HasForeignKey(d => d.ModifiedByUserId)
+                .HasConstraintName("FK_NotificationParentDetail_ModifiedByUser");
+
             entity.HasOne(d => d.Notification).WithMany(p => p.NotificationParentDetails)
                 .HasForeignKey(d => d.NotificationId)
                 .HasConstraintName("FK_NotificationParentDetail_Notification");
@@ -508,7 +630,7 @@ public partial class SchoolMedicalSystemContext : DbContext
 
         modelBuilder.Entity<Notificationstaffdetail>(entity =>
         {
-            entity.HasKey(e => new { e.NotificationId, e.Staffid }).HasName("PK__NOTIFICA__82447E71FA0B436C");
+            entity.HasKey(e => new { e.NotificationId, e.Staffid }).HasName("PK__NOTIFICA__82447E718FC69771");
 
             entity.ToTable("NOTIFICATIONSTAFFDETAILS");
 
@@ -523,6 +645,14 @@ public partial class SchoolMedicalSystemContext : DbContext
             entity.Property(e => e.ModifiedAt).HasColumnType("datetime");
             entity.Property(e => e.ModifiedByUserId).HasColumnName("ModifiedByUserID");
 
+            entity.HasOne(d => d.CreatedByUser).WithMany(p => p.NotificationstaffdetailCreatedByUsers)
+                .HasForeignKey(d => d.CreatedByUserId)
+                .HasConstraintName("FK_NOTIFICATIONSTAFFDETAILS_CreatedByUser");
+
+            entity.HasOne(d => d.ModifiedByUser).WithMany(p => p.NotificationstaffdetailModifiedByUsers)
+                .HasForeignKey(d => d.ModifiedByUserId)
+                .HasConstraintName("FK_NOTIFICATIONSTAFFDETAILS_ModifiedByUser");
+
             entity.HasOne(d => d.Notification).WithMany(p => p.Notificationstaffdetails)
                 .HasForeignKey(d => d.NotificationId)
                 .HasConstraintName("FK_NOTIFICATIONSTAFFDETAILS_Notification");
@@ -534,7 +664,7 @@ public partial class SchoolMedicalSystemContext : DbContext
 
         modelBuilder.Entity<Otp>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Otp__3214EC0701E9E11F");
+            entity.HasKey(e => e.Id).HasName("PK__Otp__3214EC07780498F2");
 
             entity.ToTable("Otp");
 
@@ -550,7 +680,7 @@ public partial class SchoolMedicalSystemContext : DbContext
 
         modelBuilder.Entity<Parent>(entity =>
         {
-            entity.HasKey(e => e.Parentid).HasName("PK__PARENT__7444E66A80DC3627");
+            entity.HasKey(e => e.Parentid).HasName("PK__PARENT__7444E66A78A1ADDE");
 
             entity.ToTable("PARENT");
 
@@ -576,7 +706,15 @@ public partial class SchoolMedicalSystemContext : DbContext
                 .HasColumnName("PHONE");
             entity.Property(e => e.Userid).HasColumnName("USERID");
 
-            entity.HasOne(d => d.User).WithMany(p => p.Parents)
+            entity.HasOne(d => d.CreatedByUser).WithMany(p => p.ParentCreatedByUsers)
+                .HasForeignKey(d => d.CreatedByUserId)
+                .HasConstraintName("FK_PARENT_CreatedByUser");
+
+            entity.HasOne(d => d.ModifiedByUser).WithMany(p => p.ParentModifiedByUsers)
+                .HasForeignKey(d => d.ModifiedByUserId)
+                .HasConstraintName("FK_PARENT_ModifiedByUser");
+
+            entity.HasOne(d => d.User).WithMany(p => p.ParentUsers)
                 .HasForeignKey(d => d.Userid)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_PARENT_USERID");
@@ -584,7 +722,7 @@ public partial class SchoolMedicalSystemContext : DbContext
 
         modelBuilder.Entity<Personalmedicine>(entity =>
         {
-            entity.HasKey(e => e.Personalmedicineid).HasName("PK__PERSONAL__E0FDAEFF9B6FBE38");
+            entity.HasKey(e => e.Personalmedicineid).HasName("PK__PERSONAL__E0FDAEFF5BE70DEF");
 
             entity.ToTable("PERSONALMEDICINE");
 
@@ -614,6 +752,14 @@ public partial class SchoolMedicalSystemContext : DbContext
             entity.Property(e => e.Staffid).HasColumnName("STAFFID");
             entity.Property(e => e.Studentid).HasColumnName("STUDENTID");
 
+            entity.HasOne(d => d.CreatedByUser).WithMany(p => p.PersonalmedicineCreatedByUsers)
+                .HasForeignKey(d => d.CreatedByUserId)
+                .HasConstraintName("FK_PERSONALMEDICINE_CreatedByUser");
+
+            entity.HasOne(d => d.ModifiedByUser).WithMany(p => p.PersonalmedicineModifiedByUsers)
+                .HasForeignKey(d => d.ModifiedByUserId)
+                .HasConstraintName("FK_PERSONALMEDICINE_ModifiedByUser");
+
             entity.HasOne(d => d.Parent).WithMany(p => p.Personalmedicines)
                 .HasForeignKey(d => d.Parentid)
                 .OnDelete(DeleteBehavior.ClientSetNull)
@@ -632,7 +778,7 @@ public partial class SchoolMedicalSystemContext : DbContext
 
         modelBuilder.Entity<Role>(entity =>
         {
-            entity.HasKey(e => e.Roleid).HasName("PK__ROLE__006568E93137E9DF");
+            entity.HasKey(e => e.Roleid).HasName("PK__ROLE__006568E992846827");
 
             entity.ToTable("ROLE");
 
@@ -647,11 +793,19 @@ public partial class SchoolMedicalSystemContext : DbContext
             entity.Property(e => e.Rolename)
                 .HasMaxLength(50)
                 .HasColumnName("ROLENAME");
+
+            entity.HasOne(d => d.CreatedByUser).WithMany(p => p.RoleCreatedByUsers)
+                .HasForeignKey(d => d.CreatedByUserId)
+                .HasConstraintName("FK_ROLE_CreatedByUser");
+
+            entity.HasOne(d => d.ModifiedByUser).WithMany(p => p.RoleModifiedByUsers)
+                .HasForeignKey(d => d.ModifiedByUserId)
+                .HasConstraintName("FK_ROLE_ModifiedByUser");
         });
 
         modelBuilder.Entity<ScheduleDetail>(entity =>
         {
-            entity.HasKey(e => e.ScheduleDetailId).HasName("PK__Schedule__921C9F75E474DA97");
+            entity.HasKey(e => e.ScheduleDetailId).HasName("PK__Schedule__921C9F75BC8B45F9");
 
             entity.ToTable("ScheduleDetail");
 
@@ -663,11 +817,19 @@ public partial class SchoolMedicalSystemContext : DbContext
             entity.Property(e => e.ModifiedAt).HasColumnType("datetime");
             entity.Property(e => e.ModifiedByUserId).HasColumnName("ModifiedByUserID");
             entity.Property(e => e.Notes).HasMaxLength(255);
+
+            entity.HasOne(d => d.CreatedByUser).WithMany(p => p.ScheduleDetailCreatedByUsers)
+                .HasForeignKey(d => d.CreatedByUserId)
+                .HasConstraintName("FK_ScheduleDetail_CreatedByUser");
+
+            entity.HasOne(d => d.ModifiedByUser).WithMany(p => p.ScheduleDetailModifiedByUsers)
+                .HasForeignKey(d => d.ModifiedByUserId)
+                .HasConstraintName("FK_ScheduleDetail_ModifiedByUser");
         });
 
         modelBuilder.Entity<SpecialNeedsCategory>(entity =>
         {
-            entity.HasKey(e => e.SpecialNeedCategoryId).HasName("PK__SpecialN__BAED81C0202003AF");
+            entity.HasKey(e => e.SpecialNeedCategoryId).HasName("PK__SpecialN__BAED81C0342AE767");
 
             entity.ToTable("SpecialNeedsCategory");
 
@@ -679,11 +841,19 @@ public partial class SchoolMedicalSystemContext : DbContext
             entity.Property(e => e.CreatedByUserId).HasColumnName("CreatedByUserID");
             entity.Property(e => e.ModifiedAt).HasColumnType("datetime");
             entity.Property(e => e.ModifiedByUserId).HasColumnName("ModifiedByUserID");
+
+            entity.HasOne(d => d.CreatedByUser).WithMany(p => p.SpecialNeedsCategoryCreatedByUsers)
+                .HasForeignKey(d => d.CreatedByUserId)
+                .HasConstraintName("FK_SpecialNeedsCategory_CreatedByUser");
+
+            entity.HasOne(d => d.ModifiedByUser).WithMany(p => p.SpecialNeedsCategoryModifiedByUsers)
+                .HasForeignKey(d => d.ModifiedByUserId)
+                .HasConstraintName("FK_SpecialNeedsCategory_ModifiedByUser");
         });
 
         modelBuilder.Entity<Staff>(entity =>
         {
-            entity.HasKey(e => e.Staffid).HasName("PK__STAFF__28B5063B08A9B74C");
+            entity.HasKey(e => e.Staffid).HasName("PK__STAFF__28B5063BF1EAB3AA");
 
             entity.ToTable("STAFF");
 
@@ -707,22 +877,30 @@ public partial class SchoolMedicalSystemContext : DbContext
             entity.Property(e => e.Roleid).HasColumnName("ROLEID");
             entity.Property(e => e.Userid).HasColumnName("USERID");
 
+            entity.HasOne(d => d.CreatedByUser).WithMany(p => p.StaffCreatedByUsers)
+                .HasForeignKey(d => d.CreatedByUserId)
+                .HasConstraintName("FK_STAFF_CreatedByUser");
+
+            entity.HasOne(d => d.ModifiedByUser).WithMany(p => p.StaffModifiedByUsers)
+                .HasForeignKey(d => d.ModifiedByUserId)
+                .HasConstraintName("FK_STAFF_ModifiedByUser");
+
             entity.HasOne(d => d.Role).WithMany(p => p.Staff)
                 .HasForeignKey(d => d.Roleid)
                 .HasConstraintName("FK_STAFF_ROLE");
 
-            entity.HasOne(d => d.User).WithMany(p => p.Staff)
+            entity.HasOne(d => d.User).WithMany(p => p.StaffUsers)
                 .HasForeignKey(d => d.Userid)
                 .HasConstraintName("FK_STAFF_USER");
         });
 
         modelBuilder.Entity<Student>(entity =>
         {
-            entity.HasKey(e => e.Studentid).HasName("PK__STUDENT__495196F071B3EEED");
+            entity.HasKey(e => e.Studentid).HasName("PK__STUDENT__495196F03FA68415");
 
             entity.ToTable("STUDENT");
 
-            entity.HasIndex(e => e.StudentCode, "UQ__STUDENT__7BC28360DF2B740C").IsUnique();
+            entity.HasIndex(e => e.StudentCode, "UQ__STUDENT__7BC2836067B51705").IsUnique();
 
             entity.Property(e => e.Studentid).HasColumnName("STUDENTID");
             entity.Property(e => e.Age).HasColumnName("AGE");
@@ -754,6 +932,14 @@ public partial class SchoolMedicalSystemContext : DbContext
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_STUDENT_CLASSID");
 
+            entity.HasOne(d => d.CreatedByUser).WithMany(p => p.StudentCreatedByUsers)
+                .HasForeignKey(d => d.CreatedByUserId)
+                .HasConstraintName("FK_STUDENT_CreatedByUser");
+
+            entity.HasOne(d => d.ModifiedByUser).WithMany(p => p.StudentModifiedByUsers)
+                .HasForeignKey(d => d.ModifiedByUserId)
+                .HasConstraintName("FK_STUDENT_ModifiedByUser");
+
             entity.HasOne(d => d.Parent).WithMany(p => p.Students)
                 .HasForeignKey(d => d.Parentid)
                 .OnDelete(DeleteBehavior.ClientSetNull)
@@ -762,7 +948,7 @@ public partial class SchoolMedicalSystemContext : DbContext
 
         modelBuilder.Entity<StudentSpecialNeed>(entity =>
         {
-            entity.HasKey(e => e.StudentSpecialNeedId).HasName("PK__StudentS__00E0B0F5AEBD895B");
+            entity.HasKey(e => e.StudentSpecialNeedId).HasName("PK__StudentS__00E0B0F5569DCFBE");
 
             entity.Property(e => e.StudentSpecialNeedId).HasColumnName("StudentSpecialNeedID");
             entity.Property(e => e.CreatedAt)
@@ -773,6 +959,14 @@ public partial class SchoolMedicalSystemContext : DbContext
             entity.Property(e => e.ModifiedByUserId).HasColumnName("ModifiedByUserID");
             entity.Property(e => e.SpecialNeedCategoryId).HasColumnName("SpecialNeedCategoryID");
             entity.Property(e => e.StudentId).HasColumnName("StudentID");
+
+            entity.HasOne(d => d.CreatedByUser).WithMany(p => p.StudentSpecialNeedCreatedByUsers)
+                .HasForeignKey(d => d.CreatedByUserId)
+                .HasConstraintName("FK_StudentSpecialNeeds_CreatedByUser");
+
+            entity.HasOne(d => d.ModifiedByUser).WithMany(p => p.StudentSpecialNeedModifiedByUsers)
+                .HasForeignKey(d => d.ModifiedByUserId)
+                .HasConstraintName("FK_StudentSpecialNeeds_ModifiedByUser");
 
             entity.HasOne(d => d.SpecialNeedCategory).WithMany(p => p.StudentSpecialNeeds)
                 .HasForeignKey(d => d.SpecialNeedCategoryId)
@@ -787,7 +981,7 @@ public partial class SchoolMedicalSystemContext : DbContext
 
         modelBuilder.Entity<StudentVaccinationRecord>(entity =>
         {
-            entity.HasKey(e => e.StudentVaccinationId).HasName("PK__StudentV__940FB40DE3BBB38F");
+            entity.HasKey(e => e.StudentVaccinationId).HasName("PK__StudentV__940FB40D49E46B73");
 
             entity.ToTable("StudentVaccinationRecord");
 
@@ -815,9 +1009,17 @@ public partial class SchoolMedicalSystemContext : DbContext
                 .HasForeignKey(d => d.AdministeredByStaffId)
                 .HasConstraintName("FK_StudentVaccination_Staff");
 
+            entity.HasOne(d => d.CreatedByUser).WithMany(p => p.StudentVaccinationRecordCreatedByUsers)
+                .HasForeignKey(d => d.CreatedByUserId)
+                .HasConstraintName("FK_StudentVaccination_CreatedByUser");
+
             entity.HasOne(d => d.Event).WithMany(p => p.StudentVaccinationRecords)
                 .HasForeignKey(d => d.EventId)
                 .HasConstraintName("FK_StudentVaccination_Event");
+
+            entity.HasOne(d => d.ModifiedByUser).WithMany(p => p.StudentVaccinationRecordModifiedByUsers)
+                .HasForeignKey(d => d.ModifiedByUserId)
+                .HasConstraintName("FK_StudentVaccination_ModifiedByUser");
 
             entity.HasOne(d => d.Student).WithMany(p => p.StudentVaccinationRecords)
                 .HasForeignKey(d => d.StudentId)
@@ -832,11 +1034,11 @@ public partial class SchoolMedicalSystemContext : DbContext
 
         modelBuilder.Entity<User>(entity =>
         {
-            entity.HasKey(e => e.UserId).HasName("PK__USER__1788CCAC428C22EE");
+            entity.HasKey(e => e.UserId).HasName("PK__USER__1788CCAC05513F52");
 
             entity.ToTable("USER");
 
-            entity.HasIndex(e => e.Email, "UQ__USER__A9D1053480E05765").IsUnique();
+            entity.HasIndex(e => e.Email, "UQ__USER__A9D10534DF95891A").IsUnique();
 
             entity.Property(e => e.UserId).HasColumnName("UserID");
             entity.Property(e => e.CreatedAt)
@@ -852,7 +1054,7 @@ public partial class SchoolMedicalSystemContext : DbContext
 
         modelBuilder.Entity<VaccinationEvent>(entity =>
         {
-            entity.HasKey(e => e.EventId).HasName("PK__Vaccinat__7944C870315A48DB");
+            entity.HasKey(e => e.EventId).HasName("PK__Vaccinat__7944C87006F30BF8");
 
             entity.ToTable("VaccinationEvent");
 
@@ -868,11 +1070,19 @@ public partial class SchoolMedicalSystemContext : DbContext
             entity.Property(e => e.ModifiedAt).HasColumnType("datetime");
             entity.Property(e => e.ModifiedByUserId).HasColumnName("ModifiedByUserID");
             entity.Property(e => e.Organizer).HasMaxLength(255);
+
+            entity.HasOne(d => d.CreatedByUser).WithMany(p => p.VaccinationEventCreatedByUsers)
+                .HasForeignKey(d => d.CreatedByUserId)
+                .HasConstraintName("FK_VaccinationEvent_CreatedByUser");
+
+            entity.HasOne(d => d.ModifiedByUser).WithMany(p => p.VaccinationEventModifiedByUsers)
+                .HasForeignKey(d => d.ModifiedByUserId)
+                .HasConstraintName("FK_VaccinationEvent_ModifiedByUser");
         });
 
         modelBuilder.Entity<Vaccine>(entity =>
         {
-            entity.HasKey(e => e.VaccineId).HasName("PK__Vaccine__45DC68E930AAADB4");
+            entity.HasKey(e => e.VaccineId).HasName("PK__Vaccine__45DC68E9F50294C1");
 
             entity.ToTable("Vaccine");
 
@@ -890,11 +1100,19 @@ public partial class SchoolMedicalSystemContext : DbContext
                 .HasColumnName("MoreInfoURL");
             entity.Property(e => e.TargetAudience).HasMaxLength(255);
             entity.Property(e => e.VaccineName).HasMaxLength(255);
+
+            entity.HasOne(d => d.CreatedByUser).WithMany(p => p.VaccineCreatedByUsers)
+                .HasForeignKey(d => d.CreatedByUserId)
+                .HasConstraintName("FK_Vaccine_CreatedByUser");
+
+            entity.HasOne(d => d.ModifiedByUser).WithMany(p => p.VaccineModifiedByUsers)
+                .HasForeignKey(d => d.ModifiedByUserId)
+                .HasConstraintName("FK_Vaccine_ModifiedByUser");
         });
 
         modelBuilder.Entity<VaccineOfferedInEvent>(entity =>
         {
-            entity.HasKey(e => new { e.EventId, e.VaccineId }).HasName("PK__VaccineO__FD190EFEB54E92A2");
+            entity.HasKey(e => new { e.EventId, e.VaccineId }).HasName("PK__VaccineO__FD190EFEE544A182");
 
             entity.ToTable("VaccineOfferedInEvent");
 

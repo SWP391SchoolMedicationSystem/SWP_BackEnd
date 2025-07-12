@@ -38,7 +38,11 @@ namespace DataAccessLayer.DTO.PersonalMedicine
 
         public int? CreatedByUserId { get; set; }
 
+        public string? CreatedByUserName { get; set; } = null!;
+
         public int? ModifiedByUserId { get; set; }
+
+        public string? ModifiedByUserName { get; set; } = null!;
 
     }
 }

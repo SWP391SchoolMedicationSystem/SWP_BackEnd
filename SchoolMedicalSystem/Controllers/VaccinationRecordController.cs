@@ -47,14 +47,14 @@ namespace SchoolMedicalSystem.Controllers
             }
         }
         [HttpPut]
-        [Route("vaccinationrecord")]
-        public IActionResult UpdateVaccinationRecord([FromBody] VaccinationRecordDTO record)
+        [Route("vaccinationrecord/{id}")]
+        public IActionResult UpdateVaccinationRecord([FromBody] VaccinationRecordDTO record, int id)
         {
             if (record == null)
             {
                 return BadRequest("Invalid vaccination record data.");
             }
-            _vaccinationRecordService.UpdateVaccinationRecord(record);
+            _vaccinationRecordService.UpdateVaccinationRecord(record, id);
             return Ok("Updated successfully");
         }
 

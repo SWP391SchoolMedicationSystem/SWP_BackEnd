@@ -21,5 +21,9 @@ public partial class HealthRecordCategory
 
     public DateTime? ModifiedAt { get; set; }
 
+    public virtual User? CreatedByUser { get; set; }
+
     public virtual ICollection<HealthRecord> HealthRecords { get; set; } = new List<HealthRecord>();
+
+    public virtual User? ModifiedByUser { get; set; }
 }

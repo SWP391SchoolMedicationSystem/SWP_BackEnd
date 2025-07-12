@@ -44,15 +44,15 @@ namespace SchoolMedicalSystem.Controllers
                 return StatusCode(500, $"Error adding medicine donation: {ex.Message}");
             }
             }
-        [HttpPut("Personalmedicine")]
+        [HttpPut("Personalmedicine/{id}")]
 
-        public IActionResult UpdatePersonalmedicine([FromBody] UpdatePersonalMedicineDTO PersonalmedicineDto)
+        public IActionResult UpdatePersonalmedicine([FromBody] UpdatePersonalMedicineDTO PersonalmedicineDto, int id)
         {
             if (PersonalmedicineDto == null)
                 return BadRequest("Invalid data.");
             try
             {
-                PersonalmedicineService.UpdatePersonalmedicine(PersonalmedicineDto);
+                PersonalmedicineService.UpdatePersonalmedicine(PersonalmedicineDto, id);
                 return Ok("Medicine donation updated successfully.");
             }
             catch (Exception ex)
@@ -77,11 +77,11 @@ namespace SchoolMedicalSystem.Controllers
                 return StatusCode(500, $"Error deleting medicine donation: {ex.Message}");
             }
         }
-        [HttpPut("approve")]
-        public async Task<IActionResult> ApprovePersonalMedicineRequest(ApprovalPersonalMedicineDTO dto)
+        [HttpPut("approve/{id}")]
+        public async Task<IActionResult> ApprovePersonalMedicineRequest(ApprovalPersonalMedicineDTO dto, int id)
         {
             try{
-                PersonalmedicineService.ApprovePersonalMedicine(dto);
+                PersonalmedicineService.ApprovePersonalMedicine(dto, id);
                 return Ok("Personal medicine request approved successfully.");
             }
             catch(Exception e)
@@ -89,12 +89,12 @@ namespace SchoolMedicalSystem.Controllers
                 return StatusCode(500, $"Internal server error: {e.Message}");
             }
         }
-        [HttpPut("reject")]
-        public async Task<IActionResult> RejectPersonalMedicineRequest(ApprovalPersonalMedicineDTO dto)
+        [HttpPut("reject/{id}")]
+        public async Task<IActionResult> RejectPersonalMedicineRequest(ApprovalPersonalMedicineDTO dto, int id)
         {
             try
             {
-                PersonalmedicineService.RejectPersonalMedicine(dto);
+                PersonalmedicineService.RejectPersonalMedicine(dto, id);
                 return Ok("Personal medicine request rejected successfully.");
             }
             catch(Exception e)

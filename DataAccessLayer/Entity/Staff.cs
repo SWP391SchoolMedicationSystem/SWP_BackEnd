@@ -29,6 +29,10 @@ public partial class Staff
 
     public virtual ICollection<AccidentReport> AccidentReports { get; set; } = new List<AccidentReport>();
 
+    public virtual ICollection<Blog> Blogs { get; set; } = new List<Blog>();
+
+    public virtual User? CreatedByUser { get; set; }
+
     public virtual ICollection<Form> Forms { get; set; } = new List<Form>();
 
     public virtual ICollection<HealthRecord> HealthRecords { get; set; } = new List<HealthRecord>();
@@ -36,6 +40,8 @@ public partial class Staff
     public virtual ICollection<Healthcheck> Healthchecks { get; set; } = new List<Healthcheck>();
 
     public virtual ICollection<MedicineStorage> MedicineStorages { get; set; } = new List<MedicineStorage>();
+
+    public virtual User? ModifiedByUser { get; set; }
 
     public virtual ICollection<Notificationstaffdetail> Notificationstaffdetails { get; set; } = new List<Notificationstaffdetail>();
 

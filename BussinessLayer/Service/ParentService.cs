@@ -105,9 +105,9 @@ namespace BussinessLayer.Service
             }
 
         }
-        public void UpdateParent(ParentUpdate parentdto)
+        public void UpdateParent(ParentUpdate parentdto, int id)
         {
-            Parent parent = (Parent) parentRepository.GetByIdAsync(parentdto.Parentid).Result;
+            Parent parent = (Parent) parentRepository.GetByIdAsync(id).Result;
             if (parent != null)
             {
                 // Only assign if value is not null/empty/0
@@ -178,14 +178,7 @@ namespace BussinessLayer.Service
         public async Task<List<ParentDTO>> GetAllParentsAsync()
         {
             List<Parent> list = await parentRepository.GetAllAsync();
-            var parentlist = mapper.Map<List<ParentDTO>>(list);
-            foreach(ParentDTO parent in parentlist)
-            {
-                var studentlist = studentRepo.GetAll().Where(s => s.Parentid == parent.Parentid);
-                var studentdto = mapper.Map<List<StudentParentDTO>>(studentlist);
-                parent.Students = studentdto;
-            }
-            
+            var parentlist = mapper.Map<List<ParentDTO>>(list);            
             return parentlist;
         }
 
@@ -202,9 +195,6 @@ namespace BussinessLayer.Service
             if (parent == null) return null;
             ParentDTO parentdto = mapper.Map<ParentDTO>(parent);
 
-            var studentlist = studentRepo.GetAll().Where(s => s.Parentid == parent.Parentid);
-            var studentdto = mapper.Map<List<StudentParentDTO>>(studentlist);
-            parentdto.Students = studentdto;
             return parentdto;
         }
 

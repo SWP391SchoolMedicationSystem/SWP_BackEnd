@@ -19,5 +19,9 @@ public partial class FormSubmissionCategory
 
     public DateTime? ModifiedAt { get; set; }
 
+    public virtual User? CreatedByUser { get; set; }
+
     public virtual ICollection<Form> Forms { get; set; } = new List<Form>();
+
+    public virtual User? ModifiedByUser { get; set; }
 }

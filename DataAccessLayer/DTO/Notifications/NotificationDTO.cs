@@ -12,19 +12,24 @@ namespace DataAccessLayer.DTO.Notifications
 
         public string Title { get; set; } = null!;
 
-        public DateTime CreatedAt { get; set; }
 
         public string Type { get; set; } = null!;
         public string? Message { get; set; }
 
 
-        public bool IsDeleted { get; set; }
+        public bool Isdeleted { get; set; }
 
-        public int? CreatedByUserId { get; set; }
+        public DateTime? CreatedAt { get; set; }
 
         public DateTime? ModifiedAt { get; set; }
 
+        public int? CreatedByUserId { get; set; }
+
+        public string? CreatedByUserName { get; set; } = null!;
+
         public int? ModifiedByUserId { get; set; }
+
+        public string? ModifiedByUserName { get; set; } = null!;
 
 
     }

@@ -8,7 +8,6 @@ namespace DataAccessLayer.DTO.SpecialNeedCategory
 {
     public class UpdateSpecialNeedCategoryDTO
     {
-        public int SpecialNeedCategoryId { get; set; }
 
         public string CategoryName { get; set; } = null!;
 

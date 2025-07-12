@@ -8,7 +8,6 @@ namespace DataAccessLayer.DTO.HealthChecks
 {
     public class UpdateHealthCheckDTO
     {
-        public int Checkid { get; set; }
         public int Studentid { get; set; }
 
         public DateTime Checkdate { get; set; }

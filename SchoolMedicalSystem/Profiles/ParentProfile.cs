@@ -11,8 +11,10 @@ namespace SchoolMedicalSystem.Profiles
         {
             CreateMap<LoginDTO, Parent>().ReverseMap();
             CreateMap<ParentRegister, Parent>().ReverseMap();
-            CreateMap<ParentDTO, Parent>().
-                ForMember(dest => dest.Students, opt => opt.MapFrom(src => src.Students))
+            CreateMap<Parent, ParentDTO>().
+                ForMember(p => p.Students, opt => opt.MapFrom(src => src.Students))
+                .ForMember(dest => dest.CreatedByUserName, opt => opt.MapFrom(src => src.CreatedByUser.StaffUsers.FirstOrDefault(s => s.Userid == src.CreatedByUserId).Fullname))
+                .ForMember(dest => dest.ModifiedByUserName, opt => opt.MapFrom(src => src.ModifiedByUser.StaffUsers.FirstOrDefault(s => s.Userid == src.ModifiedByUserId).Fullname))
                 .ReverseMap();
             CreateMap<ParentUpdate, Parent>().ReverseMap();
             CreateMap<Parent, ParentUpdate>().ReverseMap();

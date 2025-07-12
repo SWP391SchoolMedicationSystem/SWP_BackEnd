@@ -23,6 +23,10 @@ public partial class StudentSpecialNeed
 
     public int? ModifiedByUserId { get; set; }
 
+    public virtual User? CreatedByUser { get; set; }
+
+    public virtual User? ModifiedByUser { get; set; }
+
     public virtual SpecialNeedsCategory SpecialNeedCategory { get; set; } = null!;
 
     public virtual Student Student { get; set; } = null!;

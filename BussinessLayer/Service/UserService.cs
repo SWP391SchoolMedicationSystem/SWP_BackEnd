@@ -123,9 +123,17 @@ namespace BussinessLayer.Service
             _userRepository.Save();
         }
 
-        public void Update(User entity)
+        public void Update(User entity, int id)
         {
-            _userRepository.Update(entity);
+            var existingUser = _userRepository.GetByIdAsync(id).Result;
+            existingUser.IsStaff = entity.IsStaff;
+            existingUser.Email = entity.Email;
+            existingUser.Hash = entity.Hash;
+            existingUser.Salt = entity.Salt;
+            existingUser.IsDeleted = entity.IsDeleted;
+            existingUser.ModifiedAt = entity.ModifiedAt;
+
+            _userRepository.Update(existingUser);
         }
 
         public async Task<string> ValidateGoogleToken(string token)

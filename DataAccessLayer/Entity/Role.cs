@@ -19,5 +19,9 @@ public partial class Role
 
     public int? ModifiedByUserId { get; set; }
 
+    public virtual User? CreatedByUser { get; set; }
+
+    public virtual User? ModifiedByUser { get; set; }
+
     public virtual ICollection<Staff> Staff { get; set; } = new List<Staff>();
 }

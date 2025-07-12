@@ -26,13 +26,16 @@ namespace DataAccessLayer.DTO.Students
         public string ClassName { get; set; } = null!;
 
         public int Parentid { get; set; }
-        public ParentStudent Parent { get; set; } = null!;
 
+        public string ParentName { get; set; } = null!;
+        public string ParentPhone { get; set; } = null!;
 
         public bool IsDeleted { get; set; }
 
 
         public string? BloodType { get; set; }
+
+        public bool Isdeleted { get; set; }
 
         public DateTime? CreatedAt { get; set; }
 
@@ -40,7 +43,11 @@ namespace DataAccessLayer.DTO.Students
 
         public int? CreatedByUserId { get; set; }
 
+        public string? CreatedByUserName { get; set; } = null!;
+
         public int? ModifiedByUserId { get; set; }
+
+        public string? ModifiedByUserName { get; set; } = null!;
 
     }
 }

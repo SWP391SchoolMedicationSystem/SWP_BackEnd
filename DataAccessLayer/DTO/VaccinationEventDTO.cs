@@ -17,15 +17,19 @@ namespace DataAccessLayer.DTO
 
     public string? Description { get; set; }
 
-    public bool IsDeleted { get; set; }
+        public bool Isdeleted { get; set; }
 
-    public int? CreatedByUserId { get; set; }
+        public DateTime? CreatedAt { get; set; }
 
-    public DateTime? CreatedAt { get; set; }
+        public DateTime? ModifiedAt { get; set; }
 
-    public int? ModifiedByUserId { get; set; }
+        public int? CreatedByUserId { get; set; }
 
-    public DateTime? ModifiedAt { get; set; }
+        public string? CreatedByUserName { get; set; } = null!;
+
+        public int? ModifiedByUserId { get; set; }
+
+        public string? ModifiedByUserName { get; set; } = null!;
 
         public int TotalStudents { get; set; }
         public int ConfirmedCount { get; set; }

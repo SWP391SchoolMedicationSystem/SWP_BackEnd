@@ -18,7 +18,6 @@ namespace DataAccessLayer.DTO.HealthRecords
 
         public string? healthrecorddescription { get; set; }
 
-        public int staffID { get; set; }
 
         public int? CreatedByUserId { get; set; }
     }

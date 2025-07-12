@@ -21,5 +21,9 @@ public partial class SpecialNeedsCategory
 
     public int? ModifiedByUserId { get; set; }
 
+    public virtual User? CreatedByUser { get; set; }
+
+    public virtual User? ModifiedByUser { get; set; }
+
     public virtual ICollection<StudentSpecialNeed> StudentSpecialNeeds { get; set; } = new List<StudentSpecialNeed>();
 }

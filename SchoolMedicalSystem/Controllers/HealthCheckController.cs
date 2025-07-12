@@ -43,11 +43,12 @@ namespace SchoolMedicalSystem.Controllers
             }
         }
         [HttpPut]
-        public async Task<IActionResult> UpdateHealthCheck([FromBody] UpdateHealthCheckDTO healthCheckDto)
+        [Route("update{id}")]
+        public async Task<IActionResult> UpdateHealthCheck([FromBody] UpdateHealthCheckDTO healthCheckDto, int id)
         {
             if (healthCheckDto == null)
                 return BadRequest("Health check data is null.");
-            var result = await _healthCheckService.UpdateHealthCheckAsync(healthCheckDto);
+            var result = await _healthCheckService.UpdateHealthCheckAsync(healthCheckDto, id);
             if (result == null)
                 return NotFound("Health check not found.");
             return Ok(result);

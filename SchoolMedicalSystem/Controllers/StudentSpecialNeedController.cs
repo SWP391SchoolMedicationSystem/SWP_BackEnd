@@ -56,14 +56,14 @@ namespace SchoolMedicalSystem.Controllers
             }
         }
         [HttpPut]
-        [Route("UpdateSpecialNeed")]
-        public IActionResult UpdateSpecialNeed([FromBody] UpdateStudentSpecialNeedDTO dto)
+        [Route("UpdateSpecialNeed/{id}")]
+        public IActionResult UpdateSpecialNeed([FromBody] UpdateStudentSpecialNeedDTO dto, int id)
         {
             if (dto == null)
                 return BadRequest("Invalid data.");
             try
             {
-                _studentSpecialNeedService.UpdateStudentSpecialNeed(dto);
+                _studentSpecialNeedService.UpdateStudentSpecialNeed(dto, id);
                 return Ok("Special need updated successfully.");
             }
             catch (Exception ex)

@@ -15,10 +15,10 @@ namespace BussinessLayer.IService
         Task<List<PersonalMedicineDTO>> GetAllPersonalmedicinesAsync();
         Task<PersonalMedicineDTO> GetPersonalmedicineByIdAsync(int id);
         Task AddPersonalmedicineAsync(AddPersonalMedicineDTO Personalmedicine);
-        void UpdatePersonalmedicine(UpdatePersonalMedicineDTO Personalmedicine);
+        void UpdatePersonalmedicine(UpdatePersonalMedicineDTO Personalmedicine, int id);
         void DeletePersonalmedicine(int id);
-        Task ApprovePersonalMedicine(ApprovalPersonalMedicineDTO dto);
-        Task RejectPersonalMedicine(ApprovalPersonalMedicineDTO dto);
+        Task ApprovePersonalMedicine(ApprovalPersonalMedicineDTO dto, int id);
+        Task RejectPersonalMedicine(ApprovalPersonalMedicineDTO dto, int id);
 
         Task<List<Personalmedicine>> SearchPersonalmedicinesAsync(string searchTerm);
         Task<List<PersonalMedicineDTO>> GetPersonalmedicinesByParentIdAsync(int parentId);

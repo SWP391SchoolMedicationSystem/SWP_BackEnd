@@ -62,14 +62,9 @@ namespace BussinessLayer.Service
             List<StudentDTO> returnlist = new List<StudentDTO>();
             foreach (var student in list)
             {
-                var parent = await _parentrepo.GetByIdAsync(student.Parentid);
-                var listparent = _mapper.Map<ParentStudent>(parent);
                 var studentDTO = _mapper.Map<StudentDTO>(student);
                 if (student.Gender) studentDTO.Gender = GenderStatus.Male;
                 else studentDTO.Gender = GenderStatus.Female;
-                studentDTO.Parent = listparent;
-                studentDTO.ClassName = _classroomrepo.GetByIdAsync(student.Classid).Result.Classname;
-                returnlist.Add(studentDTO);
             }
             return returnlist;
         }
@@ -81,13 +76,9 @@ namespace BussinessLayer.Service
             {
                 throw new KeyNotFoundException($"Student with id {id} not found.");
             }
-            var parent = await _parentrepo.GetByIdAsync(student.Parentid);
-            var listparent = _mapper.Map<ParentStudent>(parent);
             var studentDTO = _mapper.Map<StudentDTO>(student);
             if (student.Gender) studentDTO.Gender = GenderStatus.Male;
             else studentDTO.Gender = GenderStatus.Female;
-            studentDTO.Parent = listparent;
-            studentDTO.ClassName = _classroomrepo.GetByIdAsync(student.Classid).Result.Classname;
             
             return studentDTO;
         }
@@ -100,21 +91,17 @@ namespace BussinessLayer.Service
 
             foreach (var student in filteredStudents)
             {
-                var parent = await _parentrepo.GetByIdAsync(student.Parentid);
-                var listparent = _mapper.Map<ParentStudent>(parent);
                 var studentDTO = _mapper.Map<StudentDTO>(student);
                 if (student.Gender) studentDTO.Gender = GenderStatus.Male;
                 else studentDTO.Gender = GenderStatus.Female;
-                studentDTO.Parent = listparent;
-                studentDTO.ClassName = _classroomrepo.GetByIdAsync(student.Classid).Result.Classname;
                 returnlist.Add(studentDTO);
             }
             return returnlist;
         }
 
-        public async Task<Student> UpdateStudentAsync(UpdateStudentDTo student)
+        public async Task<Student> UpdateStudentAsync(UpdateStudentDTo student, int id)
         {
-            var s = await _studentrepo.GetByIdAsync(student.Studentid);
+            var s = await _studentrepo.GetByIdAsync(id);
             if (s == null)
                 return null;
 

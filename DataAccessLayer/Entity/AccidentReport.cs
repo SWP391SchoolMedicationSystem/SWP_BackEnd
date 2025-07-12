@@ -37,6 +37,10 @@ public partial class AccidentReport
 
     public DateTime? ModifiedAt { get; set; }
 
+    public virtual User? CreatedByUser { get; set; }
+
+    public virtual User? ModifiedByUser { get; set; }
+
     public virtual Staff ReportedByStaff { get; set; } = null!;
 
     public virtual Student Student { get; set; } = null!;

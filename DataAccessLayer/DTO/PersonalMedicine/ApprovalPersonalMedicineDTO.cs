@@ -8,7 +8,6 @@ namespace DataAccessLayer.DTO.PersonalMedicine
 {
     public class ApprovalPersonalMedicineDTO
     {
-        public int Personalmedicineid { get; set; }
 
         public string DeliveryStatus { get; set; } = null!;
 

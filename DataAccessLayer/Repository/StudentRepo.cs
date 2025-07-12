@@ -26,6 +26,12 @@ namespace DataAccessLayer.Repository
                          .Include(s => s.Class)
                          .ToList();
         }
+        public async Task<List<Student>> GetAllAsync()
+        {
+            return await _dbset.Include(s => s.Parent)
+                               .Include(s => s.Class)
+                               .ToListAsync();
+        }
 
     }
 }

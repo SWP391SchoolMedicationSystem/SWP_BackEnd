@@ -35,6 +35,10 @@ public partial class Healthcheck
 
     public int? ModifiedByUserId { get; set; }
 
+    public virtual User? CreatedByUser { get; set; }
+
+    public virtual User? ModifiedByUser { get; set; }
+
     public virtual Staff Staff { get; set; } = null!;
 
     public virtual Student Student { get; set; } = null!;

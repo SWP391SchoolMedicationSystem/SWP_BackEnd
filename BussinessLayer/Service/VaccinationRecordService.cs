@@ -65,9 +65,10 @@ namespace BussinessLayer.Service
             return await _vaccinationRecordRepo.GetByIdAsync(id) ?? throw new Exception("Vaccination record not found");
         }
 
-        public void UpdateVaccinationRecord(VaccinationRecordDTO record)
+        public void UpdateVaccinationRecord(VaccinationRecordDTO record, int id)
         {
-             _vaccinationRecordRepo.Update(_mapper.Map<StudentVaccinationRecord>(record));
+            var existingRecord = _vaccinationRecordRepo.GetByIdAsync(id).Result;
+            _vaccinationRecordRepo.Update(_mapper.Map<StudentVaccinationRecord>(record));
             _vaccinationRecordRepo.Save();
 
         }

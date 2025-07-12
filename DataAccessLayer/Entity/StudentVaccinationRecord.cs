@@ -41,7 +41,11 @@ public partial class StudentVaccinationRecord
 
     public virtual Staff? AdministeredByStaff { get; set; }
 
+    public virtual User? CreatedByUser { get; set; }
+
     public virtual VaccinationEvent? Event { get; set; }
+
+    public virtual User? ModifiedByUser { get; set; }
 
     public virtual Student Student { get; set; } = null!;
 

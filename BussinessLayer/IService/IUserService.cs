@@ -15,7 +15,7 @@ namespace BussinessLayer.IService
         Task<List<User>> GetAllAsync();
         Task<User> GetByIdAsync(int id);
         Task AddAsync(User entity);
-        void Update(User entity);
+        void Update(User entity, int id);
         void Delete(int ID);
         void Save();
         Task<string> Login(LoginDTO dto);

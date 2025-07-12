@@ -33,7 +33,11 @@ public partial class Form
 
     public int? ModifiedByUserId { get; set; }
 
+    public virtual User? CreatedByUser { get; set; }
+
     public virtual FormSubmissionCategory Formcategory { get; set; } = null!;
+
+    public virtual User? ModifiedByUser { get; set; }
 
     public virtual Parent Parent { get; set; } = null!;
 

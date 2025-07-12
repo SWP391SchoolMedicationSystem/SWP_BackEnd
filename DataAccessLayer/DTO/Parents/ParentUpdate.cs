@@ -11,7 +11,6 @@ namespace DataAccessLayer.DTO.Parents
     {
         [Required(ErrorMessage = "ParentID is required.")]
 
-        public int Parentid { get; set; }
 
         public string? Fullname { get; set; }
 

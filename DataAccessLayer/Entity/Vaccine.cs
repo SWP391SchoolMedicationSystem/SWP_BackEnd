@@ -31,6 +31,10 @@ public partial class Vaccine
 
     public DateTime? ModifiedAt { get; set; }
 
+    public virtual User? CreatedByUser { get; set; }
+
+    public virtual User? ModifiedByUser { get; set; }
+
     public virtual ICollection<StudentVaccinationRecord> StudentVaccinationRecords { get; set; } = new List<StudentVaccinationRecord>();
 
     public virtual ICollection<VaccineOfferedInEvent> VaccineOfferedInEvents { get; set; } = new List<VaccineOfferedInEvent>();

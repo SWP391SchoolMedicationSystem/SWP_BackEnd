@@ -70,8 +70,8 @@ namespace SchoolMedicalSystem.Controllers
                 return BadRequest($"An error occurred while deleting staff: {ex.Message}");
             }
         }
-        [HttpPut("staff")]
-        public IActionResult UpdateStaff([FromBody] StaffUpdate staffUpdate)
+        [HttpPut("staff/{id}")]
+        public IActionResult UpdateStaff([FromBody] StaffUpdate staffUpdate, int id)
         {
             try
             {
@@ -79,7 +79,7 @@ namespace SchoolMedicalSystem.Controllers
                 {
                     return BadRequest("Staff update data is null.");
                 }
-                _staffService.UpdateStaff(staffUpdate);
+                _staffService.UpdateStaff(staffUpdate, id);
                 return Ok("Staff updated successfully.");
             }
             catch (KeyNotFoundException knfEx)

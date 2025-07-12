@@ -10,6 +10,8 @@ namespace SchoolMedicalSystem.Profiles
         public SpecialNeedCategoryProfile()
         {
             CreateMap<SpecialNeedsCategory, SpecialNeedCategoryDTO>()
+                .ForMember(dest => dest.CreatedByUserName, opt => opt.MapFrom(src => src.CreatedByUser.StaffUsers.FirstOrDefault(s => s.Userid == src.CreatedByUserId).Fullname))
+                .ForMember(dest => dest.ModifiedByUserName, opt => opt.MapFrom(src => src.ModifiedByUser.StaffUsers.FirstOrDefault(s => s.Userid == src.ModifiedByUserId).Fullname))
     .ReverseMap();
             CreateMap<CreateSpecialNeedCategoryDTO, SpecialNeedsCategory>().ReverseMap();
             CreateMap<UpdateSpecialNeedCategoryDTO, SpecialNeedsCategory>().ReverseMap();

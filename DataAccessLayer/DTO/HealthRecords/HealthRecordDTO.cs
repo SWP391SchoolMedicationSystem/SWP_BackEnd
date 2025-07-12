@@ -24,12 +24,18 @@
 
         public string Status { get; set; } = null!;
 
+        public bool Isdeleted { get; set; }
+
         public DateTime? CreatedAt { get; set; }
 
         public DateTime? ModifiedAt { get; set; }
 
         public int? CreatedByUserId { get; set; }
 
+        public string? CreatedByUserName { get; set; } = null!;
+
         public int? ModifiedByUserId { get; set; }
+
+        public string? ModifiedByUserName { get; set; } = null!;
     }
 }

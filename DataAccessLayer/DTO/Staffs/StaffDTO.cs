@@ -20,7 +20,7 @@ namespace DataAccessLayer.DTO.Staffs
 
         public int Userid { get; set; }
 
-        public bool IsDeleted { get; set; }
+        public bool Isdeleted { get; set; }
 
         public DateTime? CreatedAt { get; set; }
 
@@ -28,6 +28,10 @@ namespace DataAccessLayer.DTO.Staffs
 
         public int? CreatedByUserId { get; set; }
 
+        public string? CreatedByUserName { get; set; } = null!;
+
         public int? ModifiedByUserId { get; set; }
+
+        public string? ModifiedByUserName { get; set; } = null!;
     }
 }

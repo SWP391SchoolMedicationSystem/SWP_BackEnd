@@ -9,8 +9,12 @@ namespace SchoolMedicalSystem.Profiles
     {
         public BlogProfile()
         {
-            CreateMap<Blog, BlogDTO>().ReverseMap();
-            CreateMap<BlogDTO, Blog>().ReverseMap();
+            CreateMap<Blog, BlogDTO>()
+                .ForMember(dest => dest.CreatedByUserName, opt => opt.MapFrom(src => src.CreatedByUser.StaffUsers.FirstOrDefault(s => s.Userid == src.CreatedByUserId).Fullname))
+                .ForMember(dest => dest.ModifiedByUserName, opt => opt.MapFrom(src => src.ModifiedByUser.StaffUsers.FirstOrDefault(s => s.Userid == src.ModifiedByUserId).Fullname))
+                .ForMember(dest => dest.ApprovedByUserName, opt => opt.MapFrom(src => src.ApprovedByNavigation.Fullname))
+
+                .ReverseMap();
             CreateMap<CreateBlogDTO, Blog>().ReverseMap();
             CreateMap<UpdateBlogDTO, Blog>().ReverseMap();
             CreateMap<Blog, ApproveBlogDTO>().ReverseMap();

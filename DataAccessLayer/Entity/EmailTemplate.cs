@@ -22,4 +22,8 @@ public partial class EmailTemplate
     public int? ModifiedByUserId { get; set; }
 
     public bool IsDeleted { get; set; }
+
+    public virtual User? CreatedByUser { get; set; }
+
+    public virtual User? ModifiedByUser { get; set; }
 }

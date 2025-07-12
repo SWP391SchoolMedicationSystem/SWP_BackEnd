@@ -29,7 +29,11 @@ public partial class HealthRecord
 
     public int? ModifiedByUserId { get; set; }
 
+    public virtual User? CreatedByUser { get; set; }
+
     public virtual HealthRecordCategory HealthCategory { get; set; } = null!;
+
+    public virtual User? ModifiedByUser { get; set; }
 
     public virtual Staff Staff { get; set; } = null!;
 

@@ -22,7 +22,19 @@ namespace DataAccessLayer.DTO
         public string PhoneNumber { get; set; } = null!;
         public List<ScheduleDetailDTO> PreferedTime { get; set; } = new List<ScheduleDetailDTO>();
         public bool isApproved { get; set; }
-        public DateTime CreatedDate { get; set; }
+        public bool Isdeleted { get; set; }
+
+        public DateTime? CreatedAt { get; set; }
+
+        public DateTime? ModifiedAt { get; set; }
+
+        public int? CreatedByUserId { get; set; }
+
+        public string? CreatedByUserName { get; set; } = null!;
+
+        public int? ModifiedByUserId { get; set; }
+
+        public string? ModifiedByUserName { get; set; } = null!;
 
     }
 }

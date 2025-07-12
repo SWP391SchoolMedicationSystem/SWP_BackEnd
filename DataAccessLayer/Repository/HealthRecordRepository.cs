@@ -15,5 +15,18 @@ namespace DataAccessLayer.Repository
         {
             _dbset = context.Set<HealthRecord>();
         }
+        public async Task<List<HealthRecord>> GetAllAsync()
+        {
+            return await _dbset
+                .Include(hr => hr.Student)
+                    .ThenInclude(s => s.Parent)
+                .Include(hr => hr.Student)
+                    .ThenInclude(s => s.Class)
+                .Include(hr => hr.Staff)
+                .Include(b => b.ModifiedByUser).ThenInclude(b => b.StaffUsers)
+                .Include(b => b.CreatedByUser).ThenInclude(b => b.StaffUsers)
+
+                .ToListAsync();
+        }
     }
 }

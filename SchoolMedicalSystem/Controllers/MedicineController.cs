@@ -57,14 +57,14 @@ namespace SchoolMedicalSystem.Controllers
             }
         }
         [HttpPut]
-        [Route("UpdateMedicine")]
-        public IActionResult UpdateMedicine([FromBody] UpdateMedicineDTO medicineDto)
+        [Route("UpdateMedicine/{id}")]
+        public IActionResult UpdateMedicine([FromBody] UpdateMedicineDTO medicineDto, int id)
         {
             if (medicineDto == null)
                 return BadRequest("Invalid data.");
             try
             {
-                _medicineService.UpdateMedicine(medicineDto);
+                _medicineService.UpdateMedicine(medicineDto, id);
                 return Ok("Medicine updated successfully.");
             }
             catch (Exception ex)

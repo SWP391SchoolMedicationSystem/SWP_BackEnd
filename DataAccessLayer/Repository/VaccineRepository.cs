@@ -19,5 +19,13 @@ namespace DataAccessLayer.Repository
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             vaccines = context.Set<Vaccine>();
         }
+        public async Task<List<Vaccine>> GetAllVaccinesAsync()
+        {
+            return await vaccines
+                .Include(b => b.ModifiedByUser).ThenInclude(b => b.StaffUsers)
+                .Include(b => b.CreatedByUser).ThenInclude(b => b.StaffUsers)
+
+                .ToListAsync();
+        }
     }
 }

@@ -14,13 +14,13 @@ namespace BussinessLayer.Service
 {
     public class HealthCheckService : IHealthCheckService
     {
-        private readonly IStudentService _studentService;
-        private readonly IStaffService _staffservice;
+        private readonly IStudentRepo _studentService;
+        private readonly IStaffRepository _staffservice;
         private readonly IHealthCheckRepo _healthCheckRepository;
         private IMapper _mapper;
         public HealthCheckService(
-            IStudentService studentService,
-            IStaffService staffservice,
+            IStudentRepo studentService,
+            IStaffRepository staffservice,
             IHealthCheckRepo healthCheckRepository,
             IMapper mapper)
         {
@@ -32,13 +32,15 @@ namespace BussinessLayer.Service
 
         public async Task<Healthcheck> AddHealthCheckAsync(AddHealthCheckDTO healthCheckDto)
         {
-            if (_staffservice.GetStaffByIdAsync(healthCheckDto.Staffid) != null
-                && _studentService.GetAllStudentsAsync()
-                    .Result.FirstOrDefault(s => s.Studentid == healthCheckDto.Studentid) != null)
+            var staff = await _staffservice.GetByIdAsync(healthCheckDto.Staffid);
+            var student = await _studentService.GetAllAsync();
+            if ( staff!= null
+                && (student.FirstOrDefault(s => s.Studentid == healthCheckDto.Studentid)) != null)
             {
 
                 if (healthCheckDto.Visionleft == 10) healthCheckDto.Visionleft = (decimal?)9.99;
                 if (healthCheckDto.Visionright == 10) healthCheckDto.Visionright = (decimal)9.99;
+                
                 Healthcheck healthcheck = _mapper.Map<Healthcheck>(healthCheckDto);
                 healthcheck.CreatedAt = DateTime.Now;
 
@@ -69,34 +71,13 @@ namespace BussinessLayer.Service
         public async Task<List<HealthCheckDTO>> GetAllHealthChecksAsync()
         {
             var listhealth = await _healthCheckRepository.GetAllAsync();
-            var studentList = await _studentService.GetAllStudentsAsync();
-            var staffList = await _staffservice.GetAllStaffAsync();
-
-            var result = listhealth
-                .Where(healthcheck => listhealth.Any(h => h.Checkid == healthcheck.Checkid))
-                .Select(healthcheck => new HealthCheckDTO
-                {
-                    Checkid = healthcheck.Checkid,
-                    Staffid = healthcheck.Staffid,
-                    StaffName = staffList.FirstOrDefault(s => s.Staffid == healthcheck.Staffid)?.Fullname ?? "Unknown Staff",
-                    Studentid = healthcheck.Studentid,
-                    StudentName = studentList.FirstOrDefault(s => s.Studentid == healthcheck.Studentid)?.Fullname ?? "Unknown Student",
-                    Notes = healthcheck.Notes,
-                    Height = healthcheck.Height,
-                    Weight = healthcheck.Weight,
-                    Visionleft = healthcheck.Visionleft,
-                    Visionright = healthcheck.Visionright,
-                    Bloodpressure = healthcheck.Bloodpressure,
-                    Checkdate = healthcheck.Checkdate
-                })
-                .ToList();
-
+            var result = _mapper.Map<List<HealthCheckDTO>>(listhealth);
             return result;
         }
 
-        public async Task<Healthcheck> UpdateHealthCheckAsync(UpdateHealthCheckDTO healthCheckDto)
+        public async Task<Healthcheck> UpdateHealthCheckAsync(UpdateHealthCheckDTO healthCheckDto, int id)
         {
-            Healthcheck check = await _healthCheckRepository.GetByIdAsync(healthCheckDto.Checkid);
+            Healthcheck check = await _healthCheckRepository.GetByIdAsync(id);
             if (check != null)
             {
                     check.Notes = healthCheckDto.Notes;

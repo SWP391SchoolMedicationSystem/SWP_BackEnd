@@ -80,14 +80,14 @@ namespace SchoolMedicalSystem.Controllers
             return Ok($"Student with ID {id} deleted successfully.");
         }
 
-        [HttpPut("UpdateStudent")]
-        public async Task<IActionResult> UpdateStudent([FromBody] UpdateStudentDTo student)
+        [HttpPut("UpdateStudent/{id}")]
+        public async Task<IActionResult> UpdateStudent([FromBody] UpdateStudentDTo student,int id)
         {
             if (student == null)
                 return BadRequest("Student data cannot be null.");
-            var s = await _studentService.UpdateStudentAsync(student);
+            var s = await _studentService.UpdateStudentAsync(student,id);
             if (s == null)
-                return NotFound($"Student with ID {student.Studentid} not found.");
+                return NotFound($"Student with ID {id} not found.");
             return Ok(s);
         }
 

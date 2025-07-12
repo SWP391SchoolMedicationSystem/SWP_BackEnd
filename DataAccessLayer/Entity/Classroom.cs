@@ -23,5 +23,9 @@ public partial class Classroom
 
     public int? ModifiedByUserId { get; set; }
 
+    public virtual User? CreatedByUser { get; set; }
+
+    public virtual User? ModifiedByUser { get; set; }
+
     public virtual ICollection<Student> Students { get; set; } = new List<Student>();
 }

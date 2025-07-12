@@ -84,14 +84,14 @@ namespace BussinessLayer.Service
             return Task.FromResult(dtos);
         }
 
-        public void UpdateStudentSpecialNeed(UpdateStudentSpecialNeedDTO studentSpecialNeed)
+        public void UpdateStudentSpecialNeed(UpdateStudentSpecialNeedDTO studentSpecialNeed, int id)
         {
             if (studentSpecialNeed == null)
             {
                 throw new ArgumentNullException(nameof(studentSpecialNeed), "Student special need cannot be null.");
             }
             var entity = _mapper.Map<StudentSpecialNeed>(studentSpecialNeed);
-            var existingEntity = _studentNeedRepository.GetByIdAsync(entity.StudentSpecialNeedId).Result;
+            var existingEntity = _studentNeedRepository.GetByIdAsync(id).Result;
             if (existingEntity == null)
             {
                 throw new KeyNotFoundException("Student special need not found.");

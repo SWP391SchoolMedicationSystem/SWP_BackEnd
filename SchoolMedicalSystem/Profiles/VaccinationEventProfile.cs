@@ -9,7 +9,10 @@ namespace SchoolMedicalSystem.Profiles
         public VaccinationEventProfile()
         {
             // Entity to DTO mappings
-            CreateMap<VaccinationEvent, VaccinationEventDTO>().ReverseMap();
+            CreateMap<VaccinationEvent, VaccinationEventDTO>()
+                .ForMember(dest => dest.CreatedByUserName, opt => opt.MapFrom(src => src.CreatedByUser.StaffUsers.FirstOrDefault(s => s.Userid == src.CreatedByUserId).Fullname))
+                .ForMember(dest => dest.ModifiedByUserName, opt => opt.MapFrom(src => src.ModifiedByUser.StaffUsers.FirstOrDefault(s => s.Userid == src.ModifiedByUserId).Fullname))
+                .ReverseMap();
             // DTO to Entity mappings
             CreateMap<CreateVaccinationEventDTO, VaccinationEvent>().ReverseMap();
             CreateMap<UpdateVaccinationEventDTO, VaccinationEvent>().ReverseMap();

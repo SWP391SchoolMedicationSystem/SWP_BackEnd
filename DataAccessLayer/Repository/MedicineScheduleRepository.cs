@@ -16,5 +16,15 @@ namespace DataAccessLayer.Repository
         {
             _dbSet = context.Set<MedicineScheduleLink>();
         }
+        public async Task<List<MedicineScheduleLink>> GetAllAsync()
+        {
+            return await _dbSet
+                .Include(ms => ms.PersonalMedicine)
+                .Include(ms => ms.ScheduleDetail)
+                .Include(b => b.ModifiedByUser).ThenInclude(b => b.StaffUsers)
+                .Include(b => b.CreatedByUser).ThenInclude(b => b.StaffUsers)
+
+                .ToListAsync();
+        }
     }
 }

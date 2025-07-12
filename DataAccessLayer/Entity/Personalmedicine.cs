@@ -35,7 +35,11 @@ public partial class Personalmedicine
 
     public int? ModifiedByUserId { get; set; }
 
+    public virtual User? CreatedByUser { get; set; }
+
     public virtual ICollection<MedicineScheduleLink> MedicineScheduleLinks { get; set; } = new List<MedicineScheduleLink>();
+
+    public virtual User? ModifiedByUser { get; set; }
 
     public virtual Parent Parent { get; set; } = null!;
 

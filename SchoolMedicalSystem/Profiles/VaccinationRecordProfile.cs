@@ -12,6 +12,8 @@ namespace SchoolMedicalSystem.Profiles
                 .ForMember(dest => dest.StudentName, opt => opt.MapFrom(src => src.Student.Fullname))
                 .ForMember(dest => dest.VaccineName, opt => opt.MapFrom(src => src.Vaccine.VaccineName))
                 .ForMember(dest => dest.EventName, opt => opt.MapFrom(src => src.Event.EventName))
+                .ForMember(dest => dest.CreatedByUserName, opt => opt.MapFrom(src => src.CreatedByUser.StaffUsers.FirstOrDefault(s => s.Userid == src.CreatedByUserId).Fullname))
+                .ForMember(dest => dest.ModifiedByUserName, opt => opt.MapFrom(src => src.ModifiedByUser.StaffUsers.FirstOrDefault(s => s.Userid == src.ModifiedByUserId).Fullname))
                 .ReverseMap();
             CreateMap<VaccinationRecordStudentEvent, StudentVaccinationRecord>().
                 ForMember(dest => dest.Student, opt => opt.MapFrom(src => new Student { Studentid = src.StudentId }))

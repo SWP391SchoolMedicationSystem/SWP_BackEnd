@@ -52,14 +52,14 @@ namespace SchoolMedicalSystem.Controllers
                 return StatusCode(500, $"Error adding category: {ex.Message}");
             }
         }
-        [HttpPut("UpdateCategory")]
-        public IActionResult UpdateCategory([FromBody] UpdateSpecialNeedCategoryDTO categoryDto)
+        [HttpPut("UpdateCategory/{id}")]
+        public IActionResult UpdateCategory([FromBody] UpdateSpecialNeedCategoryDTO categoryDto, int id)
         {
             if (categoryDto == null)
                 return BadRequest("Category data is null.");
             try
             {
-                _specialNeedCategoryService.UpdateCategoryAsync(categoryDto);
+                _specialNeedCategoryService.UpdateCategoryAsync(categoryDto, id);
                 return Ok("Category updated successfully.");
             }
             catch (Exception ex)

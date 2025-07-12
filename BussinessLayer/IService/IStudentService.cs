@@ -17,7 +17,7 @@ namespace BussinessLayer.IService
         Task<Student> AddStudentAsync(UpdateStudentDTo student);
         Task DeleteStudent(int id);
         Task<string> UploadStudentList(List<InsertStudent> studentlist);
-        Task<Student> UpdateStudentAsync(UpdateStudentDTo student);
+        Task<Student> UpdateStudentAsync(UpdateStudentDTo student, int id);
         Task<List<StudentDTO>> GetStudentByParentId(int parentId);
         public (List<InsertStudent>, string) ProcessExcelFile(IFormFile file);
 

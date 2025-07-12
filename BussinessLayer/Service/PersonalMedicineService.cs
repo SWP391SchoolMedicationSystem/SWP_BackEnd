@@ -96,9 +96,9 @@ namespace BussinessLayer.Service
             return filtered;
         }
 
-        public void UpdatePersonalmedicine(UpdatePersonalMedicineDTO Personalmedicine)
+        public async void UpdatePersonalmedicine(UpdatePersonalMedicineDTO Personalmedicine, int id)
         {
-            var PersonalmedicineEntity = PersonalmedicineRepository.GetByIdAsync(Personalmedicine.Personalmedicineid).Result;
+            var PersonalmedicineEntity = PersonalmedicineRepository.GetByIdAsync(id).Result;
             if (PersonalmedicineEntity == null)
             {
                 throw new KeyNotFoundException("Medicine donation not found.");
@@ -161,7 +161,7 @@ namespace BussinessLayer.Service
                         Note = personalMedicine.Note ?? string.Empty,
                         PhoneNumber = personalMedicine.Parent.Phone,
                         PreferedTime = scheduling,
-                        CreatedDate = personalMedicine.CreatedAt.HasValue
+                        CreatedAt = personalMedicine.CreatedAt.HasValue
                             ? personalMedicine.CreatedAt.Value
                             : throw new InvalidOperationException("CreatedAt cannot be null.")
                     };
@@ -172,9 +172,9 @@ namespace BussinessLayer.Service
             return await task;
 
         }
-        public Task ApprovePersonalMedicine(ApprovalPersonalMedicineDTO dto)
+        public Task ApprovePersonalMedicine(ApprovalPersonalMedicineDTO dto, int id)
         {
-            var personalMedicine = PersonalmedicineRepository.GetByIdAsync(dto.Personalmedicineid).Result;
+            var personalMedicine = PersonalmedicineRepository.GetByIdAsync(id).Result;
             if (personalMedicine != null)
             {
                 personalMedicine.DeliveryStatus = PersonalMedicineStatus.Accepted;
@@ -185,9 +185,9 @@ namespace BussinessLayer.Service
             }
             return Task.CompletedTask;
         }
-        public Task RejectPersonalMedicine(ApprovalPersonalMedicineDTO dto)
+        public Task RejectPersonalMedicine(ApprovalPersonalMedicineDTO dto, int id)
         {
-            var personalMedicine = PersonalmedicineRepository.GetByIdAsync(dto.Personalmedicineid).Result;
+            var personalMedicine = PersonalmedicineRepository.GetByIdAsync(id).Result;
             if (personalMedicine != null)
             {
                 personalMedicine.DeliveryStatus = PersonalMedicineStatus.Rejected;

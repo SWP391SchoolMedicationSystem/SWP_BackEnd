@@ -16,6 +16,13 @@ namespace DataAccessLayer.Repository
         {
             _dbset = context.Set<Parent>();
         }
+        public async Task<List<Parent>> GetAllAsync()
+        {
+            return await _dbset.Include(p => p.Students)
+                .Include(p => p.CreatedByUser)
+                .Include(p => p.ModifiedByUser)
+                               .ToListAsync();
+        }
 
         public async Task<Parent> GetParentForEvent(string email)
         {

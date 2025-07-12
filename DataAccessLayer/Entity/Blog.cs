@@ -32,4 +32,10 @@ public partial class Blog
     public bool IsDeleted { get; set; }
 
     public string? Image { get; set; }
+
+    public virtual Staff? ApprovedByNavigation { get; set; }
+
+    public virtual User CreatedByUser { get; set; } = null!;
+
+    public virtual User? ModifiedByUser { get; set; }
 }

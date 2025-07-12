@@ -13,7 +13,7 @@ namespace BussinessLayer.IService
         Task<List<VaccinationRecordStudentEvent>> GetAllVaccinationRecords();
         Task<StudentVaccinationRecord> GetVaccinationRecordById(int id);
         Task AddVaccinationRecordAsync(VaccinationRecordDTO record);
-        void UpdateVaccinationRecord(VaccinationRecordDTO record);
+        void UpdateVaccinationRecord(VaccinationRecordDTO record, int id);
         void DeleteVaccinationRecord(int id);
 
     }

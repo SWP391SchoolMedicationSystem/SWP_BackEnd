@@ -33,6 +33,10 @@ public partial class MedicineScheduleLink
 
     public int? ModifiedByUserId { get; set; }
 
+    public virtual User? CreatedByUser { get; set; }
+
+    public virtual User? ModifiedByUser { get; set; }
+
     public virtual Personalmedicine PersonalMedicine { get; set; } = null!;
 
     public virtual ScheduleDetail ScheduleDetail { get; set; } = null!;

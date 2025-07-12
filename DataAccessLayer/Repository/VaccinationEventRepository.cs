@@ -25,6 +25,17 @@ namespace DataAccessLayer.Repository
                 .OrderByDescending(e => e.EventDate)
                 .ToListAsync();
         }
+        public async Task<List<VaccinationEvent>> GetAllAsync()
+        {
+            return await _context.VaccinationEvents
+                .Include(b => b.ModifiedByUser).ThenInclude(b => b.StaffUsers)
+                .Include(b => b.CreatedByUser).ThenInclude(b => b.StaffUsers)
+                .Include(c => c.StudentVaccinationRecords)
+                    .ThenInclude(r => r.Student)
+                        .ThenInclude(s => s.Parent)
+                .OrderByDescending(e => e.EventDate)
+                .ToListAsync();
+        }
 
         public async Task<VaccinationEvent?> GetEventWithRecordsAsync(int eventId)
         {

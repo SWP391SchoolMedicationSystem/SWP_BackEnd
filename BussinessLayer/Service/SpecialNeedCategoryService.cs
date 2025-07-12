@@ -48,13 +48,13 @@ namespace BussinessLayer.Service
             _specialNeedCategoryRepository.Add(newCategory);
             _specialNeedCategoryRepository.Save();
         }
-        public void UpdateCategoryAsync(UpdateSpecialNeedCategoryDTO category)
+        public void UpdateCategoryAsync(UpdateSpecialNeedCategoryDTO category, int id)
         {
             if (category == null)
             {
                 throw new ArgumentNullException(nameof(category), "Category cannot be null.");
             }
-            var existingCategory = _specialNeedCategoryRepository.GetByIdAsync(category.SpecialNeedCategoryId).Result;
+            var existingCategory = _specialNeedCategoryRepository.GetByIdAsync(id).Result;
             if (existingCategory == null)
             {
                 throw new KeyNotFoundException("Special need category not found.");

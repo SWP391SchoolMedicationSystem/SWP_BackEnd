@@ -19,12 +19,20 @@ namespace DataAccessLayer.DTO.Parents
 
         public string Address { get; set; } = null!;
 
-        public DateTime CreatedAt { get; set; }
+        public bool Isdeleted { get; set; }
 
-        public DateTime? UpdatedAt { get; set; }
+        public DateTime? CreatedAt { get; set; }
 
-        public bool IsDeleted { get; set; }
+        public DateTime? ModifiedAt { get; set; }
 
-        public List<StudentParentDTO> Students { get; set; } = new List<StudentParentDTO>();
+        public int? CreatedByUserId { get; set; }
+
+        public string? CreatedByUserName { get; set; } = null!;
+
+        public int? ModifiedByUserId { get; set; }
+
+        public string? ModifiedByUserName { get; set; } = null!;
+
+        public List<StudentDTO> Students { get; set; } = new List<StudentDTO>();
     }
 }

@@ -8,7 +8,6 @@ namespace DataAccessLayer.DTO.PersonalMedicine
 {
     public class UpdatePersonalMedicineDTO
     {
-        public int Personalmedicineid { get; set; }
 
         public int Studentid { get; set; }
 

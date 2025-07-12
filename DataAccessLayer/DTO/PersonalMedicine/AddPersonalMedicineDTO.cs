@@ -18,7 +18,7 @@ namespace DataAccessLayer.DTO.PersonalMedicine
         public DateTime Expirydate { get; set; }
 
 
-        public string Createdby { get; set; } = null!;
+        public int CreatedByUserId { get; set; }
 
 
     }

@@ -77,7 +77,8 @@ namespace SchoolMedicalSystem.Controllers
 
         // PUT: api/VaccinationEvent/5
         [HttpPut]
-        public async Task<IActionResult> UpdateEvent([FromBody] UpdateVaccinationEventDTO dto)
+        [Route("vaccinationevent/{id}")]
+        public async Task<IActionResult> UpdateEvent([FromBody] UpdateVaccinationEventDTO dto, int id)
         {
             try
             {
@@ -85,7 +86,7 @@ namespace SchoolMedicalSystem.Controllers
                     return BadRequest(ModelState);
 
                 var modifiedBy = User.FindFirst(ClaimTypes.Name)?.Value ?? "System";
-                var vaccinationEvent = await _vaccinationEventService.UpdateEventAsync(dto);
+                var vaccinationEvent = await _vaccinationEventService.UpdateEventAsync(dto,id);
 
                 return Ok(vaccinationEvent);
             }

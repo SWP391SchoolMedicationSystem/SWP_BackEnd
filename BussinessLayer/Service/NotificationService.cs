@@ -186,11 +186,11 @@ namespace BussinessLayer.Service
             return notifications;
         }
 
-        public void UpdateNotificationForParent(UpdateNotificationDTO dto)
+        public void UpdateNotificationForParent(UpdateNotificationDTO dto, int id)
         {
             try
             {
-                var notification = _notificationdRepository.GetByIdAsync(dto.NotificationId).Result;
+                var notification = _notificationdRepository.GetByIdAsync(id).Result;
                 if (notification == null || notification.IsDeleted == true)
                 {
                     throw new Exception("Notification not found or has been deleted.");
@@ -208,7 +208,7 @@ namespace BussinessLayer.Service
 
                 var existingDetails = _notificationParentDetailRepo
                     .GetAll()
-                    .Where(d => d.NotificationId == dto.NotificationId)
+                    .Where(d => d.NotificationId == id)
                     .ToList();
 
                 foreach (var parent in activeParents)
@@ -251,11 +251,11 @@ namespace BussinessLayer.Service
             }
         }
 
-        public void UpdateNotificationForStaff(UpdateNotificationDTO dto)
+        public void UpdateNotificationForStaff(UpdateNotificationDTO dto, int id)
         {
             try
             {
-                var notification = _notificationdRepository.GetByIdAsync(dto.NotificationId).Result;
+                var notification = _notificationdRepository.GetByIdAsync(id).Result;
                 if (notification == null || notification.IsDeleted == true)
                 {
                     throw new Exception("Notification not found or has been deleted.");
@@ -272,7 +272,7 @@ namespace BussinessLayer.Service
 
                 var existingDetails = _notificationStaffDetailRepo
                     .GetAll()
-                    .Where(d => d.NotificationId == dto.NotificationId)
+                    .Where(d => d.NotificationId == id)
                     .ToList();
 
                 foreach (var staff in activeStaffs)
