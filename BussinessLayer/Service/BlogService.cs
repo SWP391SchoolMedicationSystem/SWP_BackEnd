@@ -145,9 +145,10 @@ namespace BussinessLayer.Service
             _blogRepo.Save();
             return imageUrl;
         }
-        public async Task UpdateBlog(UpdateBlogDTO dto)
+        public async Task <String> UpdateBlog(UpdateBlogDTO dto)
         {
             var entity = _blogRepo.GetByIdAsync(dto.BlogID).Result;
+            string? imageUrl = null;
             if (dto != null)
             {
                 try
@@ -165,9 +166,32 @@ namespace BussinessLayer.Service
                         entity.Status = dto.Status;
                         entity.IsDeleted = dto.IsDeleted;
                         //                    entity.Image = dto.Image;
+                        if (dto.ImageFile != null && dto.ImageFile.Length > 0)
+                        {
+                            var allowedExtensions = new[] { ".jpg", ".jpeg", ".png" };
+                            var extension = Path.GetExtension(dto.ImageFile.FileName).ToLower();
+                            if (!allowedExtensions.Contains(extension))
+                                throw new Exception("Only JPG and PNG and jpeg files are allowed.");
+                            if (dto.ImageFile.Length > 2 * 1024 * 1024)
+                                throw new Exception("File size must be less than 2MB.");
+
+                            using var stream = dto.ImageFile.OpenReadStream();
+                            var uploadParams = new ImageUploadParams
+                            {
+                                File = new FileDescription(dto.ImageFile.FileName, stream),
+                                Transformation = new Transformation().Crop("scale").Width(500)
+                            };
+                            var uploadResult = await _cloudinary.UploadAsync(uploadParams);
+                            if (uploadResult.StatusCode == System.Net.HttpStatusCode.OK)
+                            {
+                                imageUrl = uploadResult.SecureUrl.ToString();
+                                entity.Image = uploadResult.SecureUrl.ToString();
+                            }
+                        }
 
                         _blogRepo.Update(entity);
                         _blogRepo.Save();
+
                     }
                 }
                 catch (Exception e)
@@ -175,6 +199,7 @@ namespace BussinessLayer.Service
                     throw new Exception("Error updating blog. Please try again later.");
                 }
             }
+            return imageUrl;
 
         }
         public void DeleteBlog(int id)

@@ -52,14 +52,14 @@ namespace SchoolMedicalSystem.Controllers
         }
         [HttpPut]
         [Route("update")]
-        public IActionResult UpdateBlog([FromBody] UpdateBlogDTO dto)
+        public async Task<IActionResult> UpdateBlog([FromForm] UpdateBlogDTO dto)
         {
             if (dto == null)
                 return BadRequest("Invalid data.");
             try
             {
-                _blogService.UpdateBlog(dto);
-                return Ok("Blog updated.");
+                var imageUrl = await _blogService.UpdateBlog(dto);
+                return Ok(new { message = "Blog update successfully.", imageUrl });
             }
             catch (Exception ex)
             {
