@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Http;
 using System;
 using System.ComponentModel.DataAnnotations;
 
@@ -11,6 +12,8 @@ namespace DataAccessLayer.DTO
         public string OrganizedBy { get; set; } = null!;
         public DateTime EventDate { get; set; }
         public string Description { get; set; } = null!;
+        public string? DocumentFileName { get; set; }
+        public string? DocumentAccessToken { get; set; }
         public DateTime CreatedDate { get; set; }
         public DateTime ModifiedDate { get; set; }
         public string CreatedBy { get; set; } = null!;
@@ -41,6 +44,8 @@ namespace DataAccessLayer.DTO
 
         [Required(ErrorMessage = "Description is required")]
         public string Description { get; set; } = null!;
+
+        public IFormFile? DocumentFile { get; set; }
     }
 
     public class UpdateVaccinationEventDTO
@@ -65,6 +70,9 @@ namespace DataAccessLayer.DTO
 
         [Required(ErrorMessage = "Description is required")]
         public string Description { get; set; } = null!;
+
+        public IFormFile? DocumentFile { get; set; }
+        public bool DocumentDelete { get; set; } = false;
     }
 
     public class ParentVaccinationResponseDTO
@@ -136,7 +144,7 @@ namespace DataAccessLayer.DTO
     public class SendVaccineEmailListDTO
     {
         [Required(ErrorMessage = "Vaccination event ID is required")]
-        public List<int> ParentIds { get; set; } = new();
+        public List<int> Ids { get; set; } = new();
 
         [Required(ErrorMessage = "Vaccination event ID is required")]
         public SendVaccinationEmailDTO sendVaccinationEmailDTO { get; set; } = new();

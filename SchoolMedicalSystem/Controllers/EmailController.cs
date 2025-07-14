@@ -5,6 +5,7 @@ using DataAccessLayer.DTO;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
+using System.Security.Claims;
 
 namespace SchoolMedicalSystem.Controllers
 {
@@ -86,6 +87,9 @@ namespace SchoolMedicalSystem.Controllers
         [HttpPost("CreateEmailTemplate")]
         public async Task<IActionResult> CreateEmailTemplate([FromBody] EmailDTO request)
         {
+            if (request == null)
+                return BadRequest("Email template cannot be empty or null");
+
             var emailTemplate = await _email.CreateEmailTemplate(request);
             if (emailTemplate == null)
                 return BadRequest("Failed to create email template");

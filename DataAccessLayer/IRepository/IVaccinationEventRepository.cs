@@ -7,6 +7,7 @@ namespace DataAccessLayer.IRepository
     public interface IVaccinationEventRepository : IGenericRepository<Vaccinationevent>
     {
         Task<List<Vaccinationevent>> GetAllActiveEventsAsync();
+        Task<Vaccinationevent?> GetEventByAccessTokenAsync(string accessToken);
         Task<Vaccinationevent?> GetEventWithRecordsAsync(int eventId);
         Task<List<Vaccinationevent>> GetEventsByDateRangeAsync(DateTime startDate, DateTime endDate);
         Task<List<Vaccinationevent>> GetUpcomingEventsAsync();

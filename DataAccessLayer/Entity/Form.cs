@@ -5,7 +5,7 @@ namespace DataAccessLayer.Entity;
 
 public partial class Form
 {
-    public int? Parentid { get; set; }
+    public int Parentid { get; set; }
 
     public int FormId { get; set; }
 
@@ -15,7 +15,8 @@ public partial class Form
 
     public string Reason { get; set; } = null!;
 
-    public byte[]? File { get; set; }
+    public string? Originalfilename { get; set; } = null!;
+    public string? Storedpath { get; set; } = null!;
 
     public int? Staffid { get; set; }
 
