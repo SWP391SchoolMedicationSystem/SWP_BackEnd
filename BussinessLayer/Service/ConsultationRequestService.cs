@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
 using BussinessLayer.IService;
-using DataAccessLayer.DTO;
+using DataAccessLayer.DTO.Consultations;
 using DataAccessLayer.Entity;
 using DataAccessLayer.IRepository;
 using DataAccessLayer.Repository;
@@ -13,10 +13,13 @@ using DataAccessLayer.Repository;
 namespace BussinessLayer.Service
 {
     public class ConsultationRequestService(IConsulationRepository consulationRepository, IConsultationTypeRepo consultationTypeRepo,
-        IParentRepository parentRepository, IStaffRepository staffRepository, IStudentRepo studentRepo,
+        IParentRepository parentRepository,
+        IStaffRepository staffRepository,
+        IStudentRepo studentRepo,
+        IUserRepository _userRepository,
         IMapper mapper) : IConsultationService
     {
-        public async Task<Consultationrequest> AddConsultationRequest(ConsultationRequestDTO request)
+        public async Task<Consultationrequest> AddConsultationRequest(CreateConsultationDTO request)
         {
 
             var type = consultationTypeRepo.GetByIdAsync(request.Requesttypeid);
@@ -24,10 +27,35 @@ namespace BussinessLayer.Service
             consultationRequest.Requesttype = type.Result;
             consultationRequest.Createddate = DateTime.Now;
             consultationRequest.Requestdate = DateTime.Now;
+            consultationRequest.Status = "Pending";
             await consulationRepository.AddAsync(consultationRequest);
             consulationRepository.Save();
             return Task.FromResult(consultationRequest).Result;
         }
+
+        public async Task ApproveRequest(ApprovalConsultationDTO dto)
+        {
+            var request = await consulationRepository.GetByIdAsync(dto.Consultationid);
+            request.Status = "Approve";
+            request.Staffid = dto.Staffid;
+            request.Modifiedby = dto.Modifiedby;
+            request.Modifieddate = DateTime.Now;
+            consulationRepository.Update(request);
+            consulationRepository.Save();
+        }
+        public async Task RejectRequest(ApprovalConsultationDTO dto)
+        {
+            var request = await consulationRepository.GetByIdAsync(dto.Consultationid);
+            request.Status = "Reject";
+            request.Staffid = dto.Staffid;
+            request.Modifiedby = dto.Modifiedby;
+            request.Modifieddate = DateTime.Now;
+            consulationRepository.Update(request);
+            consulationRepository.Save();
+        }
+
+
+
         public void DeleteConsultationRequest(int id)
         {
             Task<Consultationrequest> entity = consulationRepository.GetByIdAsync(id);
@@ -38,16 +66,80 @@ namespace BussinessLayer.Service
                 consulationRepository.Save();
             }
         }
-        public Task<List<Consultationrequest>> GetAllConsultationRequestsAsync()
+        public Task<List<ConsultationDTO>> GetAllConsultationRequestsAsync()
+        {
+            var consultation = consulationRepository.GetAllAsync().Result;
+            var dto = mapper.Map<List<ConsultationDTO>>(consultation);
+            foreach (var item in dto)
+            {
+                // Set the image URL to be absolute
+                if (item.Createdby != null && item.Createdby != 0)
+                {
+                    if (_userRepository.GetByIdAsync(item.Createdby).Result.IsStaff)
+                        item.CreateByName = staffRepository.GetAllAsync().Result.FirstOrDefault(s => s.Userid == item.Createdby)?.Fullname ?? "Unknown";
+                    else
+                        item.CreateByName = parentRepository.GetAllAsync().Result.FirstOrDefault(s => s.Userid == item.Createdby)?.Fullname ?? "Unknown";
+                }
+                else item.CreateByName = "Unknown";
+
+                item.Staffname = (item.Staffid != null && item.Staffid != 0)
+                    ? staffRepository.GetByIdAsync(item.Staffid.Value).Result?.Fullname
+                    : "Unassigned";
+                item.ParentName = (item.Parentid != null && item.Parentid != 0) ? parentRepository.GetByIdAsync(item.Parentid).Result?.Fullname : "Không có Phụ Huynh";
+                item.StudentName = (item.Studentid != null && item.Studentid != 0) ? studentRepo.GetByIdAsync(item.Studentid).Result?.Fullname : "Không có Học Sinh";
+            }
+            return Task.FromResult(dto);
+        }
+        public Task<ConsultationDTO> GetConsultationRequestByIdAsync(int id)
+        {
+            var consultation = consulationRepository.GetByIdAsync(id);
+            var item = mapper.Map<ConsultationDTO>(consultation);
+            if (item.Createdby != null && item.Createdby != 0)
+            {
+                if (_userRepository.GetByIdAsync(item.Createdby).Result.IsStaff)
+                    item.CreateByName = staffRepository.GetAllAsync().Result.FirstOrDefault(s => s.Userid == item.Createdby)?.Fullname ?? "Unknown";
+                else
+                    item.CreateByName = parentRepository.GetAllAsync().Result.FirstOrDefault(s => s.Userid == item.Createdby)?.Fullname ?? "Unknown";
+            }
+            else item.CreateByName = "Unknown";
+
+            item.Staffname = (item.Staffid != null && item.Staffid != 0)
+                ? staffRepository.GetByIdAsync(item.Staffid.Value).Result?.Fullname
+                : "Unassigned";
+            item.ParentName = (item.Parentid != null && item.Parentid != 0) ? parentRepository.GetByIdAsync(item.Parentid).Result?.Fullname : "Không có Phụ Huynh";
+            item.StudentName = (item.Studentid != null && item.Studentid != 0) ? studentRepo.GetByIdAsync(item.Studentid).Result?.Fullname : "Không có Học Sinh";
+            return Task.FromResult(item);
+
+        }
+
+        public Task<List<ConsultationDTO>> GetPendingRequest()
         {
             var consultation = consulationRepository.GetAllAsync();
-            return consultation;
+            var dto = mapper.Map<List<ConsultationDTO>>(consultation);
+            foreach (var item in dto)
+            {
+                if (item.Createdby != null && item.Createdby != 0)
+                {
+                    if (_userRepository.GetByIdAsync(item.Createdby).Result.IsStaff)
+                        item.CreateByName = staffRepository.GetAllAsync().Result.FirstOrDefault(s => s.Userid == item.Createdby)?.Fullname ?? "Unknown";
+                    else
+                        item.CreateByName = parentRepository.GetAllAsync().Result.FirstOrDefault(s => s.Userid == item.Createdby)?.Fullname ?? "Unknown";
+                }
+                else item.CreateByName = "Unknown";
+
+                item.Staffname = (item.Staffid != null && item.Staffid != 0)
+                    ? staffRepository.GetByIdAsync(item.Staffid.Value).Result?.Fullname
+                    : "Unassigned";
+                item.ParentName = (item.Parentid != null && item.Parentid != 0) ? parentRepository.GetByIdAsync(item.Parentid).Result?.Fullname : "Không có Phụ Huynh";
+                item.StudentName = (item.Studentid != null && item.Studentid != 0) ? studentRepo.GetByIdAsync(item.Studentid).Result?.Fullname : "Không có Học Sinh";
+            }
+            dto = dto.Where(dto => dto.Status == "Pending").ToList();
+            return Task.FromResult(dto);
+
         }
-        public Task<Consultationrequest> GetConsultationRequestByIdAsync(int id)
-        {
-            return consulationRepository.GetByIdAsync(id);
-        }
-        public Task<Consultationrequest> UpdateConsulationRequest(Consultationrequest consultationRequest)
+
+
+        public Task<Consultationrequest> UpdateConsulationRequest(UpdateConsultationDTO consultationRequest)
         {
             var existingRequest = consulationRepository.GetByIdAsync(consultationRequest.Consultationid);
             if (existingRequest != null)

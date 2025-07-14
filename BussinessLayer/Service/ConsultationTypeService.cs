@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
 using BussinessLayer.IService;
-using DataAccessLayer.DTO;
+using DataAccessLayer.DTO.Consultations;
 using DataAccessLayer.Entity;
 using DataAccessLayer.IRepository;
 using DataAccessLayer.Repository;
@@ -15,7 +15,7 @@ namespace BussinessLayer.Service
     public class ConsultationTypeService(IConsultationTypeRepo _consultationtype, IMapper mapper) : IConsultationTypeService
     {
 
-        public async Task<Consultationtype> AddConsultationTypeAsync(ConsultationTypeDTO consultationType)
+        public async Task<Consultationtype> AddConsultationTypeAsync(CreateConsultationTypeDTO consultationType)
         {
             var entity = mapper.Map<Consultationtype>(consultationType);
             await _consultationtype.AddAsync(entity);

@@ -17,10 +17,13 @@ namespace BussinessLayer.IService
         Task AddPersonalmedicineAsync(AddPersonalMedicineDTO Personalmedicine);
         void UpdatePersonalmedicine(UpdatePersonalMedicineDTO Personalmedicine);
         void DeletePersonalmedicine(int id);
+        Task ApprovePersonalMedicine(ApprovalPersonalMedicineDTO dto);
+        Task RejectPersonalMedicine(ApprovalPersonalMedicineDTO dto);
+
         Task<List<Personalmedicine>> SearchPersonalmedicinesAsync(string searchTerm);
         Task<List<PersonalMedicineDTO>> GetPersonalmedicinesByParentIdAsync(int parentId);
         Task<List<PersonalMedicineDTO>> GetPersonalmedicinesByMedicineIdAsync(int medicineId);
-        Task<List<Personalmedicine>> GetPersonalmedicinesByApprovalAsync(int isApproved);
+        Task<List<PersonalMedicineDTO>> GetPersonalmedicinesByApprovalAsync();
 
         Task<List<PersonalMedicineRequestDTO>> GetRequest();
 

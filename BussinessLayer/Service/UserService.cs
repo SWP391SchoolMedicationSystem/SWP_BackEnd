@@ -145,7 +145,7 @@ namespace BussinessLayer.Service
                     LoginGoogleDTO parentLogin = _mapper.Map<LoginGoogleDTO>(user);
                     return await _parentService.GenerateGoogleToken(parentLogin);
                 }
-                else return "Email is incorrect or doesn't exist";
+                else return null ;
             }
             catch (Exception e)
             {

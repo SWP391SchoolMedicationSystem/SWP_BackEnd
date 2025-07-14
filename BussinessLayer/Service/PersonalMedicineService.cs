@@ -14,15 +14,14 @@ using NPOI.OpenXmlFormats.Dml;
 namespace BussinessLayer.Service
 {
     public class PersonalmedicineService(IPersonalMedicineRepository PersonalmedicineRepository, IParentRepository parentRepository,
-        IMedicineRepository medicineRepository,IStudentRepo studentRepo,IClassRoomRepository classRoomRepository,
-        IMedicineScheduleRepository medicineScheduleRepository,IMedicineCategoryRepository medicineCategoryRepository,
+        IMedicineRepository medicineRepository, IStudentRepo studentRepo, IClassRoomRepository classRoomRepository,
+        IMedicineScheduleRepository medicineScheduleRepository, IMedicineCategoryRepository medicineCategoryRepository,
         IScheduleDetailRepo scheduleDetailRepo, IMapper mapper) : IPersonalmedicineService
     {
         public Task AddPersonalmedicineAsync(AddPersonalMedicineDTO Personalmedicine)
         {
             var PersonalmedicineEntity = mapper.Map<Personalmedicine>(Personalmedicine);
-            PersonalmedicineEntity.Medicine = medicineRepository.GetByIdAsync(Personalmedicine.Medicineid).Result;
-            
+
             PersonalmedicineEntity.Parent = parentRepository.GetByIdAsync(Personalmedicine.Parentid.Value).Result;
             if (PersonalmedicineEntity.Parent == null)
             {
@@ -35,7 +34,6 @@ namespace BussinessLayer.Service
             }
 
             PersonalmedicineEntity.Status = false;
-            PersonalmedicineEntity.Createdby = "Admin";
             PersonalmedicineEntity.Createddate = DateTime.Now;
             PersonalmedicineEntity.Medicine = medicineRepository.GetByIdAsync(Personalmedicine.Medicineid).Result;
             if (PersonalmedicineEntity.Medicine == null)
@@ -66,12 +64,12 @@ namespace BussinessLayer.Service
         public async Task<List<PersonalMedicineDTO>> GetAllPersonalmedicinesAsync()
         {
             var personalMedicines = await PersonalmedicineRepository.GetAllAsync();
-            var dtolist = mapper.Map<List<PersonalMedicineDTO>>(personalMedicines);
-            foreach( var item in dtolist)
+            var dtolist = mapper.Map<List<PersonalMedicineDTO>>(personalMedicines).Where(p => p.IsDeleted == false);
+            foreach (var item in dtolist)
             {
                 item.Phone = parentRepository.GetByIdAsync(item.Parentid).Result?.Phone ?? "No phone number";
             }
-            return dtolist;
+            return dtolist.ToList();
         }
 
         public async Task<PersonalMedicineDTO> GetPersonalmedicineByIdAsync(int id)
@@ -126,7 +124,7 @@ namespace BussinessLayer.Service
                 PersonalmedicineEntity.Receiveddate = Personalmedicine.Receiveddate;
                 PersonalmedicineEntity.ExpiryDate = Personalmedicine.ExpiryDate;
                 PersonalmedicineEntity.Status = Personalmedicine.Status;
-                if(PersonalmedicineEntity.Status)
+                if (PersonalmedicineEntity.Status)
                 {
                     PersonalmedicineEntity.Isapproved = true;
                 }
@@ -139,13 +137,11 @@ namespace BussinessLayer.Service
 
 
         }
-        public Task<List<Personalmedicine>> GetPersonalmedicinesByApprovalAsync(int isApproved)
+        public Task<List<PersonalMedicineDTO>> GetPersonalmedicinesByApprovalAsync()
         {
             var Personalmedicines = PersonalmedicineRepository.GetAllAsync();
-            return Personalmedicines.ContinueWith(task =>
-            {
-                return task.Result.Where(md => md.Isapproved == (isApproved == 1)).ToList();
-            });
+            var dto = mapper.Map<List<PersonalMedicineDTO>>(Personalmedicines.Result.Where(md => md.Isapproved == true && md.Status == true));
+            return Task.FromResult(dto);
         }
 
         public async Task<List<PersonalMedicineRequestDTO>> GetRequest()
@@ -164,13 +160,14 @@ namespace BussinessLayer.Service
                     var medicine = personalMedicine.Medicine;
                     var type = medicineCategoryRepository.GetByIdAsync(medicine.Medicinecategoryid).Result?.Medicinecategoryname ?? "Unknown";
                     var MedicineScheduleList = medicineScheduleRepository.GetAllAsync().Result.Where(ms => ms.Personalmedicineid == personalMedicine.Personalmedicineid).ToList();
-                    foreach (var schedule in MedicineScheduleList) {
+                    foreach (var schedule in MedicineScheduleList)
+                    {
                         scheduledetails.Add(ScheduleDetailList.FirstOrDefault(sd => sd.Scheduledetailid == schedule.Scheduledetails));
                     }
                     var scheduling = mapper.Map<List<ScheduleDetailDTO>>(scheduledetails);
                     var request = new PersonalMedicineRequestDTO
                     {
-                        Studentid = personalMedicine.Studentid ,
+                        Studentid = personalMedicine.Studentid,
                         StudentName = studentname,
                         ParentId = personalMedicine.Parentid,
                         ParentName = personalMedicine.Parent.Fullname,
@@ -192,5 +189,35 @@ namespace BussinessLayer.Service
             return await task;
 
         }
+        public Task ApprovePersonalMedicine(ApprovalPersonalMedicineDTO dto)
+        {
+            var personalMedicine = PersonalmedicineRepository.GetByIdAsync(dto.Personalmedicineid).Result;
+            if (personalMedicine != null)
+            {
+                personalMedicine.Status = true;
+                personalMedicine.Approvedby = dto.Approvedby;
+                personalMedicine.Isapproved = true;
+                personalMedicine.Modifieddate = DateTime.Now;
+                PersonalmedicineRepository.Update(personalMedicine);
+                PersonalmedicineRepository.Save();
+            }
+            return Task.CompletedTask;
+        }
+        public Task RejectPersonalMedicine(ApprovalPersonalMedicineDTO dto)
+        {
+            var personalMedicine = PersonalmedicineRepository.GetByIdAsync(dto.Personalmedicineid).Result;
+            if (personalMedicine != null)
+            {
+                personalMedicine.Status = true;
+                personalMedicine.Approvedby = dto.Approvedby;
+                personalMedicine.Isapproved = false;
+                personalMedicine.Modifieddate = DateTime.Now;
+                PersonalmedicineRepository.Update(personalMedicine);
+                PersonalmedicineRepository.Save();
+
+            }
+            return Task.CompletedTask;
+        }
+
     }
 }

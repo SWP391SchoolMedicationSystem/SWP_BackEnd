@@ -62,7 +62,7 @@ namespace SchoolMedicalSystem.Controllers
         }
 
         [HttpPost("AddStudent")]
-        public async Task<IActionResult> AddStudent([FromBody] UpdateStudentDTo student)
+        public async Task<IActionResult> AddStudent([FromBody] AddStudentDTO student)
         {
             if (student == null)
             {

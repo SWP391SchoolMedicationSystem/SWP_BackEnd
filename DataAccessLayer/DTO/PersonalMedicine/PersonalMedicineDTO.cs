@@ -9,6 +9,7 @@ namespace DataAccessLayer.DTO.PersonalMedicine
 {
     public class PersonalMedicineDTO
     {
+        public int Personalmedicineid { get; set; }
         public int Medicineid { get; set; }
 
         public int Parentid { get; set; }
@@ -18,13 +19,18 @@ namespace DataAccessLayer.DTO.PersonalMedicine
 
         public int Quantity { get; set; }
 
+
         public DateTime Receiveddate { get; set; }
 
         public DateTime? ExpiryDate { get; set; }
 
-        public bool Status { get; set; }
+            public bool Status { get; set; }
+        public bool Isapproved { get; set; }
+
+        public string? Approvedby { get; set; }
 
         public string? Note { get; set; }
+        public bool IsDeleted {get; set;}
 
     }
 }

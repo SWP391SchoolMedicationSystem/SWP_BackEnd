@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DataAccessLayer.DTO
+namespace DataAccessLayer.DTO.Consultations
 {
-    public class ConsultationTypeDTO
+    public class CreateConsultationTypeDTO
     {
         public string Typename { get; set; } = null!;
 

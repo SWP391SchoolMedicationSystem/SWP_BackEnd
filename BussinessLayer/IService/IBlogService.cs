@@ -10,15 +10,15 @@ namespace BussinessLayer.IService
 {
     public interface IBlogService
     {
-        Task<List<Blog>> GetAllBlogsAsync();
-        Task<Blog> GetBlogByIdAsync(int id);
-        Task AddBlogAsync(CreateBlogDTO dto);
-        void UpdateBlog(UpdateBlogDTO dto);
+        Task<List<BlogDTO>> GetAllBlogsAsync();
+        Task<BlogDTO> GetBlogByIdAsync(int id);
+        Task <String> AddBlogAsync(CreateBlogDTO dto);
+        Task <String> UpdateBlog(UpdateBlogDTO dto);
         void DeleteBlog(int id);
-        Task<List<Blog>> SearchBlogsAsync(string searchTerm);
+        Task<List<BlogDTO>> SearchBlogsAsync(string searchTerm);
         void ApproveBlog(ApproveBlogDTO dto);
         void RejectBlog(RejectBlogDTO dto);
-        Task<List<Blog>> GetPublishedBlogs();
-        public Task<string> UploadBlogImageAsync(BlogImageUploadDTO dto);
+        Task<List<BlogDTO>> GetPublishedBlogs();
+//        public Task<string> UploadBlogImageAsync(BlogImageUploadDTO dto);   
     }
 }

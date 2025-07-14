@@ -34,6 +34,22 @@ namespace BussinessLayer.Service
             _studentNeedRepository.Save();
         }
 
+        public void DeleteStudentSpecialNeed(int id)
+        {
+            if (id <= 0)
+            {
+                throw new ArgumentException("Invalid student special need ID.", nameof(id));
+            }
+            var studentSpecialNeed = _studentNeedRepository.GetByIdAsync(id).Result;
+            if (studentSpecialNeed == null)
+            {
+                throw new KeyNotFoundException("Student special need not found.");
+            }
+            studentSpecialNeed.IsDelete = true;
+            _studentNeedRepository.Update(studentSpecialNeed);
+            _studentNeedRepository.Save();
+        }
+
         public async Task<List<StudentSpecialNeedDTO>> GetAllStudentSpecialNeedsAsync()
         {
             var studentSpecialNeeds = await _studentNeedRepository.GetAllAsync();
@@ -83,6 +99,7 @@ namespace BussinessLayer.Service
             existingEntity.StudentId = entity.StudentId;
             existingEntity.SpecialNeedCategoryId = entity.SpecialNeedCategoryId;
             existingEntity.Notes = entity.Notes;
+            existingEntity.IsDelete = entity.IsDelete;
             _studentNeedRepository.Update(existingEntity);
             _studentNeedRepository.Save();
         }

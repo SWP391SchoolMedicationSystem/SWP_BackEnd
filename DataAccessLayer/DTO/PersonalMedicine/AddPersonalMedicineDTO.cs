@@ -15,6 +15,7 @@ namespace DataAccessLayer.DTO.PersonalMedicine
         public int? Studentid { get; set; }
 
         public int Quantity { get; set; }
+    public string Createdby { get; set; } = null!;
 
         public DateTime Receiveddate { get; set; }
 

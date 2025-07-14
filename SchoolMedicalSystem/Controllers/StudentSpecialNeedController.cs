@@ -107,6 +107,26 @@ namespace SchoolMedicalSystem.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
+        [HttpDelete]
+        [Route("DeleteSpecialNeed")]
+        public IActionResult DeleteSpecialNeed([FromQuery] int id)
+        {
+            if (id <= 0)
+                return BadRequest("Invalid special need ID.");
+            try
+            {
+                _studentSpecialNeedService.DeleteStudentSpecialNeed(id);
+                return Ok("Special need deleted successfully.");
+            }
+            catch (KeyNotFoundException knfEx)
+            {
+                return NotFound(knfEx.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error deleting special need: {ex.Message}");
+            }
 
+        }
     }
 }
