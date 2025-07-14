@@ -1,5 +1,6 @@
 using AutoMapper;
 using BussinessLayer.IService;
+using BussinessLayer.Utils;
 using DataAccessLayer.DTO;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -14,12 +15,15 @@ namespace SchoolMedicalSystem.Controllers
         private readonly IVaccinationEventService _vaccinationEventService;
         private readonly IEmailService _emailService;
         private readonly IMapper _mapper;
+        private readonly IConfiguration _config;
 
-        public VaccinationEventController(IVaccinationEventService vaccinationEventService, IMapper mapper, IEmailService emailService)
+        public VaccinationEventController(IVaccinationEventService vaccinationEventService, IMapper mapper, 
+            IEmailService emailService, IConfiguration config)
         {
             _vaccinationEventService = vaccinationEventService;
             _emailService = emailService;
             _mapper = mapper;
+            _config = config;
         }
 
         // GET: api/VaccinationEvent
@@ -57,7 +61,7 @@ namespace SchoolMedicalSystem.Controllers
 
         // POST: api/VaccinationEvent
         [HttpPost]
-        public async Task<ActionResult<VaccinationEventDTO>> CreateEvent([FromBody] CreateVaccinationEventDTO dto)
+        public async Task<ActionResult<VaccinationEventDTO>> CreateEvent([FromForm] CreateVaccinationEventDTO dto)
         {
             try
             {
@@ -66,6 +70,9 @@ namespace SchoolMedicalSystem.Controllers
 
                 var createdBy = User.FindFirst(ClaimTypes.Name)?.Value ?? "System";
                 var vaccinationEvent = await _vaccinationEventService.CreateEventAsync(dto, createdBy);
+
+                if (vaccinationEvent == null)
+                    return BadRequest("Failed to create vaccination event.");
 
                 return CreatedAtAction(nameof(GetEvent), new { id = vaccinationEvent.VaccinationEventId }, vaccinationEvent);
             }
@@ -77,7 +84,7 @@ namespace SchoolMedicalSystem.Controllers
 
         // PUT: api/VaccinationEvent/5
         [HttpPut]
-        public async Task<IActionResult> UpdateEvent([FromBody] UpdateVaccinationEventDTO dto)
+        public async Task<IActionResult> UpdateEvent([FromForm] UpdateVaccinationEventDTO dto)
         {
             try
             {
@@ -221,10 +228,10 @@ namespace SchoolMedicalSystem.Controllers
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
 
-                if (dto.ParentIds == null || !dto.ParentIds.Any())
+                if (dto.Ids == null || !dto.Ids.Any())
                     return BadRequest("Parent IDs are required.");
 
-                var result = await _vaccinationEventService.SendVaccinationEmailToSpecificParentsAsync(dto.sendVaccinationEmailDTO, dto.ParentIds);
+                var result = await _vaccinationEventService.SendVaccinationEmailToSpecificParentsAsync(dto.sendVaccinationEmailDTO, dto.Ids);
 
                 if (result == null)
                     return BadRequest("Not found Event info or Email template");
@@ -233,6 +240,29 @@ namespace SchoolMedicalSystem.Controllers
                     return BadRequest("Failed to send vaccination emails to some parents: " + string.Join(", ", result.Select(e => e.To)));
 
                 return Ok("Vaccination emails sent successfully to specific parents.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        [HttpPost("send-email-to-specific-students")]
+        public async Task<IActionResult> SendVaccinationEmailToSpecificStudents(
+            [FromBody] SendVaccineEmailListDTO dto)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                    return BadRequest(ModelState);
+                if (dto.Ids == null || !dto.Ids.Any())
+                    return BadRequest("Student IDs are required.");
+                var result = await _vaccinationEventService.SendVaccinationEmailToSpecificStudentsAsync(dto.sendVaccinationEmailDTO, dto.Ids);
+                if (result == null)
+                    return BadRequest("Not found Event info or Email template");
+                if (result.Any())
+                    return BadRequest("Failed to send vaccination emails to some students: " + string.Join(", ", result.Select(e => e.To)));
+                return Ok("Vaccination emails sent successfully to specific students.");
             }
             catch (Exception ex)
             {
@@ -328,8 +358,9 @@ namespace SchoolMedicalSystem.Controllers
                 if (studentInfo == null || !studentInfo.Any())
                     return NotFound("No student found for this email address");
 
+                string baseUrl = _config["ApiSetting:BaseUrl"];
                 // Return HTML form
-                var htmlForm = await _vaccinationEventService.FillEmailTemplateData(email, eventInfo);
+                var htmlForm = await _vaccinationEventService.FillEmailTemplateData(email, eventInfo, baseUrl);
 
                 return Content(htmlForm, "text/html");
             }

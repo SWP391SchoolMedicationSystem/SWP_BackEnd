@@ -23,6 +23,12 @@ namespace DataAccessLayer.Repository
                 .ToListAsync();
         }
 
+        public async Task<Vaccinationevent?> GetEventByAccessTokenAsync(string accessToken)
+        {
+            return await _context.Vaccinationevents
+                .FirstOrDefaultAsync(e => e.DocumentAccessToken.Equals(accessToken) && !e.Isdeleted);
+        }
+
         public async Task<Vaccinationevent?> GetEventWithRecordsAsync(int eventId)
         {
             return await _context.Vaccinationevents

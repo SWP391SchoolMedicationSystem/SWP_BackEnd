@@ -43,6 +43,8 @@ namespace DataAccessLayer.Repository
                 .FirstOrDefaultAsync(r => r.Studentid == studentId && r.Vaccinationeventid == eventId && !r.Isdeleted);
         }
 
+        //public async Task<
+
         public async Task<int> GetConfirmedCountAsync(int eventId)
         {
             return await _context.Vaccinationrecords

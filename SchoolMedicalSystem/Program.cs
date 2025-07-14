@@ -4,6 +4,7 @@ using BussinessLayer.IService;
 using BussinessLayer.QuartzJob.Job;
 using BussinessLayer.QuartzJob.Scheduler;
 using BussinessLayer.Service;
+using BussinessLayer.Utils;
 using BussinessLayer.Utils.Configurations;
 using DataAccessLayer.Entity;
 using DataAccessLayer.IRepository;
@@ -124,6 +125,9 @@ builder.Services.AddScoped<IStudentSpecialNeedService, StudentSpecialNeedService
 builder.Services.AddScoped<IStudentSpecialNeedCategoryRepo, StudentSpecialNeedCategoryRepo>();
 builder.Services.AddScoped<ISpecialNeedCategoryService, SpecialNeedCategoryService>();
 builder.Services.AddScoped<IStudentSpecialNeedCategoryRepo, StudentSpecialNeedCategoryRepo>();
+builder.Services.AddScoped<IFormRepository, FormRepository>();
+builder.Services.AddScoped<IFormService, FormService>();
+builder.Services.AddScoped<FileHandler>();
 #endregion
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

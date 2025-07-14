@@ -256,10 +256,15 @@ public partial class SchoolMedicalSystemContext : DbContext
             entity.Property(e => e.Createddate)
                 .HasColumnType("datetime")
                 .HasColumnName("CREATEDDATE");
-            entity.Property(e => e.File).HasColumnName("FILE");
+            entity.Property(e => e.Originalfilename)
+                .HasMaxLength(255)
+                .HasColumnName("ORIGINALFILENAME");
+            entity.Property(e => e.Storedpath)
+                .HasMaxLength(255)
+                .HasColumnName("STOREDPATH");
             entity.Property(e => e.FormcategoryId).HasColumnName("FORMCATEGORY_ID");
             entity.Property(e => e.Isaccepted)
-                .HasDefaultValue(false)
+                .HasDefaultValue(null)
                 .HasColumnName("ISACCEPTED");
             entity.Property(e => e.Modifiedby)
                 .HasMaxLength(255)
@@ -992,6 +997,12 @@ public partial class SchoolMedicalSystemContext : DbContext
             entity.Property(e => e.Description)
                 .HasColumnType("text")
                 .HasColumnName("DESCRIPTION");
+            entity.Property(e => e.DocumentFileName)
+                .HasMaxLength(255)
+                .HasColumnName("DOCUMENTFILENAME");
+            entity.Property(e => e.DocumentAccessToken)
+                .HasMaxLength(255)
+                .HasColumnName("DOCUMENTACCESSTOKEN");
             entity.Property(e => e.Eventdate)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime")
