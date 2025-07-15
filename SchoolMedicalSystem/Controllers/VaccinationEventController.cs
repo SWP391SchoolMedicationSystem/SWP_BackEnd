@@ -200,8 +200,8 @@ namespace SchoolMedicalSystem.Controllers
             {
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
-
-                var result = await _vaccinationEventService.SendVaccinationEmailToAllParentsAsync(dto);
+                string baseUrl = _config["ApiSetting:BaseUrl"];
+                var result = await _vaccinationEventService.SendVaccinationEmailToAllParentsAsync(dto, baseUrl);
 
                 if (result == null)
                     return BadRequest("Not found Event info or Email template");
@@ -231,7 +231,8 @@ namespace SchoolMedicalSystem.Controllers
                 if (dto.Ids == null || !dto.Ids.Any())
                     return BadRequest("Parent IDs are required.");
 
-                var result = await _vaccinationEventService.SendVaccinationEmailToSpecificParentsAsync(dto.sendVaccinationEmailDTO, dto.Ids);
+                string baseUrl = _config["ApiSetting:BaseUrl"];
+                var result = await _vaccinationEventService.SendVaccinationEmailToSpecificParentsAsync(dto.sendVaccinationEmailDTO, dto.Ids, baseUrl);
 
                 if (result == null)
                     return BadRequest("Not found Event info or Email template");
@@ -257,7 +258,9 @@ namespace SchoolMedicalSystem.Controllers
                     return BadRequest(ModelState);
                 if (dto.Ids == null || !dto.Ids.Any())
                     return BadRequest("Student IDs are required.");
-                var result = await _vaccinationEventService.SendVaccinationEmailToSpecificStudentsAsync(dto.sendVaccinationEmailDTO, dto.Ids);
+
+                string baseUrl = _config["ApiSetting:BaseUrl"];
+                var result = await _vaccinationEventService.SendVaccinationEmailToSpecificStudentsAsync(dto.sendVaccinationEmailDTO, dto.Ids, baseUrl);
                 if (result == null)
                     return BadRequest("Not found Event info or Email template");
                 if (result.Any())
@@ -358,9 +361,9 @@ namespace SchoolMedicalSystem.Controllers
                 if (studentInfo == null || !studentInfo.Any())
                     return NotFound("No student found for this email address");
 
-                string baseUrl = _config["ApiSetting:BaseUrl"];
+                
                 // Return HTML form
-                var htmlForm = await _vaccinationEventService.FillEmailTemplateData(email, eventInfo, baseUrl);
+                var htmlForm = await _vaccinationEventService.FillEmailTemplateData(email, eventInfo);
 
                 return Content(htmlForm, "text/html");
             }
