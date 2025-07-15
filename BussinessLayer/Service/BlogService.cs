@@ -28,6 +28,9 @@ namespace BussinessLayer.Service
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly Cloudinary _cloudinary;
         //        private readonly IStaffRepository _staffRepository;
+        const string draft = "Draft";
+        const string published = "Published";
+        const string rejected = "Rejected";
         public BlogService(
             IBlogRepo blogRepo,
             IUserRepository userRepository,
@@ -116,7 +119,7 @@ namespace BussinessLayer.Service
         {
 
             Blog blog = _mapper.Map<Blog>(dto);
-            blog.Status = "Draft";
+            blog.Status = draft;
             blog.CreatedAt = DateTime.Now;
             string? imageUrl = null;
             if (dto.ImageFile != null && dto.ImageFile.Length > 0)
@@ -253,7 +256,7 @@ namespace BussinessLayer.Service
             {
                 blog.ApprovedBy = dto.ApprovedBy;
                 blog.ApprovedOn = DateTime.Now;
-                blog.Status = "Published";
+                blog.Status = published;
                 _blogRepo.Update(blog);
                 _blogRepo.Save();
             }
@@ -265,7 +268,7 @@ namespace BussinessLayer.Service
                     //                    b.ApprovedBy != null &&
                     //                   b.ApprovedOn != null &&
                     b.Status != null &&
-                    (b.Status.Equals("Published", StringComparison.OrdinalIgnoreCase)))
+                    (b.Status.Equals(published, StringComparison.OrdinalIgnoreCase)))
                 .ToList();
             List<BlogDTO> blogDTOs = _mapper.Map<List<BlogDTO>>(blogs);
             foreach (var blog in blogDTOs)
@@ -306,46 +309,84 @@ namespace BussinessLayer.Service
             {
                 blog.ApprovedBy = dto.ApprovedBy;
                 blog.ApprovedOn = DateTime.Now;
-                blog.Status = "Rejected";
+                blog.Status = rejected;
                 _blogRepo.Update(blog);
                 _blogRepo.Save();
             }
         }
-/*        public async Task<string> UploadBlogImageAsync(BlogImageUploadDTO dto)
+
+        public Task<List<BlogDTO>> GetRejectedBlogs()
         {
-            var blog = await _blogRepo.GetByIdAsync(dto.BlogId);
-            if (blog == null) throw new Exception("Blog not found.");
-
-            //only jpg, jpeg, png file allow
-            var allowedExtensions = new[] { ".jpg", ".jpeg", ".png" };
-            var fileExtension = Path.GetExtension(dto.ImageFile.FileName).ToLower();
-            if (!allowedExtensions.Contains(fileExtension))
-                throw new Exception("Only JPG and PNG files are allowed.");
-
-            //size < 2mb
-            if (dto.ImageFile.Length > 2 * 1024 * 1024)
-                throw new Exception("File size must be less than 2MB.");
-
-            // Save image to wwwroot/images/blogs
-            var wwwRootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "blogs");
-            Directory.CreateDirectory(wwwRootPath); //create directory if it doesn't exist
-
-            var fileName = Guid.NewGuid().ToString() + Path.GetExtension(dto.ImageFile.FileName); //generate unique name for image file
-            var filePath = Path.Combine(wwwRootPath, fileName); //get full path for the image file
-
-            // open file stream and copy the uploaded file to the server
-            using (var stream = new FileStream(filePath, FileMode.Create))
+            var blogs = _blogRepo.GetAllAsync().Result.Where(b =>
+                    b.IsDeleted != true &&
+                    b.Status != null &&
+                    (b.Status.Equals(rejected, StringComparison.OrdinalIgnoreCase)))
+                .ToList();
+            List<BlogDTO> blogDTOs = _mapper.Map<List<BlogDTO>>(blogs);
+            foreach (var blog in blogDTOs)
             {
-                await dto.ImageFile.CopyToAsync(stream); //copy the uploaded file to the server
+                if (blog.CreatedBy != null)
+                {
+                    if (_userRepository.GetByIdAsync(blog.CreatedBy.Value).Result.IsStaff)
+                        blog.CreatedByName = _staffRepository.GetAllAsync().Result.FirstOrDefault(s => s.Userid == blog.CreatedBy)?.Fullname ?? "Unknown";
+                    else
+                        blog.CreatedByName = _parentRepository.GetAllAsync().Result.FirstOrDefault(s => s.Userid == blog.CreatedBy)?.Fullname ?? "Unknown";
+                }
+
+                if (blog.UpdatedBy != null)
+                {
+                    if (_userRepository.GetByIdAsync(blog.UpdatedBy.Value).Result.IsStaff)
+                        blog.UpdatedByName = _staffRepository.GetAllAsync().Result.FirstOrDefault(s => s.Userid == blog.UpdatedBy)?.Fullname ?? "Unknown";
+                    else
+                        blog.UpdatedByName = _parentRepository.GetAllAsync().Result.FirstOrDefault(s => s.Userid == blog.UpdatedBy)?.Fullname ?? "Unknown";
+                }
+
+                if (blog.ApprovedBy != null)
+                {
+                    if (_userRepository.GetByIdAsync(blog.ApprovedBy.Value).Result.IsStaff)
+                        blog.ApprovedByName = _staffRepository.GetAllAsync().Result.FirstOrDefault(s => s.Userid == blog.ApprovedBy)?.Fullname ?? "Unknown";
+                    else
+                        blog.ApprovedByName = _parentRepository.GetAllAsync().Result.FirstOrDefault(s => s.Userid == blog.ApprovedBy)?.Fullname ?? "Unknown";
+                }
             }
+            return Task.FromResult(blogDTOs);
+        }
 
-            // Update blog entity
-            blog.Image = $"/images/blogs/{fileName}";
-            blog.UpdatedAt = DateTime.Now;
-            _blogRepo.Update(blog);
-            _blogRepo.Save();
+        /*        public async Task<string> UploadBlogImageAsync(BlogImageUploadDTO dto)
+                {
+                    var blog = await _blogRepo.GetByIdAsync(dto.BlogId);
+                    if (blog == null) throw new Exception("Blog not found.");
 
-            return blog.Image; //return the image URL
-        }*/
+                    //only jpg, jpeg, png file allow
+                    var allowedExtensions = new[] { ".jpg", ".jpeg", ".png" };
+                    var fileExtension = Path.GetExtension(dto.ImageFile.FileName).ToLower();
+                    if (!allowedExtensions.Contains(fileExtension))
+                        throw new Exception("Only JPG and PNG files are allowed.");
+
+                    //size < 2mb
+                    if (dto.ImageFile.Length > 2 * 1024 * 1024)
+                        throw new Exception("File size must be less than 2MB.");
+
+                    // Save image to wwwroot/images/blogs
+                    var wwwRootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "blogs");
+                    Directory.CreateDirectory(wwwRootPath); //create directory if it doesn't exist
+
+                    var fileName = Guid.NewGuid().ToString() + Path.GetExtension(dto.ImageFile.FileName); //generate unique name for image file
+                    var filePath = Path.Combine(wwwRootPath, fileName); //get full path for the image file
+
+                    // open file stream and copy the uploaded file to the server
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await dto.ImageFile.CopyToAsync(stream); //copy the uploaded file to the server
+                    }
+
+                    // Update blog entity
+                    blog.Image = $"/images/blogs/{fileName}";
+                    blog.UpdatedAt = DateTime.Now;
+                    _blogRepo.Update(blog);
+                    _blogRepo.Save();
+
+                    return blog.Image; //return the image URL
+                }*/
     }
 }

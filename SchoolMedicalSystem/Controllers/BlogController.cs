@@ -141,5 +141,19 @@ namespace SchoolMedicalSystem.Controllers
                 return StatusCode(500, $"Error searching blogs: {ex.Message}");
             }
         }
+        [HttpGet]
+        [Route("GetRejectedBlogs")]
+        public async Task<IActionResult> GetRejectedBlogs()
+        {
+            try
+            {
+                var blogs = await _blogService.GetRejectedBlogs();
+                return Ok(blogs);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error retrieving rejected blogs: {ex.Message}");
+            }
+        }
     }
 }
