@@ -25,14 +25,14 @@ namespace BussinessLayer.IService
         Task<List<StudentVaccinationStatusDTO>> GetStudentResponsesForEventAsync(int eventId);
         
         // Email Operations
-        Task<List<EmailDTO>> SendVaccinationEmailToAllParentsAsync(SendVaccinationEmailDTO dto);
-        Task<List<EmailDTO>> SendVaccinationEmailToSpecificParentsAsync(SendVaccinationEmailDTO dto, List<int> parentIds);
-        Task<List<EmailDTO>> SendVaccinationEmailToSpecificStudentsAsync(SendVaccinationEmailDTO dto, List<int> studentIds);
+        Task<List<EmailDTO>> SendVaccinationEmailToAllParentsAsync(SendVaccinationEmailDTO dto, string baseUrl);
+        Task<List<EmailDTO>> SendVaccinationEmailToSpecificParentsAsync(SendVaccinationEmailDTO dto, List<int> parentIds, string baseUrl);
+        Task<List<EmailDTO>> SendVaccinationEmailToSpecificStudentsAsync(SendVaccinationEmailDTO dto, List<int> studentIds, string baseUrl);
 
         // Parent Response Handling
         Task<bool> ProcessParentResponseAsync(ParentVaccinationResponseDTO dto);
         Task<List<ParentVaccinationResponseDTO>> GetParentResponsesForEventAsync(int eventId);
-        Task<string> FillEmailTemplateData(string email, VaccinationEventDTO eventInfo, string baseUrl);
+        Task<string> FillEmailTemplateData(string email, VaccinationEventDTO eventInfo);
 
         // Statistics
         Task<Dictionary<string, int>> GetEventStatisticsAsync(int eventId);

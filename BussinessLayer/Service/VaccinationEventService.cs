@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Reflection;
 using AutoMapper;
 using BussinessLayer.IService;
@@ -232,8 +232,8 @@ namespace BussinessLayer.Service
         {
             return await _vaccinationEventRepository.GetStudentResponsesForEventAsync(eventId);
         }
-
-        public async Task<List<EmailDTO>> SendVaccinationEmailToAllParentsAsync(SendVaccinationEmailDTO dto)
+        //=====================================================
+        public async Task<List<EmailDTO>> SendVaccinationEmailToAllParentsAsync(SendVaccinationEmailDTO dto, string baseUrl)
         {
             try
             {
@@ -244,6 +244,20 @@ namespace BussinessLayer.Service
                 var emailTemplate = await _emailRepo.GetEmailTemplateByIdAsync(dto.EmailTemplateId);
                 if (emailTemplate == null)
                     return null;
+
+                // --- Step 1: Conditionally build the HTML for the detailed document link ---
+                string detailedDocumentSectionHtml = ""; // Default to an empty string
+                if (!string.IsNullOrWhiteSpace(eventInfo.DocumentAccessToken))
+                {
+                    string secureDownloadUrl = $"{baseUrl}/api/files/download/{eventInfo.DocumentAccessToken}";
+                    // This is the full HTML block that will replace our placeholder
+                    detailedDocumentSectionHtml = $@"
+                            <div class='details-link'>
+                                <a href='{secureDownloadUrl}' target='_blank' style='font-weight: bold; color: #0056b3; text-decoration: none;'>
+                                    Tải về kế hoạch chi tiết của sự kiện
+                                </a>
+                            </div>";
+                }
 
                 var parents = await _vaccinationEventRepository.GetParentsForEventAsync(dto.VaccinationEventId);
                 var parentsWithEmails = parents.Where(p => !string.IsNullOrEmpty(p.Email)).ToList();
@@ -263,6 +277,7 @@ namespace BussinessLayer.Service
                             .Replace("{Description}", eventInfo.Description)
                             .Replace("{CustomMessage}", dto.CustomMessage ?? "")
                             .Replace("{ResponseLink}", GenerateResponseLink(parent.Email!, dto.VaccinationEventId))
+                            .Replace("{DetailedDocumentSection}", detailedDocumentSectionHtml)
                     },
                     batchSize: 20 // Process 20 emails per batch
                 );
@@ -278,7 +293,7 @@ namespace BussinessLayer.Service
             return new List<EmailDTO>();
         }
 
-        public async Task<List<EmailDTO>> SendVaccinationEmailToSpecificParentsAsync(SendVaccinationEmailDTO dto, List<int> parentIds)
+        public async Task<List<EmailDTO>> SendVaccinationEmailToSpecificParentsAsync(SendVaccinationEmailDTO dto, List<int> parentIds, string baseUrl)
         {
             try
             {
@@ -289,6 +304,20 @@ namespace BussinessLayer.Service
                 var emailTemplate = await _emailRepo.GetEmailTemplateByIdAsync(dto.EmailTemplateId);
                 if (emailTemplate == null)
                     return null;
+
+                // --- Step 1: Conditionally build the HTML for the detailed document link ---
+                string detailedDocumentSectionHtml = ""; // Default to an empty string
+                if (!string.IsNullOrWhiteSpace(eventInfo.DocumentAccessToken))
+                {
+                    string secureDownloadUrl = $"{baseUrl}/api/files/download/{eventInfo.DocumentAccessToken}";
+                    // This is the full HTML block that will replace our placeholder
+                    detailedDocumentSectionHtml = $@"
+                            <div class='details-link'>
+                                <a href='{secureDownloadUrl}' target='_blank' style='font-weight: bold; color: #0056b3; text-decoration: none;'>
+                                    Tải về kế hoạch chi tiết của sự kiện
+                                </a>
+                            </div>";
+                }
 
                 var parents = await _vaccinationEventRepository.GetParentsForEventAsync(dto.VaccinationEventId);
                 var specificParents = parents.Where(p => parentIds.Contains(p.Parentid) && !string.IsNullOrEmpty(p.Email)).ToList();
@@ -309,6 +338,7 @@ namespace BussinessLayer.Service
                             .Replace("{ParentName}", parent.Fullname)
                             .Replace("{CustomMessage}", dto.CustomMessage ?? "")
                             .Replace("{ResponseLink}", GenerateResponseLink(parent.Email!, dto.VaccinationEventId))
+                            .Replace("{DetailedDocumentSection}", detailedDocumentSectionHtml)
                     },
                     batchSize: 20 // Process 20 emails per batch
                 );
@@ -324,7 +354,7 @@ namespace BussinessLayer.Service
             return new List<EmailDTO>();
         }
 
-        public async Task<List<EmailDTO>> SendVaccinationEmailToSpecificStudentsAsync(SendVaccinationEmailDTO dto, List<int> studentIds)
+        public async Task<List<EmailDTO>> SendVaccinationEmailToSpecificStudentsAsync(SendVaccinationEmailDTO dto, List<int> studentIds, string baseUrl)
         {
             try
             {
@@ -334,6 +364,20 @@ namespace BussinessLayer.Service
                 var emailTemplate = await _emailRepo.GetEmailTemplateByIdAsync(dto.EmailTemplateId);
                 if (emailTemplate == null)
                     return null;
+
+                // --- Step 1: Conditionally build the HTML for the detailed document link ---
+                string detailedDocumentSectionHtml = ""; // Default to an empty string
+                if (!string.IsNullOrWhiteSpace(eventInfo.DocumentAccessToken))
+                {
+                    string secureDownloadUrl = $"{baseUrl}/api/files/download/{eventInfo.DocumentAccessToken}";
+                    // This is the full HTML block that will replace our placeholder
+                    detailedDocumentSectionHtml = $@"
+                                            <div class='details-link'>
+                                                <a href='{secureDownloadUrl}' target='_blank' style='font-weight: bold; color: #0056b3; text-decoration: none;'>
+                                                    Tải về kế hoạch chi tiết của sự kiện
+                                                </a>
+                                            </div>";
+                }
 
                 var students = await _vaccinationEventRepository.GetStudentsForEventAsync(dto.VaccinationEventId);
                 var specificStudents = students.Where(s => studentIds.Contains(s.Studentid) && s.Parent != null && !string.IsNullOrEmpty(s.Parent.Email)).ToList();
@@ -353,6 +397,7 @@ namespace BussinessLayer.Service
                             .Replace("{StudentName}", student.Fullname)
                             .Replace("{CustomMessage}", dto.CustomMessage ?? "")
                             .Replace("{ResponseLink}", GenerateResponseLink(student.Parent.Email!, dto.VaccinationEventId))
+                            .Replace("{DetailedDocumentSection}", detailedDocumentSectionHtml)
                     },
                     batchSize: 20 // Process 20 emails per batch
                 );
@@ -529,7 +574,7 @@ namespace BussinessLayer.Service
             return $"{baseUrl}/api/VaccinationEvent/Respond?email={Uri.EscapeDataString(email)}&eventId={eventId}";
         }
 
-        public async Task<string> FillEmailTemplateData(string email, VaccinationEventDTO eventInfo, string baseUrl)
+        public async Task<string> FillEmailTemplateData(string email, VaccinationEventDTO eventInfo)
         {
             var emailTemplate = await _emailService.GetEmailByName(EmailTemplateKeys.VaccinationResponseEmail);
             var parent = await _parentService.GetParentByEmailForEvent(email);
@@ -541,14 +586,6 @@ namespace BussinessLayer.Service
                     id = s.StudentId
                 }).ToList();
 
-            // --- New Logic: Construct the Secure URL ---
-            string? secureDownloadUrl = null;
-            // Only create a URL if a token exists.
-            if (!string.IsNullOrWhiteSpace(eventInfo.DocumentAccessToken))
-            {
-                secureDownloadUrl = $"{baseUrl}/api/files/download/{eventInfo.DocumentAccessToken}";
-            }
-
             string result = await scribanTemplate.RenderAsync(new
             {
                 @event = new
@@ -557,7 +594,7 @@ namespace BussinessLayer.Service
                     name = eventInfo.VaccinationEventName,
                     date = eventInfo.EventDate,
                     location = eventInfo.Location,
-                    description = eventInfo.Description
+                    description = eventInfo.Description,
                 },
                 parent = new
                 {

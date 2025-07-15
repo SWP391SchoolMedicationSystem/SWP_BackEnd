@@ -56,7 +56,7 @@ namespace BussinessLayer.Service
         public async Task<EmailDTO> GetEmailByName(string name)
         {
             var emailTemplate = await _context.EmailTemplates
-                .FirstOrDefaultAsync(e => e.Subject.Equals(name, StringComparison.OrdinalIgnoreCase));
+                .FirstOrDefaultAsync(e => e.Subject.Equals(name));
             if (emailTemplate == null)
                 return null;
             return new EmailDTO
