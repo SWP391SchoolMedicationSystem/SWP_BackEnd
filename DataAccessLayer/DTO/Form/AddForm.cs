@@ -16,6 +16,8 @@ namespace DataAccessLayer.DTO.Form
         public string MedicineName { get; set; } = null!;
         public string? MedicineDescription { get; set; } = null!;
         public string? Reason { get; set; } = null!;
+        public IFormFile? DocumentFile { get; set; }
+
         public string CreatedBy { get; set; } = null!;
     }
     public class AddFormAbsent
@@ -25,6 +27,7 @@ namespace DataAccessLayer.DTO.Form
         public string Title { get; set; } = null!;
         public string? ReasonForAbsent { get; set; } = null!;
         public string AbsentDate { get; set; } = null!;
+        public IFormFile? DocumentFile { get; set; }
 
         public string CreatedBy { get; set; } = null!;
     }
@@ -37,19 +40,23 @@ namespace DataAccessLayer.DTO.Form
         public string? ChronicIllnessDescription { get; set; } = null!;
         public string? Systoms { get; set; } = null!;
         public string? ActionRequired { get; set; } = null!;
+        public IFormFile? DocumentFile { get; set; }
+
         public string CreatedBy { get; set; } = null!;
     }
     public class AddFormPhysicalActivityModification
     {
-        public int StudentID { get; set; }
-        public int HealthCategoryID { get; set; }
-        public DateTime HealthRecordDate { get; set; }
-        public string Healthrecordtitle { get; set; } = null!;
-        public string Healthrecorddescription { get; set; } = null!;
-        public int Staffid { get; set; }
-        public bool IsConfirm { get; set; }
+        public int ParentId { get; set; }
+        public int StudentId { get; set; }
+        public string Title { get; set; } = null!;
+
+        public string? ReasonForModification { get; set; } = null!;
+        public string? ModificationDetails { get; set; } = null!;
+        public IFormFile? DocumentFile { get; set; }
+
+
         public string CreatedBy { get; set; } = null!;
-        public DateTime? CreatedDate { get; set; } = DateTime.Now;
+
     }
 
 }

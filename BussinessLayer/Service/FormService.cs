@@ -175,11 +175,16 @@ namespace BussinessLayer.Service
 
 
         //Cap thuoc
-        public async Task<Form> AddFormMedicineRequest(AddFormHealth form) {
+        public async Task<Form> AddFormMedicineRequest(object form, string? storedFileName, string? accessToken) {
             var addForm = _mapper.Map<Form>(form);
+            addForm.Storedpath = accessToken;
+            addForm.Originalfilename = storedFileName;
             await _formRepository.AddAsync(addForm);
             await _formRepository.SaveChangesAsync();
             return addForm;
         }
+        //Nghi phep
+
+
     }
 }

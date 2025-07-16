@@ -1,9 +1,12 @@
 ﻿using AutoMapper;
+using Azure.Core;
 using BussinessLayer.IService;
+using BussinessLayer.Utils;
 using DataAccessLayer.DTO.Form;
 using DataAccessLayer.Entity;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Net.Http.Headers;
 using System.Security.Claims;
 
 namespace SchoolMedicalSystem.Controllers
@@ -12,12 +15,14 @@ namespace SchoolMedicalSystem.Controllers
     [ApiController]
     public class FormController : ControllerBase
     {
+        private readonly FileHandler _fileHandler;
         private readonly IFormService _formService;
         private readonly IMapper _mapper;
-        public FormController(IFormService formService, IMapper mapper)
+        public FormController(IFormService formService, IMapper mapper, FileHandler fileHandler)
         {
             _formService = formService;
             _mapper = mapper;
+            _fileHandler = fileHandler;
         }
 
         [HttpGet]
@@ -49,25 +54,6 @@ namespace SchoolMedicalSystem.Controllers
             catch (Exception ex)
             {
                 return StatusCode(500, $"Error retrieving form: {ex.Message}");
-            }
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> CreateForm(IFormFile file, [FromBody] CreateFormDTO formDto)
-        {
-            if (formDto == null)
-            {
-                return BadRequest("Form data is null.");
-            }
-            try
-            {
-                var createdBy = User.FindFirst(ClaimTypes.Name)?.Value ?? "System";
-                var createdForm = await _formService.CreateFormAsync(formDto, createdBy);
-                return CreatedAtAction(nameof(GetFormById), new { id = createdForm.FormId }, createdForm);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Error creating form: {ex.Message}");
             }
         }
 
@@ -188,14 +174,136 @@ namespace SchoolMedicalSystem.Controllers
         }
         [HttpPost]
         [Route("form/medicinerequest")]
-        public async Task<ActionResult<Form>> CreateFormForMedicineRequest([FromBody] AddFormMedicine form)
+        [Consumes("multipart/form-data"), DisableRequestSizeLimit]
+        public async Task<ActionResult<Form>> CreateFormForMedicineRequest([FromForm] AddFormMedicine form)
         {
-            var createdForm = await _formService.AddFormMedicineRequest(form);
+            string? storedFileName = null;
+            string? accessToken = null;
+
+            if (form.DocumentFile != null)
+            {
+                var uploadResult = await _fileHandler.UploadAsync(form.DocumentFile);
+                if (!uploadResult.Success)
+                {
+                    return null;//BadRequest(uploadResult.ErrorMessage);
+                }
+                storedFileName = uploadResult.StoredFileName;
+                accessToken = Guid.NewGuid().ToString();
+            }
+
+
+            var createdForm = await _formService.AddFormMedicineRequest(form, storedFileName, accessToken);
             if (createdForm == null)
             {
                 return BadRequest("Failed to create form for medicine request.");
             }
             return CreatedAtAction(nameof(GetFormById), new { id = createdForm.FormId }, createdForm);
         }
+        [HttpPost]
+        [Route("form/absentrequest")]
+        [Consumes("multipart/form-data"), DisableRequestSizeLimit]
+        public async Task<ActionResult<Form>> CreateFormForAbsentRequest([FromForm] AddFormAbsent form)
+        {
+            string? storedFileName = null;
+            string? accessToken = null;
+
+            if (form.DocumentFile != null)
+            {
+                var uploadResult = await _fileHandler.UploadAsync(form.DocumentFile);
+                if (!uploadResult.Success)
+                {
+                    return null;//BadRequest(uploadResult.ErrorMessage);
+                }
+                storedFileName = uploadResult.StoredFileName;
+                accessToken = Guid.NewGuid().ToString();
+            }
+
+
+            var createdForm = await _formService.AddFormMedicineRequest(form, storedFileName, accessToken);
+            if (createdForm == null)
+            {
+                return BadRequest("Failed to create form for medicine request.");
+            }
+            return CreatedAtAction(nameof(GetFormById), new { id = createdForm.FormId }, createdForm);
+        }
+        [HttpPost]
+        [Route("form/permissionrequest")]
+        [Consumes("multipart/form-data"), DisableRequestSizeLimit]
+        public
+            async Task<ActionResult<Form>> CreateFormForChronicIllness([FromForm] AddFormChronicIllness form)
+        {
+            string? storedFileName = null;
+            string? accessToken = null;
+            if (form.DocumentFile != null)
+            {
+                var uploadResult = await _fileHandler.UploadAsync(form.DocumentFile);
+                if (!uploadResult.Success)
+                {
+                    return null;//BadRequest(uploadResult.ErrorMessage);
+                }
+                storedFileName = uploadResult.StoredFileName;
+                accessToken = Guid.NewGuid().ToString();
+            }
+            var createdForm = await _formService.AddFormMedicineRequest(form, storedFileName, accessToken);
+            if (createdForm == null)
+            {
+                return BadRequest("Failed to create form for chronic illness request.");
+            }
+            return CreatedAtAction(nameof(GetFormById), new { id = createdForm.FormId }, createdForm);
+        }
+        [HttpPost]
+        [Route("form/physicalrequest")]
+        [Consumes("multipart/form-data"), DisableRequestSizeLimit]
+        public async Task<ActionResult<Form>> CreateFormForPhysicalModificiationRequest([FromForm] AddFormPhysicalActivityModification form)
+        {
+            string? storedFileName = null;
+            string? accessToken = null;
+            if (form.DocumentFile != null)
+            {
+                var uploadResult = await _fileHandler.UploadAsync(form.DocumentFile);
+                if (!uploadResult.Success)
+                {
+                    return null;//BadRequest(uploadResult.ErrorMessage);
+                }
+                storedFileName = uploadResult.StoredFileName;
+                accessToken = Guid.NewGuid().ToString();
+            }
+            var createdForm = await _formService.AddFormMedicineRequest(form, storedFileName, accessToken);
+            if (createdForm == null)
+            {
+                return BadRequest("Failed to create form for chronic illness request.");
+            }
+            return CreatedAtAction(nameof(GetFormById), new { id = createdForm.FormId }, createdForm);
+        }
+        [HttpPost]
+        [Route("form/otherrequest")]
+        [Consumes("multipart/form-data"), DisableRequestSizeLimit]
+        public async Task<ActionResult<Form>> CreateFormForOtherRequest([FromForm] CreateFormDTO form)
+        {
+            string? storedFileName = null;
+            string? accessToken = null;
+            if (form.DocumentFile != null)
+            {
+                var uploadResult = await _fileHandler.UploadAsync(form.DocumentFile);
+                if (!uploadResult.Success)
+                {
+                    return null;//BadRequest(uploadResult.ErrorMessage);
+                }
+                storedFileName = uploadResult.StoredFileName;
+                accessToken = Guid.NewGuid().ToString();
+            }
+            var createdForm = await _formService.AddFormMedicineRequest(form, storedFileName, accessToken);
+            if (createdForm == null)
+            {
+                return BadRequest("Failed to create form for chronic illness request.");
+            }
+            return CreatedAtAction(nameof(GetFormById), new { id = createdForm.FormId }, createdForm);
+        }
+
+
+
+
+
+
     }
 }

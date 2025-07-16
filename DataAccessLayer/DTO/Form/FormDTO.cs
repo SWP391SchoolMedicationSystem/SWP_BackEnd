@@ -40,10 +40,11 @@ namespace DataAccessLayer.DTO.Form
     {
         public int ParentId { get; set; }
         public int StudentID { get; set; }
-        public int FormCategoryId { get; set; }
         public string Title { get; set; } = null!;
         public string Reason { get; set; } = null!;
-        public IFormFile? formFile { get; set; }
+        public IFormFile? DocumentFile { get; set; }
+        public string CreatedBy { get; set; } = null!;
+
     }
 
     public class UpdateFormDTO

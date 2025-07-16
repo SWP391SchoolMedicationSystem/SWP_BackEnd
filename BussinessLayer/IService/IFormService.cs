@@ -19,6 +19,6 @@ namespace BussinessLayer.IService
         Task<List<FormDTO>> GetFormsByCategoryIdAsync(int categoryId);
         Task<bool> AcceptFormAsync(ResponseFormDTO dto, string acceptBy);
         Task<bool> DeclineFormAsync(ResponseFormDTO dto, string declineBy);
-        Task<Form> AddFormMedicineRequest(AddFormMedicine form);
+        Task<Form> AddFormMedicineRequest(object form, string? storedFileName, string? accessToken);
     }
 }
