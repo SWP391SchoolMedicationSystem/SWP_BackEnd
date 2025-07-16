@@ -226,55 +226,55 @@ namespace SchoolMedicalSystem.Controllers
             }
             return CreatedAtAction(nameof(GetFormById), new { id = createdForm.FormId }, createdForm);
         }
-        [HttpPost]
-        [Route("form/permissionrequest")]
-        [Consumes("multipart/form-data"), DisableRequestSizeLimit]
-        public
-            async Task<ActionResult<Form>> CreateFormForChronicIllness([FromForm] AddFormChronicIllness form)
-        {
-            string? storedFileName = null;
-            string? accessToken = null;
-            if (form.DocumentFile != null)
-            {
-                var uploadResult = await _fileHandler.UploadAsync(form.DocumentFile);
-                if (!uploadResult.Success)
-                {
-                    return null;//BadRequest(uploadResult.ErrorMessage);
-                }
-                storedFileName = uploadResult.StoredFileName;
-                accessToken = Guid.NewGuid().ToString();
-            }
-            var createdForm = await _formService.AddFormMedicineRequest(form, storedFileName, accessToken);
-            if (createdForm == null)
-            {
-                return BadRequest("Failed to create form for chronic illness request.");
-            }
-            return CreatedAtAction(nameof(GetFormById), new { id = createdForm.FormId }, createdForm);
-        }
-        [HttpPost]
-        [Route("form/physicalrequest")]
-        [Consumes("multipart/form-data"), DisableRequestSizeLimit]
-        public async Task<ActionResult<Form>> CreateFormForPhysicalModificiationRequest([FromForm] AddFormPhysicalActivityModification form)
-        {
-            string? storedFileName = null;
-            string? accessToken = null;
-            if (form.DocumentFile != null)
-            {
-                var uploadResult = await _fileHandler.UploadAsync(form.DocumentFile);
-                if (!uploadResult.Success)
-                {
-                    return null;//BadRequest(uploadResult.ErrorMessage);
-                }
-                storedFileName = uploadResult.StoredFileName;
-                accessToken = Guid.NewGuid().ToString();
-            }
-            var createdForm = await _formService.AddFormMedicineRequest(form, storedFileName, accessToken);
-            if (createdForm == null)
-            {
-                return BadRequest("Failed to create form for chronic illness request.");
-            }
-            return CreatedAtAction(nameof(GetFormById), new { id = createdForm.FormId }, createdForm);
-        }
+        //[HttpPost]
+        //[Route("form/permissionrequest")]
+        //[Consumes("multipart/form-data"), DisableRequestSizeLimit]
+        //public
+        //    async Task<ActionResult<Form>> CreateFormForChronicIllness([FromForm] AddFormChronicIllness form)
+        //{
+        //    string? storedFileName = null;
+        //    string? accessToken = null;
+        //    if (form.DocumentFile != null)
+        //    {
+        //        var uploadResult = await _fileHandler.UploadAsync(form.DocumentFile);
+        //        if (!uploadResult.Success)
+        //        {
+        //            return null;//BadRequest(uploadResult.ErrorMessage);
+        //        }
+        //        storedFileName = uploadResult.StoredFileName;
+        //        accessToken = Guid.NewGuid().ToString();
+        //    }
+        //    var createdForm = await _formService.AddFormMedicineRequest(form, storedFileName, accessToken);
+        //    if (createdForm == null)
+        //    {
+        //        return BadRequest("Failed to create form for chronic illness request.");
+        //    }
+        //    return CreatedAtAction(nameof(GetFormById), new { id = createdForm.FormId }, createdForm);
+        //}
+        //[HttpPost]
+        //[Route("form/physicalrequest")]
+        //[Consumes("multipart/form-data"), DisableRequestSizeLimit]
+        //public async Task<ActionResult<Form>> CreateFormForPhysicalModificiationRequest([FromForm] AddFormPhysicalActivityModification form)
+        //{
+        //    string? storedFileName = null;
+        //    string? accessToken = null;
+        //    if (form.DocumentFile != null)
+        //    {
+        //        var uploadResult = await _fileHandler.UploadAsync(form.DocumentFile);
+        //        if (!uploadResult.Success)
+        //        {
+        //            return null;//BadRequest(uploadResult.ErrorMessage);
+        //        }
+        //        storedFileName = uploadResult.StoredFileName;
+        //        accessToken = Guid.NewGuid().ToString();
+        //    }
+        //    var createdForm = await _formService.AddFormMedicineRequest(form, storedFileName, accessToken);
+        //    if (createdForm == null)
+        //    {
+        //        return BadRequest("Failed to create form for chronic illness request.");
+        //    }
+        //    return CreatedAtAction(nameof(GetFormById), new { id = createdForm.FormId }, createdForm);
+        //}
         [HttpPost]
         [Route("form/otherrequest")]
         [Consumes("multipart/form-data"), DisableRequestSizeLimit]
