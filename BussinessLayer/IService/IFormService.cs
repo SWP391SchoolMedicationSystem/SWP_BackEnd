@@ -17,8 +17,8 @@ namespace BussinessLayer.IService
         Task<bool> DeleteFormAsync(int id, string deleteBy);
         Task<List<FormDTO>> GetFormsByParentIdAsync(int parentId);
         Task<List<FormDTO>> GetFormsByCategoryIdAsync(int categoryId);
-        Task<bool> AcceptFormAsync(ResponseFormDTO dto, string acceptBy);
-        Task<bool> DeclineFormAsync(ResponseFormDTO dto, string declineBy);
+        Task<bool> AcceptFormAsync(ResponseFormDTO dto);
+        Task<bool> DeclineFormAsync(ResponseFormDTO dto);
         Task<Form> AddFormMedicineRequest(object form, string? storedFileName, string? accessToken);
     }
 }

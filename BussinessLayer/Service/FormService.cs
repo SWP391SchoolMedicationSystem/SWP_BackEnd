@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using BussinessLayer.IService;
+using DataAccessLayer.Constants;
 using DataAccessLayer.DTO;
 using DataAccessLayer.DTO.Form;
 using DataAccessLayer.Entity;
@@ -101,28 +102,28 @@ namespace BussinessLayer.Service
             return _mapper.Map<List<FormDTO>>(forms);
         }
 
-        public async Task<bool> AcceptFormAsync(ResponseFormDTO dto, string acceptBy)
+        public async Task<bool> AcceptFormAsync(ResponseFormDTO dto)
         {
-            var form = await _formRepository.GetByIdAsync(dto.FormId);
+            var form = _formRepository.GetAllAsync().Result.FirstOrDefault(f => f.FormId ==dto.FormId);
             if (form == null)
             {
                 return false;
             }
             form.Isaccepted = true;
             form.Modifieddate = DateTime.UtcNow;
-            form.Reasonfordecline = dto.Reason;
-            form.Modifiedby = acceptBy;
-            form.Staffid = dto.StaffId;
+            form.Reasonfordecline = dto.Reasonfordecline;
+            form.Modifiedby = dto.Modifiedby;
+            form.Staffid = dto.Staffid;
 
             _formRepository.Update(form);
             await _formRepository.SaveChangesAsync();
 
             // Send email notification
-            var emailTemplate = await _emailService.GetEmailByName("THÔNG BÁO XÁC NHẬN TÌNH TRẠNG ĐƠN");
+            var emailTemplate = await _emailService.GetEmailByName(EmailTemplateKeys.FormResponseEmail);
             if (emailTemplate == null)
                 return false;
 
-            emailTemplate.To = dto.ParentEmail;
+            emailTemplate.To = form.Parent.Email;
             string replacedBody = FillResponseData(emailTemplate, form);
             emailTemplate.Body = replacedBody;
 
@@ -131,25 +132,25 @@ namespace BussinessLayer.Service
             return true;
         }
 
-        public async Task<bool> DeclineFormAsync(ResponseFormDTO dto, string declineBy)
+        public async Task<bool> DeclineFormAsync(ResponseFormDTO dto)
         {
-            var form = await _formRepository.GetByIdAsync(dto.FormId);
+            var form = _formRepository.GetAllAsync().Result.FirstOrDefault(f => f.FormId == dto.FormId);
             if (form == null)
             {
                 return false;
             }
             form.Isaccepted = false;
-            form.Reasonfordecline = dto.Reason;
+            form.Reasonfordecline = dto.Reasonfordecline;
             form.Modifieddate = DateTime.UtcNow;
-            form.Modifiedby = declineBy;
-            form.Staffid = dto.StaffId;
+            form.Modifiedby = dto.Modifiedby;
+            form.Staffid = dto.Staffid;
 
             // Send email notification
-            var emailTemplate = await _emailService.GetEmailByName("THÔNG BÁO XÁC NHẬN TÌNH TRẠNG ĐƠN");
+            var emailTemplate = await _emailService.GetEmailByName(EmailTemplateKeys.FormResponseEmail);
             if (emailTemplate == null)
                 return false;
 
-            emailTemplate.To = dto.ParentEmail;
+            emailTemplate.To = form.Parent.Email;
             string replacedBody = FillResponseData(emailTemplate, form);
             emailTemplate.Body = replacedBody;
 

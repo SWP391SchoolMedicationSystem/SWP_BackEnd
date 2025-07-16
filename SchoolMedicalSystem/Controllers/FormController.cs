@@ -137,7 +137,7 @@ namespace SchoolMedicalSystem.Controllers
             try
             {
                 var acceptBy = User.FindFirst(ClaimTypes.Name)?.Value ?? "System";
-                var result = await _formService.AcceptFormAsync(dto, acceptBy);
+                var result = await _formService.AcceptFormAsync(dto);
                 if (result)
                 {
                     return Ok("Form accepted successfully.");
@@ -160,7 +160,7 @@ namespace SchoolMedicalSystem.Controllers
             try
             {
                 var declineBy = User.FindFirst(ClaimTypes.Name)?.Value ?? "System";
-                var result = await _formService.DeclineFormAsync(dto, declineBy);
+                var result = await _formService.DeclineFormAsync(dto);
                 if (result)
                 {
                     return Ok("Form declined successfully.");

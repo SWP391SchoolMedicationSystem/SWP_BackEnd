@@ -56,16 +56,18 @@ namespace DataAccessLayer.DTO.Form
         public string Reason { get; set; } = null!;
         public string? OriginalFileName { get; set; } = null!;
         public string? StoredPath { get; set; } = null!;
+        public string ModifiedBy { get; set; } = null!;
+
     }
 
     public class ResponseFormDTO
     {
+
         public int FormId { get; set; }
-        public int StaffId { get; set; }
-        public string Reason { get; set; } = null!;
-        public bool IsAccepted { get; set; } = false;
-        public string ParentName { get; set; } = null!;
-        public string ParentEmail { get; set; } = null!;
+
+        public int? Staffid { get; set; }
+        public string? Reasonfordecline { get; set; }
+        public string Modifiedby { get; set; }
     }
 
     public class FileUploadResult

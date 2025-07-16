@@ -16,9 +16,7 @@ namespace SchoolMedicalSystem.Profiles
                 .ReverseMap();
 
             CreateMap<UpdateFormDTO, Form>().ReverseMap();
-            CreateMap<Form, ResponseFormDTO>()
-                .ForMember(dest => dest.ParentName, opt => opt.MapFrom(src => src.Parent.Fullname))
-                .ForMember(dest => dest.ParentEmail, opt => opt.MapFrom(src => src.Parent.Email));
+            CreateMap<Form, ResponseFormDTO>().ReverseMap();
             CreateMap<AddFormMedicine,Form>()
                 .ForMember(src => src.Reason, opt => opt.MapFrom(form =>
                 $"Tên thuốc: {form.MedicineName}\n" +
