@@ -53,12 +53,4 @@ namespace DataAccessLayer.DTO
         public string ParentName { get; set; } = null!;
         public string ParentEmail { get; set; } = null!;
     }
-
-    public class FileUploadResult
-    {
-        public string? OriginalFileName { get; set; }
-        public string? StoredFileName { get; set; }
-        public bool Success { get; set; }
-        public string? ErrorMessage { get; set; }
-    }
 }
