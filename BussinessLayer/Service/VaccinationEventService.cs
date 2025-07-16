@@ -1,8 +1,10 @@
-using System;
+﻿using System;
 using System.Reflection;
 using AutoMapper;
 using BussinessLayer.IService;
+using BussinessLayer.Utils;
 using BussinessLayer.Utils.Configurations;
+using DataAccessLayer.Constants;
 using DataAccessLayer.DTO;
 using DataAccessLayer.Entity;
 using DataAccessLayer.IRepository;
@@ -23,6 +25,7 @@ namespace BussinessLayer.Service
         private readonly IEmailRepo _emailRepo;
         private readonly IMapper _mapper;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly FileHandler _fileHandler;
 
         public VaccinationEventService(
             IVaccinationEventRepository vaccinationEventRepository,
@@ -31,7 +34,8 @@ namespace BussinessLayer.Service
             IEmailRepo emailRepo,
             IMapper mapper,
             IHttpContextAccessor httpContextAccessor,
-            IParentService parentService)
+            IParentService parentService,
+            FileHandler fileHandler)
         {
             _vaccinationEventRepository = vaccinationEventRepository;
             _vaccinationRecordRepository = vaccinationRecordRepository;
@@ -40,6 +44,7 @@ namespace BussinessLayer.Service
             _mapper = mapper;
             _httpContextAccessor = httpContextAccessor;
             _parentService = parentService;
+            _fileHandler = fileHandler;
         }
 
         public async Task<List<VaccinationEventDTO>> GetAllEventsAsync()
@@ -60,6 +65,21 @@ namespace BussinessLayer.Service
             return eventDtos;
         }
 
+        public async Task<VaccinationEventDTO> GetEventByAccessToken(string accessToken)
+        {
+            var vaccinationEvent = await _vaccinationEventRepository.GetEventByAccessTokenAsync(accessToken);
+            if (vaccinationEvent == null)
+                return null;
+
+            var eventDto = _mapper.Map<VaccinationEventDTO>(vaccinationEvent);
+            var stats = await GetEventStatisticsAsync(vaccinationEvent.Vaccinationeventid);
+            eventDto.ConfirmedCount = stats["Confirmed"];
+            eventDto.DeclinedCount = stats["Declined"];
+            eventDto.PendingCount = stats["Pending"];
+            eventDto.TotalStudents = stats["Total"];
+            return eventDto;
+        }
+
         public async Task<VaccinationEventDTO?> GetEventByIdAsync(int eventId)
         {
             var vaccinationEvent = await _vaccinationEventRepository.GetEventWithRecordsAsync(eventId);
@@ -78,15 +98,47 @@ namespace BussinessLayer.Service
 
         public async Task<VaccinationEventDTO> CreateEventAsync(CreateVaccinationEventDTO dto, string createdBy)
         {
-            var vaccinationEvent = _mapper.Map<Vaccinationevent>(dto);
-            vaccinationEvent.Createddate = DateTime.Now;
-            vaccinationEvent.Modifieddate = DateTime.Now;
-            vaccinationEvent.Createdby = createdBy;
-            vaccinationEvent.Modifiedby = createdBy;
-            vaccinationEvent.Isdeleted = false;
+            string? storedFileName = null;
+            string? accessToken = null;
 
-            await _vaccinationEventRepository.AddAsync(vaccinationEvent);
-            await _vaccinationEventRepository.SaveChangesAsync();
+            if (dto.DocumentFile != null)
+            {
+                var uploadResult = await _fileHandler.UploadAsync(dto.DocumentFile);
+                if (!uploadResult.Success)
+                {
+                    return null;//BadRequest(uploadResult.ErrorMessage);
+                }
+                storedFileName = uploadResult.StoredFileName;
+                accessToken = Guid.NewGuid().ToString();
+            }
+
+            var vaccinationEvent = new Vaccinationevent
+            {
+                Vaccinationeventname = dto.VaccinationEventName,
+                Location = dto.Location,
+                Organizedby = dto.OrganizedBy,
+                Eventdate = dto.EventDate,
+                Description = dto.Description,
+                Createddate = DateTime.Now,
+                Modifieddate = DateTime.Now,
+                Createdby = createdBy,
+                Modifiedby = createdBy,
+                Isdeleted = false,
+                Documentfilename = storedFileName,
+                Documentaccesstoken = accessToken
+            };
+
+            try
+            {
+                await _vaccinationEventRepository.AddAsync(vaccinationEvent);
+                await _vaccinationEventRepository.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                // Log the exception
+                // You can use a logging framework like Serilog, NLog, etc.
+                throw new InvalidOperationException("An error occurred while creating the vaccination event.", ex);
+            }
 
             return _mapper.Map<VaccinationEventDTO>(vaccinationEvent);
         }
@@ -96,6 +148,38 @@ namespace BussinessLayer.Service
             var existingEvent = await _vaccinationEventRepository.GetByIdAsync(dto.VaccinationEventId);
             if (existingEvent == null)
                 throw new InvalidOperationException("Vaccination event not found.");
+
+            string? oldFileName = existingEvent.Documentfilename;
+
+            // Case A: A new file is uploaded. This means we ADD or REPLACE.
+            if (dto.DocumentFile != null)
+            {
+                // First, delete the old file if one existed
+                _fileHandler.Delete(oldFileName);
+
+                // Then, upload the new file
+                var uploadResult = await _fileHandler.UploadAsync(dto.DocumentFile);
+                if (!uploadResult.Success)
+                {
+                    return null;//BadRequest(uploadResult.ErrorMessage);
+                }
+
+                // Update the database record with the NEW file info and a NEW access token
+                existingEvent.Documentfilename = uploadResult.StoredFileName;
+                existingEvent.Documentaccesstoken = Guid.NewGuid().ToString();
+            }
+            // Case B: No new file is uploaded, but the user explicitly wants to REMOVE the existing file.
+            else if (dto.DocumentDelete)
+            {
+                // Delete the file from the disk
+                _fileHandler.Delete(oldFileName);
+
+                // Clear the file info in the database record
+                existingEvent.Documentfilename = null;
+                existingEvent.Documentaccesstoken = null;
+            }
+            // Case C: No new file is uploaded and RemoveDocument is false.
+            // We do nothing to the file fields. The existing file remains untouched.
 
             existingEvent.Vaccinationeventname = dto.VaccinationEventName;
             existingEvent.Location = dto.Location;
@@ -148,8 +232,8 @@ namespace BussinessLayer.Service
         {
             return await _vaccinationEventRepository.GetStudentResponsesForEventAsync(eventId);
         }
-
-        public async Task<List<EmailDTO>> SendVaccinationEmailToAllParentsAsync(SendVaccinationEmailDTO dto)
+        //=====================================================
+        public async Task<List<EmailDTO>> SendVaccinationEmailToAllParentsAsync(SendVaccinationEmailDTO dto, string baseUrl)
         {
             try
             {
@@ -160,6 +244,20 @@ namespace BussinessLayer.Service
                 var emailTemplate = await _emailRepo.GetEmailTemplateByIdAsync(dto.EmailTemplateId);
                 if (emailTemplate == null)
                     return null;
+
+                // --- Step 1: Conditionally build the HTML for the detailed document link ---
+                string detailedDocumentSectionHtml = ""; // Default to an empty string
+                if (!string.IsNullOrWhiteSpace(eventInfo.Documentaccesstoken))
+                {
+                    string secureDownloadUrl = $"{baseUrl}/api/files/download/{eventInfo.Documentaccesstoken}";
+                    // This is the full HTML block that will replace our placeholder
+                    detailedDocumentSectionHtml = $@"
+                            <div class='details-link'>
+                                <a href='{secureDownloadUrl}' target='_blank' style='font-weight: bold; color: #0056b3; text-decoration: none;'>
+                                    Tải về kế hoạch chi tiết của sự kiện
+                                </a>
+                            </div>";
+                }
 
                 var parents = await _vaccinationEventRepository.GetParentsForEventAsync(dto.VaccinationEventId);
                 var parentsWithEmails = parents.Where(p => !string.IsNullOrEmpty(p.Email)).ToList();
@@ -179,6 +277,7 @@ namespace BussinessLayer.Service
                             .Replace("{Description}", eventInfo.Description)
                             .Replace("{CustomMessage}", dto.CustomMessage ?? "")
                             .Replace("{ResponseLink}", GenerateResponseLink(parent.Email!, dto.VaccinationEventId))
+                            .Replace("{DetailedDocumentSection}", detailedDocumentSectionHtml)
                     },
                     batchSize: 20 // Process 20 emails per batch
                 );
@@ -194,7 +293,7 @@ namespace BussinessLayer.Service
             return new List<EmailDTO>();
         }
 
-        public async Task<List<EmailDTO>> SendVaccinationEmailToSpecificParentsAsync(SendVaccinationEmailDTO dto, List<int> parentIds)
+        public async Task<List<EmailDTO>> SendVaccinationEmailToSpecificParentsAsync(SendVaccinationEmailDTO dto, List<int> parentIds, string baseUrl)
         {
             try
             {
@@ -205,6 +304,20 @@ namespace BussinessLayer.Service
                 var emailTemplate = await _emailRepo.GetEmailTemplateByIdAsync(dto.EmailTemplateId);
                 if (emailTemplate == null)
                     return null;
+
+                // --- Step 1: Conditionally build the HTML for the detailed document link ---
+                string detailedDocumentSectionHtml = ""; // Default to an empty string
+                if (!string.IsNullOrWhiteSpace(eventInfo.Documentaccesstoken))
+                {
+                    string secureDownloadUrl = $"{baseUrl}/api/files/download/{eventInfo.Documentaccesstoken}";
+                    // This is the full HTML block that will replace our placeholder
+                    detailedDocumentSectionHtml = $@"
+                            <div class='details-link'>
+                                <a href='{secureDownloadUrl}' target='_blank' style='font-weight: bold; color: #0056b3; text-decoration: none;'>
+                                    Tải về kế hoạch chi tiết của sự kiện
+                                </a>
+                            </div>";
+                }
 
                 var parents = await _vaccinationEventRepository.GetParentsForEventAsync(dto.VaccinationEventId);
                 var specificParents = parents.Where(p => parentIds.Contains(p.Parentid) && !string.IsNullOrEmpty(p.Email)).ToList();
@@ -225,6 +338,7 @@ namespace BussinessLayer.Service
                             .Replace("{ParentName}", parent.Fullname)
                             .Replace("{CustomMessage}", dto.CustomMessage ?? "")
                             .Replace("{ResponseLink}", GenerateResponseLink(parent.Email!, dto.VaccinationEventId))
+                            .Replace("{DetailedDocumentSection}", detailedDocumentSectionHtml)
                     },
                     batchSize: 20 // Process 20 emails per batch
                 );
@@ -237,6 +351,63 @@ namespace BussinessLayer.Service
                 // You can use a logging framework like Serilog, NLog, etc.
             }
 
+            return new List<EmailDTO>();
+        }
+
+        public async Task<List<EmailDTO>> SendVaccinationEmailToSpecificStudentsAsync(SendVaccinationEmailDTO dto, List<int> studentIds, string baseUrl)
+        {
+            try
+            {
+                var eventInfo = await _vaccinationEventRepository.GetByIdAsync(dto.VaccinationEventId);
+                if (eventInfo == null)
+                    return null;
+                var emailTemplate = await _emailRepo.GetEmailTemplateByIdAsync(dto.EmailTemplateId);
+                if (emailTemplate == null)
+                    return null;
+
+                // --- Step 1: Conditionally build the HTML for the detailed document link ---
+                string detailedDocumentSectionHtml = ""; // Default to an empty string
+                if (!string.IsNullOrWhiteSpace(eventInfo.Documentaccesstoken))
+                {
+                    string secureDownloadUrl = $"{baseUrl}/api/files/download/{eventInfo.Documentaccesstoken}";
+                    // This is the full HTML block that will replace our placeholder
+                    detailedDocumentSectionHtml = $@"
+                                            <div class='details-link'>
+                                                <a href='{secureDownloadUrl}' target='_blank' style='font-weight: bold; color: #0056b3; text-decoration: none;'>
+                                                    Tải về kế hoạch chi tiết của sự kiện
+                                                </a>
+                                            </div>";
+                }
+
+                var students = await _vaccinationEventRepository.GetStudentsForEventAsync(dto.VaccinationEventId);
+                var specificStudents = students.Where(s => studentIds.Contains(s.Studentid) && s.Parent != null && !string.IsNullOrEmpty(s.Parent.Email)).ToList();
+                // Use the optimized bulk email method
+                var failList = await _emailService.SendPersonalizedEmailsAsync(
+                    specificStudents,
+                    dto.EmailTemplateId,
+                    student => new EmailDTO
+                    {
+                        To = student.Parent!.Email!,
+                        Subject = emailTemplate.Subject,
+                        Body = emailTemplate.Body
+                            .Replace("{EventName}", eventInfo.Vaccinationeventname)
+                            .Replace("{EventDate}", eventInfo.Eventdate.ToString("dd/MM/yyyy"))
+                            .Replace("{Location}", eventInfo.Location)
+                            .Replace("{Description}", eventInfo.Description)
+                            .Replace("{StudentName}", student.Fullname)
+                            .Replace("{CustomMessage}", dto.CustomMessage ?? "")
+                            .Replace("{ResponseLink}", GenerateResponseLink(student.Parent.Email!, dto.VaccinationEventId))
+                            .Replace("{DetailedDocumentSection}", detailedDocumentSectionHtml)
+                    },
+                    batchSize: 20 // Process 20 emails per batch
+                );
+                return failList;
+            }
+            catch (Exception ex)
+            {
+                // Log the exception
+                // You can use a logging framework like Serilog, NLog, etc.
+            }
             return new List<EmailDTO>();
         }
 
@@ -405,7 +576,7 @@ namespace BussinessLayer.Service
 
         public async Task<string> FillEmailTemplateData(string email, VaccinationEventDTO eventInfo)
         {
-            var emailTemplate = _emailService.GetTemplateByID(6);
+            var emailTemplate = await _emailService.GetEmailByName(EmailTemplateKeys.VaccinationResponseEmail);
             var parent = await _parentService.GetParentByEmailForEvent(email);
             var scribanTemplate = Template.Parse(emailTemplate.Body);
             var students = parent.Students
@@ -423,7 +594,7 @@ namespace BussinessLayer.Service
                     name = eventInfo.VaccinationEventName,
                     date = eventInfo.EventDate,
                     location = eventInfo.Location,
-                    description = eventInfo.Description
+                    description = eventInfo.Description,
                 },
                 parent = new
                 {

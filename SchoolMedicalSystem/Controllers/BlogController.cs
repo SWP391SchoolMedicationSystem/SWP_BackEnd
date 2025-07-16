@@ -35,14 +35,15 @@ namespace SchoolMedicalSystem.Controllers
         }
         [HttpPost]
         [Route("add")]
-        public async Task<IActionResult> AddBlog([FromBody] CreateBlogDTO blogDto)
+        public async Task<IActionResult> AddBlog([FromForm] CreateBlogDTO blogDto)
         {
             if (blogDto == null)
                 return BadRequest("Blog data is null.");
+
             try
             {
-                await _blogService.AddBlogAsync(blogDto);
-                return Ok("Blog added successfully.");
+                var imageUrl = await _blogService.AddBlogAsync(blogDto);
+                return Ok(new { message = "Blog added successfully.", imageUrl });
             }
             catch (Exception ex)
             {
@@ -51,14 +52,14 @@ namespace SchoolMedicalSystem.Controllers
         }
         [HttpPut]
         [Route("update")]
-        public IActionResult UpdateBlog([FromBody] UpdateBlogDTO dto)
+        public async Task<IActionResult> UpdateBlog([FromForm] UpdateBlogDTO dto)
         {
             if (dto == null)
                 return BadRequest("Invalid data.");
             try
             {
-                _blogService.UpdateBlog(dto);
-                return Ok("Blog updated.");
+                var imageUrl = await _blogService.UpdateBlog(dto);
+                return Ok(new { message = "Blog update successfully.", imageUrl });
             }
             catch (Exception ex)
             {
@@ -140,21 +141,18 @@ namespace SchoolMedicalSystem.Controllers
                 return StatusCode(500, $"Error searching blogs: {ex.Message}");
             }
         }
-        [HttpPost("upload-image")]
-        public async Task<IActionResult> UploadImage([FromForm] BlogImageUploadDTO dto)
+        [HttpGet]
+        [Route("GetRejectedBlogs")]
+        public async Task<IActionResult> GetRejectedBlogs()
         {
             try
             {
-                var imageUrl = await _blogService.UploadBlogImageAsync(dto);
-                return Ok(new
-                {
-                    message = "Image uploaded successfully.",
-                    imageUrl = imageUrl
-                });
+                var blogs = await _blogService.GetRejectedBlogs();
+                return Ok(blogs);
             }
             catch (Exception ex)
             {
-                return BadRequest($"Error: {ex.Message}");
+                return StatusCode(500, $"Error retrieving rejected blogs: {ex.Message}");
             }
         }
     }

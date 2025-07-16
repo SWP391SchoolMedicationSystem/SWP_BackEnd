@@ -35,7 +35,7 @@ namespace BussinessLayer.Service
             _mapper = mapper;
         }
 
-        public async Task<Student> AddStudentAsync(UpdateStudentDTo student)
+        public async Task<Student> AddStudentAsync(AddStudentDTO student)
         {
             Student addedstudent = _mapper.Map<Student>(student);
             await _studentrepo.AddAsync(addedstudent);
@@ -139,7 +139,7 @@ namespace BussinessLayer.Service
                             Parent parent = parentlist.FirstOrDefault(p => p.Fullname == student.parentName && p.Phone == student.parentphone);
                             if (parent != null && classroom != null)
                             {
-                                UpdateStudentDTo addstudent = new()
+                                AddStudentDTO addstudent = new()
                                 {
                                     Fullname = student.fullName,
                                     Age = DateTime.Now.Year - student.birthDate.Year -

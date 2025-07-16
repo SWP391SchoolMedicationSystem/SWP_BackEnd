@@ -12,13 +12,14 @@ namespace BussinessLayer.IService
     {
         Task<List<BlogDTO>> GetAllBlogsAsync();
         Task<BlogDTO> GetBlogByIdAsync(int id);
-        Task AddBlogAsync(CreateBlogDTO dto);
-        Task UpdateBlog(UpdateBlogDTO dto);
+        Task <String> AddBlogAsync(CreateBlogDTO dto);
+        Task <String> UpdateBlog(UpdateBlogDTO dto);
         void DeleteBlog(int id);
         Task<List<BlogDTO>> SearchBlogsAsync(string searchTerm);
         void ApproveBlog(ApproveBlogDTO dto);
         void RejectBlog(RejectBlogDTO dto);
         Task<List<BlogDTO>> GetPublishedBlogs();
-        public Task<string> UploadBlogImageAsync(BlogImageUploadDTO dto);
+        Task<List<BlogDTO>> GetRejectedBlogs();
+        //        public Task<string> UploadBlogImageAsync(BlogImageUploadDTO dto);   
     }
 }

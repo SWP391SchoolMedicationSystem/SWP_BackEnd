@@ -21,7 +21,6 @@ namespace BussinessLayer.Service
         public Task AddPersonalmedicineAsync(AddPersonalMedicineDTO Personalmedicine)
         {
             var PersonalmedicineEntity = mapper.Map<Personalmedicine>(Personalmedicine);
-            PersonalmedicineEntity.Medicine = medicineRepository.GetByIdAsync(Personalmedicine.Medicineid).Result;
 
             PersonalmedicineEntity.Parent = parentRepository.GetByIdAsync(Personalmedicine.Parentid.Value).Result;
             if (PersonalmedicineEntity.Parent == null)
@@ -34,13 +33,9 @@ namespace BussinessLayer.Service
                 return Task.FromException(new KeyNotFoundException("Student not found."));
             }
 
-            PersonalmedicineEntity.Status = false;
+            PersonalmedicineEntity.Status = true;
+            PersonalmedicineEntity.Isapproved = true;
             PersonalmedicineEntity.Createddate = DateTime.Now;
-            PersonalmedicineEntity.Medicine = medicineRepository.GetByIdAsync(Personalmedicine.Medicineid).Result;
-            if (PersonalmedicineEntity.Medicine == null)
-            {
-                return Task.FromException(new KeyNotFoundException("Medicine not found."));
-            }
             PersonalmedicineRepository.AddAsync(PersonalmedicineEntity);
             PersonalmedicineRepository.Save();
             return Task.CompletedTask;
@@ -65,12 +60,8 @@ namespace BussinessLayer.Service
         public async Task<List<PersonalMedicineDTO>> GetAllPersonalmedicinesAsync()
         {
             var personalMedicines = await PersonalmedicineRepository.GetAllAsync();
-            var dtolist = mapper.Map<List<PersonalMedicineDTO>>(personalMedicines).Where(p => p.IsDeleted == false);
-            foreach (var item in dtolist)
-            {
-                item.Phone = parentRepository.GetByIdAsync(item.Parentid).Result?.Phone ?? "No phone number";
-            }
-            return dtolist.ToList();
+            var dto = mapper.Map<List<PersonalMedicineDTO>>(personalMedicines);
+            return dto;
         }
 
         public async Task<PersonalMedicineDTO> GetPersonalmedicineByIdAsync(int id)

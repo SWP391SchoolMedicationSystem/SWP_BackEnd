@@ -53,6 +53,20 @@ namespace BussinessLayer.Service
                 .ToList();
         }
 
+        public async Task<EmailDTO> GetEmailByName(string name)
+        {
+            var emailTemplate = await _context.EmailTemplates
+                .FirstOrDefaultAsync(e => e.Subject.Equals(name));
+            if (emailTemplate == null)
+                return null;
+            return new EmailDTO
+            {
+                To = emailTemplate.To,
+                Subject = emailTemplate.Subject,
+                Body = emailTemplate.Body
+            };
+        }
+
         public async Task SendEmailAsync(EmailDTO request)
         {
             await _smtpSemaphore.WaitAsync();

@@ -12,6 +12,7 @@ namespace BussinessLayer.IService
     {
         // CRUD Operations
         Task<List<VaccinationEventDTO>> GetAllEventsAsync();
+        Task<VaccinationEventDTO> GetEventByAccessToken(string accessToken);
         Task<VaccinationEventDTO?> GetEventByIdAsync(int eventId);
         Task<VaccinationEventDTO> CreateEventAsync(CreateVaccinationEventDTO dto, string createdBy);
         Task<VaccinationEventDTO> UpdateEventAsync(UpdateVaccinationEventDTO dto, string modifiedBy);
@@ -24,9 +25,10 @@ namespace BussinessLayer.IService
         Task<List<StudentVaccinationStatusDTO>> GetStudentResponsesForEventAsync(int eventId);
         
         // Email Operations
-        Task<List<EmailDTO>> SendVaccinationEmailToAllParentsAsync(SendVaccinationEmailDTO dto);
-        Task<List<EmailDTO>> SendVaccinationEmailToSpecificParentsAsync(SendVaccinationEmailDTO dto, List<int> parentIds);
-        
+        Task<List<EmailDTO>> SendVaccinationEmailToAllParentsAsync(SendVaccinationEmailDTO dto, string baseUrl);
+        Task<List<EmailDTO>> SendVaccinationEmailToSpecificParentsAsync(SendVaccinationEmailDTO dto, List<int> parentIds, string baseUrl);
+        Task<List<EmailDTO>> SendVaccinationEmailToSpecificStudentsAsync(SendVaccinationEmailDTO dto, List<int> studentIds, string baseUrl);
+
         // Parent Response Handling
         Task<bool> ProcessParentResponseAsync(ParentVaccinationResponseDTO dto);
         Task<List<ParentVaccinationResponseDTO>> GetParentResponsesForEventAsync(int eventId);

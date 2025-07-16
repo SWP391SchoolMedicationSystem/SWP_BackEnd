@@ -23,7 +23,7 @@ public partial class Medicine
 
     public string? Updatedby { get; set; }
 
-    public bool IsDeleted { get; set; }
+    public bool? Isdeleted { get; set; }
 
     public virtual Medicinecategory Medicinecategory { get; set; } = null!;
 

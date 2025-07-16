@@ -4,15 +4,19 @@ using BussinessLayer.IService;
 using BussinessLayer.QuartzJob.Job;
 using BussinessLayer.QuartzJob.Scheduler;
 using BussinessLayer.Service;
+using BussinessLayer.Utils;
 using BussinessLayer.Utils.Configurations;
+using CloudinaryDotNet;
 using DataAccessLayer.Entity;
 using DataAccessLayer.IRepository;
 using DataAccessLayer.Repository;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using OfficeOpenXml;
 using Quartz;
+using SchoolMedicalSystem.Configurations;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -72,6 +76,15 @@ builder.Services.AddDbContext<SchoolMedicalSystemContext>(options =>
         builder.Configuration.GetConnectionString("SchoolMedicalSystemContext") 
         ?? throw new InvalidOperationException("Connection string 'SchoolMedicalSystemContext' not found.")));
 
+builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("CloudinarySettings"));
+
+builder.Services.AddSingleton(provider =>
+{
+    var config = provider.GetRequiredService<IOptions<CloudinarySettings>>().Value;
+    var account = new Account(config.CloudName, config.ApiKey, config.ApiSecret);
+    return new Cloudinary(account);
+});
+
 #region AddScoped
 builder.Services.AddScoped<IParentRepository, ParentRepository>();
 builder.Services.AddScoped<IEmailService, EmailService>();
@@ -124,6 +137,9 @@ builder.Services.AddScoped<IStudentSpecialNeedService, StudentSpecialNeedService
 builder.Services.AddScoped<IStudentSpecialNeedCategoryRepo, StudentSpecialNeedCategoryRepo>();
 builder.Services.AddScoped<ISpecialNeedCategoryService, SpecialNeedCategoryService>();
 builder.Services.AddScoped<IStudentSpecialNeedCategoryRepo, StudentSpecialNeedCategoryRepo>();
+builder.Services.AddScoped<IFormRepository, FormRepository>();
+builder.Services.AddScoped<IFormService, FormService>();
+builder.Services.AddScoped<FileHandler>();
 #endregion
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

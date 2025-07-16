@@ -11,9 +11,11 @@ public partial class Form
 
     public int? FormcategoryId { get; set; }
 
-    public string Title { get; set; } = null!;
+    public string? Originalfilename { get; set; }
 
-    public string Reason { get; set; } = null!;
+    public string? Storedpath { get; set; }
+
+    public string? Reason { get; set; }
 
     public byte[]? File { get; set; }
 
@@ -31,7 +33,13 @@ public partial class Form
 
     public DateTime? Modifieddate { get; set; }
 
-    public virtual Formcategory1? Formcategory { get; set; }
+    public string? Title { get; set; }
+
+    public int? Studentid { get; set; }
+
+    public virtual Student FormNavigation { get; set; } = null!;
+
+    public virtual Formcategory? Formcategory { get; set; }
 
     public virtual Parent? Parent { get; set; }
 

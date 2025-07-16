@@ -17,6 +17,10 @@ public partial class Vaccinationevent
 
     public string? Description { get; set; }
 
+    public string? Documentfilename { get; set; }
+
+    public string? Documentaccesstoken { get; set; }
+
     public DateTime Createddate { get; set; }
 
     public DateTime Modifieddate { get; set; }

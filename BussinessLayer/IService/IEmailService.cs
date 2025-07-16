@@ -16,6 +16,7 @@ namespace BussinessLayer.IService
         Task<List<EmailTemplate>> GetEmailAllTemplate();
         Task<EmailTemplate> UpdateEmailTemplate(EmailDTO request, int id);
         Task<bool> DeleteEmailTemplate(int id);
-        public EmailDTO GetTemplateByID(int templateId);
+        EmailDTO GetTemplateByID(int templateId);
+        Task<EmailDTO> GetEmailByName(string name);
     }
 }

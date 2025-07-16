@@ -25,15 +25,13 @@ public partial class Healthcheck
 
     public string? Notes { get; set; }
 
-    public bool Isdeleted { get; set; }
+    public bool? Isdeleted { get; set; }
 
     public DateTime? Createdat { get; set; }
 
     public DateTime? Updatedat { get; set; }
 
     public string? Createdby { get; set; }
-
-    public virtual Staff Staff { get; set; } = null!;
 
     public virtual Student Student { get; set; } = null!;
 }

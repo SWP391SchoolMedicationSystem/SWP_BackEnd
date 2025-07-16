@@ -21,8 +21,6 @@ namespace DataAccessLayer.DTO.PersonalMedicine
 
         public DateTime? ExpiryDate { get; set; }
 
-        public bool Status { get; set; }
-
         public string? Note { get; set; }
 
     }
