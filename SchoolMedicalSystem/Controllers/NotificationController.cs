@@ -16,11 +16,11 @@ namespace SchoolMedicalSystem.Controllers
         }
         [HttpPost]
         [Route("create")]
-        public IActionResult CreateNotification([FromBody] CreateNotificationDTO dto)
+        public async Task<IActionResult> CreateNotification([FromBody] CreateNotificationDTO dto)
         {
             if (dto == null)
                 return BadRequest("Notification data is null.");
-            _notificationService.CreateNotification(dto);
+            await _notificationService.CreateNotification(dto);
             return Ok("Notification created successfully.");
         }
         [HttpPost]

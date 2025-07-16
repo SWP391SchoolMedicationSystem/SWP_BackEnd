@@ -134,6 +134,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddAutoMapper(typeof(Program));
 
 var app = builder.Build();
+
 app.UseCors("AllowAllOrigins");
 app.UseCors("AllowReact");
 // Configure the HTTP request pipeline.
@@ -150,5 +151,6 @@ app.UseAuthorization();
 
 app.MapControllers();
 app.MapHub<ChatHubs>("/chathub");
+app.MapHub<NotificationHub>("/hubs/notifications");
 app.UseStaticFiles();
 app.Run();
