@@ -23,7 +23,7 @@ namespace BussinessLayer.Service
         public void AddMedicine(CreateMedicineDTO medicine)
         {
             Medicine entity = _mapper.Map<Medicine>(medicine);
-            entity.IsDeleted = false;
+            entity.Isdeleted = false;
             _medicineRepository.AddAsync(entity);
             _medicineRepository.Save();
         }
@@ -33,7 +33,7 @@ namespace BussinessLayer.Service
             var medicine = _medicineRepository.GetByIdAsync(id).Result;
             if (medicine != null)
             {
-                medicine.IsDeleted = true;
+                medicine.Isdeleted = true;
                 _medicineRepository.Update(medicine);
                 _medicineRepository.Save();
             }
@@ -49,7 +49,7 @@ namespace BussinessLayer.Service
         public async Task<List<MedicineDTO>> GetAvailableMedicinesAsync()
         {
             var allMedicines = await _medicineRepository.GetAllAsync();
-            var medicines = allMedicines.Where(m => !m.IsDeleted).ToList();
+            var medicines = allMedicines.Where(m => !m.Isdeleted.Value).ToList();
             var lists = _mapper.Map<List<MedicineDTO>>(medicines);  
             return lists;
         }

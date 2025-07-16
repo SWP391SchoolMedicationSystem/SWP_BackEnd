@@ -124,8 +124,8 @@ namespace BussinessLayer.Service
                 Createdby = createdBy,
                 Modifiedby = createdBy,
                 Isdeleted = false,
-                DocumentFileName = storedFileName,
-                DocumentAccessToken = accessToken
+                Documentfilename = storedFileName,
+                Documentaccesstoken = accessToken
             };
 
             try
@@ -149,7 +149,7 @@ namespace BussinessLayer.Service
             if (existingEvent == null)
                 throw new InvalidOperationException("Vaccination event not found.");
 
-            string? oldFileName = existingEvent.DocumentFileName;
+            string? oldFileName = existingEvent.Documentfilename;
 
             // Case A: A new file is uploaded. This means we ADD or REPLACE.
             if (dto.DocumentFile != null)
@@ -165,8 +165,8 @@ namespace BussinessLayer.Service
                 }
 
                 // Update the database record with the NEW file info and a NEW access token
-                existingEvent.DocumentFileName = uploadResult.StoredFileName;
-                existingEvent.DocumentAccessToken = Guid.NewGuid().ToString();
+                existingEvent.Documentfilename = uploadResult.StoredFileName;
+                existingEvent.Documentaccesstoken = Guid.NewGuid().ToString();
             }
             // Case B: No new file is uploaded, but the user explicitly wants to REMOVE the existing file.
             else if (dto.DocumentDelete)
@@ -175,8 +175,8 @@ namespace BussinessLayer.Service
                 _fileHandler.Delete(oldFileName);
 
                 // Clear the file info in the database record
-                existingEvent.DocumentFileName = null;
-                existingEvent.DocumentAccessToken = null;
+                existingEvent.Documentfilename = null;
+                existingEvent.Documentaccesstoken = null;
             }
             // Case C: No new file is uploaded and RemoveDocument is false.
             // We do nothing to the file fields. The existing file remains untouched.
@@ -247,9 +247,9 @@ namespace BussinessLayer.Service
 
                 // --- Step 1: Conditionally build the HTML for the detailed document link ---
                 string detailedDocumentSectionHtml = ""; // Default to an empty string
-                if (!string.IsNullOrWhiteSpace(eventInfo.DocumentAccessToken))
+                if (!string.IsNullOrWhiteSpace(eventInfo.Documentaccesstoken))
                 {
-                    string secureDownloadUrl = $"{baseUrl}/api/files/download/{eventInfo.DocumentAccessToken}";
+                    string secureDownloadUrl = $"{baseUrl}/api/files/download/{eventInfo.Documentaccesstoken}";
                     // This is the full HTML block that will replace our placeholder
                     detailedDocumentSectionHtml = $@"
                             <div class='details-link'>
@@ -307,9 +307,9 @@ namespace BussinessLayer.Service
 
                 // --- Step 1: Conditionally build the HTML for the detailed document link ---
                 string detailedDocumentSectionHtml = ""; // Default to an empty string
-                if (!string.IsNullOrWhiteSpace(eventInfo.DocumentAccessToken))
+                if (!string.IsNullOrWhiteSpace(eventInfo.Documentaccesstoken))
                 {
-                    string secureDownloadUrl = $"{baseUrl}/api/files/download/{eventInfo.DocumentAccessToken}";
+                    string secureDownloadUrl = $"{baseUrl}/api/files/download/{eventInfo.Documentaccesstoken}";
                     // This is the full HTML block that will replace our placeholder
                     detailedDocumentSectionHtml = $@"
                             <div class='details-link'>
@@ -367,9 +367,9 @@ namespace BussinessLayer.Service
 
                 // --- Step 1: Conditionally build the HTML for the detailed document link ---
                 string detailedDocumentSectionHtml = ""; // Default to an empty string
-                if (!string.IsNullOrWhiteSpace(eventInfo.DocumentAccessToken))
+                if (!string.IsNullOrWhiteSpace(eventInfo.Documentaccesstoken))
                 {
-                    string secureDownloadUrl = $"{baseUrl}/api/files/download/{eventInfo.DocumentAccessToken}";
+                    string secureDownloadUrl = $"{baseUrl}/api/files/download/{eventInfo.Documentaccesstoken}";
                     // This is the full HTML block that will replace our placeholder
                     detailedDocumentSectionHtml = $@"
                                             <div class='details-link'>

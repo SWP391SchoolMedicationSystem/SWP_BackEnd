@@ -5,18 +5,19 @@ namespace DataAccessLayer.Entity;
 
 public partial class Form
 {
-    public int Parentid { get; set; }
+    public int? Parentid { get; set; }
 
     public int FormId { get; set; }
 
     public int? FormcategoryId { get; set; }
 
-    public string Title { get; set; } = null!;
+    public string? Originalfilename { get; set; }
 
-    public string Reason { get; set; } = null!;
+    public string? Storedpath { get; set; }
 
-    public string? Originalfilename { get; set; } = null!;
-    public string? Storedpath { get; set; } = null!;
+    public string? Reason { get; set; }
+
+    public byte[]? File { get; set; }
 
     public int? Staffid { get; set; }
 
@@ -32,7 +33,13 @@ public partial class Form
 
     public DateTime? Modifieddate { get; set; }
 
-    public virtual Formcategory1? Formcategory { get; set; }
+    public string? Title { get; set; }
+
+    public int? Studentid { get; set; }
+
+    public virtual Student FormNavigation { get; set; } = null!;
+
+    public virtual Formcategory? Formcategory { get; set; }
 
     public virtual Parent? Parent { get; set; }
 

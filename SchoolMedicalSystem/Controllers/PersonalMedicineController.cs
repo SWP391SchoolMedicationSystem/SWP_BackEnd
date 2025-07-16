@@ -76,31 +76,6 @@ namespace SchoolMedicalSystem.Controllers
                 return StatusCode(500, $"Error deleting medicine donation: {ex.Message}");
             }
         }
-        [HttpPut("approve")]
-        public async Task<IActionResult> ApprovePersonalMedicineRequest(ApprovalPersonalMedicineDTO dto)
-        {
-            try{
-                PersonalmedicineService.ApprovePersonalMedicine(dto);
-                return Ok("Personal medicine request approved successfully.");
-            }
-            catch(Exception e)
-            {
-                return StatusCode(500, $"Internal server error: {e.Message}");
-            }
-        }
-        [HttpPut("reject")]
-        public async Task<IActionResult> RejectPersonalMedicineRequest(ApprovalPersonalMedicineDTO dto)
-        {
-            try
-            {
-                PersonalmedicineService.RejectPersonalMedicine(dto);
-                return Ok("Personal medicine request rejected successfully.");
-            }
-            catch(Exception e)
-            {
-                return StatusCode(500, $"Internal server error: {e.Message}");
-            }
-        }
 
         [HttpGet("search")]
         public async Task<IActionResult> SearchPersonalmedicines([FromQuery] string searchTerm)
@@ -116,49 +91,6 @@ namespace SchoolMedicalSystem.Controllers
             var Personalmedicines = await PersonalmedicineService.GetPersonalmedicinesByParentIdAsync(parentId);
             return Ok(Personalmedicines);
         }
-        [HttpGet("pending")]
-        public async Task<IActionResult> GetPendingRequest()
-        {
-            var Personalmedicines = PersonalmedicineService.GetAllPersonalmedicinesAsync().Result.Where(p => !p.Status);
-            return Ok(Personalmedicines);
-        }
-        [HttpGet("approval")]
 
-        public async Task<IActionResult> GetPersonalmedicinesByApproval()
-        {
-            var Personalmedicines = await PersonalmedicineService.GetPersonalmedicinesByApprovalAsync();
-            return Ok(Personalmedicines);
-        }
-
-
-        [HttpGet("medicine/{medicineId}")]
-        public async Task<IActionResult> GetPersonalmedicinesByMedicineId(int medicineId)
-        {
-            var Personalmedicines = await PersonalmedicineService.GetPersonalmedicinesByMedicineIdAsync(medicineId);
-            return Ok(Personalmedicines);
-
-        }
-        [HttpGet("requests")]
-        public async Task<ActionResult<List<PersonalMedicineRequestDTO>>> GetRequest()
-        {
-            try
-            {
-                var requests = await PersonalmedicineService.GetRequest();
-                if (requests == null || !requests.Any())
-                    return NotFound("No requests found.");
-                return new JsonResult(new
-                {
-                    status = "success",
-                    result = requests
-                });
-
-
-            }
-            catch (Exception e)
-            {
-                return StatusCode(500, $"Internal server error: {e.Message}");
-            }
-
-        }
     }
 }

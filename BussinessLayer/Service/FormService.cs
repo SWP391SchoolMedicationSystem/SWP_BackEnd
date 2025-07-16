@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using BussinessLayer.IService;
 using DataAccessLayer.DTO;
+using DataAccessLayer.DTO.Form;
 using DataAccessLayer.Entity;
 using DataAccessLayer.IRepository;
 using Scriban;
@@ -61,7 +62,6 @@ namespace BussinessLayer.Service
             {
                 throw new KeyNotFoundException("Form not found");
             }
-            form.Title = formDto.Title;
             form.Reason = formDto.Reason;
             //form.File = formDto.File;
             form.Parentid = formDto.ParentId;
@@ -171,6 +171,15 @@ namespace BussinessLayer.Service
                 response_date = DateTime.UtcNow.ToString("dd/MM/yyyy")
             }, member => member.Name);
             return result;
+        }
+
+
+        //Cap thuoc
+        public async Task<Form> AddFormMedicineRequest(AddFormHealth form) {
+            var addForm = _mapper.Map<Form>(form);
+            await _formRepository.AddAsync(addForm);
+            await _formRepository.SaveChangesAsync();
+            return addForm;
         }
     }
 }

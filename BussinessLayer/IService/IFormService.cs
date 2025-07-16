@@ -1,4 +1,5 @@
-﻿using DataAccessLayer.DTO;
+﻿using DataAccessLayer.DTO.Form;
+using DataAccessLayer.Entity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,5 +19,6 @@ namespace BussinessLayer.IService
         Task<List<FormDTO>> GetFormsByCategoryIdAsync(int categoryId);
         Task<bool> AcceptFormAsync(ResponseFormDTO dto, string acceptBy);
         Task<bool> DeclineFormAsync(ResponseFormDTO dto, string declineBy);
+        Task<Form> AddFormMedicineRequest(AddFormMedicine form);
     }
 }

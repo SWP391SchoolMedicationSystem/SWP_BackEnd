@@ -33,13 +33,13 @@ public partial class Student
 
     public virtual ICollection<Consultationrequest> Consultationrequests { get; set; } = new List<Consultationrequest>();
 
+    public virtual Form? Form { get; set; }
+
     public virtual ICollection<Healthcheck> Healthchecks { get; set; } = new List<Healthcheck>();
 
     public virtual ICollection<Healthrecord> Healthrecords { get; set; } = new List<Healthrecord>();
 
     public virtual ICollection<Healthstatus> Healthstatuses { get; set; } = new List<Healthstatus>();
-
-    public virtual ICollection<MedicalForm> MedicalForms { get; set; } = new List<MedicalForm>();
 
     public virtual Parent Parent { get; set; } = null!;
 

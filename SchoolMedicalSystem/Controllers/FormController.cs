@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using BussinessLayer.IService;
-using DataAccessLayer.DTO;
+using DataAccessLayer.DTO.Form;
+using DataAccessLayer.Entity;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -184,6 +185,17 @@ namespace SchoolMedicalSystem.Controllers
             {
                 return StatusCode(500, $"Error declining form: {ex.Message}");
             }
+        }
+        [HttpPost]
+        [Route("form/medicinerequest")]
+        public async Task<ActionResult<Form>> CreateFormForMedicineRequest([FromBody] AddFormMedicine form)
+        {
+            var createdForm = await _formService.AddFormMedicineRequest(form);
+            if (createdForm == null)
+            {
+                return BadRequest("Failed to create form for medicine request.");
+            }
+            return CreatedAtAction(nameof(GetFormById), new { id = createdForm.FormId }, createdForm);
         }
     }
 }

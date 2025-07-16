@@ -3,13 +3,13 @@ using System.Collections.Generic;
 
 namespace DataAccessLayer.Entity;
 
-public partial class FormCategory
+public partial class Formcategory
 {
-    public int CategoryId { get; set; }
+    public int Categoryid { get; set; }
 
-    public string CategoryName { get; set; } = null!;
+    public string Categoryname { get; set; } = null!;
 
-    public string? Description { get; set; }
+    public bool? Isdeleted { get; set; }
 
-    public virtual ICollection<MedicalForm> MedicalForms { get; set; } = new List<MedicalForm>();
+    public virtual ICollection<Form> Forms { get; set; } = new List<Form>();
 }

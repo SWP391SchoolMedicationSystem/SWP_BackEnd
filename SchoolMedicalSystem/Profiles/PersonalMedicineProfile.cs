@@ -9,7 +9,12 @@ namespace SchoolMedicalSystem.Profiles
     {
         public PersonalMedicineProfile()
         {
-            CreateMap<PersonalMedicineDTO,Personalmedicine>().ReverseMap();
+            CreateMap<Personalmedicine, PersonalMedicineDTO>()
+                .ForMember(dest => dest.ParentName, opt => opt.MapFrom(src => src.Parent != null ? src.Parent.Fullname : ""))
+                .ForMember(dest => dest.Phone, opt => opt.MapFrom(src => src.Parent != null ? src.Parent.Phone : ""))
+                .ForMember(dest => dest.StudentName, opt => opt.MapFrom(src => src.Student != null ? src.Student.Fullname : ""))
+                .ForMember(des => des.MedicineName, opt => opt.MapFrom(src => src.Medicine != null ? src.Medicine.Medicinename : ""))
+                .ReverseMap();
             CreateMap<UpdatePersonalMedicineDTO, Personalmedicine>().ReverseMap();
             CreateMap<AddPersonalMedicineDTO, Personalmedicine>().ReverseMap();
             CreateMap<Medicineschedule, PersonalMedicineScheduleDTO>().ReverseMap();

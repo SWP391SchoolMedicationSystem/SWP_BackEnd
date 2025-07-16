@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace DataAccessLayer.Entity;
+namespace SchoolMedicalSystem.Entity;
 
-public partial class Formcategory1
+public partial class Formcategory
 {
     public int Categoryid { get; set; }
 

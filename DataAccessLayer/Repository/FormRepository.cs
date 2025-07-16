@@ -16,6 +16,15 @@ namespace DataAccessLayer.Repository
             _dbset = context.Set<Form>();
         }
 
+        public async Task<List<Form>> GetAllAsync()
+        {
+            return await _dbset
+                .Include(f => f.Parent)
+                .Include(f => f.Formcategory)
+                .Include(f => f.Staff)
+                .Include(f => f.FormNavigation)
+                .ToListAsync();
+        }
         public async Task<List<Form>> GetFormsByParentIdAsync(int parentId)
         {
             return await _dbset

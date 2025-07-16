@@ -12,7 +12,8 @@ public partial class StudentSpecialNeed
     public int SpecialNeedCategoryId { get; set; }
 
     public string? Notes { get; set; }
-    public bool IsDelete { get; set; }
+
+    public bool Isdeleted { get; set; }
 
     public virtual SpecialNeedsCategory SpecialNeedCategory { get; set; } = null!;
 
