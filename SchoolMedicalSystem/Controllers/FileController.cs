@@ -4,10 +4,11 @@ using DataAccessLayer.IRepository;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Net.Mime;
 
 namespace SchoolMedicalSystem.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/files")]
     [ApiController]
     public class FileController : ControllerBase
     {
@@ -58,12 +59,52 @@ namespace SchoolMedicalSystem.Controllers
             }
             memoryStream.Position = 0; // Reset the stream position to the beginning.
 
-            // Determine a user-friendly file name for the download prompt.
-            var fileExtension = Path.GetExtension(eventRecord.DocumentFileName);
-            var friendlyFileName = $"KeHoach_{eventRecord.VaccinationEventName.Replace(" ", "_")}{fileExtension}";
+            // --- KEY CHANGES START HERE ---
 
-            // Return the file. "application/octet-stream" is a generic content type for any file download.
-            return File(memoryStream, "application/octet-stream", friendlyFileName);
+            // 1. Get the correct MIME type for the file.
+            var contentType = GetMimeTypeForFile(eventRecord.DocumentFileName);
+
+            // 2. Create the Content-Disposition header.
+            var contentDisposition = new ContentDisposition
+            {
+                // Set the friendly file name for the user
+                FileName = $"KeHoach_{eventRecord.VaccinationEventName.Replace(" ", "_")}{Path.GetExtension(eventRecord.DocumentFileName)}"
+            };
+
+            // 3. Decide whether to show inline or as an attachment.
+            if (contentType == "application/pdf" || contentType.StartsWith("image/"))
+            {
+                // For PDFs and images, tell the browser to display them inline.
+                contentDisposition.Inline = true;
+            }
+            else
+            {
+                // For all other types (DOCX, XLSX), force a download.
+                contentDisposition.Inline = false;
+            }
+
+            // 4. Add the header to the response.
+            Response.Headers.Add("Content-Disposition", contentDisposition.ToString());
+
+            // 5. Return the File with the correct Content-Type.
+            // We no longer pass the filename here, as the header handles it.
+            return File(memoryStream, contentType);
+        }
+
+        // Helper method to determine the MIME type
+        private string GetMimeTypeForFile(string fileName)
+        {
+            string extension = Path.GetExtension(fileName).ToLowerInvariant();
+            return extension switch
+            {
+                ".pdf" => "application/pdf",
+                ".docx" => "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                ".xlsx" => "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                ".png" => "image/png",
+                ".jpg" => "image/jpeg",
+                ".jpeg" => "image/jpeg",
+                _ => "application/octet-stream"
+            };
         }
     }
 }
