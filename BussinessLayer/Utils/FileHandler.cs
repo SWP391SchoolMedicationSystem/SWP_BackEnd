@@ -23,19 +23,19 @@ namespace BussinessLayer.Utils
             _protectedFilesFolderPath = Path.Combine(_env.WebRootPath, "protected_file");
         }
 
-        public async Task<FileUploadResult> UploadAsync(IFormFile formFile)
+        public async Task<FileDTO> UploadAsync(IFormFile formFile)
         {
             // --- 1. Validation ---
-            var allowedExtensions = new List<string> { ".pdf", ".docx", ".xlsx", ".png", ".jpg" };
+            var allowedExtensions = new List<string> { ".pdf", ".docx", ".xlsx", ".png", ".jpg", ".jpeg" };
             string extension = Path.GetExtension(formFile.FileName).ToLower();
             if (!allowedExtensions.Contains(extension))
             {
-                return new FileUploadResult { Success = false, ErrorMessage = $"File extension '{extension}' is not supported." };
+                return new FileDTO { Success = false, ErrorMessage = $"File extension '{extension}' is not supported." };
             }
 
             if (formFile.Length > (maxFileSize))
             {
-                return new FileUploadResult { Success = false, ErrorMessage = "File is too large. Maximum size is 15MB." };
+                return new FileDTO { Success = false, ErrorMessage = "File is too large. Maximum size is 15MB." };
             }
 
             try
@@ -60,7 +60,7 @@ namespace BussinessLayer.Utils
                 }
 
                 // --- 3. Return a successful result ---
-                return new FileUploadResult
+                return new FileDTO
                 {
                     Success = true,
                     StoredFileName = storedFileName,
@@ -70,7 +70,7 @@ namespace BussinessLayer.Utils
             catch (Exception ex)
             {
                 // Log the exception (ex.ToString()) with your logging framework
-                return new FileUploadResult { Success = false, ErrorMessage = "An unexpected error occurred while saving the file." };
+                return new FileDTO { Success = false, ErrorMessage = "An unexpected error occurred while saving the file." };
             }
         }
 

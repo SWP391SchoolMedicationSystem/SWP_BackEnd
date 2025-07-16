@@ -59,8 +59,6 @@ namespace SchoolMedicalSystem.Controllers
             }
             memoryStream.Position = 0; // Reset the stream position to the beginning.
 
-            // --- KEY CHANGES START HERE ---
-
             // 1. Get the correct MIME type for the file.
             var contentType = GetMimeTypeForFile(eventRecord.DocumentFileName);
 

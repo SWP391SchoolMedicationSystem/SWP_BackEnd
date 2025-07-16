@@ -11,6 +11,7 @@ using DataAccessLayer.IRepository;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using NPOI.POIFS.Properties;
 using Scriban;
 
@@ -96,19 +97,12 @@ namespace BussinessLayer.Service
             return eventDto;
         }
 
-        public async Task<VaccinationEventDTO> CreateEventAsync(CreateVaccinationEventDTO dto, string createdBy)
+        public async Task<VaccinationEventDTO> CreateEventAsync(CreateVaccinationEventDTO dto,string storedFileName, string createdBy)
         {
-            string? storedFileName = null;
             string? accessToken = null;
 
-            if (dto.DocumentFile != null)
+            if (!storedFileName.IsNullOrEmpty())
             {
-                var uploadResult = await _fileHandler.UploadAsync(dto.DocumentFile);
-                if (!uploadResult.Success)
-                {
-                    return null;//BadRequest(uploadResult.ErrorMessage);
-                }
-                storedFileName = uploadResult.StoredFileName;
                 accessToken = Guid.NewGuid().ToString();
             }
 

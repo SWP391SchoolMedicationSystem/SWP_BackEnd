@@ -69,12 +69,4 @@ namespace DataAccessLayer.DTO.Form
         public string? Reasonfordecline { get; set; }
         public string Modifiedby { get; set; }
     }
-
-    public class FileUploadResult
-    {
-        public string? OriginalFileName { get; set; }
-        public string? StoredFileName { get; set; }
-        public bool Success { get; set; }
-        public string? ErrorMessage { get; set; }
-    }
 }
