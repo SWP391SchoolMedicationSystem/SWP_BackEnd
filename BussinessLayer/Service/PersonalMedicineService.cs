@@ -33,13 +33,9 @@ namespace BussinessLayer.Service
                 return Task.FromException(new KeyNotFoundException("Student not found."));
             }
 
-            PersonalmedicineEntity.Status = false;
+            PersonalmedicineEntity.Status = true;
+            PersonalmedicineEntity.Isapproved = true;
             PersonalmedicineEntity.Createddate = DateTime.Now;
-            PersonalmedicineEntity.Medicine = medicineRepository.GetByIdAsync(Personalmedicine.Medicineid).Result;
-            if (PersonalmedicineEntity.Medicine == null)
-            {
-                return Task.FromException(new KeyNotFoundException("Medicine not found."));
-            }
             PersonalmedicineRepository.AddAsync(PersonalmedicineEntity);
             PersonalmedicineRepository.Save();
             return Task.CompletedTask;
