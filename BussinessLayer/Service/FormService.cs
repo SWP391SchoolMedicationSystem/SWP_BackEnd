@@ -81,7 +81,7 @@ namespace BussinessLayer.Service
             {
                 return false;
             }
-            form.Isaccepted = false;
+            form.IsDeleted = true;
             form.Modifieddate = DateTime.UtcNow;
             form.Modifiedby = deleteBy;
 
