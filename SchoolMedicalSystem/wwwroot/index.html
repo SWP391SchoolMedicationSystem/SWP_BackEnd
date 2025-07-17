@@ -13,8 +13,10 @@
     <script>
         // IMPORTANT: Change "/notificationHub" to your hub's actual URL route
         const connection = new signalR.HubConnectionBuilder()
-            .withUrl("/hubs/notifications") // <-- CHANGE THIS IF NEEDED
-            .configureLogging(signalR.LogLevel.Information)
+            .withUrl("https://api-schoolhealth.purintech.id.vn/hubs/notifications", {
+                transport: signalR.HttpTransportType.WebSockets,
+                withCredentials: true
+            })
             .build();
 
         // Listen for the "ReceiveNotification" event from the server
