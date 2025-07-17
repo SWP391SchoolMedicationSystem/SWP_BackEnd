@@ -74,7 +74,7 @@ namespace BussinessLayer.Service
             return _mapper.Map<FormDTO>(form);
         }
 
-        public async Task<bool> DeleteFormAsync(int id, string deleteBy)
+        public async Task<bool> DeleteFormAsync(int id)
         {
             var form = await _formRepository.GetByIdAsync(id);
             if (form == null)
@@ -83,7 +83,7 @@ namespace BussinessLayer.Service
             }
             form.IsDeleted = true;
             form.Modifieddate = DateTime.UtcNow;
-            form.Modifiedby = deleteBy;
+            
 
             _formRepository.Update(form);
             await _formRepository.SaveChangesAsync();

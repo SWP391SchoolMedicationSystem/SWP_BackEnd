@@ -80,13 +80,13 @@ namespace SchoolMedicalSystem.Controllers
             }
         }
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteForm([FromBody] int id, string deleteBy)
+        [HttpDelete]
+        public async Task<IActionResult> DeleteForm([FromQuery] int id)
         {
             try
             {
                 
-                var result = await _formService.DeleteFormAsync(id, deleteBy);
+                var result = await _formService.DeleteFormAsync(id);
                 if (result)
                 {
                     return Ok("Delete Success!");
