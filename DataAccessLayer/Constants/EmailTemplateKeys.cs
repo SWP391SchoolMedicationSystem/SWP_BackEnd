@@ -15,5 +15,7 @@ namespace DataAccessLayer.Constants
         public const string FormResponseEmail = "PHẢN HỒI ĐƠN";
         public const string FormResponseEmailWithFile = "PHẢN HỒI ĐƠN VỚI TẬP TIN";
         public const string FormResponseEmailWithFileAndLink = "PHẢN HỒI ĐƠN VỚI TẬP TIN VÀ LIÊN KẾT";
+        public const string FormResponseEmailWithLink = "PHẢN HỒI ĐƠN VỚI LIÊN KẾT";
+        public const string FormResponseEmailWithFileAndLinkAndQrCode = "PHẢN HỒI ĐƠN VỚI TẬP TIN, LIÊN KẾT VÀ MÃ QR";
     }
 }
