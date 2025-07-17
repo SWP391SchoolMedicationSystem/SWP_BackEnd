@@ -81,11 +81,11 @@ namespace SchoolMedicalSystem.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteForm(int id)
+        public async Task<IActionResult> DeleteForm([FromBody] int id, string deleteBy)
         {
             try
             {
-                var deleteBy = User.FindFirst(ClaimTypes.Name)?.Value ?? "System";
+                
                 var result = await _formService.DeleteFormAsync(id, deleteBy);
                 if (result)
                 {
