@@ -326,7 +326,7 @@ public partial class SchoolMedicalSystemContext : DbContext
             entity.HasOne(d => d.Parent).WithMany(p => p.Forms)
                 .HasForeignKey(d => d.Parentid)
                 .HasConstraintName("FK__FORM__PARENTID__3B40CD36");
-
+            entity.Property(e => e.IsDeleted).HasColumnName("IS_DELETED");
             entity.HasOne(d => d.Staff).WithMany(p => p.Forms)
                 .HasForeignKey(d => d.Staffid)
                 .HasConstraintName("FK__FORM__STAFFID__3C34F16F");

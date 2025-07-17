@@ -25,6 +25,8 @@ public partial class Form
 
     public string? Reasonfordecline { get; set; }
 
+    public bool? IsDeleted {get; set;}
+
     public string? Createdby { get; set; }
 
     public DateTime? Createddate { get; set; }
