@@ -1,5 +1,6 @@
 using System.Text;
 using System.Text.Json.Serialization;
+using BussinessLayer.Hubs;
 using BussinessLayer.IService;
 using BussinessLayer.QuartzJob.Job;
 using BussinessLayer.QuartzJob.Scheduler;
@@ -25,6 +26,7 @@ builder.Services.AddControllers().AddJsonOptions(opt =>
 {
     opt.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
 });
+builder.Services.AddSignalR();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAllOrigins",
@@ -164,4 +166,5 @@ app.UseAuthorization();
 
     app.MapControllers();
 app.UseStaticFiles();
+app.MapHub<NotificationHub>("/hubs/notifications");
 app.Run();

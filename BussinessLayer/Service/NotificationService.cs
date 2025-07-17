@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
+using BussinessLayer.Hubs;
 using BussinessLayer.IService;
 using BussinessLayer.Utils.Configurations;
 using DataAccessLayer.DTO.Notifications;
@@ -11,6 +12,7 @@ using DataAccessLayer.Entity;
 using DataAccessLayer.IRepository;
 using DataAccessLayer.Repository;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
@@ -27,6 +29,7 @@ namespace BussinessLayer.Service
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IParentRepository _parentRepository;
         private readonly IStaffRepository _staffRepository;
+        private readonly IHubContext<NotificationHub> _hub;
         public NotificationService(
             INotificationRepo notificationdRepository,
             INotificationParentDetailRepo notificationParentDetailRepo,
@@ -35,7 +38,8 @@ namespace BussinessLayer.Service
             IOptionsMonitor<AppSetting> option,
             IHttpContextAccessor httpContextAccessor,
             IStaffRepository staffRepository,
-            INotificationStaffDetailRepo notificationStaffDetailRepo)
+            INotificationStaffDetailRepo notificationStaffDetailRepo,
+            IHubContext<NotificationHub> hub)
         {
             _notificationdRepository = notificationdRepository;
             _notificationParentDetailRepo = notificationParentDetailRepo;
@@ -45,19 +49,71 @@ namespace BussinessLayer.Service
             _httpContextAccessor = httpContextAccessor;
             _staffRepository = staffRepository;
             _notificationStaffDetailRepo = notificationStaffDetailRepo;
+            _hub = hub;
         }
-        public void CreateNotification(CreateNotificationDTO dto)
+        public async Task CreateNotification(CreateNotificationDTO dto)
         {
-            var entity = _mapper.Map<Notification>(dto);
-            entity.CreatedAt = DateTime.Now;
-            entity.Createddate = DateTime.Now;
-            entity.IsDeleted = false;
+            try
+            {
+                var entity = _mapper.Map<Notification>(dto);
+                entity.CreatedAt = DateTime.Now;
+                entity.Createddate = DateTime.Now;
+                entity.IsDeleted = false;
+                _notificationdRepository.AddAsync(entity);
+                _notificationdRepository.Save();
+                var parentEntities = _parentRepository.GetAll();
+                var activeParents = parentEntities.Where(p => !p.IsDeleted).ToList();
+                foreach (var parent in activeParents)
+                {
+                    var detail = new NotificationParentDetail
+                    {
+                        NotificationId = entity.NotificationId,
+                        ParentId = parent.Parentid,
+                        Message = dto.Message,
+                        IsRead = false,
+                        IsDeleted = false,
+                        CreatedDate = DateTime.Now,
+                        CreatedBy = entity.Createdby,
+                        //                        ModifiedDate = DateTime.Now,
+                        //                        ModifiedBy = notification.Modifiedby
+                    };
+                    _notificationParentDetailRepo.Add(detail);
+                }
+                _notificationParentDetailRepo.Save();
 
-            _notificationdRepository.AddAsync(entity).GetAwaiter().GetResult();
-            _notificationdRepository.Save();
+                var staffs = _staffRepository.GetAll();
+                var activeStaffs = staffs.Where(p => !p.IsDeleted).ToList();
+                foreach (var staff in activeStaffs)
+                {
+                    var detail = new Notificationstaffdetail
+                    {
+                        NotificationId = entity.NotificationId,
+                        Staffid = staff.Staffid,
+                        Message = dto.Message,
+                        IsRead = false,
+                        IsDeleted = false,
+                        CreatedDate = DateTime.Now,
+                        CreatedBy = entity.Createdby,
+                        //                        ModifiedDate = DateTime.Now,
+                        //                        ModifiedBy = notification.Modifiedby
+                    };
+                    _notificationStaffDetailRepo.Add(detail);
+                }
+                _notificationStaffDetailRepo.Save();
+                await _hub.Clients.All.SendAsync("ReceiveNotification", new
+                {
+                    dto.Title,
+                    dto.Message,
+                    Target = "All"
+                });
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Failed to create notification: {ex.Message}", ex);
+            }
         }
 
-        public void CreateNotificationForParent(CreateNotificationDTO dto)
+        public async Task CreateNotificationForParent(CreateNotificationDTO dto)
         {
             try
             {
@@ -89,6 +145,12 @@ namespace BussinessLayer.Service
                     _notificationParentDetailRepo.Add(detail);
                 }
                 _notificationParentDetailRepo.Save();
+                await _hub.Clients.All.SendAsync("ReceiveNotification", new
+                {
+                    dto.Title,
+                    dto.Message,
+                    Target = "Parents"
+                });
             }
             catch (Exception ex)
             {
@@ -96,7 +158,7 @@ namespace BussinessLayer.Service
             }
         }
 
-        public void CreateNotificationForStaff(CreateNotificationDTO dto)
+        public async Task CreateNotificationForStaff(CreateNotificationDTO dto)
         {
             try
             {
@@ -127,6 +189,12 @@ namespace BussinessLayer.Service
                     _notificationStaffDetailRepo.Add(detail);
                 }
                 _notificationStaffDetailRepo.Save();
+                await _hub.Clients.All.SendAsync("ReceiveNotification", new
+                {
+                    dto.Title,
+                    dto.Message,
+                    Target = "Staffs"
+                });
             }
             catch (Exception ex)
             {
