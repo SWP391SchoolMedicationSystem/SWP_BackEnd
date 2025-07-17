@@ -161,11 +161,11 @@ app.UseSwagger();
 app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
-
+app.UseRouting();
 //app.UseAuthentication();
 app.UseAuthorization();
 
-    app.MapControllers();
+app.MapControllers();
 app.UseStaticFiles();
 app.MapHub<NotificationHub>("/hubs/notifications");
 app.Run();

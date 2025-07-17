@@ -51,6 +51,8 @@ namespace BussinessLayer.Service
             _notificationStaffDetailRepo = notificationStaffDetailRepo;
             _hub = hub;
         }
+        const string parentTarget = "Parents";
+        const string staffTarget = "Staffs";
         public async Task CreateNotification(CreateNotificationDTO dto)
         {
             try
@@ -145,11 +147,11 @@ namespace BussinessLayer.Service
                     _notificationParentDetailRepo.Add(detail);
                 }
                 _notificationParentDetailRepo.Save();
-                await _hub.Clients.All.SendAsync("ReceiveNotification", new
+                await _hub.Clients.Group(parentTarget).SendAsync("ReceiveNotification", new
                 {
                     dto.Title,
                     dto.Message,
-                    Target = "Parents"
+                    Target = parentTarget
                 });
             }
             catch (Exception ex)
@@ -189,11 +191,11 @@ namespace BussinessLayer.Service
                     _notificationStaffDetailRepo.Add(detail);
                 }
                 _notificationStaffDetailRepo.Save();
-                await _hub.Clients.All.SendAsync("ReceiveNotification", new
+                await _hub.Clients.Group(staffTarget).SendAsync("ReceiveNotification", new
                 {
                     dto.Title,
                     dto.Message,
-                    Target = "Staffs"
+                    Target = staffTarget
                 });
             }
             catch (Exception ex)

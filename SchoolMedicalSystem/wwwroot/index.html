@@ -13,7 +13,7 @@
     <script>
         // IMPORTANT: Change "/notificationHub" to your hub's actual URL route
         const connection = new signalR.HubConnectionBuilder()
-            .withUrl("/hubs/notifications") // <-- CHANGE THIS IF NEEDED
+            .withUrl("https://api-schoolhealth.purintech.id.vn/hubs/notifications")
             .configureLogging(signalR.LogLevel.Information)
             .build();
 
