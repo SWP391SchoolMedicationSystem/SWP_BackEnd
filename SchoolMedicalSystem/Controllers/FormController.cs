@@ -80,7 +80,7 @@ namespace SchoolMedicalSystem.Controllers
             }
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete]
         public async Task<IActionResult> DeleteForm([FromBody] int id, string deleteBy)
         {
             try
