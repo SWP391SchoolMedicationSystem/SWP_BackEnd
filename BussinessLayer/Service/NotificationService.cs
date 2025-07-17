@@ -16,7 +16,6 @@ using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
-
 namespace BussinessLayer.Service
 {
     //comment
@@ -82,7 +81,6 @@ namespace BussinessLayer.Service
                 }
                 _notificationParentDetailRepo.Save();
 
-
                 var staffs = _staffRepository.GetAll();
                 var activeStaffs = staffs.Where(p => !p.IsDeleted).ToList();
                 foreach (var staff in activeStaffs)
@@ -102,32 +100,18 @@ namespace BussinessLayer.Service
                     _notificationStaffDetailRepo.Add(detail);
                 }
                 _notificationStaffDetailRepo.Save();
-
-                // Send SignalR notification to all users in general group
-                try
+                await _hub.Clients.All.SendAsync("ReceiveNotification", new
                 {
-                    await _hub.Clients.Group("GeneralNotifications").SendAsync("ReceiveNotification", new
-                    {
-                        dto.Title,
-                        dto.Message,
-                        Target = "All",
-                        NotificationId = entity.NotificationId,
-                        CreatedAt = entity.CreatedAt,
-                        Type = entity.Type
-                    });
-                }
-                catch (Exception signalrEx)
-                {
-                    // Log SignalR error but don't fail the entire operation
-                    // _logger.LogError(signalrEx, "Failed to send SignalR notification");
-                }
+                    dto.Title,
+                    dto.Message,
+                    Target = "All"
+                });
             }
             catch (Exception ex)
             {
                 throw new Exception($"Failed to create notification: {ex.Message}", ex);
             }
         }
-
 
         public async Task CreateNotificationForParent(CreateNotificationDTO dto)
         {
@@ -136,15 +120,12 @@ namespace BussinessLayer.Service
                 var parentEntities = _parentRepository.GetAll();
                 var activeParents = parentEntities.Where(p => !p.IsDeleted).ToList();
 
-
                 var notification = _mapper.Map<Notification>(dto);
                 notification.CreatedAt = DateTime.Now;
                 notification.Createddate = DateTime.Now;
                 notification.IsDeleted = false;
                 _notificationdRepository.Add(notification);
                 _notificationdRepository.Save();
-
-
 
 
                 foreach (var parent in activeParents)
@@ -164,47 +145,18 @@ namespace BussinessLayer.Service
                     _notificationParentDetailRepo.Add(detail);
                 }
                 _notificationParentDetailRepo.Save();
-
-                // Send SignalR notification to parent group
-                try
+                await _hub.Clients.All.SendAsync("ReceiveNotification", new
                 {
-                    await _hub.Clients.Group("GeneralNotifications").SendAsync("ReceiveNotification", new
-                    {
-                        dto.Title,
-                        dto.Message,
-                        Target = "Parents",
-                        NotificationId = notification.NotificationId,
-                        CreatedAt = notification.CreatedAt,
-                        Type = notification.Type
-                    });
-
-                    // Also send to specific parent groups if needed
-                    foreach (var parent in activeParents)
-                    {
-                        await _hub.Clients.Group($"Parent_{parent.Parentid}").SendAsync("ReceiveNotification", new
-                        {
-                            dto.Title,
-                            dto.Message,
-                            Target = "Parents",
-                            NotificationId = notification.NotificationId,
-                            CreatedAt = notification.CreatedAt,
-                            Type = notification.Type,
-                            ParentId = parent.Parentid
-                        });
-                    }
-                }
-                catch (Exception signalrEx)
-                {
-                    // Log SignalR error but don't fail the entire operation
-                    // _logger.LogError(signalrEx, "Failed to send SignalR notification for parents");
-                }
+                    dto.Title,
+                    dto.Message,
+                    Target = "Parents"
+                });
             }
             catch (Exception ex)
             {
                 throw new Exception($"Failed to create notification for parents: {ex.Message}", ex);
             }
         }
-
 
         public async Task CreateNotificationForStaff(CreateNotificationDTO dto)
         {
@@ -213,14 +165,12 @@ namespace BussinessLayer.Service
                 var staffs = _staffRepository.GetAll();
                 var activeStaffs = staffs.Where(p => !p.IsDeleted).ToList();
 
-
                 var notification = _mapper.Map<Notification>(dto);
                 notification.CreatedAt = DateTime.Now;
                 notification.Createddate = DateTime.Now;
                 notification.IsDeleted = false;
                 _notificationdRepository.Add(notification);
                 _notificationdRepository.Save();
-
 
                 foreach (var staff in activeStaffs)
                 {
@@ -239,53 +189,23 @@ namespace BussinessLayer.Service
                     _notificationStaffDetailRepo.Add(detail);
                 }
                 _notificationStaffDetailRepo.Save();
-
-                // Send SignalR notification to staff group
-                try
+                await _hub.Clients.All.SendAsync("ReceiveNotification", new
                 {
-                    await _hub.Clients.Group("GeneralNotifications").SendAsync("ReceiveNotification", new
-                    {
-                        dto.Title,
-                        dto.Message,
-                        Target = "Staffs",
-                        NotificationId = notification.NotificationId,
-                        CreatedAt = notification.CreatedAt,
-                        Type = notification.Type
-                    });
-
-                    // Also send to specific staff groups if needed
-                    foreach (var staff in activeStaffs)
-                    {
-                        await _hub.Clients.Group($"Staff_{staff.Staffid}").SendAsync("ReceiveNotification", new
-                        {
-                            dto.Title,
-                            dto.Message,
-                            Target = "Staffs",
-                            NotificationId = notification.NotificationId,
-                            CreatedAt = notification.CreatedAt,
-                            Type = notification.Type,
-                            StaffId = staff.Staffid
-                        });
-                    }
-                }
-                catch (Exception signalrEx)
-                {
-                    // Log SignalR error but don't fail the entire operation
-                    // _logger.LogError(signalrEx, "Failed to send SignalR notification for staff");
-                }
+                    dto.Title,
+                    dto.Message,
+                    Target = "Staffs"
+                });
             }
             catch (Exception ex)
             {
-                throw new Exception($"Failed to create notification for staff: {ex.Message}", ex);
+                throw new Exception($"Failed to create notification for parents: {ex.Message}", ex);
             }
         }
-
 
         public void DeleteNotification(int id)
         {
             try
             {
-
 
                 var entity = _notificationdRepository.GetByIdAsync(id).Result;
                 if (entity != null)
@@ -301,19 +221,16 @@ namespace BussinessLayer.Service
             }
         }
 
-
         public List<Notification> GetAllNotifications()
         {
             var notifications = _notificationdRepository.GetAllAsync().Result;
             return notifications.Where(n => !n.IsDeleted).ToList();
         }
 
-
         public List<Notification> GetAllNotificationsForParent()
         {
             var details = _notificationParentDetailRepo.GetAll();
             var allNotifications = _notificationdRepository.GetAll();
-
 
             var notifications = (from d in details
                                  join n in allNotifications on d.NotificationId equals n.NotificationId
@@ -322,17 +239,14 @@ namespace BussinessLayer.Service
                                 .Distinct()
                                 .ToList();
 
-
             return notifications;
         }
-
 
         public List<Notification> GetAllNotificationsForStaff()
         {
             var details = _notificationStaffDetailRepo.GetAll();
             var allNotifications = _notificationdRepository.GetAll();
 
-
             var notifications = (from d in details
                                  join n in allNotifications on d.NotificationId equals n.NotificationId
                                  where !d.IsDeleted && !n.IsDeleted
@@ -340,10 +254,8 @@ namespace BussinessLayer.Service
                                 .Distinct()
                                 .ToList();
 
-
             return notifications;
         }
-
 
         public void UpdateNotificationForParent(UpdateNotificationDTO dto, int notificationId)
         {
@@ -359,31 +271,25 @@ namespace BussinessLayer.Service
                 notification.Modifieddate = DateTime.Now;
                 notification.Modifiedby = dto.Modifiedby;
 
-
                 _notificationdRepository.Update(notification);
                 _notificationdRepository.Save();
 
-
                 var activeParents = _parentRepository.GetAll().Where(p => !p.IsDeleted).ToList();
-
 
                 var existingDetails = _notificationParentDetailRepo
                     .GetAll()
                     .Where(d => d.NotificationId == notificationId)
                     .ToList();
 
-
                 foreach (var parent in activeParents)
                 {
                     var existingDetail = existingDetails.FirstOrDefault(d => d.ParentId == parent.Parentid);
-
 
                     if (existingDetail != null)
                     {
                         existingDetail.Message = dto.Message;
                         existingDetail.ModifiedDate = DateTime.Now;
                         existingDetail.ModifiedBy = dto.Modifiedby;
-
 
                         _notificationParentDetailRepo.Update(existingDetail);
                     }
@@ -403,11 +309,9 @@ namespace BussinessLayer.Service
                             ModifiedBy = dto.Modifiedby
                         };
 
-
                         _notificationParentDetailRepo.Add(newDetail);
                     }
                 }
-
 
                 _notificationParentDetailRepo.Save();
             }
@@ -416,7 +320,6 @@ namespace BussinessLayer.Service
                 throw new Exception($"Failed to update notification for parents: {ex.Message}", ex);
             }
         }
-
 
         public void UpdateNotificationForStaff(UpdateNotificationDTO dto, int id)
         {
@@ -432,33 +335,26 @@ namespace BussinessLayer.Service
                 notification.Modifieddate = DateTime.Now;
                 notification.Modifiedby = dto.Modifiedby;
 
-
                 _notificationdRepository.Update(notification);
                 _notificationdRepository.Save();
 
-
                 var activeStaffs = _staffRepository.GetAll().Where(p => !p.IsDeleted).ToList();
-
 
                 var existingDetails = _notificationStaffDetailRepo
                     .GetAll()
                     .Where(d => d.NotificationId == id)
                     .ToList();
 
-
                 foreach (var staff in activeStaffs)
                 {
                     var existingDetail = existingDetails.FirstOrDefault(d => d.Staffid == staff.Staffid);
-
 
                     if (existingDetail != null)
                     {
                         existingDetail.Message = dto.Message;
 
-
                         existingDetail.ModifiedDate = DateTime.Now;
                         existingDetail.ModifiedBy = dto.Modifiedby;
-
 
                         _notificationStaffDetailRepo.Update(existingDetail);
                     }
@@ -478,11 +374,9 @@ namespace BussinessLayer.Service
                             ModifiedBy = dto.Modifiedby
                         };
 
-
                         _notificationStaffDetailRepo.Add(newDetail);
                     }
                 }
-
 
                 _notificationParentDetailRepo.Save();
             }

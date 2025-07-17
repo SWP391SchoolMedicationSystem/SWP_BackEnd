@@ -19,50 +19,25 @@ using OfficeOpenXml;
 using Quartz;
 using SchoolMedicalSystem.Configurations;
 
-
 var builder = WebApplication.CreateBuilder(args);
-
 
 // Add services to the container.
 builder.Services.AddControllers().AddJsonOptions(opt =>
 {
     opt.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
 });
-builder.Services.AddSignalR(options =>
-{
-    options.EnableDetailedErrors = builder.Environment.IsDevelopment();
-    options.KeepAliveInterval = TimeSpan.FromSeconds(15);
-    options.ClientTimeoutInterval = TimeSpan.FromSeconds(30);
-    options.HandshakeTimeout = TimeSpan.FromSeconds(15);
-    options.MaximumReceiveMessageSize = 1024 * 1024; // 1MB
-    options.StreamBufferCapacity = 10;
-});
+builder.Services.AddSignalR();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAllOrigins",
-        builder => builder.SetIsOriginAllowed(_ => true)
+        builder => builder.AllowAnyOrigin()
                           .AllowAnyMethod()
-                          .AllowAnyHeader()
-                          .AllowCredentials()); // Required for SignalR
-
+                          .AllowAnyHeader());
     options.AddPolicy("AllowReact", policy =>
     {
-        policy.WithOrigins("http://localhost:3000", "https://localhost:3000")
+        policy.WithOrigins("http://localhost:3000") 
               .AllowAnyHeader()
-              .AllowAnyMethod()
-              .AllowCredentials(); // Required for SignalR
-    });
-
-    options.AddPolicy("AllowServer", policy =>
-    {
-        // Get allowed origins from configuration
-        var allowedOrigins = builder.Configuration.GetSection("SignalR:AllowedOrigins").Get<string[]>()
-                           ?? new[] { "http://localhost:3000" };
-
-        policy.WithOrigins(allowedOrigins)
-              .AllowAnyHeader()
-              .AllowAnyMethod()
-              .AllowCredentials(); // Required for SignalR
+              .AllowAnyMethod();
     });
 });
 #region Quartz Scheduler Configuration
@@ -83,7 +58,6 @@ if (string.IsNullOrEmpty(secretkey))
     throw new InvalidOperationException("AppSetting failed ");
 }
 
-
 var secretKeyByte = Encoding.UTF8.GetBytes(secretkey);
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer
     (options =>
@@ -99,15 +73,12 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
     });
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
-
 builder.Services.AddDbContext<SchoolMedicalSystemContext>(options =>
     options.UseSqlServer(
-        builder.Configuration.GetConnectionString("SchoolMedicalSystemContext")
+        builder.Configuration.GetConnectionString("SchoolMedicalSystemContext") 
         ?? throw new InvalidOperationException("Connection string 'SchoolMedicalSystemContext' not found.")));
 
-
 builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("CloudinarySettings"));
-
 
 builder.Services.AddSingleton(provider =>
 {
@@ -116,14 +87,13 @@ builder.Services.AddSingleton(provider =>
     return new Cloudinary(account);
 });
 
-
 #region AddScoped
 builder.Services.AddScoped<IParentRepository, ParentRepository>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IStaffService, StaffService>();
 builder.Services.AddScoped<IStaffRepository, StaffRepository>();
 builder.Services.AddScoped<IEmailRepo, EmailRepository>();
-builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IUserRepository,UserRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IParentService, ParentService>();
 builder.Services.AddScoped<IBlogRepo, BlogRepo>();
@@ -174,47 +144,27 @@ builder.Services.AddScoped<IFormService, FormService>();
 builder.Services.AddScoped<FileHandler>();
 #endregion
 
-
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddAutoMapper(typeof(Program));
 
-
 var app = builder.Build();
-
-
-// Configure CORS based on environment
+app.UseCors("AllowAllOrigins");
+app.UseCors("AllowReact");
+// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseCors("AllowReact");
 }
-else
-{
-    app.UseCors("AllowServer");
-}
-
-
-// Configure the HTTP request pipeline.
-
-    app.UseSwagger();
-    app.UseSwaggerUI();
-
-
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
-
 
 //app.UseAuthentication();
 app.UseAuthorization();
 
-
+    app.MapControllers();
 app.UseStaticFiles();
-
-
-// Map SignalR hub BEFORE controllers
 app.MapHub<NotificationHub>("/hubs/notifications");
-app.MapControllers();
-
-
 app.Run();

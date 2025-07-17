@@ -2,9 +2,6 @@
 using DataAccessLayer.DTO.Notifications;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.SignalR;
-using BussinessLayer.Hubs;
-
 
 namespace SchoolMedicalSystem.Controllers
 {
@@ -13,71 +10,9 @@ namespace SchoolMedicalSystem.Controllers
     public class NotificationController : ControllerBase
     {
         private readonly INotificationService _notificationService;
-        private readonly IHubContext<NotificationHub> _hubContext;
-
-        public NotificationController(INotificationService notificationService, IHubContext<NotificationHub> hubContext)
+        public NotificationController(INotificationService notificationService)
         {
             _notificationService = notificationService;
-            _hubContext = hubContext;
-        }
-
-        [HttpPost]
-        [Route("test-signalr")]
-        public async Task<IActionResult> TestSignalR([FromBody] string message)
-        {
-            try
-            {
-                await _hubContext.Clients.All.SendAsync("ReceiveTestMessage", new
-                {
-                    Message = message ?? "Test message from server API",
-                    Timestamp = DateTime.Now,
-                    Source = "NotificationController"
-                });
-
-                return Ok(new
-                {
-                    Success = true,
-                    Message = "SignalR test message sent successfully"
-                });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new
-                {
-                    Success = false,
-                    Message = $"SignalR test failed: {ex.Message}"
-                });
-            }
-        }
-
-        [HttpGet]
-        [Route("test-connection")]
-        public async Task<IActionResult> TestConnection()
-        {
-            try
-            {
-                await _hubContext.Clients.All.SendAsync("ConnectionTest", new
-                {
-                    Message = "Server is testing SignalR connection",
-                    Timestamp = DateTime.Now,
-                    ServerTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
-                });
-
-                return Ok(new
-                {
-                    Success = true,
-                    Message = "SignalR connection test sent",
-                    ServerTime = DateTime.Now
-                });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new
-                {
-                    Success = false,
-                    Message = $"SignalR connection test failed: {ex.Message}"
-                });
-            }
         }
         [HttpPost]
         [Route("create")]
