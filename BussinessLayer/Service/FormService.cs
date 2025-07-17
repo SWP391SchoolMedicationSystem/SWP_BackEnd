@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using BussinessLayer.IService;
+using DataAccessLayer.Constants;
 using DataAccessLayer.DTO;
 using DataAccessLayer.Entity;
 using DataAccessLayer.IRepository;
@@ -118,7 +119,7 @@ namespace BussinessLayer.Service
             await _formRepository.SaveChangesAsync();
 
             // Send email notification
-            var emailTemplate = await _emailService.GetEmailByName("THÔNG BÁO XÁC NHẬN TÌNH TRẠNG ĐƠN");
+            var emailTemplate = await _emailService.GetEmailByName(EmailTemplateKeys.FormResponseEmail);
             if (emailTemplate == null)
                 return false;
 
@@ -145,7 +146,7 @@ namespace BussinessLayer.Service
             form.Staffid = dto.StaffId;
 
             // Send email notification
-            var emailTemplate = await _emailService.GetEmailByName("THÔNG BÁO XÁC NHẬN TÌNH TRẠNG ĐƠN");
+            var emailTemplate = await _emailService.GetEmailByName(EmailTemplateKeys.FormResponseEmail);
             if (emailTemplate == null)
                 return false;
 
