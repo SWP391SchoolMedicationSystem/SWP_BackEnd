@@ -13,5 +13,7 @@ namespace DataAccessLayer.Constants
         public const string VaccinationEventEmail = "THÔNG BÁO SỰ KIỆN TIÊM CHỦNG";
         public const string VaccinationResponseEmail = "FORM PHẢN HỒI TIÊM CHỦNG";
         public const string FormResponseEmail = "PHẢN HỒI ĐƠN";
+        public const string FormResponseEmailToStaff = "PHẢN HỒI ĐƠN CHO NHÂN VIÊN";
+        public const string FormResponseEmailToUser = "PHẢN HỒI ĐƠN CHO NGƯỜI DÙNG";
     }
 }
