@@ -35,11 +35,11 @@ builder.Services.AddCors(options =>
                           .AllowAnyHeader());
     options.AddPolicy("AllowReact", policy =>
     {
-        policy.WithOrigins("http://localhost:3000") 
-            .WithOrigins("http://localhost:5173") 
-            .WithOrigins("http://localhost:5174") 
-            .WithOrigins("http://localhost:5175") 
-            .WithOrigins("http://localhost:5176") 
+        policy.WithOrigins("http://localhost:3000")
+            .WithOrigins("http://localhost:5173")
+            .WithOrigins("http://localhost:5174")
+            .WithOrigins("http://localhost:5175")
+            .WithOrigins("http://localhost:5176")
               .AllowAnyHeader()
               .AllowAnyMethod()
               .AllowCredentials();
@@ -75,12 +75,29 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
             IssuerSigningKey = new SymmetricSecurityKey(secretKeyByte),
             ClockSkew = TimeSpan.Zero
         };
+        // Cấu hình JWT cho SignalR
+        options.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = context =>
+            {
+                var accessToken = context.Request.Query["access_token"];
+
+                // Nếu request đến Hub và có access_token trong query string
+                var path = context.HttpContext.Request.Path;
+                if (!string.IsNullOrEmpty(accessToken) &&
+                    (path.StartsWithSegments("/hubs/notifications"))) // Đảm bảo khớp với endpoint của Hub
+                {
+                    context.Token = accessToken;
+                }
+                return Task.CompletedTask;
+            }
+        };
     });
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
 builder.Services.AddDbContext<SchoolMedicalSystemContext>(options =>
     options.UseSqlServer(
-        builder.Configuration.GetConnectionString("SchoolMedicalSystemContext") 
+        builder.Configuration.GetConnectionString("SchoolMedicalSystemContext")
         ?? throw new InvalidOperationException("Connection string 'SchoolMedicalSystemContext' not found.")));
 
 builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("CloudinarySettings"));
@@ -98,7 +115,7 @@ builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IStaffService, StaffService>();
 builder.Services.AddScoped<IStaffRepository, StaffRepository>();
 builder.Services.AddScoped<IEmailRepo, EmailRepository>();
-builder.Services.AddScoped<IUserRepository,UserRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IParentService, ParentService>();
 builder.Services.AddScoped<IBlogRepo, BlogRepo>();
