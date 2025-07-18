@@ -36,6 +36,10 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowReact", policy =>
     {
         policy.WithOrigins("http://localhost:3000") 
+            .WithOrigins("http://localhost:5173") 
+            .WithOrigins("http://localhost:5174") 
+            .WithOrigins("http://localhost:5175") 
+            .WithOrigins("http://localhost:5176") 
               .AllowAnyHeader()
               .AllowAnyMethod()
               .AllowCredentials();
@@ -143,6 +147,7 @@ builder.Services.AddScoped<IStudentSpecialNeedCategoryRepo, StudentSpecialNeedCa
 builder.Services.AddScoped<IFormRepository, FormRepository>();
 builder.Services.AddScoped<IFormService, FormService>();
 builder.Services.AddScoped<FileHandler>();
+builder.Services.AddScoped<IDashboardService, DashboardService>();
 #endregion
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

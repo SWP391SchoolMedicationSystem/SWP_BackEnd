@@ -199,6 +199,12 @@ namespace BussinessLayer.Service
             existingEvent.Modifieddate = DateTime.Now;
             existingEvent.Modifiedby = deletedBy;
 
+            string existingFileName = existingEvent.Documentfilename;
+
+            if(existingFileName.IsNullOrEmpty())
+                // Delete the file from the disk
+                _fileHandler.Delete(existingFileName);
+
             _vaccinationEventRepository.Update(existingEvent);
             await _vaccinationEventRepository.SaveChangesAsync();
 

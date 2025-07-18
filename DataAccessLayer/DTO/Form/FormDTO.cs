@@ -24,7 +24,7 @@ namespace DataAccessLayer.DTO.Form
 
         public int? Staffid { get; set; }
         public string? StaffName { get; set; } = null!;
-
+        public bool? IsPending { get; set; }
         public bool? Isaccepted { get; set; }
 
         public string? Reasonfordecline { get; set; }

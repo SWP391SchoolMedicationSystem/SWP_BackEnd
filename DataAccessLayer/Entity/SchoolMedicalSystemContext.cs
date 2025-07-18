@@ -286,6 +286,10 @@ public partial class SchoolMedicalSystemContext : DbContext
                 .HasColumnName("CREATEDDATE");
             entity.Property(e => e.File).HasColumnName("FILE");
             entity.Property(e => e.FormcategoryId).HasColumnName("FORMCATEGORY_ID");
+            entity.Property(e => e.IsPending)
+    .HasDefaultValue(true)
+    .HasColumnName("ISPENDING");
+
             entity.Property(e => e.Isaccepted)
                 .HasDefaultValue(false)
                 .HasColumnName("ISACCEPTED");

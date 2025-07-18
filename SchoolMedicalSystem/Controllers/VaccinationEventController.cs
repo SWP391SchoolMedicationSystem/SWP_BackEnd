@@ -214,7 +214,7 @@ namespace SchoolMedicalSystem.Controllers
             {
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
-                string baseUrl = _config["ApiSetting:BaseUrl"];
+                string baseUrl = _config["ApiSetting:BaseUrl"] ?? "";
                 var result = await _vaccinationEventService.SendVaccinationEmailToAllParentsAsync(dto, baseUrl);
 
                 if (result == null)

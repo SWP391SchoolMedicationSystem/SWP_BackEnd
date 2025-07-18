@@ -109,6 +109,8 @@ namespace BussinessLayer.Service
             {
                 return false;
             }
+            form.IsPending = false;
+
             form.Isaccepted = true;
             form.Modifieddate = DateTime.UtcNow;
             form.Reasonfordecline = dto.Reasonfordecline;
@@ -139,6 +141,7 @@ namespace BussinessLayer.Service
             {
                 return false;
             }
+            form.IsPending = false;
             form.Isaccepted = false;
             form.Reasonfordecline = dto.Reasonfordecline;
             form.Modifieddate = DateTime.UtcNow;
