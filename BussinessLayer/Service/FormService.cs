@@ -74,16 +74,16 @@ namespace BussinessLayer.Service
             return _mapper.Map<FormDTO>(form);
         }
 
-        public async Task<bool> DeleteFormAsync(int id, string deleteBy)
+        public async Task<bool> DeleteFormAsync(int id)
         {
             var form = await _formRepository.GetByIdAsync(id);
             if (form == null)
             {
                 return false;
             }
-            form.Isaccepted = false;
+            form.IsDeleted = true;
             form.Modifieddate = DateTime.UtcNow;
-            form.Modifiedby = deleteBy;
+            
 
             _formRepository.Update(form);
             await _formRepository.SaveChangesAsync();
@@ -109,6 +109,8 @@ namespace BussinessLayer.Service
             {
                 return false;
             }
+            form.IsPending = false;
+
             form.Isaccepted = true;
             form.Modifieddate = DateTime.UtcNow;
             form.Reasonfordecline = dto.Reasonfordecline;
@@ -139,6 +141,7 @@ namespace BussinessLayer.Service
             {
                 return false;
             }
+            form.IsPending = false;
             form.Isaccepted = false;
             form.Reasonfordecline = dto.Reasonfordecline;
             form.Modifieddate = DateTime.UtcNow;

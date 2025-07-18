@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SignalR Test Client</title>
+</head>
+<body>
+    <h1>SignalR Notification Tester</h1>
+    <p>Open the browser's developer console (F12) to see connection status and received messages.</p>
+    <ul id="messagesList"></ul>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
+
+    <script>
+        // IMPORTANT: Change "/notificationHub" to your hub's actual URL route
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl("https://api-schoolhealth.purintech.id.vn/hubs/notifications")
+            .configureLogging(signalR.LogLevel.Information)
+            .build();
+
+        // Listen for the "ReceiveNotification" event from the server
+        connection.on("ReceiveNotification", (data) => {
+            console.log("Notification Received:", data);
+            
+            const li = document.createElement("li");
+            li.textContent = `[${new Date().toLocaleTimeString()}] Title: ${data.title}, Message: ${data.message}`;
+            document.getElementById("messagesList").appendChild(li);
+        });
+
+        // Start the connection
+        async function start() {
+            try {
+                await connection.start();
+                console.log("SignalR Connected.");
+            } catch (err) {
+                console.error(err);
+                setTimeout(start, 5000); // Retry connection after 5 seconds
+            }
+        };
+
+        connection.onclose(async () => {
+            await start();
+        });
+
+        // Start the initial connection
+        start();
+    </script>
+</body>
+</html>

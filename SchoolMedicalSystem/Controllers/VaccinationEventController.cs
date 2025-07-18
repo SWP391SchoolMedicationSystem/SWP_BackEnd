@@ -13,17 +13,19 @@ namespace SchoolMedicalSystem.Controllers
     public class VaccinationEventController : ControllerBase
     {
         private readonly IVaccinationEventService _vaccinationEventService;
+        private readonly FileHandler _fileHandler;
         private readonly IEmailService _emailService;
         private readonly IMapper _mapper;
         private readonly IConfiguration _config;
 
         public VaccinationEventController(IVaccinationEventService vaccinationEventService, IMapper mapper, 
-            IEmailService emailService, IConfiguration config)
+            IEmailService emailService, IConfiguration config, FileHandler fileHandler)
         {
             _vaccinationEventService = vaccinationEventService;
             _emailService = emailService;
             _mapper = mapper;
             _config = config;
+            _fileHandler = fileHandler;
         }
 
         // GET: api/VaccinationEvent
@@ -63,13 +65,25 @@ namespace SchoolMedicalSystem.Controllers
         [HttpPost]
         public async Task<ActionResult<VaccinationEventDTO>> CreateEvent([FromForm] CreateVaccinationEventDTO dto)
         {
+            string? storedFileName = null;
+
+            if (dto.DocumentFile != null)
+            {
+                var uploadResult = await _fileHandler.UploadAsync(dto.DocumentFile);
+                if (!uploadResult.Success)
+                {
+                    return BadRequest(new { message = uploadResult.ErrorMessage });
+                }
+                storedFileName = uploadResult.StoredFileName;
+            }
+
             try
             {
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
 
                 var createdBy = User.FindFirst(ClaimTypes.Name)?.Value ?? "System";
-                var vaccinationEvent = await _vaccinationEventService.CreateEventAsync(dto, createdBy);
+                var vaccinationEvent = await _vaccinationEventService.CreateEventAsync(dto, storedFileName, createdBy);
 
                 if (vaccinationEvent == null)
                     return BadRequest("Failed to create vaccination event.");
@@ -200,7 +214,7 @@ namespace SchoolMedicalSystem.Controllers
             {
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
-                string baseUrl = _config["ApiSetting:BaseUrl"];
+                string baseUrl = _config["ApiSetting:BaseUrl"] ?? "";
                 var result = await _vaccinationEventService.SendVaccinationEmailToAllParentsAsync(dto, baseUrl);
 
                 if (result == null)

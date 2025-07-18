@@ -286,6 +286,10 @@ public partial class SchoolMedicalSystemContext : DbContext
                 .HasColumnName("CREATEDDATE");
             entity.Property(e => e.File).HasColumnName("FILE");
             entity.Property(e => e.FormcategoryId).HasColumnName("FORMCATEGORY_ID");
+            entity.Property(e => e.IsPending)
+    .HasDefaultValue(true)
+    .HasColumnName("ISPENDING");
+
             entity.Property(e => e.Isaccepted)
                 .HasDefaultValue(false)
                 .HasColumnName("ISACCEPTED");
@@ -326,7 +330,7 @@ public partial class SchoolMedicalSystemContext : DbContext
             entity.HasOne(d => d.Parent).WithMany(p => p.Forms)
                 .HasForeignKey(d => d.Parentid)
                 .HasConstraintName("FK__FORM__PARENTID__3B40CD36");
-
+            entity.Property(e => e.IsDeleted).HasColumnName("IS_DELETED");
             entity.HasOne(d => d.Staff).WithMany(p => p.Forms)
                 .HasForeignKey(d => d.Staffid)
                 .HasConstraintName("FK__FORM__STAFFID__3C34F16F");
@@ -635,6 +639,9 @@ public partial class SchoolMedicalSystemContext : DbContext
                 .HasColumnType("datetime")
                 .HasColumnName("CREATEDDATE");
             entity.Property(e => e.IsDeleted).HasColumnName("isDeleted");
+            entity.Property(e => e.isRead).HasColumnName("isRead")
+            .HasDefaultValue(false);
+
             entity.Property(e => e.Modifiedby)
                 .HasMaxLength(255)
                 .HasColumnName("MODIFIEDBY");

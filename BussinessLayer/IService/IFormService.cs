@@ -14,7 +14,7 @@ namespace BussinessLayer.IService
         Task<FormDTO> GetFormByIdAsync(int id);
         Task<FormDTO> CreateFormAsync(CreateFormDTO formDto, string createdBy);
         Task<FormDTO> UpdateFormAsync(UpdateFormDTO formDto, string modifiedBy);
-        Task<bool> DeleteFormAsync(int id, string deleteBy);
+        Task<bool> DeleteFormAsync(int id);
         Task<List<FormDTO>> GetFormsByParentIdAsync(int parentId);
         Task<List<FormDTO>> GetFormsByCategoryIdAsync(int categoryId);
         Task<bool> AcceptFormAsync(ResponseFormDTO dto);

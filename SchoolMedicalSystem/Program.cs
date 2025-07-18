@@ -1,5 +1,6 @@
 using System.Text;
 using System.Text.Json.Serialization;
+using BussinessLayer.Hubs;
 using BussinessLayer.IService;
 using BussinessLayer.QuartzJob.Job;
 using BussinessLayer.QuartzJob.Scheduler;
@@ -25,6 +26,7 @@ builder.Services.AddControllers().AddJsonOptions(opt =>
 {
     opt.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
 });
+builder.Services.AddSignalR();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAllOrigins",
@@ -33,9 +35,14 @@ builder.Services.AddCors(options =>
                           .AllowAnyHeader());
     options.AddPolicy("AllowReact", policy =>
     {
-        policy.WithOrigins("http://localhost:3000") 
+        policy.WithOrigins("http://localhost:3000")
+            .WithOrigins("http://localhost:5173")
+            .WithOrigins("http://localhost:5174")
+            .WithOrigins("http://localhost:5175")
+            .WithOrigins("http://localhost:5176")
               .AllowAnyHeader()
-              .AllowAnyMethod();
+              .AllowAnyMethod()
+              .AllowCredentials();
     });
 });
 #region Quartz Scheduler Configuration
@@ -68,12 +75,29 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
             IssuerSigningKey = new SymmetricSecurityKey(secretKeyByte),
             ClockSkew = TimeSpan.Zero
         };
+        // Cấu hình JWT cho SignalR
+        options.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = context =>
+            {
+                var accessToken = context.Request.Query["access_token"];
+
+                // Nếu request đến Hub và có access_token trong query string
+                var path = context.HttpContext.Request.Path;
+                if (!string.IsNullOrEmpty(accessToken) &&
+                    (path.StartsWithSegments("/hubs/notifications"))) // Đảm bảo khớp với endpoint của Hub
+                {
+                    context.Token = accessToken;
+                }
+                return Task.CompletedTask;
+            }
+        };
     });
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
 builder.Services.AddDbContext<SchoolMedicalSystemContext>(options =>
     options.UseSqlServer(
-        builder.Configuration.GetConnectionString("SchoolMedicalSystemContext") 
+        builder.Configuration.GetConnectionString("SchoolMedicalSystemContext")
         ?? throw new InvalidOperationException("Connection string 'SchoolMedicalSystemContext' not found.")));
 
 builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("CloudinarySettings"));
@@ -91,7 +115,7 @@ builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IStaffService, StaffService>();
 builder.Services.AddScoped<IStaffRepository, StaffRepository>();
 builder.Services.AddScoped<IEmailRepo, EmailRepository>();
-builder.Services.AddScoped<IUserRepository,UserRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IParentService, ParentService>();
 builder.Services.AddScoped<IBlogRepo, BlogRepo>();
@@ -140,6 +164,7 @@ builder.Services.AddScoped<IStudentSpecialNeedCategoryRepo, StudentSpecialNeedCa
 builder.Services.AddScoped<IFormRepository, FormRepository>();
 builder.Services.AddScoped<IFormService, FormService>();
 builder.Services.AddScoped<FileHandler>();
+builder.Services.AddScoped<IDashboardService, DashboardService>();
 #endregion
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -158,10 +183,11 @@ app.UseSwagger();
 app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
-
+app.UseRouting();
 //app.UseAuthentication();
 app.UseAuthorization();
 
-    app.MapControllers();
+app.MapControllers();
 app.UseStaticFiles();
+app.MapHub<NotificationHub>("/hubs/notifications");
 app.Run();

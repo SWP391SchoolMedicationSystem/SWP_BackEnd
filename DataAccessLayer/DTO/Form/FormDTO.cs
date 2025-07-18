@@ -24,11 +24,12 @@ namespace DataAccessLayer.DTO.Form
 
         public int? Staffid { get; set; }
         public string? StaffName { get; set; } = null!;
-
+        public bool? IsPending { get; set; }
         public bool? Isaccepted { get; set; }
 
         public string? Reasonfordecline { get; set; }
 
+        public bool? IsDeleted {get; set;}
 
         public DateTime CreatedDate { get; set; }
         public DateTime ModifiedDate { get; set; }
@@ -68,13 +69,5 @@ namespace DataAccessLayer.DTO.Form
         public int? Staffid { get; set; }
         public string? Reasonfordecline { get; set; }
         public string Modifiedby { get; set; }
-    }
-
-    public class FileUploadResult
-    {
-        public string? OriginalFileName { get; set; }
-        public string? StoredFileName { get; set; }
-        public bool Success { get; set; }
-        public string? ErrorMessage { get; set; }
     }
 }

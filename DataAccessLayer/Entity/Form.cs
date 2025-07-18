@@ -20,10 +20,14 @@ public partial class Form
     public byte[]? File { get; set; }
 
     public int? Staffid { get; set; }
+    public bool? IsPending { get; set; }
+
 
     public bool? Isaccepted { get; set; }
 
     public string? Reasonfordecline { get; set; }
+
+    public bool? IsDeleted {get; set;}
 
     public string? Createdby { get; set; }
 
