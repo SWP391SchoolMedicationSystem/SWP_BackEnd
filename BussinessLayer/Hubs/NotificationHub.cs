@@ -24,12 +24,16 @@ namespace BussinessLayer.Hubs
 
                 // Có thể thêm vào nhiều group khác nhau
                 // Ví dụ: thêm vào group theo role
-                if (!string.IsNullOrEmpty(userRole))
+                if (!string.IsNullOrEmpty(userRole) && userRole == "Parent")
                 {
-                    await Groups.AddToGroupAsync(Context.ConnectionId, $"Role_{userRole}");
-                    Console.WriteLine($"User {userId} added to role group: Role_{userRole}");
+                    await Groups.AddToGroupAsync(Context.ConnectionId, $"Parents");
+                    Console.WriteLine($"User {userId} added to role group: Parents");
                 }
-
+                if (!string.IsNullOrEmpty(userRole) && userRole == "Nurse")
+                {
+                    await Groups.AddToGroupAsync(Context.ConnectionId, $"Staffs");
+                    Console.WriteLine($"User {userId} added to role group: Staffs");
+                }
                 // Ví dụ: thêm vào group chung cho tất cả user
                 await Groups.AddToGroupAsync(Context.ConnectionId, "AllUsers");
             }
