@@ -4,6 +4,7 @@ using DataAccessLayer.DTO.Blogs;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NPOI.HPSF;
+using static BussinessLayer.Service.NotificationService;
 
 namespace SchoolMedicalSystem.Controllers
 {
@@ -74,7 +75,6 @@ namespace SchoolMedicalSystem.Controllers
                 throw new ArgumentException("Invalid blog ID.");
             try
             {
-                var blog = _blogService.GetBlogByIdAsync(id).Result;
                 _blogService.DeleteBlog(id);
             }
             catch (Exception ex)
@@ -91,6 +91,7 @@ namespace SchoolMedicalSystem.Controllers
         }
         [HttpPost]
         [Route("ApproveBlog")]
+        [ProducesResponseType<int>(StatusCodes.Status200OK)]
         public IActionResult ApproveBlog([FromBody] ApproveBlogDTO approveBlogDto)
         {
             if (approveBlogDto == null)
@@ -109,6 +110,7 @@ namespace SchoolMedicalSystem.Controllers
         }
         [HttpPost]
         [Route("RejectBlog")]
+        [ProducesResponseType<int>(StatusCodes.Status200OK)]
         public IActionResult RejectBlog([FromBody] RejectBlogDTO rejectBlogDto)
         {
             if (rejectBlogDto == null)

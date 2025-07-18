@@ -17,6 +17,8 @@ namespace DataAccessLayer.Repository
             _dbset = context.Set<Parent>();
         }
 
+
+
         public async Task<Parent> GetParentForEvent(string email)
         {
             var parent = await _dbset.Include(p => p.Students).FirstOrDefaultAsync(p => p.Email == email && !p.IsDeleted);

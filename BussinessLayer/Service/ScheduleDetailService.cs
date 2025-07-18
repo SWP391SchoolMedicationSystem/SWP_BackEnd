@@ -5,19 +5,19 @@ using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
 using BussinessLayer.IService;
+using DataAccessLayer.Constants;
 using DataAccessLayer.DTO;
 using DataAccessLayer.Entity;
 using DataAccessLayer.IRepository;
 
 namespace BussinessLayer.Service
 {
-    public class ScheduleDetailService(IMapper mapper, IScheduleDetailRepo scheduleDetailRepo) : IScheduleDetailService
+    public class ScheduleDetailService(IMapper mapper, IScheduleDetailRepo scheduleDetailRepo, IEmailService emailService) : IScheduleDetailService
     {
-        public Task AddScheduleDetailAsync(ScheduleDetailDTO scheduleDetail)
+        public async Task AddScheduleDetailAsync(ScheduleDetailDTO scheduleDetail)
         {
             scheduleDetailRepo.AddAsync(mapper.Map<Scheduledetail>(scheduleDetail));
             scheduleDetailRepo.Save();
-            return Task.CompletedTask;
         }
 
         public Task DeleteScheduleDetailAsync(int id)

@@ -14,7 +14,6 @@ namespace BussinessLayer.IService
         public Task<bool> DeleteSchedule(int detailID, int medicineID);
         public Task<List<MedicalScheduleDTO>> GetAllSchedules();
         public Task<List<MedicalScheduleDTO>> GetSchedulesByWeeks();
-        public Task NotifyMedicalSchedule();
 
     }
 }

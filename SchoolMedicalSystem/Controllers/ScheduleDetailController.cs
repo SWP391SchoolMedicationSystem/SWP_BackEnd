@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using BussinessLayer.IService;
+using BussinessLayer.QuartzJob.Scheduler;
 using DataAccessLayer.DTO;
+using DataAccessLayer.IRepository;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,7 +10,7 @@ namespace SchoolMedicalSystem.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ScheduleDetailController(IScheduleDetailService scheduleDetailService) : ControllerBase
+    public class ScheduleDetailController(IScheduleDetailService scheduleDetailService, NotifyScheduler scheduler, IMedicineScheduleRepository medicineScheduleRepository) : ControllerBase
     {
         [HttpGet]
         [Route("scheduledetails")]
@@ -61,6 +63,19 @@ namespace SchoolMedicalSystem.Controllers
             }
             await scheduleDetailService.DeleteScheduleDetailAsync(id);
             return NoContent();
+        }
+
+        [HttpPost]
+        [Route("sendschedule")]
+        public async Task<IActionResult> SendSchedule()
+        {
+            var scheduleDetails = await medicineScheduleRepository.GetAllAsync();
+            await scheduler.ScheduleMedicalNotifyJob(scheduleDetails);
+            if (scheduleDetails == null || !scheduleDetails.Any())
+            {
+                return NotFound($"No schedule details found.");
+            }
+            return Ok("Success");
         }
     }
 }

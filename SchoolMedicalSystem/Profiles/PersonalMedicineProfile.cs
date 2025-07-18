@@ -14,7 +14,7 @@ namespace SchoolMedicalSystem.Profiles
                 .ForMember(dest => dest.Phone, opt => opt.MapFrom(src => src.Parent != null ? src.Parent.Phone : ""))
                 .ForMember(dest => dest.StudentName, opt => opt.MapFrom(src => src.Student != null ? src.Student.Fullname : ""))
                 .ForMember(des => des.MedicineName, opt => opt.MapFrom(src => src.Medicine != null ? src.Medicine.Medicinename : ""))
-                .ReverseMap();
+                .ReverseMap();  
             CreateMap<UpdatePersonalMedicineDTO, Personalmedicine>().ReverseMap();
             CreateMap<AddPersonalMedicineDTO, Personalmedicine>().ReverseMap();
             CreateMap<Medicineschedule, PersonalMedicineScheduleDTO>().ReverseMap();
