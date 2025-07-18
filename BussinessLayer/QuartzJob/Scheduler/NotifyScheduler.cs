@@ -62,9 +62,10 @@ namespace BussinessLayer.QuartzJob.Scheduler
                     var personalMedicine = personalmedicine.FirstOrDefault(p => p.Personalmedicineid == medicalSchedules.Personalmedicineid);
                     var parent = Parent.FirstOrDefault(p => p.Parentid == personalMedicine.Parentid);
                     var scheduleDetail = scheduledetail.FirstOrDefault(s => s.Scheduledetailid == medicalSchedules.Scheduledetails);
-                    if (medicalSchedules.Startdate.Value.AddDays((double)(medicalSchedules.Duration * 7)) != DateTime.Now && scheduleDetail.Dayinweek == ((int)DateTime.Now.DayOfWeek) + 1 )
+                    var checkfordate = medicalSchedules.Startdate.Value.AddDays((double)(medicalSchedules.Duration * 7));
+                    if (checkfordate > DateTime.Now && scheduleDetail.Dayinweek == ((int)DateTime.Now.DayOfWeek) + 1 )
                     {
-                        string notifyId = "medicalNotifyJob";
+                        string notifyId = $"medicalNotifyJob{rotation}";
                         rotation++;
                         var job = JobBuilder.Create<MedicineNotifyJob>()
                         .WithIdentity($"medicalJob_{notifyId}")
@@ -76,7 +77,7 @@ namespace BussinessLayer.QuartzJob.Scheduler
                         .Build();
                         var schedule = await _scheduleDetailService.GetScheduleDetailByIdAsync(medicalSchedules.Scheduledetails);
 
-                        if (schedule.Starttime - TimeOnly.FromDateTime(DateTime.Now) < TimeSpan.Zero || schedule.Endtime - TimeOnly.FromDateTime(DateTime.Now) > TimeSpan.Zero)
+                        if (schedule.Starttime < TimeOnly.FromDateTime(DateTime.Now)|| schedule.Endtime > TimeOnly.FromDateTime(DateTime.Now))
                         {
                             var trigger = TriggerBuilder.Create()
                                 .WithIdentity($"medicalTrigger_{notifyId}")

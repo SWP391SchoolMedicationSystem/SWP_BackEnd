@@ -141,4 +141,5 @@ namespace SchoolMedicalSystem.Controllers
                 return StatusCode(500, $"Error updating notification: {ex.Message}");
             }
         }
+    }
 }

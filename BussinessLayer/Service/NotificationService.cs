@@ -387,7 +387,7 @@ namespace BussinessLayer.Service
                 throw new Exception($"Failed to update notification for parents: {ex.Message}", ex);
             }
         }
-        
+
         public async Task UpdateNotificationIsReadAsync(int notificationId)
         {
             try
@@ -405,4 +405,5 @@ namespace BussinessLayer.Service
                 throw new Exception($"Failed to update notification read status: {ex.Message}", ex);
             }
         }
+    }
 }
