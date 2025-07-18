@@ -21,8 +21,8 @@ namespace BussinessLayer.Hubs
         public override async Task OnConnectedAsync()
         {
             // Lấy User ID từ ClaimsPrincipal từ JWT (được thêm vào khi đăng nhập)
-            var userId = Context.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var userRole = Context.User?.FindFirst(ClaimTypes.Role)?.Value;
+            var userId = Context.User?.FindFirst("Id")?.Value;
+            var userRole = Context.User?.FindFirst("Role")?.Value;
 
             if (userId != null)
             {
@@ -56,8 +56,8 @@ namespace BussinessLayer.Hubs
         // Khi một client ngắt kết nối
         public override async Task OnDisconnectedAsync(Exception exception)
         {
-            var userId = Context.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var userRole = Context.User?.FindFirst(ClaimTypes.Role)?.Value;
+            var userId = Context.User?.FindFirst("Id")?.Value;
+            var userRole = Context.User?.FindFirst("Role")?.Value;
 
             if (userId != null)
             {
