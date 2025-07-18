@@ -147,6 +147,7 @@ builder.Services.AddScoped<IStudentSpecialNeedCategoryRepo, StudentSpecialNeedCa
 builder.Services.AddScoped<IFormRepository, FormRepository>();
 builder.Services.AddScoped<IFormService, FormService>();
 builder.Services.AddScoped<FileHandler>();
+builder.Services.AddScoped<IDashboardService, DashboardService>();
 #endregion
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
