@@ -51,8 +51,8 @@ namespace BussinessLayer.Service
             _notificationStaffDetailRepo = notificationStaffDetailRepo;
             _hub = hub;
         }
-        const string parentTarget = "Parents";
-        const string staffTarget = "Staffs";
+        const string parentTarget = "Role_Parents";
+        const string staffTarget = "Role_Staffs";
         public async Task CreateNotification(CreateNotificationDTO dto)
         {
             try
