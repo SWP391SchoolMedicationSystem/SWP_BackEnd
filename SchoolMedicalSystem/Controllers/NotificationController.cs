@@ -124,5 +124,21 @@ namespace SchoolMedicalSystem.Controllers
                 return StatusCode(500, $"Error updating notification for staff: {ex.Message}");
             }
         }
-    }
+
+        [HttpPut]
+        [Route("updateIsRead/{notificationId}")]
+        public async Task<IActionResult> UpdateNotificationIsReadAsync(int notificationId)
+        {
+            if (notificationId <= 0)
+                return BadRequest("Invalid notification ID.");
+            try
+            {
+                await _notificationService.UpdateNotificationIsReadAsync(notificationId);
+                return Ok("Notification marked as read successfully.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error updating notification: {ex.Message}");
+            }
+        }
 }

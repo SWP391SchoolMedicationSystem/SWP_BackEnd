@@ -639,6 +639,9 @@ public partial class SchoolMedicalSystemContext : DbContext
                 .HasColumnType("datetime")
                 .HasColumnName("CREATEDDATE");
             entity.Property(e => e.IsDeleted).HasColumnName("isDeleted");
+            entity.Property(e => e.isRead).HasColumnName("isRead")
+            .HasDefaultValue(false);
+
             entity.Property(e => e.Modifiedby)
                 .HasMaxLength(255)
                 .HasColumnName("MODIFIEDBY");

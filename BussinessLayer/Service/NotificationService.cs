@@ -387,5 +387,22 @@ namespace BussinessLayer.Service
                 throw new Exception($"Failed to update notification for parents: {ex.Message}", ex);
             }
         }
-    }
+        
+        public async Task UpdateNotificationIsReadAsync(int notificationId)
+        {
+            try
+            {
+                var detail = _notificationdRepository.GetAllAsync().Result.FirstOrDefault(n => n.NotificationId == notificationId);
+                if (detail != null)
+                {
+                    detail.isRead = true;
+                    _notificationdRepository.Update(detail);
+                    _notificationdRepository.Save();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Failed to update notification read status: {ex.Message}", ex);
+            }
+        }
 }
