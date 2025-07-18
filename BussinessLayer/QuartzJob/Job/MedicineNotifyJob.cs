@@ -52,7 +52,7 @@ namespace BussinessLayer.QuartzJob.Job
                 IsDeleted = false
             }
                 ;
-            notificationService.CreateNotification(newnoti);
+            notificationService.CreateNotificationForStaff(newnoti);
             await Task.CompletedTask; // Simulate async work
         }
     }
