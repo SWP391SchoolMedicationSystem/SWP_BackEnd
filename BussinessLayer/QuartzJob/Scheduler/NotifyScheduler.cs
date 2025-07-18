@@ -77,11 +77,11 @@ namespace BussinessLayer.QuartzJob.Scheduler
                         .Build();
                         var schedule = await _scheduleDetailService.GetScheduleDetailByIdAsync(medicalSchedules.Scheduledetails);
 
-                        if (schedule.Starttime < TimeOnly.FromDateTime(DateTime.Now)|| schedule.Endtime > TimeOnly.FromDateTime(DateTime.Now))
+                        if (schedule.Starttime < TimeOnly.FromDateTime(DateTime.Now) && schedule.Endtime > TimeOnly.FromDateTime(DateTime.Now))
                         {
                             var trigger = TriggerBuilder.Create()
                                 .WithIdentity($"medicalTrigger_{notifyId}")
-                                .StartAt(DateBuilder.FutureDate(10, IntervalUnit.Second))
+                                .StartAt(DateBuilder.FutureDate(2, IntervalUnit.Second))
                                 .Build();
                             Console.WriteLine("Medical Job scheduled: " + medicalSchedules.Personalmedicineid + ", run at" + DateBuilder.FutureDate(10, IntervalUnit.Second) + ", at:" + DateTime.Now);
                             await _scheduler.ScheduleJob(job, trigger);
