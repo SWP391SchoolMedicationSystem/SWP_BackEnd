@@ -319,7 +319,7 @@ public partial class SchoolMedicalSystemContext : DbContext
                 .HasColumnName("TITLE");
 
             entity.HasOne(d => d.FormNavigation).WithOne(p => p.Form)
-                .HasForeignKey<Form>(d => d.FormId)
+                .HasForeignKey<Student>(d => d.Studentid)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_FORM_STUDENTID");
 
