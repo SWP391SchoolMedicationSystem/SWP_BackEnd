@@ -41,7 +41,7 @@ public partial class Form
 
     public int? Studentid { get; set; }
 
-    public virtual Student FormNavigation { get; set; } = null!;
+    public virtual Student? FormNavigation { get; set; } = null!;
 
     public virtual Formcategory? Formcategory { get; set; }
 

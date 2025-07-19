@@ -275,9 +275,7 @@ public partial class SchoolMedicalSystemContext : DbContext
 
             entity.ToTable("FORM");
 
-            entity.Property(e => e.FormId)
-                .ValueGeneratedOnAdd()
-                .HasColumnName("FORM_ID");
+            entity.Property(e => e.FormId).HasColumnName("FORM_ID");
             entity.Property(e => e.Createdby)
                 .HasMaxLength(255)
                 .HasColumnName("CREATEDBY");
@@ -286,13 +284,15 @@ public partial class SchoolMedicalSystemContext : DbContext
                 .HasColumnName("CREATEDDATE");
             entity.Property(e => e.File).HasColumnName("FILE");
             entity.Property(e => e.FormcategoryId).HasColumnName("FORMCATEGORY_ID");
-            entity.Property(e => e.IsPending)
-    .HasDefaultValue(true)
-    .HasColumnName("ISPENDING");
-
+            entity.Property(e => e.IsDeleted)
+                .HasDefaultValue(false)
+                .HasColumnName("IS_DELETED");
             entity.Property(e => e.Isaccepted)
                 .HasDefaultValue(false)
                 .HasColumnName("ISACCEPTED");
+            entity.Property(e => e.IsPending)
+                .HasDefaultValue(true)
+                .HasColumnName("ISPENDING");
             entity.Property(e => e.Modifiedby)
                 .HasMaxLength(255)
                 .HasColumnName("MODIFIEDBY");
@@ -318,11 +318,6 @@ public partial class SchoolMedicalSystemContext : DbContext
                 .HasMaxLength(255)
                 .HasColumnName("TITLE");
 
-            entity.HasOne(d => d.FormNavigation).WithOne(p => p.Form)
-                .HasForeignKey<Student>(d => d.Studentid)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_FORM_STUDENTID");
-
             entity.HasOne(d => d.Formcategory).WithMany(p => p.Forms)
                 .HasForeignKey(d => d.FormcategoryId)
                 .HasConstraintName("FK__FORM__FORMCATEGO__3A4CA8FD");
@@ -330,10 +325,14 @@ public partial class SchoolMedicalSystemContext : DbContext
             entity.HasOne(d => d.Parent).WithMany(p => p.Forms)
                 .HasForeignKey(d => d.Parentid)
                 .HasConstraintName("FK__FORM__PARENTID__3B40CD36");
-            entity.Property(e => e.IsDeleted).HasColumnName("IS_DELETED");
+
             entity.HasOne(d => d.Staff).WithMany(p => p.Forms)
                 .HasForeignKey(d => d.Staffid)
                 .HasConstraintName("FK__FORM__STAFFID__3C34F16F");
+
+            entity.HasOne(d => d.FormNavigation).WithMany(p => p.Forms)
+                .HasForeignKey(d => d.Studentid)
+                .HasConstraintName("FK_FORM_STUDENTID");
         });
 
         modelBuilder.Entity<Formcategory>(entity =>
