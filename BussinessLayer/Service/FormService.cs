@@ -119,7 +119,7 @@ namespace BussinessLayer.Service
 
 
             // Send email notification
-            var emailTemplate = await _emailService.GetEmailByName(EmailTemplateKeys.FormResponseEmail);
+                var emailTemplate = await _emailService.GetEmailByName(EmailTemplateKeys.FormResponseEmail);
             if (emailTemplate == null)
                 return false;
 
