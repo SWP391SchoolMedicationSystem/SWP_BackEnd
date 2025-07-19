@@ -117,8 +117,6 @@ namespace BussinessLayer.Service
             form.Modifiedby = dto.Modifiedby;
             form.Staffid = dto.Staffid;
 
-            _formRepository.Update(form);
-            await _formRepository.SaveChangesAsync();
 
             // Send email notification
             var emailTemplate = await _emailService.GetEmailByName("EmailTemplateKeys.FormResponseEmail");
@@ -130,6 +128,9 @@ namespace BussinessLayer.Service
             emailTemplate.Body = replacedBody;
 
             await _emailService.SendEmailAsync(emailTemplate);
+            _formRepository.Update(form);
+            await _formRepository.SaveChangesAsync();
+
 
             return true;
         }
