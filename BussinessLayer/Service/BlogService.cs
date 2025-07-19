@@ -135,7 +135,7 @@ namespace BussinessLayer.Service
                 var uploadParams = new ImageUploadParams
                 {
                     File = new FileDescription(dto.ImageFile.FileName, stream),
-                    Transformation = new Transformation().Crop("scale").Width(500)
+                    Transformation = new Transformation().AspectRatio("16:9").Crop("fill")
                 };
                 var uploadResult = await _cloudinary.UploadAsync(uploadParams);
                 if (uploadResult.StatusCode == System.Net.HttpStatusCode.OK)
@@ -182,7 +182,7 @@ namespace BussinessLayer.Service
                             var uploadParams = new ImageUploadParams
                             {
                                 File = new FileDescription(dto.ImageFile.FileName, stream),
-                                Transformation = new Transformation().Crop("scale").Width(500)
+                                Transformation = new Transformation().AspectRatio("16:9").Crop("fill")
                             };
                             var uploadResult = await _cloudinary.UploadAsync(uploadParams);
                             if (uploadResult.StatusCode == System.Net.HttpStatusCode.OK)
