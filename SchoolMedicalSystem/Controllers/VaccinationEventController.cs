@@ -2,6 +2,7 @@ using AutoMapper;
 using BussinessLayer.IService;
 using BussinessLayer.Utils;
 using DataAccessLayer.DTO;
+using DataAccessLayer.Entity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -13,19 +14,21 @@ namespace SchoolMedicalSystem.Controllers
     public class VaccinationEventController : ControllerBase
     {
         private readonly IVaccinationEventService _vaccinationEventService;
+        private readonly IStudentService _studentService; 
         private readonly FileHandler _fileHandler;
         private readonly IEmailService _emailService;
         private readonly IMapper _mapper;
         private readonly IConfiguration _config;
 
         public VaccinationEventController(IVaccinationEventService vaccinationEventService, IMapper mapper, 
-            IEmailService emailService, IConfiguration config, FileHandler fileHandler)
+            IEmailService emailService, IConfiguration config, FileHandler fileHandler, IStudentService studentService)
         {
             _vaccinationEventService = vaccinationEventService;
             _emailService = emailService;
             _mapper = mapper;
             _config = config;
             _fileHandler = fileHandler;
+            _studentService = studentService;
         }
 
         // GET: api/VaccinationEvent
@@ -81,6 +84,8 @@ namespace SchoolMedicalSystem.Controllers
             {
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
+                if(dto.EventDate < DateTime.Now)
+                    return BadRequest("Event date cannot be in the past.");
 
                 var createdBy = User.FindFirst(ClaimTypes.Name)?.Value ?? "System";
                 var vaccinationEvent = await _vaccinationEventService.CreateEventAsync(dto, storedFileName, createdBy);
@@ -357,13 +362,18 @@ namespace SchoolMedicalSystem.Controllers
 
         // GET: api/VaccinationEvent/respond
         [HttpGet("respond")]
-        public async Task<IActionResult> GetResponseForm([FromQuery] string email, [FromQuery] int eventId)
+        public async Task<IActionResult> GetResponseForm([FromQuery] string email, [FromQuery] int eventId, [FromQuery] List<int> studentId)
         {
             try
             {
                 // Validate parameters
                 if (string.IsNullOrEmpty(email) || eventId <= 0)
                     return BadRequest("Invalid email or event ID");
+
+                if(studentId == null || !studentId.Any())
+                    return BadRequest("Student IDs cannot be null or empty");
+
+                List<Student> studentList = await _studentService.GetStudentByIdList(studentId);
 
                 // Get event information
                 var eventInfo = await _vaccinationEventService.GetEventByIdAsync(eventId);
@@ -377,7 +387,7 @@ namespace SchoolMedicalSystem.Controllers
 
                 
                 // Return HTML form
-                var htmlForm = await _vaccinationEventService.FillEmailTemplateData(email, eventInfo);
+                var htmlForm = await _vaccinationEventService.FillEmailTemplateData(email, eventInfo, studentList);
 
                 return Content(htmlForm, "text/html");
             }

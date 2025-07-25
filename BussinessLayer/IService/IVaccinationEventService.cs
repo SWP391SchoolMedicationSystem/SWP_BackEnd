@@ -32,7 +32,7 @@ namespace BussinessLayer.IService
         // Parent Response Handling
         Task<bool> ProcessParentResponseAsync(ParentVaccinationResponseDTO dto);
         Task<List<ParentVaccinationResponseDTO>> GetParentResponsesForEventAsync(int eventId);
-        Task<string> FillEmailTemplateData(string email, VaccinationEventDTO eventInfo);
+        Task<string> FillEmailTemplateData(string email, VaccinationEventDTO eventInfo, List<Student> students);
 
         // Statistics
         Task<Dictionary<string, int>> GetEventStatisticsAsync(int eventId);

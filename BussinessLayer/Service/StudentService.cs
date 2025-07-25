@@ -81,6 +81,14 @@ namespace BussinessLayer.Service
             return studentdto;
         }
 
+        public async Task<List<Student>> GetStudentByIdList(List<int> studentIds)
+        {
+            if (studentIds == null || !studentIds.Any())
+                return new List<Student>();
+            var students = await _studentrepo.GetAllAsync();
+            return students.Where(s => studentIds.Contains(s.Studentid) && !s.IsDeleted).ToList();
+        }
+
         public async Task<List<StudentDTO>> GetStudentByParentId(int parentId)
         {
             var students = await _studentrepo.GetAllAsync();

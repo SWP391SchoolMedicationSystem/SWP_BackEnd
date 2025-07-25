@@ -14,6 +14,7 @@ namespace BussinessLayer.IService
     {
         Task<List<StudentDTO>> GetAllStudentsAsync();
         Task<StudentDTO> GetStudentByIdAsync(int id);
+        Task<List<Student>> GetStudentByIdList(List<int> studentIds);
         Task<Student> AddStudentAsync(AddStudentDTO student);
         Task DeleteStudent(int id);
         Task<string> UploadStudentList(List<InsertStudent> studentlist);

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Reflection;
+using System.Text;
 using AutoMapper;
 using BussinessLayer.IService;
 using BussinessLayer.Utils;
@@ -276,7 +277,7 @@ namespace BussinessLayer.Service
                             .Replace("{Location}", eventInfo.Location)
                             .Replace("{Description}", eventInfo.Description)
                             .Replace("{CustomMessage}", dto.CustomMessage ?? "")
-                            .Replace("{ResponseLink}", GenerateResponseLink(parent.Email!, dto.VaccinationEventId))
+                            .Replace("{ResponseLink}", GenerateResponseLink(parent.Email!, dto.VaccinationEventId, null))
                             .Replace("{DetailedDocumentSection}", detailedDocumentSectionHtml)
                     },
                     batchSize: 20 // Process 20 emails per batch
@@ -337,7 +338,7 @@ namespace BussinessLayer.Service
                             .Replace("{Description}", eventInfo.Description)
                             .Replace("{ParentName}", parent.Fullname)
                             .Replace("{CustomMessage}", dto.CustomMessage ?? "")
-                            .Replace("{ResponseLink}", GenerateResponseLink(parent.Email!, dto.VaccinationEventId))
+                            .Replace("{ResponseLink}", GenerateResponseLink(parent.Email!, dto.VaccinationEventId, null))
                             .Replace("{DetailedDocumentSection}", detailedDocumentSectionHtml)
                     },
                     batchSize: 20 // Process 20 emails per batch
@@ -365,22 +366,24 @@ namespace BussinessLayer.Service
                 if (emailTemplate == null)
                     return null;
 
+                emailTemplate.Body = testTemplate;
+
                 // --- Step 1: Conditionally build the HTML for the detailed document link ---
-                string detailedDocumentSectionHtml = ""; // Default to an empty string
+                string secureDownloadUrl = ""; // Default to an empty string
                 if (!string.IsNullOrWhiteSpace(eventInfo.Documentaccesstoken))
                 {
-                    string secureDownloadUrl = $"{baseUrl}/api/files/download/{eventInfo.Documentaccesstoken}";
-                    // This is the full HTML block that will replace our placeholder
-                    detailedDocumentSectionHtml = $@"
-                                            <div class='details-link'>
-                                                <a href='{secureDownloadUrl}' target='_blank' style='font-weight: bold; color: #0056b3; text-decoration: none;'>
-                                                    Tải về kế hoạch chi tiết của sự kiện
-                                                </a>
-                                            </div>";
+                    secureDownloadUrl = $"{baseUrl}/api/files/download/{eventInfo.Documentaccesstoken}";
                 }
 
                 var students = await _vaccinationEventRepository.GetStudentsForEventAsync(dto.VaccinationEventId);
                 var specificStudents = students.Where(s => studentIds.Contains(s.Studentid) && s.Parent != null && !string.IsNullOrEmpty(s.Parent.Email)).ToList();
+
+                var studentListHtml = new StringBuilder();
+                foreach (var student in specificStudents)
+                {
+                    studentListHtml.Append($"<li style='margin-bottom: 5px;'><strong>{student.Fullname}</strong></li>");
+                }
+
                 // Use the optimized bulk email method
                 var failList = await _emailService.SendPersonalizedEmailsAsync(
                     specificStudents,
@@ -396,8 +399,9 @@ namespace BussinessLayer.Service
                             .Replace("{Description}", eventInfo.Description)
                             .Replace("{StudentName}", student.Fullname)
                             .Replace("{CustomMessage}", dto.CustomMessage ?? "")
-                            .Replace("{ResponseLink}", GenerateResponseLink(student.Parent.Email!, dto.VaccinationEventId))
-                            .Replace("{DetailedDocumentSection}", detailedDocumentSectionHtml)
+                            .Replace("{ResponseLink}", GenerateResponseLink(student.Parent.Email!, dto.VaccinationEventId, specificStudents))
+                            .Replace("{secureDownloadUrl}", secureDownloadUrl)
+                            .Replace("{StudentList}", studentListHtml.ToString())
                     },
                     batchSize: 20 // Process 20 emails per batch
                 );
@@ -564,26 +568,36 @@ namespace BussinessLayer.Service
             }
         }
 
-        private string GenerateResponseLink(string email, int eventId)
+        private string GenerateResponseLink(string email, int eventId, List<Student> students)
         {
             // This would typically generate a secure link to a web form
             // For now, we'll create a simple link structure
             var baseUrl = _httpContextAccessor.HttpContext?.Request.Scheme + "://" +
                          _httpContextAccessor.HttpContext?.Request.Host;
 
-            return $"{baseUrl}/api/VaccinationEvent/Respond?email={Uri.EscapeDataString(email)}&eventId={eventId}";
+            var builder = new StringBuilder();
+            builder.Append($"{baseUrl}/api/VaccinationEvent/Respond?");
+            builder.Append($"email={Uri.EscapeDataString(email)}");
+            builder.Append($"&eventId={eventId}");
+            
+            foreach(var student in students)
+            {
+                builder.Append($"&studentIds={student.Studentid}");
+            }
+
+            return builder.ToString();
         }
 
-        public async Task<string> FillEmailTemplateData(string email, VaccinationEventDTO eventInfo)
+        public async Task<string> FillEmailTemplateData(string email, VaccinationEventDTO eventInfo, List<Student> students)
         {
             var emailTemplate = await _emailService.GetEmailByName(EmailTemplateKeys.VaccinationResponseEmail);
             var parent = await _parentService.GetParentByEmailForEvent(email);
             var scribanTemplate = Template.Parse(emailTemplate.Body);
-            var students = parent.Students
+            var studentList = students
                 .Select(s => new
                 {
                     name = s.Fullname,
-                    id = s.StudentId
+                    id = s.Studentid
                 }).ToList();
 
             string result = await scribanTemplate.RenderAsync(new
@@ -600,11 +614,13 @@ namespace BussinessLayer.Service
                 {
                     name = parent.FullName,
                     id = parent.ParentId,
-                    students = students
+                    students = studentList
                 },
             }, member => member.Name);
 
             return result;
         }
+
+        private readonly string testTemplate = "<html><head><style>.details-link { margin-top: 15px; padding: 12px; background-color: #e9ecef; border: 1px solid #dee2e6; border-radius: 5px; text-align: center; } .details-link a { font-weight: bold; color: #0056b3; text-decoration: none; font-size: 15px; } .details-link a:hover { text-decoration: underline; } .custom-message { margin-top: 15px; font-style: italic; color: #555; }</style></head><body style='font-family: Arial, sans-serif; line-height: 1.6; color: #333;'><div style='max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px; background-color: #fff;'><h2 style='color: #2c3e50; text-align: center;'>Thông báo về sự kiện tiêm chủng</h2><div style='background-color: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;'><h3 style='color: #e74c3c; margin-top: 0;'>Sự kiện: {EventName}</h3><p><strong>Ngày diễn ra:</strong> {EventDate}</p><p><strong>Địa điểm:</strong> {Location}</p><p><strong>Mô tả:</strong> {Description}</p><h4 style='color: #17a2b8; margin-top: 20px;'>Áp dụng cho các học sinh:</h4><ul>{StudentList}</ul><p class='custom-message'>{CustomMessage}</p><div class='details-link'><a href='{secureDownloadUrl}' target='_blank' style='font-weight: bold; color: #0056b3; text-decoration: none;'>Tải về kế hoạch chi tiết của sự kiện</a></div></div><div style='background-color: #e8f5e8; padding: 15px; border-radius: 8px; margin: 20px 0;'><h4 style='color: #27ae60; margin-top: 0;'>Hướng dẫn phản hồi:</h4><p>Kính mong Quý Phụ huynh vui lòng nhấp vào liên kết bên dưới để truy cập biểu mẫu và xác nhận việc tham gia cho con của mình:</p><p style='text-align: center;'><a href='{ResponseLink}' style='background-color: #3498db; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; display: inline-block; font-weight: bold;'>Đi đến trang phản hồi</a></p></div><div style='background-color: #fff3cd; padding: 15px; border-radius: 8px; margin: 20px 0;'><h4 style='color: #856404; margin-top: 0;'>Lưu ý quan trọng:</h4><ul><li>Nếu không thể tham gia, xin vui lòng nêu rõ lý do trong biểu mẫu phản hồi.</li><li>Thông tin này sẽ được sử dụng để nhà trường lập kế hoạch tiêm chủng chu đáo.</li><li>Mọi thắc mắc vui lòng liên hệ với bộ phận y tế của nhà trường.</li></ul></div><div style='text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd;'><p style='color: #7f8c8d; font-size: 14px;'>Email này được gửi tự động từ hệ thống quản lý y tế học đường.<br>Vui lòng không trả lời email này.</p></div></div></body></html>";
     }
 }
