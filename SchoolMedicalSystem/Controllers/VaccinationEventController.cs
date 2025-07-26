@@ -105,6 +105,9 @@ namespace SchoolMedicalSystem.Controllers
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
 
+                if(dto.EventDate < DateTime.Now)
+                    return BadRequest("Event date cannot be in the past.");
+
                 var modifiedBy = User.FindFirst(ClaimTypes.Name)?.Value ?? "System";
                 var vaccinationEvent = await _vaccinationEventService.UpdateEventAsync(dto, modifiedBy);
 
