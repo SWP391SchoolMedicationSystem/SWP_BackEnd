@@ -40,6 +40,8 @@ builder.Services.AddCors(options =>
             .WithOrigins("http://localhost:5174")
             .WithOrigins("http://localhost:5175")
             .WithOrigins("http://localhost:5176")
+            .WithOrigins("https://medlearn-kfc-fptu.vercel.app/")
+
               .AllowAnyHeader()
               .AllowAnyMethod()
               .AllowCredentials();
