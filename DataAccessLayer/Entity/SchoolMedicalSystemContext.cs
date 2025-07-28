@@ -39,6 +39,8 @@ public partial class SchoolMedicalSystemContext : DbContext
 
     public virtual DbSet<Healthcheckevent> Healthcheckevents { get; set; }
 
+    public virtual DbSet<Healthcheckrecordevent> Healthcheckrecordevents { get; set; }
+
     public virtual DbSet<Healthrecord> Healthrecords { get; set; }
 
     public virtual DbSet<Healthstatus> Healthstatuses { get; set; }
@@ -84,6 +86,10 @@ public partial class SchoolMedicalSystemContext : DbContext
     public virtual DbSet<Vaccine> Vaccines { get; set; }
 
     public virtual DbSet<VaccineDiseaseAssociation> VaccineDiseaseAssociations { get; set; }
+
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
+        => optionsBuilder.UseSqlServer("Server=database.purintech.id.vn;user=sa;password=<Hu@nH0aH0n9>;Database=SchoolMedicalSystem;TrustServerCertificate=True;");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -434,13 +440,13 @@ public partial class SchoolMedicalSystemContext : DbContext
 
         modelBuilder.Entity<Healthcheckevent>(entity =>
         {
-            entity.HasKey(e => e.HealthcheckeventID).HasName("PK__HEALTHCH__1A3722A0FF0FE374");
+            entity.HasKey(e => e.HealthcheckeventID).HasName("PK__tmp_ms_x__01DA7F81AABB9700");
 
             entity.ToTable("HEALTHCHECKEVENT");
 
             entity.Property(e => e.HealthcheckeventID)
                 .ValueGeneratedNever()
-                .HasColumnName("HEALTHCHECKEVENT");
+                .HasColumnName("HEALTHCHECKEVENTID");
             entity.Property(e => e.Createdby)
                 .HasMaxLength(100)
                 .HasColumnName("CREATEDBY");
@@ -467,6 +473,26 @@ public partial class SchoolMedicalSystemContext : DbContext
             entity.Property(e => e.Location)
                 .HasMaxLength(100)
                 .HasColumnName("LOCATION");
+        });
+
+        modelBuilder.Entity<Healthcheckrecordevent>(entity =>
+        {
+            entity.HasKey(e => e.Healthcheckrecordeventid).HasName("PK__HEALTHCH__64F665AA160231A4");
+
+            entity.ToTable("HEALTHCHECKRECORDEVENT");
+
+            entity.Property(e => e.Healthcheckrecordeventid).HasColumnName("HEALTHCHECKRECORDEVENTID");
+            entity.Property(e => e.Healthcheckeventid).HasColumnName("HEALTHCHECKEVENTID");
+            entity.Property(e => e.Healthcheckrecordid).HasColumnName("HEALTHCHECKRECORDID");
+            entity.Property(e => e.Isdeleted).HasColumnName("ISDELETED");
+
+            entity.HasOne(d => d.Healthcheckevent).WithMany(p => p.Healthcheckrecordevents)
+                .HasForeignKey(d => d.Healthcheckeventid)
+                .HasConstraintName("FK_HEALTHCHECKRECORDEVENT_HEALTHCHECKEVENT");
+
+            entity.HasOne(d => d.Healthcheckrecord).WithMany(p => p.Healthcheckrecordevents)
+                .HasForeignKey(d => d.Healthcheckrecordid)
+                .HasConstraintName("FK_HEALTHCHECKRECORDEVENT_HEALTHCHECKRECORD");
         });
 
         modelBuilder.Entity<Healthrecord>(entity =>

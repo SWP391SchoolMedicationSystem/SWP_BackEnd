@@ -26,4 +26,6 @@ public partial class Healthcheckevent
     public DateTime Createddate { get; set; }
 
     public bool Isdeleted { get; set; }
+    public virtual ICollection<Healthcheckrecordevent> Healthcheckrecordevents { get; set; } = new List<Healthcheckrecordevent>();
+
 }
