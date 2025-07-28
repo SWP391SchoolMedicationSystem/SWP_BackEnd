@@ -434,11 +434,11 @@ public partial class SchoolMedicalSystemContext : DbContext
 
         modelBuilder.Entity<Healthcheckevent>(entity =>
         {
-            entity.HasKey(e => e.Healthcheckevent1).HasName("PK__HEALTHCH__1A3722A0FF0FE374");
+            entity.HasKey(e => e.HealthcheckeventID).HasName("PK__HEALTHCH__1A3722A0FF0FE374");
 
             entity.ToTable("HEALTHCHECKEVENT");
 
-            entity.Property(e => e.Healthcheckevent1)
+            entity.Property(e => e.HealthcheckeventID)
                 .ValueGeneratedNever()
                 .HasColumnName("HEALTHCHECKEVENT");
             entity.Property(e => e.Createdby)

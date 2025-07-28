@@ -5,7 +5,7 @@ namespace DataAccessLayer.Entity;
 
 public partial class Healthcheckevent
 {
-    public int Healthcheckevent1 { get; set; }
+    public int HealthcheckeventID { get; set; }
 
     public string Healthcheckeventname { get; set; } = null!;
 
