@@ -37,6 +37,8 @@ public partial class SchoolMedicalSystemContext : DbContext
 
     public virtual DbSet<Healthcheck> Healthchecks { get; set; }
 
+    public virtual DbSet<Healthcheckevent> Healthcheckevents { get; set; }
+
     public virtual DbSet<Healthrecord> Healthrecords { get; set; }
 
     public virtual DbSet<Healthstatus> Healthstatuses { get; set; }
@@ -430,6 +432,43 @@ public partial class SchoolMedicalSystemContext : DbContext
                 .HasConstraintName("FK_HEALTHCHECK_Student");
         });
 
+        modelBuilder.Entity<Healthcheckevent>(entity =>
+        {
+            entity.HasKey(e => e.Healthcheckevent1).HasName("PK__HEALTHCH__1A3722A0FF0FE374");
+
+            entity.ToTable("HEALTHCHECKEVENT");
+
+            entity.Property(e => e.Healthcheckevent1)
+                .ValueGeneratedNever()
+                .HasColumnName("HEALTHCHECKEVENT");
+            entity.Property(e => e.Createdby)
+                .HasMaxLength(100)
+                .HasColumnName("CREATEDBY");
+            entity.Property(e => e.Createddate)
+                .HasColumnType("datetime")
+                .HasColumnName("CREATEDDATE");
+            entity.Property(e => e.Documentaccesstoken)
+                .HasMaxLength(255)
+                .HasColumnName("DOCUMENTACCESSTOKEN");
+            entity.Property(e => e.Documentfilename)
+                .HasMaxLength(255)
+                .HasColumnName("DOCUMENTFILENAME");
+            entity.Property(e => e.Eventdate)
+                .HasColumnType("datetime")
+                .HasColumnName("EVENTDATE");
+            entity.Property(e => e.Eventtime)
+                .HasColumnType("datetime")
+                .HasColumnName("EVENTTIME");
+            entity.Property(e => e.Healthcheckeventdescription).HasColumnName("HEALTHCHECKEVENTDESCRIPTION");
+            entity.Property(e => e.Healthcheckeventname)
+                .HasMaxLength(100)
+                .HasColumnName("HEALTHCHECKEVENTNAME");
+            entity.Property(e => e.Isdeleted).HasColumnName("ISDELETED");
+            entity.Property(e => e.Location)
+                .HasMaxLength(100)
+                .HasColumnName("LOCATION");
+        });
+
         modelBuilder.Entity<Healthrecord>(entity =>
         {
             entity.HasKey(e => e.Healthrecordid).HasName("PK__HEALTHRE__05992FCE22E3B441");
@@ -638,9 +677,7 @@ public partial class SchoolMedicalSystemContext : DbContext
                 .HasColumnType("datetime")
                 .HasColumnName("CREATEDDATE");
             entity.Property(e => e.IsDeleted).HasColumnName("isDeleted");
-            entity.Property(e => e.isRead).HasColumnName("isRead")
-            .HasDefaultValue(false);
-
+            entity.Property(e => e.isRead).HasColumnName("isRead");
             entity.Property(e => e.Modifiedby)
                 .HasMaxLength(255)
                 .HasColumnName("MODIFIEDBY");
