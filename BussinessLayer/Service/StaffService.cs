@@ -58,8 +58,8 @@ namespace BussinessLayer.Service
                     Salt = salt,
                 };
                 user.Staff.Add(staff);
-                var listrole = roleRepository.GetAllAsync();
-                Role role = listrole.Result.FirstOrDefault(r => r.Roleid == register.RoleID);
+                var listrole = await roleRepository.GetAllAsync();
+                Role role = listrole.FirstOrDefault(r => r.Roleid == register.RoleID);
                 await userRepository.AddAsync(user);
                 staff.Userid = user.UserId;
                 await staffRepository.AddAsync(staff);
