@@ -118,7 +118,21 @@ namespace SchoolMedicalSystem.Controllers
         {
             try
             {
-                var forms = await _formService.GetFormsByCategoryIdAsync(categoryId);
+                var forms = (await _formService.GetFormsByCategoryIdAsync(categoryId));
+                return Ok(forms);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error retrieving forms by category ID: {ex.Message}");
+            }
+        }
+
+        [HttpGet("category/count/{categoryId}")]
+        public async Task<ActionResult<int>> GetCountFormByCategoryID(int categoryId)
+        {
+            try
+            {
+                var forms = (await _formService.GetFormsByCategoryIdAsync(categoryId)).Count;
                 return Ok(forms);
             }
             catch (Exception ex)
