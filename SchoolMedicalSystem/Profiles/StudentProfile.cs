@@ -9,7 +9,9 @@ namespace SchoolMedicalSystem.Profiles
     public class StudentProfile : Profile
     {
         public StudentProfile() {
-            CreateMap<StudentDTO, Student>().ReverseMap();
+            CreateMap<Student,StudentDTO>()
+                .ForMember(dest => dest.Classname, opt => opt.MapFrom(src => src.Class.Classname))
+                .ReverseMap();
             CreateMap<StudentParentDTO, Student>().ReverseMap();
             CreateMap<Student, StudentVaccineEvent>().ReverseMap();
             CreateMap<UpdateStudentDTo, Student>().ReverseMap();

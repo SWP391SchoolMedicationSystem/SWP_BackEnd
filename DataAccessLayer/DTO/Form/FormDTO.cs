@@ -68,6 +68,6 @@ namespace DataAccessLayer.DTO.Form
 
         public int? Staffid { get; set; }
         public string? Reasonfordecline { get; set; }
-        public string Modifiedby { get; set; }
+        public string Modifiedby { get; set; } = null!;
     }
 }

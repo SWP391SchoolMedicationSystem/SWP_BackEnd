@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using BussinessLayer.IService;
 using DataAccessLayer.DTO;
+using DataAccessLayer.DTO.HealthCheck;
 using Microsoft.AspNetCore.Mvc;
 
 namespace SchoolMedicalSystem.Controllers
@@ -27,17 +28,14 @@ namespace SchoolMedicalSystem.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> AddHealthCheck([FromBody] HealthCheckDTO healthCheckDto)
+        public async Task<IActionResult> AddHealthCheck([FromBody] AddHealthCheckDto healthCheckDto)
         {
             try
             {
                 if (healthCheckDto == null)
                     return BadRequest("Health check data is null.");
-                var result = await _healthCheckService.AddHealthCheckAsync(healthCheckDto);
-                if (result == null)
-                    return NotFound("Staff or Student not found.");
-
-                return Ok(result);
+                await _healthCheckService.AddHealthCheckAsync(healthCheckDto);
+                return Ok("Health check added successfully.");
             }
             catch (Exception ex)
             {

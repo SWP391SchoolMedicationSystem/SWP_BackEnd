@@ -8,6 +8,7 @@ using AutoMapper;
 using BussinessLayer.IService;
 using BussinessLayer.Utils.Configurations;
 using DataAccessLayer.DTO;
+using DataAccessLayer.DTO.HealthCheck;
 using DataAccessLayer.DTO.HealthRecords;
 using DataAccessLayer.Entity;
 using DataAccessLayer.IRepository;

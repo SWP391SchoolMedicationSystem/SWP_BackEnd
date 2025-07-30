@@ -167,6 +167,10 @@ builder.Services.AddScoped<IFormRepository, FormRepository>();
 builder.Services.AddScoped<IFormService, FormService>();
 builder.Services.AddScoped<FileHandler>();
 builder.Services.AddScoped<IDashboardService, DashboardService>();
+builder.Services.AddScoped<IHealthCheckEventRepository, HealthCheckEventRepository>();
+builder.Services.AddScoped<IHealthCheckEventService, HealthCheckEventService>();
+builder.Services.AddScoped<IHealthCheckEventRecordService, HealthcheckrecordeventService>();
+builder.Services.AddScoped<IHealthcheckrecordeventRepository, HealthcheckrecordeventRepository>();
 #endregion
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

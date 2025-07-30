@@ -5,7 +5,7 @@ namespace DataAccessLayer.Entity;
 
 public partial class Healthcheckevent
 {
-    public int Healthcheckevent1 { get; set; }
+    public int HealthcheckeventID { get; set; }
 
     public string Healthcheckeventname { get; set; } = null!;
 
@@ -14,8 +14,6 @@ public partial class Healthcheckevent
     public string? Location { get; set; }
 
     public DateTime Eventdate { get; set; }
-
-    public DateTime Eventtime { get; set; }
 
     public string? Documentfilename { get; set; }
 
@@ -26,4 +24,6 @@ public partial class Healthcheckevent
     public DateTime Createddate { get; set; }
 
     public bool Isdeleted { get; set; }
+    public virtual ICollection<Healthcheckrecordevent> Healthcheckrecordevents { get; set; } = new List<Healthcheckrecordevent>();
+
 }

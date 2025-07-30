@@ -138,7 +138,7 @@ namespace BussinessLayer.Service
                 new Claim("Email", staff.Email ?? string.Empty),
                 new Claim("Phone", staff.Phone.ToString()),
                 new Claim("Status", status),
-                new Claim("Role", role),
+                new Claim(ClaimTypes.Role, role),
                 new Claim("DateCreated", staff.CreatedAt.ToString())
            }),
 

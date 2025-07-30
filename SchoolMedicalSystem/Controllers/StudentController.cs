@@ -9,6 +9,7 @@ using NPOI.XSSF.UserModel;
 using DataAccessLayer.Repository;
 using DataAccessLayer.IRepository;
 using DataAccessLayer.DTO.Students;
+using Microsoft.AspNetCore.Authorization;
 
 namespace SchoolMedicalSystem.Controllers
 {
@@ -31,6 +32,7 @@ namespace SchoolMedicalSystem.Controllers
         }
 
         [HttpPost("student")]
+        [Authorize(Roles = "Admin")]
         public Task<string> UploadStudent(IFormFile file)
         {
             try
