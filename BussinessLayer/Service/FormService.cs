@@ -45,8 +45,8 @@ namespace BussinessLayer.Service
         public async Task<FormDTO> CreateFormAsync(CreateFormDTO formDto, string createdBy)
         {
             var form = _mapper.Map<Form>(formDto);
-            form.Createddate = DateTime.UtcNow;
-            form.Modifieddate = DateTime.UtcNow;
+            form.Createddate = DateTime.Now;
+            form.Modifieddate = DateTime.Now;
             form.Createdby = createdBy;
             form.Modifiedby = createdBy;
             form.Isaccepted = false;
@@ -182,6 +182,7 @@ namespace BussinessLayer.Service
         //Cap thuoc
         public async Task<Form> AddFormMedicineRequest(object form, string? storedFileName, string? accessToken) {
             var addForm = _mapper.Map<Form>(form);
+            addForm.Createddate = DateTime.Now; 
             addForm.Storedpath = accessToken;
             addForm.Originalfilename = storedFileName;
             await _formRepository.AddAsync(addForm);
