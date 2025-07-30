@@ -74,21 +74,17 @@ namespace SchoolMedicalSystem.Controllers
             return Ok(result);
         }
         [HttpGet]
-        [Route("getNotiForParent/notread")]
-        public ActionResult<List<NotificationDTO>> GetNotificationsForParentIsRead()
+        [Route("getNotiForParent/notread/{parentId}")]
+        public ActionResult<List<NotificationDTO>> GetNotificationsForParentNotRead(int parentId)
         {
-            var result = _notificationService.GetAllNotificationsForParent().Where(n => !n.isRead);
+            var result = _notificationService.GetAllParentNotifcationUnread(parentId);
             return Ok(result);
         }
         [HttpPut]
-        [Route("updateIsReadForParent")]
-        public ActionResult<List<NotificationDTO>> UpdateNotificationForParentRead()
+        [Route("updateIsReadForParent/{parentID}")]
+        public ActionResult<List<NotificationDTO>> UpdateNotificationForParentRead(int parentID)
         {
-            var result = _notificationService.GetAllNotificationsForParent().Where(n => !n.isRead);
-            foreach(var notification in result)
-            {
-                notification.isRead = true;
-            }
+            var result = _notificationService.UpdateParentNotifciationRead(parentID);
             return Ok(result);
 
         }
@@ -101,21 +97,17 @@ namespace SchoolMedicalSystem.Controllers
             return Ok(result);
         }
         [HttpGet]
-        [Route("getNotiForStaff/notread")]
-        public ActionResult<List<NotificationDTO>> GetNotificationsForStaffIsRead()
+        [Route("getNotiForStaff/notread/{staffid}")]
+        public ActionResult<List<NotificationDTO>> GetNotificationsForStaffNotRead(int staffid)
         {
-            var result = _notificationService.GetAllNotificationsForStaff().Where(n => !n.isRead);
+            var result = _notificationService.GetAllStaffNotifcationUnread(staffid);
             return Ok(result);
         }
         [HttpPut]
-        [Route("updateIsReadForStaff")]
-        public ActionResult<List<NotificationDTO>> UpdateNotificationForStaffRead()
+        [Route("updateIsReadForStaff/{staffid}")]
+        public ActionResult<List<NotificationDTO>> UpdateNotificationForStaffRead(int staffid)
         {
-            var result = _notificationService.GetAllNotificationsForStaff().Where(n => !n.isRead);
-            foreach (var notification in result)
-            {
-                notification.isRead = true;
-            }
+            var result = _notificationService.UpdateStaffNotifciationRead(staffid);
             return Ok(result);
         }
         [HttpDelete]
