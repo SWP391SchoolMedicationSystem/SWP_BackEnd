@@ -15,7 +15,8 @@ namespace BussinessLayer.Service
     {
         public async Task<List<Healthcheckrecordevent>> GetAllHealthCheckRecordEventsAsync()
         {
-            return await healthCheckEventRepository.GetAllAsync();
+            var list = await healthCheckEventRepository.GetAllAsync();
+                return list.OrderBy(x => x.Healthcheckevent.Eventdate).Reverse().ToList();
         }
         public async Task<Healthcheckrecordevent?> GetHealthCheckRecordEventByIdAsync(int eventId)
         {
@@ -23,8 +24,9 @@ namespace BussinessLayer.Service
         }
         public async Task AddHealthCheckRecordEventAsync(AddHealthcheckrecordeventDTO healthCheckRecordEvent)
         {
-            var record = mapper.Map<AddHealthcheckrecordeventDTO, Healthcheckrecordevent>(healthCheckRecordEvent);
+            var record = mapper.Map<Healthcheckrecordevent>(healthCheckRecordEvent);
             await healthCheckEventRepository.AddAsync(record);
+            await healthCheckEventRepository.SaveChangesAsync();
         }
         public async Task UpdateHealthCheckRecordEventAsync(Healthcheckrecordevent healthCheckRecordEvent)
         {
@@ -47,7 +49,7 @@ namespace BussinessLayer.Service
         public async Task<List<Healthcheckrecordevent>> GetHealthCheckRecordEventsByStudentIdAsync(int studentId)
         {
             var list = await healthCheckEventRepository.GetAllAsync();
-            return list.Where(x => x.Healthcheckrecord.Studentid == studentId).OrderBy(x => x.Healthcheckevent.Eventdate).ToList();
+            return list.Where(x => x.Healthcheckrecord.Studentid == studentId).OrderBy(x => x.Healthcheckevent.Eventdate).Reverse().ToList();
         }
 
         public Task<List<Healthcheckrecordevent>> GetHealthCheckRecordEventsByEventIdAsync(int eventId)

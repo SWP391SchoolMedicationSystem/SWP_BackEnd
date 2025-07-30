@@ -29,7 +29,7 @@ namespace SchoolMedicalSystem.Controllers
             return Ok(healthCheckRecordEvent);
         }
         [HttpGet]
-        [Route("healthcheckrecordevents/{studentId}")]
+        [Route("healthcheckrecordevents/student/{studentId}")]
         public async Task<IActionResult> GetHealthCheckRecordEventsByStudentId(int studentId)
         {
             var events = await healthCheckEventRecordService.GetHealthCheckRecordEventsByStudentIdAsync(studentId);

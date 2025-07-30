@@ -62,7 +62,6 @@ namespace BussinessLayer.Service
                 var listparent = _mapper.Map<ParentStudent>(parent);
                 var studentDTO = _mapper.Map<StudentDTO>(student);
                 studentDTO.parent = listparent;
-                studentDTO.Classname = _classroomrepo.GetByIdAsync(student.Classid).Result.Classname;
                 returnlist.Add(studentDTO);
             }
             return returnlist;

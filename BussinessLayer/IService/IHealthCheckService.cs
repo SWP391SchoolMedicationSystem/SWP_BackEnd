@@ -11,7 +11,7 @@ namespace BussinessLayer.IService
 {
     public interface IHealthCheckService
     {
-        Task<Healthcheck> AddHealthCheckAsync(AddHealthCheckDto healthCheckDto);
+        Task AddHealthCheckAsync(AddHealthCheckDto healthCheckDto);
         Task<Healthcheck> UpdateHealthCheckAsync(HealthCheckDTO healthCheckDto);
         Task <bool> DeleteHealthCheckAsync(int checkId);
         List<HealthCheckDTO> GetAllHealthChecksAsync();

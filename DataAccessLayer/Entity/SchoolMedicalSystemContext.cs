@@ -445,7 +445,6 @@ public partial class SchoolMedicalSystemContext : DbContext
             entity.ToTable("HEALTHCHECKEVENT");
 
             entity.Property(e => e.HealthcheckeventID)
-                .ValueGeneratedNever()
                 .HasColumnName("HEALTHCHECKEVENTID");
             entity.Property(e => e.Createdby)
                 .HasMaxLength(100)
