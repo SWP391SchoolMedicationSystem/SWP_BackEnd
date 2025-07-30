@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
 using BussinessLayer.IService;
+using DataAccessLayer.DTO;
 using DataAccessLayer.DTO.HealthCheck;
 using DataAccessLayer.Entity;
 using DataAccessLayer.IRepository;

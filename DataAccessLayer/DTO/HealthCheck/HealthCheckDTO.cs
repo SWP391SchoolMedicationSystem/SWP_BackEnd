@@ -10,6 +10,7 @@ namespace DataAccessLayer.DTO
     {
         public int Checkid { get; set; }
         public int Studentid { get; set; }
+        public string StudentName { get; set; } = null!;
 
         public DateTime Checkdate { get; set; }
 

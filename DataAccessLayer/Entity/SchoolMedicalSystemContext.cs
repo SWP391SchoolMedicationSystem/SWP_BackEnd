@@ -462,9 +462,6 @@ public partial class SchoolMedicalSystemContext : DbContext
             entity.Property(e => e.Eventdate)
                 .HasColumnType("datetime")
                 .HasColumnName("EVENTDATE");
-            entity.Property(e => e.Eventtime)
-                .HasColumnType("datetime")
-                .HasColumnName("EVENTTIME");
             entity.Property(e => e.Healthcheckeventdescription).HasColumnName("HEALTHCHECKEVENTDESCRIPTION");
             entity.Property(e => e.Healthcheckeventname)
                 .HasMaxLength(100)

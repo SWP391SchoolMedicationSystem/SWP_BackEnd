@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using BussinessLayer.IService;
+using DataAccessLayer.DTO;
 using DataAccessLayer.DTO.HealthCheck;
 using Microsoft.AspNetCore.Mvc;
 
@@ -27,7 +28,7 @@ namespace SchoolMedicalSystem.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> AddHealthCheck([FromBody] HealthCheckDTO healthCheckDto)
+        public async Task<IActionResult> AddHealthCheck([FromBody] AddHealthCheckDto healthCheckDto)
         {
             try
             {

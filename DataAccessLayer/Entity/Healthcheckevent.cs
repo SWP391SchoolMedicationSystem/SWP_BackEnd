@@ -15,8 +15,6 @@ public partial class Healthcheckevent
 
     public DateTime Eventdate { get; set; }
 
-    public DateTime Eventtime { get; set; }
-
     public string? Documentfilename { get; set; }
 
     public string? Documentaccesstoken { get; set; }

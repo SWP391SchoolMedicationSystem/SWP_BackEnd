@@ -1,4 +1,6 @@
 ﻿using BussinessLayer.IService;
+using BussinessLayer.Utils;
+using DataAccessLayer.DTO.HealthCheck;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -6,7 +8,7 @@ namespace SchoolMedicalSystem.Controllers
 {
     [Route("api/")]
     [ApiController]
-    public class HealthCheckEventController(IHealthCheckEventService healthCheckEventService) : ControllerBase
+    public class HealthCheckEventController(IHealthCheckEventService healthCheckEventService, FileHandler fileHandler) : ControllerBase
     {
         [HttpGet]
         [Route("healthcheckevent")]
@@ -28,14 +30,27 @@ namespace SchoolMedicalSystem.Controllers
         }
         [HttpPost]
         [Route("healthcheckevent")]
-        public async Task<IActionResult> AddHealthCheckEvent([FromBody] DataAccessLayer.Entity.Healthcheckevent healthCheckEvent)
+        public async Task<IActionResult> AddHealthCheckEvent([FromForm] AddHealthCheckEventDto healthCheckEvent)
         {
+            string? storedFileName = null;
+
             if (healthCheckEvent == null)
             {
                 return BadRequest("Health check event cannot be null.");
             }
-            await healthCheckEventService.AddHealthCheckEventAsync(healthCheckEvent);
-            return CreatedAtAction(nameof(GetHealthCheckEventById), new { eventId = healthCheckEvent.HealthcheckeventID }, healthCheckEvent);
+            if (healthCheckEvent.DocumentFile != null)
+            {
+                var uploadResult = await fileHandler.UploadAsync(healthCheckEvent.DocumentFile);
+                if (!uploadResult.Success)
+                {
+                    return BadRequest(new { message = uploadResult.ErrorMessage });
+                }
+                storedFileName = uploadResult.StoredFileName;
+            }
+
+
+            await healthCheckEventService.AddHealthCheckEventAsync(healthCheckEvent, storedFileName);
+            return Ok(healthCheckEvent);
         }
         [HttpPut]
         [Route("healthcheckevent/{eventId}")]

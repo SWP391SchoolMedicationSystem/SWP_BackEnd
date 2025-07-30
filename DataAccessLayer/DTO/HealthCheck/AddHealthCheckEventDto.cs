@@ -17,7 +17,6 @@ namespace DataAccessLayer.DTO.HealthCheck
 
         public DateTime Eventdate { get; set; }
 
-        public DateTime Eventtime { get; set; }
         public IFormFile? DocumentFile { get; set; }
 
         public string? Createdby { get; set; }
