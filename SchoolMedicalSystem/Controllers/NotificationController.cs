@@ -29,6 +29,8 @@ namespace SchoolMedicalSystem.Controllers
         {
             if (dto == null)
                 return BadRequest("Notification data is null.");
+            if (string.IsNullOrWhiteSpace(dto.Title) || string.IsNullOrWhiteSpace(dto.Message))
+                return BadRequest("Title and content cannot be empty or whitespace.");
             try
             {
                 await _notificationService.CreateNotificationForParent(dto);
@@ -45,6 +47,8 @@ namespace SchoolMedicalSystem.Controllers
         {
             if (dto == null)
                 return BadRequest("Notification data is null.");
+            if (string.IsNullOrWhiteSpace(dto.Title) || string.IsNullOrWhiteSpace(dto.Message))
+                return BadRequest("Title and content cannot be empty or whitespace.");
             try
             {
                 await _notificationService.CreateNotificationForStaff(dto);
@@ -87,6 +91,10 @@ namespace SchoolMedicalSystem.Controllers
                 _notificationService.DeleteNotification(id);
                 return Ok("Notification deleted successfully.");
             }
+            catch (KeyNotFoundException)
+            {
+                return NotFound("Notification not found.");
+            }
             catch (Exception ex)
             {
                 return StatusCode(500, $"Error deleting notification: {ex.Message}");
@@ -102,6 +110,10 @@ namespace SchoolMedicalSystem.Controllers
             {
                 _notificationService.UpdateNotificationForParent(dto, id);
                 return Ok("Notification for parent updated successfully.");
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound("Notification not found.");
             }
             catch (Exception ex)
             {
@@ -119,6 +131,10 @@ namespace SchoolMedicalSystem.Controllers
                 _notificationService.UpdateNotificationForStaff(dto, id);
                 return Ok("Notification for staff updated successfully.");
             }
+            catch (KeyNotFoundException)
+            {
+                return NotFound("Notification not found.");
+            }
             catch (Exception ex)
             {
                 return StatusCode(500, $"Error updating notification for staff: {ex.Message}");
@@ -135,6 +151,10 @@ namespace SchoolMedicalSystem.Controllers
             {
                 await _notificationService.UpdateNotificationIsReadAsync(notificationId);
                 return Ok("Notification marked as read successfully.");
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound("Notification not found.");
             }
             catch (Exception ex)
             {
