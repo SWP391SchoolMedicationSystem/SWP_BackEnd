@@ -11,25 +11,15 @@ namespace DataAccessLayer.DTO.Medicines
     {
         [Required(ErrorMessage = "Vui lòng nhập tên thuốc")]
         public string Medicinename { get; set; } = null!;
-<<<<<<< HEAD
-
-=======
->>>>>>> Rework
         [Required(ErrorMessage = "Vui lòng chọn danh mục thuốc")]
         [Range(1, int.MaxValue, ErrorMessage = "Vui lòng chọn danh mục thuốc hợp lệ")]
         public int Medicinecategoryid { get; set; }
 
         [Required(ErrorMessage = "Vui lòng nhập loại thuốc")]
-<<<<<<< HEAD
-        public string Type { get; set; } = null!;
-        [Required(ErrorMessage = "Vui lòng nhập số lượng thuốc")]
-=======
-
         public string Type { get; set; } = null!;
 
         [Required(ErrorMessage = "Vui lòng nhập số lượng thuốc")]
         [Range(1, int.MaxValue, ErrorMessage = "Số lượng thuốc phải lớn hơn 0")]
->>>>>>> Rework
         public int Quantity { get; set; }
 
         public DateTime? Createdat { get; set; }

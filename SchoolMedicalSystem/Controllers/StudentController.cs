@@ -32,12 +32,8 @@ namespace SchoolMedicalSystem.Controllers
         }
 
         [HttpPost("student")]
-<<<<<<< HEAD
         [Authorize(Roles = "Admin")]
-        public Task<string> UploadStudent(IFormFile file)
-=======
         public async Task<IActionResult> UploadStudent(IFormFile file)
->>>>>>> Rework
         {
             try
             {
