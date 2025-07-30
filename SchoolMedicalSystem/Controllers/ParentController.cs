@@ -17,12 +17,11 @@ namespace SchoolMedicalSystem.Controllers
             _parentservice = parentservice;
             _mapper = mapper;
         }
-        [HttpGet("parent/")]
-        public async Task<IActionResult> GetAllParents([FromQuery] int page, int offset)
+        [HttpGet("parent")]
+        public async Task<IActionResult> GetAllParents()
         {
             var parents = await _parentservice.GetAllParentsAsync();
-            var filtered = parents.Skip((page-1) * offset).Take(offset).ToList();
-            return Ok(filtered);
+            return Ok(parents);
         }
         [HttpGet("parent/{id}")]
         public async Task<IActionResult> GetParentById([FromBody] int id)
