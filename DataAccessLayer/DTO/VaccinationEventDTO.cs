@@ -25,6 +25,11 @@ namespace DataAccessLayer.DTO
         public int PendingCount { get; set; }
     }
 
+    public class GetVaccineEventWithFile
+    {
+
+    }
+
     public class CreateVaccinationEventDTO
     {
         [Required(ErrorMessage = "Vaccination event name is required")]

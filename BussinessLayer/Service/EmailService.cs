@@ -26,6 +26,7 @@ namespace BussinessLayer.Service
         private readonly IMapper _mapper;
         private readonly SemaphoreSlim _smtpSemaphore;
         private readonly int _maxConcurrentEmails;
+        private List<EmailDTO> failEmailList;
 
         public EmailService(IMapper mapper,
             IConfiguration config, SchoolMedicalSystemContext context, IEmailRepo emailRepo)
@@ -36,6 +37,7 @@ namespace BussinessLayer.Service
             _emailRepository = emailRepo;
             _maxConcurrentEmails = int.TryParse(_config["EmailSettings:MaxConcurrentEmails"], out var max) ? max : 5;
             _smtpSemaphore = new SemaphoreSlim(_maxConcurrentEmails, _maxConcurrentEmails);
+            failEmailList = new List<EmailDTO>();
         }
 
         public List<string> GetAllUserEmails()
@@ -100,36 +102,90 @@ namespace BussinessLayer.Service
             var allFailedEmails = new List<EmailDTO>();
             var batches = emails.Chunk(batchSize);
             var batchProcessingTasks = new List<Task<List<EmailDTO>>>();
+            failEmailList = new List<EmailDTO>();
 
             foreach (var batch in batches)
             {
-                // Wait for a slot to become available
                 await _smtpSemaphore.WaitAsync();
 
-                // Start the task and add it to our list.
-                // The ContinueWith ensures the semaphore is released.
                 var task = ProcessEmailBatchAsync(batch)
                     .ContinueWith(t =>
                     {
                         _smtpSemaphore.Release();
-                        return t.Result; // t.Result is the List<EmailDTO> of failed emails from the batch
+                        return t.Result;
                     });
                 batchProcessingTasks.Add(task);
             }
 
-            // Await all batch tasks to complete
-            var results = await Task.WhenAll(batchProcessingTasks);
-
-            // Aggregate the lists of ailed emails from all batches
-            foreach (var failedBatch in results)
+            _ = Task.Run(async () =>
             {
-                if (failedBatch.Any())
+                try
                 {
-                    allFailedEmails.AddRange(failedBatch);
+                    // Await all batch tasks. We don't need their results here, just their completion.
+                    await Task.WhenAll(batchProcessingTasks);
+                    Console.WriteLine("All email batch processing tasks have completed successfully.");
+                }
+                catch (AggregateException ae)
+                {
+                    // This catch block will execute if any of the *individual* tasks threw an unhandled exception.
+                    Console.WriteLine($"An AggregateException occurred during bulk email processing:");
+                    foreach (var ex in ae.InnerExceptions)
+                    {
+                        Console.WriteLine($"- Inner Exception: {ex.Message}");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"An unexpected error occurred in the background task: {ex.Message}");
+                }
+                finally
+                {
+                    await RetrySendEmailAsync(failEmailList); // Retry sending failed emails
+                    Console.WriteLine("OnBulkEmailProcessingCompleted event raised.");
+                }
+            });
+
+            return failEmailList; // Return the list of failed emails
+        }
+
+        private async Task RetrySendEmailAsync(List<EmailDTO> failList)
+        {
+            using var smtp = new SmtpClient();
+            try
+            {
+                await smtp.ConnectAsync(_config["EmailHost"], 587, SecureSocketOptions.StartTls);
+                await smtp.AuthenticateAsync(_config["EmailUserName"], _config["EmailPassword"]);
+
+                foreach (var emailDto in failList)
+                {
+                    try
+                    {
+                        var email = new MimeMessage();
+                        email.From.Add(MailboxAddress.Parse(_config["EmailHost"]));
+                        email.To.Add(MailboxAddress.Parse(emailDto.To));
+                        email.Subject = emailDto.Subject;
+                        email.Body = new TextPart(TextFormat.Html) { Text = emailDto.Body };
+
+                        await smtp.SendAsync(email);
+                        failEmailList.Remove(emailDto); // Remove from failed list if sent successfully
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Failed to resend email to {emailDto.To}: {ex.Message}");
+                    }
                 }
             }
-
-            return allFailedEmails;
+            catch (Exception ex)
+            {
+                Console.WriteLine($"A catastrophic failure occurred while retrying emails: {ex.Message}");
+            }
+            finally
+            {
+                if (smtp.IsConnected)
+                {
+                    await smtp.DisconnectAsync(true);
+                }
+            }
         }
 
         private async Task<List<EmailDTO>> ProcessEmailBatchAsync(IEnumerable<EmailDTO> emailBatch)
@@ -155,9 +211,7 @@ namespace BussinessLayer.Service
                     }
                     catch (Exception ex)
                     {
-                        // A specific email failed. Log the exception and the recipient.
-                        // For example: _logger.LogError(ex, "Failed to send email to {Recipient}", emailDto.To);
-                        failedEmails.Add(emailDto);
+                        failEmailList.Add(emailDto);
                     }
                 }
             }
@@ -166,7 +220,7 @@ namespace BussinessLayer.Service
                 // A catastrophic failure occurred (e.g., couldn't connect or authenticate).
                 // All emails in this batch are considered failed.
                 // For example: _logger.LogError(ex, "Catastrophic failure in email batch processing.");
-                return emailBatch.ToList(); // Return the whole batch as failed
+                return failedEmails; // Return the whole batch as failed
             }
             finally
             {
@@ -175,7 +229,7 @@ namespace BussinessLayer.Service
                     await smtp.DisconnectAsync(true);
                 }
             }
-            return failedEmails;
+            return failEmailList;
         }
 
         // Optimized method for sending emails to all users

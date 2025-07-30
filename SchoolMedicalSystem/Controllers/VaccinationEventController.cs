@@ -30,7 +30,7 @@ namespace SchoolMedicalSystem.Controllers
 
         // GET: api/VaccinationEvent
         [HttpGet]
-        public async Task<ActionResult<List<VaccinationEventDTO>>> GetAllEvents()
+        public async Task<ActionResult<List<VaccinationEventDTO>>> GetAllEvents([FromQuery] bool includeFiles = false)
         {
             try
             {
@@ -82,6 +82,9 @@ namespace SchoolMedicalSystem.Controllers
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
 
+                if (dto.EventDate < DateTime.Now)
+                    return BadRequest("Event date cannot be in the past.");
+
                 var createdBy = User.FindFirst(ClaimTypes.Name)?.Value ?? "System";
                 var vaccinationEvent = await _vaccinationEventService.CreateEventAsync(dto, storedFileName, createdBy);
 
@@ -110,6 +113,10 @@ namespace SchoolMedicalSystem.Controllers
 
                 var modifiedBy = User.FindFirst(ClaimTypes.Name)?.Value ?? "System";
                 var vaccinationEvent = await _vaccinationEventService.UpdateEventAsync(dto, modifiedBy);
+
+                if (vaccinationEvent == null)
+                    return NotFound("Vaccination event not found.");
+
 
                 return Ok(vaccinationEvent);
             }

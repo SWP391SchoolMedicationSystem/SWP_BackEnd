@@ -9,6 +9,7 @@ using DataAccessLayer.DTO;
 using DataAccessLayer.Entity;
 using DataAccessLayer.IRepository;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -26,6 +27,7 @@ namespace BussinessLayer.Service
         private readonly IEmailRepo _emailRepo;
         private readonly IMapper _mapper;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IConfiguration _config;
         private readonly FileHandler _fileHandler;
 
         public VaccinationEventService(
@@ -36,7 +38,8 @@ namespace BussinessLayer.Service
             IMapper mapper,
             IHttpContextAccessor httpContextAccessor,
             IParentService parentService,
-            FileHandler fileHandler)
+            FileHandler fileHandler,
+            IConfiguration config)
         {
             _vaccinationEventRepository = vaccinationEventRepository;
             _vaccinationRecordRepository = vaccinationRecordRepository;
@@ -46,12 +49,14 @@ namespace BussinessLayer.Service
             _httpContextAccessor = httpContextAccessor;
             _parentService = parentService;
             _fileHandler = fileHandler;
+            _config = config;
         }
 
         public async Task<List<VaccinationEventDTO>> GetAllEventsAsync()
         {
             var events = await _vaccinationEventRepository.GetAllActiveEventsAsync();
             var eventDtos = _mapper.Map<List<VaccinationEventDTO>>(events);
+            string baseUrl = _config["ApiSetting:BaseUrl"] ?? "";
 
             // Add statistics to each event
             foreach (var eventDto in eventDtos)
@@ -61,6 +66,7 @@ namespace BussinessLayer.Service
                 eventDto.DeclinedCount = stats["Declined"];
                 eventDto.PendingCount = stats["Pending"];
                 eventDto.TotalStudents = stats["Total"];
+
             }
 
             return eventDtos;
