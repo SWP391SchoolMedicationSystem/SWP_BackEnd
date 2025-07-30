@@ -170,6 +170,16 @@ namespace BussinessLayer.Service
             return staffDTOs;
         }
 
+        public async Task<List<StaffDTO>> GetAllNurseAsync()
+        {
+            List<Staff> staffList = await staffRepository.GetAllAsync();
+            List<StaffDTO> staffDTOs = staffList
+                .Where(staff => staff.Roleid == 3 && !staff.IsDeleted)
+                .Select(staff => mapper.Map<StaffDTO>(staff))
+                .ToList();
+            return staffDTOs;
+        }
+
         public async Task<StaffDTO> GetStaffByIdAsync(int id)
         {
             StaffDTO staffDTO = mapper.Map<StaffDTO>(await staffRepository.GetByIdAsync(id));

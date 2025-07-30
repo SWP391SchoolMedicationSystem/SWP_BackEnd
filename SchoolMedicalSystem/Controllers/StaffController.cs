@@ -53,6 +53,14 @@ namespace SchoolMedicalSystem.Controllers
             var staffList = await _staffService.GetAllStaffAsync();
             return Ok(staffList);
         }
+
+        [HttpGet("nurses")]
+        public async Task<IActionResult> GetAllNurses()
+        {
+            var nurses = await _staffService.GetAllNurseAsync();
+            return Ok(nurses);
+        }
+
         [HttpDelete("staff/{id}")]
         public IActionResult DeleteStaff(int id)
         {
