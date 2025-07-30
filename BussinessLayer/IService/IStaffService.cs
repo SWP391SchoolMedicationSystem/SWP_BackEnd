@@ -13,6 +13,7 @@ namespace BussinessLayer.IService
     {
         Task<List<StaffDTO>> GetAllStaffAsync();
         Task<StaffDTO> GetStaffByIdAsync(int id);
+        Task<List<StaffDTO>> GetAllNurseAsync();
         Task AddStaffAsync(StaffRegister staff);
         void UpdateStaff(StaffUpdate staff);
         void DeleteStaff(int id);
