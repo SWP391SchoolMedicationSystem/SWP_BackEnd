@@ -13,8 +13,10 @@ namespace DataAccessLayer.DTO.Notifications
         public string Title { get; set; } = null!;
 
         [Required(ErrorMessage = "Vui lòng nhập ngày tạo")]
+            [DataType(DataType.DateTime, ErrorMessage = "Ngày tạo không hợp lệ")]
         public DateTime CreatedAt { get; set; }
 
+        [Required(ErrorMessage = "Vui lòng nhập loại thông báo")]
         public string Type { get; set; } = null!;
 
         public bool IsDeleted { get; set; }

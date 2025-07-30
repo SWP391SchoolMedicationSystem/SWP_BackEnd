@@ -43,6 +43,7 @@ namespace DataAccessLayer.DTO.Form
         public string Title { get; set; } = null!;
         [Required(ErrorMessage = "Vui lòng nhập tên thuốc")]
         public string? ReasonForAbsent { get; set; } = null!;
+        [Required(ErrorMessage = "Vui lòng nhập ngày vắng mặt")]
         public string AbsentDate { get; set; } = null!;
         public IFormFile? DocumentFile { get; set; }
         [Required(ErrorMessage = "Vui lòng nhập tên người tạo")]
