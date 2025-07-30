@@ -8,6 +8,7 @@ namespace SchoolMedicalSystem.Profiles
         {
             CreateMap<DataAccessLayer.DTO.EmailDTO, DataAccessLayer.Entity.EmailTemplate>()
                 .ReverseMap();
+            CreateMap<DataAccessLayer.DTO.CreateEmailDTO, DataAccessLayer.Entity.EmailTemplate>().ReverseMap();
         }
 
 
