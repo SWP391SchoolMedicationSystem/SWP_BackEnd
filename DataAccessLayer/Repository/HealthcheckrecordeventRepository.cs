@@ -16,6 +16,13 @@ namespace DataAccessLayer.Repository
         {
             _dbset = context.Set<Healthcheckrecordevent>();
         }
+        public async Task<List<Healthcheckrecordevent>> GetAllAsync()
+        {
+            return await _dbset
+                .Include(h => h.Healthcheckevent)
+                .Include(h => h.Healthcheckrecord)
+                .ToListAsync();
 
+        }
     }
 }

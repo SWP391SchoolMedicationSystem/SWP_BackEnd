@@ -7,7 +7,7 @@ using DataAccessLayer.Entity;
 
 namespace DataAccessLayer.IRepository
 {
-    public interface IHealthCheckEventRepository : IGenericRepository<Healthcheckrecordevent>
+    public interface IHealthCheckEventRepository : IGenericRepository<Healthcheckevent>
     {
 
     }

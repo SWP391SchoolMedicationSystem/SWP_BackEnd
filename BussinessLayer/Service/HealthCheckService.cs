@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
 using BussinessLayer.IService;
-using DataAccessLayer.DTO;
+using DataAccessLayer.DTO.HealthCheck;
 using DataAccessLayer.Entity;
 using DataAccessLayer.IRepository;
 using DataAccessLayer.Repository;
@@ -17,20 +17,28 @@ namespace BussinessLayer.Service
         private readonly IStudentService _studentService;
         private readonly IStaffService _staffservice;
         private readonly IHealthCheckRepo _healthCheckRepository;
+        private readonly IHealthCheckEventRecordService _healthCheckEventRecordService;
+        private readonly IHealthCheckEventRepository _healthCheckEventRepository;
         private IMapper _mapper;
         public HealthCheckService(
             IStudentService studentService,
             IStaffService staffservice,
             IHealthCheckRepo healthCheckRepository,
-            IMapper mapper)
+            IMapper mapper,
+            IHealthCheckEventRecordService healthCheckEventRecordService,
+            IHealthCheckEventRepository healthCheckEventRepository,
+            IHealthCheckRepo healthCheckRepo)
         {
             _studentService = studentService;
             _staffservice = staffservice;
             _healthCheckRepository = healthCheckRepository;
             _mapper = mapper;
+            _healthCheckRepository = healthCheckRepo;
+            _healthCheckEventRecordService = healthCheckEventRecordService;
+            _healthCheckEventRepository = healthCheckEventRepository;
         }
 
-        public async Task<Healthcheck> AddHealthCheckAsync(HealthCheckDTO healthCheckDto)
+        public async Task<Healthcheck> AddHealthCheckAsync(AddHealthCheckDto healthCheckDto)
         {
             if (_staffservice.GetStaffByIdAsync(healthCheckDto.Staffid) != null
                 && _studentService.GetAllStudentsAsync()
@@ -41,14 +49,22 @@ namespace BussinessLayer.Service
                 if (healthCheckDto.Visionright == 10) healthCheckDto.Visionright = (decimal)9.99;
                 Healthcheck healthcheck = _mapper.Map<Healthcheck>(healthCheckDto);
                 healthcheck.Createdat = DateTime.Now;
-
-                await _healthCheckRepository.AddAsync(healthcheck); // Use AddAsync instead of Add
-                // Set the creation date
-                _healthCheckRepository.Save(); // Ensure changes are saved
-                return healthcheck; // Return the created healthcheck object
+                var healthCheckEvent = await _healthCheckEventRepository.GetByIdAsync(healthCheckDto.Eventid);
+                if (healthCheckEvent != null)
+                {
+                    await _healthCheckRepository.AddAsync(healthcheck);
+                    _healthCheckRepository.Save();
+                    AddHealthcheckrecordeventDTO addHealthcheckrecordeventDTO = new AddHealthcheckrecordeventDTO
+                    {
+                        Healthcheckrecordid = healthcheck.Checkid,
+                        Healthcheckeventid = healthCheckDto.Eventid
+                    };
+                    await _healthCheckEventRecordService.AddHealthCheckRecordEventAsync(addHealthcheckrecordeventDTO);
+                    return healthcheck;
+                }
             }
 
-            return null; 
+            return null;
         }
 
         public async Task<bool> DeleteHealthCheckAsync(int checkId)
@@ -73,21 +89,21 @@ namespace BussinessLayer.Service
             foreach (var healthcheck in listhealth)
             {
                 {
-                    if(_healthCheckRepository.GetAllAsync().Result.FirstOrDefault(h => h.Checkid == healthcheck.Checkid) != null)
+                    if (_healthCheckRepository.GetAllAsync().Result.FirstOrDefault(h => h.Checkid == healthcheck.Checkid) != null)
 
-                    result.Add(new HealthCheckDTO
-                    {
-                        Checkid = healthcheck.Checkid,
-                        Staffid = healthcheck.Staffid,
-                        Studentid = healthcheck.Studentid,
-                        Notes = healthcheck.Notes,
-                        Height = healthcheck.Height,
-                        Weight = healthcheck.Weight,
-                        Visionleft = healthcheck.Visionleft,
-                        Visionright = healthcheck.Visionright,
-                        Bloodpressure = healthcheck.Bloodpressure,
-                        Checkdate = healthcheck.Checkdate
-                    });
+                        result.Add(new HealthCheckDTO
+                        {
+                            Checkid = healthcheck.Checkid,
+                            Staffid = healthcheck.Staffid,
+                            Studentid = healthcheck.Studentid,
+                            Notes = healthcheck.Notes,
+                            Height = healthcheck.Height,
+                            Weight = healthcheck.Weight,
+                            Visionleft = healthcheck.Visionleft,
+                            Visionright = healthcheck.Visionright,
+                            Bloodpressure = healthcheck.Bloodpressure,
+                            Checkdate = healthcheck.Checkdate
+                        });
                 }
 
             }
