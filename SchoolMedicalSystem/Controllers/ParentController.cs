@@ -21,7 +21,7 @@ namespace SchoolMedicalSystem.Controllers
         public async Task<IActionResult> GetAllParents([FromQuery] int page, int offset)
         {
             var parents = await _parentservice.GetAllParentsAsync();
-            var filtered = parents.Skip(page * offset).Take(offset).ToList();
+            var filtered = parents.Skip((page-1) * offset).Take(offset).ToList();
             return Ok(filtered);
         }
         [HttpGet("parent/{id}")]
