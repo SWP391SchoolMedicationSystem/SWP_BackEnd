@@ -45,7 +45,11 @@ namespace SchoolMedicalSystem.Controllers
         {
             if (blogDto == null)
                 return BadRequest("Blog data is null.");
-
+            if (string.IsNullOrWhiteSpace(blogDto.Title) || blogDto.Title.Length < 5 ||
+                string.IsNullOrWhiteSpace(blogDto.Content) || blogDto.Content.Length < 5)
+            {
+                return BadRequest("Title and content must be at least 5 characters.");
+            }
             try
             {
                 var imageUrl = await _blogService.AddBlogAsync(blogDto);
