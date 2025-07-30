@@ -85,7 +85,7 @@ namespace SchoolMedicalSystem.Controllers
         }
 
         [HttpPost("CreateEmailTemplate")]
-        public async Task<IActionResult> CreateEmailTemplate([FromBody] EmailDTO request)
+        public async Task<IActionResult> CreateEmailTemplate([FromBody] CreateEmailDTO request)
         {
             if (request == null)
                 return BadRequest("Email template cannot be empty or null");

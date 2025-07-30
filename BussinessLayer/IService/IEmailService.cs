@@ -9,7 +9,7 @@ namespace BussinessLayer.IService
         Task<List<EmailDTO>> SendBulkEmailsAsync(List<EmailDTO> emails, int batchSize = 10);
         Task<List<EmailDTO>> SendPersonalizedEmailsAsync<T>(List<T> recipients, int templateId, 
             Func<T, EmailDTO> personalizationFunc, int batchSize = 10);
-        Task<EmailTemplate> CreateEmailTemplate(EmailDTO request);
+        Task<EmailTemplate> CreateEmailTemplate(CreateEmailDTO request);
         Task<List<EmailDTO>> SendEmailToAllUsersAsync(int id);
         List<string> GetAllUserEmails();
         Task<List<EmailDTO>> SendEmailByListAsync(List<int> userIDs, int templateId);

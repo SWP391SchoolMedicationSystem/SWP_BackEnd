@@ -18,4 +18,13 @@ namespace DataAccessLayer.DTO
         public string? Body { get; set; }
 
     }
+
+    public class CreateEmailDTO
+    {
+        [Required(ErrorMessage = "Title is required")]
+        public string? Subject { get; set; }
+
+        [Required(ErrorMessage = "To email is required.")]
+        public string? Body { get; set; }
+    }
 }

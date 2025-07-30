@@ -308,7 +308,7 @@ namespace BussinessLayer.Service
             return emailTemplateDTO;
         }
 
-        public async Task<EmailTemplate> CreateEmailTemplate(EmailDTO request)
+        public async Task<EmailTemplate> CreateEmailTemplate(CreateEmailDTO request)
         {
             var emailTemplate = _mapper.Map<EmailTemplate>(request);
             emailTemplate.CreatedDate = DateTime.Now;
