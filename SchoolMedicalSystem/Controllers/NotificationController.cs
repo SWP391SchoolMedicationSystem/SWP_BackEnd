@@ -74,10 +74,48 @@ namespace SchoolMedicalSystem.Controllers
             return Ok(result);
         }
         [HttpGet]
+        [Route("getNotiForParent/notread")]
+        public ActionResult<List<NotificationDTO>> GetNotificationsForParentIsRead()
+        {
+            var result = _notificationService.GetAllNotificationsForParent().Where(n => !n.isRead);
+            return Ok(result);
+        }
+        [HttpPut]
+        [Route("updateIsReadForParent")]
+        public ActionResult<List<NotificationDTO>> UpdateNotificationForParentRead()
+        {
+            var result = _notificationService.GetAllNotificationsForParent().Where(n => !n.isRead);
+            foreach(var notification in result)
+            {
+                notification.isRead = true;
+            }
+            return Ok(result);
+
+        }
+
+        [HttpGet]
         [Route("getNotiForStaff")]
         public ActionResult<List<NotificationDTO>> GetNotificationsForStaff()
         {
             var result = _notificationService.GetAllNotificationsForStaff();
+            return Ok(result);
+        }
+        [HttpGet]
+        [Route("getNotiForStaff/notread")]
+        public ActionResult<List<NotificationDTO>> GetNotificationsForStaffIsRead()
+        {
+            var result = _notificationService.GetAllNotificationsForStaff().Where(n => !n.isRead);
+            return Ok(result);
+        }
+        [HttpPut]
+        [Route("updateIsReadForStaff")]
+        public ActionResult<List<NotificationDTO>> UpdateNotificationForStaffRead()
+        {
+            var result = _notificationService.GetAllNotificationsForStaff().Where(n => !n.isRead);
+            foreach (var notification in result)
+            {
+                notification.isRead = true;
+            }
             return Ok(result);
         }
         [HttpDelete]
