@@ -107,11 +107,9 @@ namespace SchoolMedicalSystem.Controllers
         }
 
         [HttpPut("UpdateEmailTemplate")]
-        public async Task<IActionResult> UpdateEmailTemplate([FromBody] UpdateEmail request)
+        public async Task<IActionResult> UpdateEmailTemplate([FromBody] UpdateEmailDTO request)
         {
-            if (request == null || request.Email == null)
-                return BadRequest("Email template cannot be empty or null");
-            var updatedTemplate = await _email.UpdateEmailTemplate(request.Email, request.Id);
+            var updatedTemplate = await _email.UpdateEmailTemplate(request);
             if (updatedTemplate == null)
                 return BadRequest("Failed to update email template");
 
@@ -132,11 +130,5 @@ namespace SchoolMedicalSystem.Controllers
     {
         public List<int>? userIDs { get; set; }
         public int emailTemplateID { get; set; }
-    }
-
-    public class UpdateEmail
-    {
-        public int Id { get; set; }
-        public EmailDTO? Email { get; set; }
     }
 }

@@ -27,4 +27,14 @@ namespace DataAccessLayer.DTO
         [Required(ErrorMessage = "To email is required.")]
         public string? Body { get; set; }
     }
+
+    public class UpdateEmailDTO
+    {
+        [Required(ErrorMessage = "Id is required.")]
+        public int Id { get; set; }
+        [Required(ErrorMessage = "Title is required")]
+        public string? Subject { get; set; }
+        [Required(ErrorMessage = "To email is required.")]
+        public string? Body { get; set; }
+    }
 }

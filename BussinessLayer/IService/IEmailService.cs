@@ -14,7 +14,7 @@ namespace BussinessLayer.IService
         List<string> GetAllUserEmails();
         Task<List<EmailDTO>> SendEmailByListAsync(List<int> userIDs, int templateId);
         Task<List<EmailTemplate>> GetEmailAllTemplate();
-        Task<EmailTemplate> UpdateEmailTemplate(EmailDTO request, int id);
+        Task<EmailTemplate> UpdateEmailTemplate(UpdateEmailDTO request);
         Task<bool> DeleteEmailTemplate(int id);
         EmailDTO GetTemplateByID(int templateId);
         Task<EmailDTO> GetEmailByName(string name);

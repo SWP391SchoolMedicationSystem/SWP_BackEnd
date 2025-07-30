@@ -318,12 +318,11 @@ namespace BussinessLayer.Service
             return emailTemplate;
         }
 
-        public async Task<EmailTemplate> UpdateEmailTemplate(EmailDTO request, int id)
+        public async Task<EmailTemplate> UpdateEmailTemplate(UpdateEmailDTO request)
         {
-            var emailTemplate = await _context.EmailTemplates.FindAsync(id);
+            var emailTemplate = await _context.EmailTemplates.FindAsync(request.Id);
             if (emailTemplate == null)
                 return null;
-            emailTemplate.To = request.To;
             emailTemplate.Subject = request.Subject;
             emailTemplate.Body = request.Body;
             emailTemplate.UpdatedDate = DateTime.Now;
