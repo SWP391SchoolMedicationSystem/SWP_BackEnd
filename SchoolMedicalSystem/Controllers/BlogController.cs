@@ -29,10 +29,15 @@ namespace SchoolMedicalSystem.Controllers
         [Route("getById")]
         public async Task<IActionResult> GetBlogById([FromQuery] int id)
         {
-            var blog = await _blogService.GetBlogByIdAsync(id);
-            if (blog == null)
+            try
+            {
+                var blog = await _blogService.GetBlogByIdAsync(id);
+                return Ok(blog);
+            }
+            catch (KeyNotFoundException)
+            {
                 return NotFound("Blog not found.");
-            return Ok(blog);
+            }
         }
         [HttpPost]
         [Route("add")]
@@ -69,17 +74,22 @@ namespace SchoolMedicalSystem.Controllers
         }
         [HttpDelete]
         [Route("delete")]
-        public void DeleteBlog([FromQuery] int id)
+        public async Task<IActionResult> DeleteBlog([FromQuery] int id)
         {
             if (id < 0)
-                throw new ArgumentException("Invalid blog ID.");
+                return BadRequest("Invalid blog ID.");
             try
             {
-                _blogService.DeleteBlog(id);
+                await _blogService.DeleteBlog(id);
+                return Ok("Blog deleted successfully.");
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound("Blog not found.");
             }
             catch (Exception ex)
             {
-                throw new Exception($"Error deleting blog: {ex.Message}", ex);
+                return StatusCode(500, $"Error deleting blog with ID {id}: {ex.Message}");
             }
         }
         [HttpGet]
