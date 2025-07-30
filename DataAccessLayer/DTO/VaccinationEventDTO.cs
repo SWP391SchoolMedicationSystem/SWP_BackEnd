@@ -14,6 +14,7 @@ namespace DataAccessLayer.DTO
         public string Description { get; set; } = null!;
         public string? DocumentFileName { get; set; }
         public string? DocumentAccessToken { get; set; }
+        public string? DownloadUrl { get; set; }
         public DateTime CreatedDate { get; set; }
         public DateTime ModifiedDate { get; set; }
         public string CreatedBy { get; set; } = null!;
@@ -25,10 +26,7 @@ namespace DataAccessLayer.DTO
         public int PendingCount { get; set; }
     }
 
-    public class GetVaccineEventWithFile
-    {
 
-    }
 
     public class CreateVaccinationEventDTO
     {

@@ -30,7 +30,7 @@ namespace SchoolMedicalSystem.Controllers
 
         // GET: api/VaccinationEvent
         [HttpGet]
-        public async Task<ActionResult<List<VaccinationEventDTO>>> GetAllEvents([FromQuery] bool includeFiles = false)
+        public async Task<ActionResult<List<VaccinationEventDTO>>> GetAllEvents()
         {
             try
             {

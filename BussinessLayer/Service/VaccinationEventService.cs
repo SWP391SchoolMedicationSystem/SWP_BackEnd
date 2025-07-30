@@ -67,10 +67,20 @@ namespace BussinessLayer.Service
                 eventDto.PendingCount = stats["Pending"];
                 eventDto.TotalStudents = stats["Total"];
 
+                if (!string.IsNullOrEmpty(eventDto.DocumentFileName))
+                {
+                    // Create download URL
+                    if (!string.IsNullOrEmpty(eventDto.DocumentAccessToken))
+                    {
+                        eventDto.DownloadUrl = $"{baseUrl}/api/files/download/{eventDto.DocumentAccessToken}";
+                    }
+                }
             }
 
             return eventDtos;
         }
+
+        
 
         public async Task<VaccinationEventDTO> GetEventByAccessToken(string accessToken)
         {
