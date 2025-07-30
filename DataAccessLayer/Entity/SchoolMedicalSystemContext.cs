@@ -84,6 +84,7 @@ public partial class SchoolMedicalSystemContext : DbContext
     public virtual DbSet<Vaccine> Vaccines { get; set; }
 
     public virtual DbSet<VaccineDiseaseAssociation> VaccineDiseaseAssociations { get; set; }
+    public virtual DbSet<Receiveemailstatus> Receiveemailstatuses { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -119,6 +120,19 @@ public partial class SchoolMedicalSystemContext : DbContext
                 .HasColumnType("datetime")
                 .HasColumnName("UPDATED_AT");
             entity.Property(e => e.UpdatedBy).HasColumnName("UPDATED_BY");
+        });
+
+        modelBuilder.Entity<Receiveemailstatus>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__Receive__3214EC27A1B0F3D2");
+            entity.ToTable("RECEIVEEMAILSTATUS");
+            entity.Property(e => e.Id).HasColumnName("Id");
+            entity.Property(e => e.EmailTemplateId).HasColumnName("TEMPLATE_ID");
+            entity.Property(e => e.Email).HasMaxLength(255).HasColumnName("EMAIL");
+            entity.Property(e => e.Status).HasColumnName("STATUS");
+            entity.Property(e => e.SendDate)
+                .HasColumnType("datetime")
+                .HasColumnName("SENDDATE");
         });
 
         modelBuilder.Entity<Class>(entity =>

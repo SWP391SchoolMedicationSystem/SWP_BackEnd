@@ -13,12 +13,18 @@ namespace DataAccessLayer.DTO.Parents
 
         public int Parentid { get; set; }
 
+        [Required(ErrorMessage = "Vui lòng nhập tên đầy đủ.")]
         public string? Fullname { get; set; }
 
+        [Required(ErrorMessage = "Vui lòng nhập email.")]
+        [EmailAddress(ErrorMessage = "Email không hợp lệ.")]
         public string? Email { get; set; }
 
-        public string Phone { get; set; } 
+        [Required(ErrorMessage = "Vui lòng nhập số điện thoại.")]
+        [RegularExpression("^0\\d{9,}$", ErrorMessage = "Vui lòng nhập số hợp lệ")]
+        public string Phone { get; set; }
 
+        [Required(ErrorMessage = "Vui lòng nhập địa chỉ.")]
         public string? Address { get; set; } 
 
     }

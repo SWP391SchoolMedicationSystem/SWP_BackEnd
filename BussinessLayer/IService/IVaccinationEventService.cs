@@ -12,6 +12,7 @@ namespace BussinessLayer.IService
     {
         // CRUD Operations
         Task<List<VaccinationEventDTO>> GetAllEventsAsync();
+        //Task<List<VaccinationEventWithFileDTO>> GetAllEventsWithFilesAsync();
         Task<VaccinationEventDTO> GetEventByAccessToken(string accessToken);
         Task<VaccinationEventDTO?> GetEventByIdAsync(int eventId);
         Task<VaccinationEventDTO> CreateEventAsync(CreateVaccinationEventDTO dto,string storedFileName, string createdBy);
