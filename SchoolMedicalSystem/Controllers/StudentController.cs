@@ -32,14 +32,22 @@ namespace SchoolMedicalSystem.Controllers
         }
 
         [HttpPost("student")]
+<<<<<<< HEAD
         [Authorize(Roles = "Admin")]
         public Task<string> UploadStudent(IFormFile file)
+=======
+        public async Task<IActionResult> UploadStudent(IFormFile file)
+>>>>>>> Rework
         {
             try
             {
                 var list = _studentService.ProcessExcelFile(file);
                 
-                return _studentService.UploadStudentList(list.Item1);
+                var result = await _studentService.UploadStudentList(list.Item1);
+                return Ok(new
+                {
+                    result,
+                });
             }
             catch (Exception ex) {}
             return null;

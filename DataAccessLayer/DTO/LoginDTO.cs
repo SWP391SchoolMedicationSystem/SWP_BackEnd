@@ -9,10 +9,10 @@ namespace DataAccessLayer.DTO
 {
     public class LoginDTO
     {
-        [Required(ErrorMessage = "Email is required.")]
-        [EmailAddress(ErrorMessage = "Invalid email format.")]
+        [Required(ErrorMessage = "Vui lòng nhập email đăng nhập.")]
+        [EmailAddress(ErrorMessage = "Email không hợp lệ.")]
         public string Email { get; set; } = null!;
-        [Required(ErrorMessage = "Password is required.")]
+        [Required(ErrorMessage = "Vui lòng nhập mật khẩu.")]
         public string Password { get; set; } = null!;
 
     }

@@ -126,42 +126,49 @@ namespace BussinessLayer.Service
                 var classlist = await _classroomrepo.GetAllAsync();
                 var students = await _studentrepo.GetAllAsync();
                 string errorMessage = string.Empty;
+
                 foreach (var student in studentlist)
                 {
-
-                    if (student != null)
+                    try
                     {
-                        if (students.FirstOrDefault(s => s.StudentCode == student.studentCode) == null)
-
+                        if (student != null)
                         {
-                            Classroom classroom = classlist.FirstOrDefault(c => c.Classname == student.className);
-                            Parent parent = parentlist.FirstOrDefault(p => p.Fullname == student.parentName && p.Phone == student.parentphone);
-                            if (parent != null && classroom != null)
+                            if (students.FirstOrDefault(s => s.StudentCode == student.studentCode) == null)
+
                             {
-                                AddStudentDTO addstudent = new()
+                                Classroom classroom = classlist.FirstOrDefault(c => c.Classname == student.className);
+                                Parent parent = parentlist.FirstOrDefault(p => p.Fullname == student.parentName && p.Phone == student.parentphone);
+                                if (parent != null && classroom != null)
                                 {
-                                    Fullname = student.fullName,
-                                    Age = DateTime.Now.Year - student.birthDate.Year -
-                                          (DateTime.Now.DayOfYear < student.birthDate.DayOfYear ? 1 : 0),
-                                    BloodType = student.bloodtype,
-                                    Classid = classroom.Classid,
-                                    Parentid = parent.Parentid,
-                                    Dob = student.birthDate,
-                                    Gender = student.gender == "Nam" ? true : student.gender == "Nữ" ? false : throw new ArgumentException("Invalid gender value"),
-                                    StudentCode = student.studentCode,
-                                };
-                                Student newstudent = await AddStudentAsync(addstudent);
-                                classroom.Students.Add(newstudent);
-                                parent.Students.Add(newstudent);
+                                    AddStudentDTO addstudent = new()
+                                    {
+                                        Fullname = student.fullName,
+                                        Age = DateTime.Now.Year - student.birthDate.Year -
+                                              (DateTime.Now.DayOfYear < student.birthDate.DayOfYear ? 1 : 0),
+                                        BloodType = student.bloodtype,
+                                        Classid = classroom.Classid,
+                                        Parentid = parent.Parentid,
+                                        Dob = student.birthDate,
+                                        Gender = student.gender == "Nam" ? true : student.gender == "Nữ" ? false : throw new ArgumentException("Invalid gender value"),
+                                        StudentCode = student.studentCode,
+                                    };
+                                    Student newstudent = await AddStudentAsync(addstudent);
+                                    classroom.Students.Add(newstudent);
+                                    parent.Students.Add(newstudent);
+                                }
+                                else
+                                {
+                                    errorMessage += ($"Parent or Classroom not found for student: {student.fullName} - {student.className} - {student.parentName} - {student.parentphone}\n");
+                                }
                             }
-                            else
-                            {
-                                errorMessage += ($"Parent or Classroom not found for student: {student.fullName} - {student.className} - {student.parentName} - {student.parentphone}\n");
-                            }
+
+                            else errorMessage += ($"Student already exist: {student.fullName} - {student.className} - {student.parentName} - {student.parentphone}\n");
+
                         }
-
-                        else errorMessage += ($"Student already exist: {student.fullName} - {student.className} - {student.parentName} - {student.parentphone}\n");
-
+                    }
+                    catch (Exception ex)
+                    {
+                        errorMessage += ($"Error processing student {student.fullName}: {ex.Message}\n");
                     }
                 }
                 _classroomrepo.Save();
