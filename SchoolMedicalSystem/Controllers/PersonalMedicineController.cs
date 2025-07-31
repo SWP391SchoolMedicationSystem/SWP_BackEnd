@@ -33,6 +33,12 @@ namespace SchoolMedicalSystem.Controllers
         {
             if (PersonalmedicineDto == null)
                 return BadRequest("Medicine donation data is null.");
+            if (PersonalmedicineDto.ExpiryDate < DateTime.Now)
+                return BadRequest("Date cannot be in the past.");
+            if (PersonalmedicineDto.Receiveddate < DateTime.Now)
+                return BadRequest("Date cannot be in the past.");
+
+
             try
             {
                 await PersonalmedicineService.AddPersonalmedicineAsync(PersonalmedicineDto);
