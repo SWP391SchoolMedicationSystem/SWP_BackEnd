@@ -27,5 +27,7 @@ namespace DataAccessLayer.DTO
         public string? Bloodpressure { get; set; }
 
         public string? Notes { get; set; }
+        public bool? Isdeleted { get; set; }
+
     }
 }
