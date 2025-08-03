@@ -20,6 +20,11 @@ namespace BussinessLayer.IService
         void UpdateNotificationForStaff(UpdateNotificationDTO dto, int id);
         void DeleteNotification(int id);
         Task UpdateNotificationIsReadAsync(int notificationId);
+        List<NotificationParentDetail> GetAllParentNotifcationUnread(int parentId);
+        List<Notificationstaffdetail> GetAllStaffNotifcationUnread(int staffId);
+        Task UpdateParentNotifciationRead(int parentID);
+        Task UpdateStaffNotifciationRead(int staffID);
+
         //comment
     }
 }

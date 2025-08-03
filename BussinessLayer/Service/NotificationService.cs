@@ -243,6 +243,52 @@ namespace BussinessLayer.Service
 
             return notifications;
         }
+        public List<NotificationParentDetail> GetAllParentNotifcationUnread(int parentID)
+        {
+            var notread = _notificationParentDetailRepo.GetAll().Where(n => !n.IsRead && n.ParentId == parentID);
+            return notread.ToList();
+        }
+        public List<Notificationstaffdetail> GetAllStaffNotifcationUnread(int staffID)
+        {
+            var notread = _notificationStaffDetailRepo.GetAll().Where(n => !n.IsRead && n.Staffid == staffID);
+            return notread.ToList();
+        }
+        public Task UpdateParentNotifciationRead(int parentID)
+        {
+            try
+            {
+                var details = _notificationParentDetailRepo.GetAll().Where(n => n.ParentId == parentID && !n.IsRead).ToList();
+                foreach (var detail in details)
+                {
+                    detail.IsRead = true;
+                    _notificationParentDetailRepo.Update(detail);
+                }
+                _notificationParentDetailRepo.Save();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Failed to update parent notification read status: {ex.Message}", ex);
+            }
+            return Task.CompletedTask;
+        }
+        public Task UpdateStaffNotifciationRead(int staffID)
+        {
+            try
+            {
+                var details = _notificationStaffDetailRepo.GetAll().Where(n => n.Staffid == staffID && !n.IsRead).ToList();
+                foreach (var detail in details)
+                {
+                    detail.IsRead = true;
+                    _notificationStaffDetailRepo.Update(detail);
+                }
+                _notificationStaffDetailRepo.Save();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Failed to update staff notification read status: {ex.Message}", ex);
+            }
+            return Task.CompletedTask;
+        }
 
         public List<Notification> GetAllNotificationsForStaff()
         {

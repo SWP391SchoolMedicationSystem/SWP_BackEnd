@@ -34,6 +34,9 @@ namespace SchoolMedicalSystem.Controllers
             {
                 if (healthCheckDto == null)
                     return BadRequest("Health check data is null.");
+                if (healthCheckDto.Checkdate < DateTime.Now)
+                    return BadRequest("Date cannot be in the past.");
+
                 await _healthCheckService.AddHealthCheckAsync(healthCheckDto);
                 return Ok("Health check added successfully.");
             }

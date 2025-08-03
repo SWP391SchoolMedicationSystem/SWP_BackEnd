@@ -1,4 +1,5 @@
 ﻿using BussinessLayer.IService;
+using DataAccessLayer.DTO;
 using DataAccessLayer.DTO.HealthRecords;
 using DataAccessLayer.Entity;
 using Microsoft.AspNetCore.Mvc;
@@ -22,6 +23,9 @@ namespace SchoolMedicalSystem.Controllers
         {
             if (dto == null)
                 return BadRequest("Health record data is null.");
+            if (dto.HealthRecordDate < DateTime.Now)
+                return BadRequest("Date cannot be in the past.");
+
             try
             {
                 await _healthRecordService.AddHealthRecordAsync(dto);

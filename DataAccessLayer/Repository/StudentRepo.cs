@@ -20,11 +20,11 @@ namespace DataAccessLayer.Repository
             _mapper = mapper;
             _dbset = context.Set<Student>();
         }
-        public List<Student> GetAllStudents()
+        public async Task<List<Student>> GetAllAsync()
         {
-            return _dbset.Include(s => s.Parent)
+            return await _dbset.Include(s => s.Parent)
                          .Include(s => s.Class)
-                         .ToList();
+                         .ToListAsync();
         }
 
     }

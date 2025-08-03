@@ -74,10 +74,40 @@ namespace SchoolMedicalSystem.Controllers
             return Ok(result);
         }
         [HttpGet]
+        [Route("getNotiForParent/notread/{parentId}")]
+        public ActionResult<List<NotificationDTO>> GetNotificationsForParentNotRead(int parentId)
+        {
+            var result = _notificationService.GetAllParentNotifcationUnread(parentId);
+            return Ok(result);
+        }
+        [HttpPut]
+        [Route("updateIsReadForParent/{parentID}")]
+        public ActionResult<List<NotificationDTO>> UpdateNotificationForParentRead(int parentID)
+        {
+            var result = _notificationService.UpdateParentNotifciationRead(parentID);
+            return Ok(result);
+
+        }
+
+        [HttpGet]
         [Route("getNotiForStaff")]
         public ActionResult<List<NotificationDTO>> GetNotificationsForStaff()
         {
             var result = _notificationService.GetAllNotificationsForStaff();
+            return Ok(result);
+        }
+        [HttpGet]
+        [Route("getNotiForStaff/notread/{staffid}")]
+        public ActionResult<List<NotificationDTO>> GetNotificationsForStaffNotRead(int staffid)
+        {
+            var result = _notificationService.GetAllStaffNotifcationUnread(staffid);
+            return Ok(result);
+        }
+        [HttpPut]
+        [Route("updateIsReadForStaff/{staffid}")]
+        public ActionResult<List<NotificationDTO>> UpdateNotificationForStaffRead(int staffid)
+        {
+            var result = _notificationService.UpdateStaffNotifciationRead(staffid);
             return Ok(result);
         }
         [HttpDelete]
