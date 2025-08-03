@@ -217,9 +217,6 @@ namespace BussinessLayer.Service
             }
             catch (Exception ex)
             {
-                // A catastrophic failure occurred (e.g., couldn't connect or authenticate).
-                // All emails in this batch are considered failed.
-                // For example: _logger.LogError(ex, "Catastrophic failure in email batch processing.");
                 return failedEmails; // Return the whole batch as failed
             }
             finally
