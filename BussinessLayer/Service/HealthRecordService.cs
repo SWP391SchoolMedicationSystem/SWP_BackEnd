@@ -90,6 +90,7 @@ namespace BussinessLayer.Service
                 var healthChecks = _healthCheckRepository.GetHealthChecksByStudentIdAsync(healthRecord.Studentid).Result;
                 HealthRecordStudentCheck check = new HealthRecordStudentCheck
                 {
+                    HealthRecordId = healthRecord.Healthrecordid,
                     StudentName = student.Fullname,
                     HealthCategory = healthCategory.Healthcategoryname,
                     HealthRecordDate = healthRecord.Healthrecorddate,
@@ -126,6 +127,7 @@ namespace BussinessLayer.Service
                 var healthChecks = _healthCheckRepository.GetHealthChecksByStudentIdAsync(healthrecordList.Studentid).Result;
                 HealthRecordStudentCheck check = new HealthRecordStudentCheck
                 {
+                    HealthRecordId = healthrecordList.Healthrecordid,
                     StudentName = student.Fullname,
                     HealthCategory = healthCategory.Healthcategoryname,
                     HealthRecordDate = healthrecordList.Healthrecorddate,
