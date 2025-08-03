@@ -622,5 +622,21 @@ namespace BussinessLayer.Service
 
             return result;
         }
+
+        //public async bool CheckEventDate(List<VaccinationEventDTO> eventList)
+        //{
+        //    if (eventList == null || eventList.Count == 0)
+        //        return true;
+        //    var today = DateTime.Now.Date;
+        //    foreach(var ev in eventList)
+        //    {
+        //        if (ev.EventDate.Date < today)
+        //        {
+        //            ev.IsDeleted = true;
+        //        }
+        //    }
+
+        //    UpdateEmailDTO
+        //}
     }
 }

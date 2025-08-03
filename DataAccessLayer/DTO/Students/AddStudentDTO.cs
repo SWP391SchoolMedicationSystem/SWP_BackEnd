@@ -22,10 +22,10 @@ namespace DataAccessLayer.DTO.Students
         public bool Gender { get; set; }
         [Required(ErrorMessage = "Vui lòng chọn lớp học")]
         [Range(1, int.MaxValue, ErrorMessage = "Vui lòng chọn lớp học hợp lệ")]
-        public int Classid { get; set; }
+        public int Classid { get; set; } = 0;
         [Required(ErrorMessage = "Vui lòng chọn phụ huynh của học sinh")]
         [Range(1, int.MaxValue, ErrorMessage = "Vui lòng chọn phụ huynh hợp lệ")]
-        public int Parentid { get; set; }
+        public int Parentid { get; set; } = 0;
         [Required(ErrorMessage = "Vui lòng nhập ngày sinh")]
         [DataType(DataType.Date, ErrorMessage = "Vui lòng nhập ngày sinh hợp lệ")]
         public DateOnly Dob { get; set; }

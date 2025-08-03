@@ -167,6 +167,7 @@ builder.Services.AddScoped<IHealthCheckEventRepository, HealthCheckEventReposito
 builder.Services.AddScoped<IHealthCheckEventService, HealthCheckEventService>();
 builder.Services.AddScoped<IHealthCheckEventRecordService, HealthcheckrecordeventService>();
 builder.Services.AddScoped<IHealthcheckrecordeventRepository, HealthcheckrecordeventRepository>();
+builder.Services.AddScoped<IMedicineCategoryService, MedicineCategoryService>();
 #endregion
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
