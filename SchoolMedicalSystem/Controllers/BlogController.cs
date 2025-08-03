@@ -50,9 +50,15 @@ namespace SchoolMedicalSystem.Controllers
             {
                 return BadRequest("Title and content must be at least 5 characters.");
             }
+            if (blogDto.CreatedBy <= 0)
+                return BadRequest("Invalid CreatedBy ID.");
             try
             {
                 var imageUrl = await _blogService.AddBlogAsync(blogDto);
+                if (string.IsNullOrEmpty(imageUrl))
+                {
+                    return BadRequest("No image found.");
+                }
                 return Ok(new { message = "Blog added successfully.", imageUrl });
             }
             catch (Exception ex)
@@ -66,6 +72,15 @@ namespace SchoolMedicalSystem.Controllers
         {
             if (dto == null)
                 return BadRequest("Invalid data.");
+            if (string.IsNullOrWhiteSpace(dto.Title) || dto.Title.Length < 5 ||
+    string.IsNullOrWhiteSpace(dto.Content) || dto.Content.Length < 5)
+            {
+                return BadRequest("Title and content must be at least 5 characters.");
+            }
+            if(dto.BlogID <= 0)
+                return BadRequest("Invalid Blog ID.");
+            if (dto.UpdatedBy <= 0)
+                return BadRequest("Invalid UpdatedBy ID.");
             try
             {
                 var imageUrl = await _blogService.UpdateBlog(dto);
