@@ -102,7 +102,8 @@ namespace BussinessLayer.Service
                             Visionleft = healthcheck.Visionleft,
                             Visionright = healthcheck.Visionright,
                             Bloodpressure = healthcheck.Bloodpressure,
-                            Checkdate = healthcheck.Checkdate
+                            Checkdate = healthcheck.Checkdate,
+                            Isdeleted = healthcheck.Isdeleted,
                         });
                 }
 
