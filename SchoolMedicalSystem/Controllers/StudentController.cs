@@ -32,7 +32,6 @@ namespace SchoolMedicalSystem.Controllers
         }
 
         [HttpPost("student")]
-        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UploadStudent(IFormFile file)
         {
             try
