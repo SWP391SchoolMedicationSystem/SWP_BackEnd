@@ -14,13 +14,15 @@ namespace BussinessLayer.Service
 
         ) : IHealthCheckEventService
     {
-        public async Task<List<DataAccessLayer.Entity.Healthcheckevent>> GetAllHealthCheckEventsAsync()
+        public async Task<List<HeatlhCheckEventDto>> GetAllHealthCheckEventsAsync()
         {
-            return await healthCheckEventRepository.GetAllAsync();
+            var healthcheck = await healthCheckEventRepository.GetAllAsync();
+            return mapper.Map<List<HeatlhCheckEventDto>>(healthcheck);
         }
-        public async Task<DataAccessLayer.Entity.Healthcheckevent?> GetHealthCheckEventByIdAsync(int eventId)
+        public async Task<HeatlhCheckEventDto> GetHealthCheckEventByIdAsync(int eventId)
         {
-            return await healthCheckEventRepository.GetByIdAsync(eventId);
+            var healthcheck = await healthCheckEventRepository.GetByIdAsync(eventId);
+            return mapper.Map<HeatlhCheckEventDto>(healthcheck);
         }
         public async Task AddHealthCheckEventAsync(AddHealthCheckEventDto dto, string? storedFileName)
         {
