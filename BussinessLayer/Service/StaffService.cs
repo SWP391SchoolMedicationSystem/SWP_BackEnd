@@ -189,12 +189,23 @@ namespace BussinessLayer.Service
             return staffDTO ?? throw new KeyNotFoundException($"Staff with ID {id} not found.");
         }
 
-        public void UpdateStaff(StaffUpdate staff)
+        public async void UpdateStaff(StaffUpdate staff)
         {
-            Staff staffupdated = mapper.Map<Staff>(staff);
-            staffupdated.UpdatedAt = DateTime.Now;
-            staffRepository.Update(staffupdated);
-            staffRepository.Save();
+            Staff staffById = await staffRepository.GetByIdAsync(staff.Staffid);
+            if (staffById == null)
+            {
+                throw new KeyNotFoundException($"Staff with ID {staff.Staffid} not found.");
+            }
+            else
+            {
+                staffById.Fullname = staff.Fullname;
+                staffById.Phone = staff.Phone;
+                staffById.Email = staff.Email;
+                staffById.Roleid = staff.Roleid;
+                staffRepository.Update(staffById);
+                await staffRepository.SaveChangesAsync();
+
+            }
         }
 
         public async Task<String> ValidateGoogleToken(string token)

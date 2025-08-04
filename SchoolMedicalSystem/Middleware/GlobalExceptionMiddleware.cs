@@ -23,7 +23,7 @@
                     InnerMessage = ex.InnerException?.Message
                 });
             }
-        }
+            }
     }
 
 }
