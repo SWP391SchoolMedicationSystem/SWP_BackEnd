@@ -20,8 +20,11 @@ namespace DataAccessLayer.Repository
         {
             return await _dbset
                 .Include(h => h.Healthcheckevent)
-                
                 .Include(h => h.Healthcheckrecord)
+                    .ThenInclude(hr => hr.Student)
+                        .ThenInclude(s => s.Class)
+                // Do NOT include Student.Healthchecks or Class.Students
+                .IgnoreAutoIncludes() // Ensures navigation properties not explicitly included are ignored
                 .ToListAsync();
         }
     }

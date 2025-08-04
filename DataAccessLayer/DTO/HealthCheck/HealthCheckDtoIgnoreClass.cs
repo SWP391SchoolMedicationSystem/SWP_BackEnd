@@ -18,8 +18,8 @@ namespace DataAccessLayer.DTO.HealthCheck
 
         public bool Isdeleted { get; set; }
 
-        public virtual Healthcheckevent Healthcheckevent { get; set; } = null!;
-        public virtual Healthcheck Healthcheckrecord { get; set; } = null!;
+        public virtual HeatlhCheckEventDto Healthcheckevent { get; set; } = null!;
+        public virtual HealthCheckDTO Healthcheckrecord { get; set; } = null!;
         public string ClassName { get; set; } = null!;
 
     }

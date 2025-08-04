@@ -13,15 +13,20 @@ using DataAccessLayer.Repository;
 
 namespace BussinessLayer.Service
 {
-    public class HealthcheckrecordeventService(IHealthcheckrecordeventRepository healthCheckEventRepository, IMapper mapper, IClassRoomRepository classRoomRepository) : IHealthCheckEventRecordService
+    public class HealthcheckrecordeventService(IHealthcheckrecordeventRepository healthCheckEventRepository, IMapper mapper, IClassRoomRepository classRoomRepository, IStudentRepo studentRepo) : IHealthCheckEventRecordService
     {
         public async Task<List<HealthCheckDtoIgnoreClass>> GetAllHealthCheckRecordEventsAsync()
         {
             var classroom = await classRoomRepository.GetAllAsync();
 
             var healthcheck = await healthCheckEventRepository.GetAllAsync();
+            var students = await studentRepo.GetAllAsync();
             var list = mapper.Map<List<HealthCheckDtoIgnoreClass>>(healthcheck);
-
+            foreach(var item in list)
+            {
+                var student = students.FirstOrDefault(x => x.Studentid == item.Healthcheckrecord.Studentid);
+                item.ClassName = student.Class.Classname;
+            }
             return list.OrderBy(x => x.Healthcheckevent.Eventdate).Reverse().ToList();
         }
         public async Task<Healthcheckrecordevent?> GetHealthCheckRecordEventByIdAsync(int eventId)
