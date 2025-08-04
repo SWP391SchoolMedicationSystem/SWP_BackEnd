@@ -24,6 +24,7 @@ namespace BussinessLayer.Service
 {
     public class ParentService(
         IStudentRepo studentRepo,
+        IStudentService studentService,
         IParentRepository parentRepository, IUserRepository userRepository,
         IMapper mapper,
         IOptionsMonitor<AppSetting> option, IHttpContextAccessor httpContextAccessor) : IParentService
@@ -74,6 +75,11 @@ namespace BussinessLayer.Service
                     newParent.Userid = user.UserId;
                     await parentRepository.AddAsync(newParent);
                     parentRepository.Save();
+                    foreach(var student in parent.Students)
+                    {
+                        student.Parentid = newParent.Parentid;
+                        await studentService.AddStudentAsync(student);
+                    }
                 }
                 catch
                 {
@@ -111,16 +117,16 @@ namespace BussinessLayer.Service
             if (parent != null)
             {
                 // Only assign if value is not null/empty/0
-                if (!string.IsNullOrWhiteSpace(parentdto.Address))
                     parent.Address = parentdto.Address;
-                if (!string.IsNullOrWhiteSpace(parentdto.Email))
                     parent.Email = parentdto.Email;
-                if (!string.IsNullOrWhiteSpace(parentdto.Fullname))
                     parent.Fullname = parentdto.Fullname;
-                if (!string.IsNullOrWhiteSpace(parentdto.Phone))
                     parent.Phone = parentdto.Phone;
                 parentRepository.Update(parent);
                 parentRepository.Save();
+            }
+            else
+            {
+                throw new KeyNotFoundException($"Parent with ID {parentdto.Parentid} not found.");
             }
         }
 

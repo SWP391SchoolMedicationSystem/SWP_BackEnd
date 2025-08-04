@@ -41,6 +41,8 @@ namespace BussinessLayer.Service
             var students = await _studentrepo.GetAllAsync();
             int studentcode = students[students.Count - 1].Studentid + 1;
             addedstudent.StudentCode = $"HS{studentcode}";
+            addedstudent.Age = DateTime.Now.Year - student.Dob.Year -
+                                      (DateTime.Now.DayOfYear < student.Dob.DayOfYear ? 1 : 0);
             await _studentrepo.AddAsync(addedstudent);
             await _studentrepo.SaveChangesAsync();
             return addedstudent;
@@ -149,8 +151,6 @@ namespace BussinessLayer.Service
                             AddStudentDTO addstudent = new()
                             {
                                 Fullname = student.fullName,
-                                Age = DateTime.Now.Year - student.birthDate.Year -
-                                      (DateTime.Now.DayOfYear < student.birthDate.DayOfYear ? 1 : 0),
                                 BloodType = student.bloodtype,
                                 Classid = classroom.Classid,
                                 Parentid = parent.Parentid,
