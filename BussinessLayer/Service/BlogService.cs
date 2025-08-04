@@ -250,8 +250,6 @@ namespace BussinessLayer.Service
         public async Task ApproveBlog(ApproveBlogDTO dto)
         {
             var blog = await _blogRepo.GetByIdAsync(dto.BlogId);
-            try
-            {
                 if (blog == null)
                     throw new Exception("Blog not found.");
                 if (dto.ApprovedBy == null || dto.ApprovedBy <= 0)
@@ -264,11 +262,6 @@ namespace BussinessLayer.Service
                     _blogRepo.Update(blog);
                     _blogRepo.Save();
                 }
-            }
-            catch (Exception ex)
-            {
-                throw new Exception($"Error approving blog: {ex.Message}");
-            }
         }
         public async Task<List<BlogDTO>> GetPublishedBlogs()
         {
@@ -310,8 +303,6 @@ namespace BussinessLayer.Service
         public async Task RejectBlog(RejectBlogDTO dto)
         {
             var blog = await _blogRepo.GetByIdAsync(dto.BlogId);
-            try
-            {
                 if (blog == null)
                     throw new Exception("Blog not found.");
                 if (dto.ApprovedBy == null || dto.ApprovedBy <= 0)
@@ -324,11 +315,6 @@ namespace BussinessLayer.Service
                     _blogRepo.Update(blog);
                     _blogRepo.Save();
                 }
-            }
-            catch (Exception ex)
-            {
-                throw new Exception($"Error approving blog: {ex.Message}");
-            }
         }
 
         public Task<List<BlogDTO>> GetRejectedBlogs()
