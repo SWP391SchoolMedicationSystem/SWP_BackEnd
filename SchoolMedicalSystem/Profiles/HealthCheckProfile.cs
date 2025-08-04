@@ -10,7 +10,7 @@ namespace SchoolMedicalSystem.Profiles
         public HealthCheckProfile()
         {
             CreateMap<Healthcheck, AddHealthCheckDto>()
-                .ForMember(dest => dest.Eventid, opt => opt.Ignore())
+               
                 .ReverseMap();
             CreateMap<Healthcheck, HealthCheckDTO>()
                 .ForMember(dest => dest.StudentName, opt => opt.MapFrom(src => src.Student.Fullname))
@@ -20,8 +20,7 @@ namespace SchoolMedicalSystem.Profiles
                 .ForMember(dest => dest.Documentaccesstoken, opt => opt.Ignore())
                 .ReverseMap();
             CreateMap<Healthcheckevent, HeatlhCheckEventDto>().ReverseMap();
-            CreateMap<Healthcheckrecordevent, HeatlhCheckRecordEventDto>().ForMember(dest => dest.Healthcheckevent.Healthcheckrecordevents, opt => opt.Ignore())
-                .ForMember(dest => dest.Healthcheckrecord.Healthcheckrecordevents, opt => opt.Ignore()).ReverseMap();
+            CreateMap<Healthcheckrecordevent, HeatlhCheckRecordEventDto>().ReverseMap();
             
         }
 
