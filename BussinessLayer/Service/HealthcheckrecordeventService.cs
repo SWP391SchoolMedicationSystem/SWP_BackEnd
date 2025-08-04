@@ -50,7 +50,9 @@ namespace BussinessLayer.Service
         }
         public async Task DeleteHealthCheckRecordEventAsync(int eventId)
         {
-            healthCheckEventRepository.Delete(eventId);
+            var healthcheck = await healthCheckEventRepository.GetByIdAsync(eventId);
+            healthcheck.Isdeleted = true; // Soft delete
+            healthCheckEventRepository.Update(healthcheck);
             await healthCheckEventRepository.SaveChangesAsync();
         }
 
