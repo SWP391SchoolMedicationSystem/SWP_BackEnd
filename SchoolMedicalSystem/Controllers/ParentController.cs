@@ -41,7 +41,7 @@ namespace SchoolMedicalSystem.Controllers
                     return BadRequest("Parent data is null.");
                 }
                 await _parentservice.AddParentAsync(parent);
-                return CreatedAtAction(nameof(GetParentById), new { id = parent.Fullname }, parent);
+                return Ok(parent);
     
         }
 

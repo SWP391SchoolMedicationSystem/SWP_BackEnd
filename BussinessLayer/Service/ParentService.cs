@@ -15,6 +15,7 @@ using DataAccessLayer.DTO.Parents;
 using DataAccessLayer.DTO.Students;
 using DataAccessLayer.Entity;
 using DataAccessLayer.IRepository;
+using DataAccessLayer.Repository;
 using Google.Apis.Auth;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
@@ -48,8 +49,6 @@ namespace BussinessLayer.Service
         #endregion
         public async Task AddParentAsync(ParentRegister parent)
         {
-            try
-            {
                 List<Parent> Parent = await parentRepository.GetAllAsync();
                 if (Parent.Any(p => p.Email == parent.Email))
                 {
@@ -78,23 +77,32 @@ namespace BussinessLayer.Service
                     foreach(var student in parent.Students)
                     {
                         student.Parentid = newParent.Parentid;
-                        await studentService.AddStudentAsync(student);
+                    Student addedstudent = mapper.Map<Student>(student);
+                    var students = await studentRepo.GetAllAsync();
+                    int studentcode = students[students.Count - 1].Studentid + 1;
+                    addedstudent.StudentCode = $"HS{studentcode}";
+
+                    addedstudent.Age = DateTime.Now.Year - student.Dob.Year -
+                                              (DateTime.Now.DayOfYear < student.Dob.DayOfYear ? 1 : 0);
+                    if (addedstudent.Age <= 3 || addedstudent.Age >= 5)
+                    {
+                        throw new ArgumentException("Ngày sinh không hợp lệ");
                     }
-                }
-                catch
-                {
-                    userRepository.Delete(user.UserId);
-                    userRepository.Save();
-                    parentRepository.Delete(newParent.Userid);
-                    parentRepository.Save();
+                    await studentRepo.AddAsync(addedstudent);
+                    await studentRepo.SaveChangesAsync();
 
                 }
             }
-            catch (Exception ex)
-            {
-                // Log the exception or handle it as needed
-                throw new Exception("An error occurred while adding the parent.", ex);
-            }
+                catch
+                {
+                parentRepository.Delete(newParent.Parentid);
+                parentRepository.Save();
+
+                userRepository.Delete(user.UserId);
+                    userRepository.Save();
+                    
+                }
+            
         }
 
         public async Task DeleteParent(int id)

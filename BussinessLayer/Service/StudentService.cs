@@ -26,13 +26,15 @@ namespace BussinessLayer.Service
         private readonly IClassRoomRepository _classroomrepo;
         private readonly IParentRepository _parentrepo;
         private readonly IMapper _mapper;
+        private readonly IUserRepository _userRepository;
         public StudentService(IStudentRepo studentrepo, IClassRoomRepository classRoomRepository,
-            IParentRepository parentRepository, IMapper mapper)
+            IParentRepository parentRepository, IMapper mapper, IUserRepository userRepository)
         {
             _studentrepo = studentrepo;
             _classroomrepo = classRoomRepository;
             _parentrepo = parentRepository;
             _mapper = mapper;
+            _userRepository = userRepository;
         }
 
         public async Task<Student> AddStudentAsync(AddStudentDTO student)
@@ -42,9 +44,14 @@ namespace BussinessLayer.Service
                 var students = await _studentrepo.GetAllAsync();
                 int studentcode = students[students.Count - 1].Studentid + 1;
                 addedstudent.StudentCode = $"HS{studentcode}";
+           
                 addedstudent.Age = DateTime.Now.Year - student.Dob.Year -
                                           (DateTime.Now.DayOfYear < student.Dob.DayOfYear ? 1 : 0);
-                await _studentrepo.AddAsync(addedstudent);
+            if (addedstudent.Age <= 3 || addedstudent.Age >= 5 )
+            {
+                throw new ArgumentException("Ngày sinh không hợp lệ");
+            }
+            await _studentrepo.AddAsync(addedstudent);
                 await _studentrepo.SaveChangesAsync();
                 return addedstudent;
         } 
