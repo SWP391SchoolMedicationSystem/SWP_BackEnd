@@ -66,11 +66,11 @@ namespace SchoolMedicalSystem.Controllers
             }
         }
         [HttpDelete("Personalmedicine/{id}")]
-        public IActionResult DeletePersonalmedicine(int id)
+        public async Task<IActionResult> DeletePersonalmedicine(int id)
         {
             try
             {
-                PersonalmedicineService.DeletePersonalmedicine(id);
+                await PersonalmedicineService.DeletePersonalmedicine(id);
                 return Ok("Medicine donation deleted successfully.");
             }
             catch (KeyNotFoundException ex)

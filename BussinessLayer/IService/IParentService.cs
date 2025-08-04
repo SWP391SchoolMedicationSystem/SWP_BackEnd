@@ -11,7 +11,7 @@ namespace BussinessLayer.IService
         Task<ParentDTO> GetParentByEmailAsync(string email);
         Task<ParentVaccineEvent> GetParentByEmailForEvent(string email);
         Task AddParentAsync(ParentRegister parent);
-        void UpdateParent(ParentUpdate parent);
+        Task UpdateParent(ParentUpdate parent);
         Task DeleteParent(int id);
         Task<String> GenerateToken(LoginDTO login);
         Task<String> GenerateGoogleToken(LoginGoogleDTO login);
