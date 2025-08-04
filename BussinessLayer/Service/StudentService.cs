@@ -68,7 +68,7 @@ namespace BussinessLayer.Service
                 }
                 return returnlist;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 throw new Exception($"Error retrieving students: {e.Message}", e);
             }
@@ -128,75 +128,63 @@ namespace BussinessLayer.Service
 
         public async Task<string> UploadStudentList(List<InsertStudent> studentlist)
         {
-            try
+            var parentlist = await _parentrepo.GetAllAsync();
+            var classlist = await _classroomrepo.GetAllAsync();
+            var students = await _studentrepo.GetAllAsync();
+            string errorMessage = string.Empty;
+
+            foreach (var student in studentlist)
             {
-                var parentlist = await _parentrepo.GetAllAsync();
-                var classlist = await _classroomrepo.GetAllAsync();
-                var students = await _studentrepo.GetAllAsync();
-                string errorMessage = string.Empty;
-
-                foreach (var student in studentlist)
+                try
                 {
-                    try
+                    if (student != null)
+
                     {
-                        if (student != null)
+                        Classroom classroom = classlist.FirstOrDefault(c => c.Classname == student.className);
+                        Parent parent = parentlist.FirstOrDefault(p => p.Fullname == student.parentName && p.Phone == student.parentphone);
+                        if (parent != null && classroom != null && parent.Students.FirstOrDefault(s => s.Fullname == student.fullName) == null)
                         {
-                            if (students.FirstOrDefault(s => s.StudentCode == student.studentCode) == null)
-
+                            AddStudentDTO addstudent = new()
                             {
-                                Classroom classroom = classlist.FirstOrDefault(c => c.Classname == student.className);
-                                Parent parent = parentlist.FirstOrDefault(p => p.Fullname == student.parentName && p.Phone == student.parentphone);
-                                if (parent != null && classroom != null)
-                                {
-                                    AddStudentDTO addstudent = new()
-                                    {
-                                        Fullname = student.fullName,
-                                        Age = DateTime.Now.Year - student.birthDate.Year -
-                                              (DateTime.Now.DayOfYear < student.birthDate.DayOfYear ? 1 : 0),
-                                        BloodType = student.bloodtype,
-                                        Classid = classroom.Classid,
-                                        Parentid = parent.Parentid,
-                                        Dob = student.birthDate,
-                                        Gender = student.gender == "Nam" ? true : student.gender == "Nữ" ? false : throw new ArgumentException("Invalid gender value"),
-                                        StudentCode = student.studentCode,
-                                    };
-                                    Student newstudent = await AddStudentAsync(addstudent);
-                                    classroom.Students.Add(newstudent);
-                                    parent.Students.Add(newstudent);
-                                }
-                                else
-                                {
-                                    errorMessage += ($"Parent or Classroom not found for student: {student.fullName} - {student.className} - {student.parentName} - {student.parentphone}\n");
-                                }
-                            }
-
-                            else errorMessage += ($"Student already exist: {student.fullName} - {student.className} - {student.parentName} - {student.parentphone}\n");
-
+                                Fullname = student.fullName,
+                                Age = DateTime.Now.Year - student.birthDate.Year -
+                                      (DateTime.Now.DayOfYear < student.birthDate.DayOfYear ? 1 : 0),
+                                BloodType = student.bloodtype,
+                                Classid = classroom.Classid,
+                                Parentid = parent.Parentid,
+                                Dob = student.birthDate,
+                                Gender = student.gender == "Nam" ? true : student.gender == "Nữ" ? false : throw new ArgumentException("Invalid gender value"),
+                                StudentCode = $"HS{students[students.Count - 1].Studentid}",
+                            };
+                            Student newstudent = await AddStudentAsync(addstudent);
+                            classroom.Students.Add(newstudent);
+                            parent.Students.Add(newstudent);
+                        }
+                        else
+                        {
+                            errorMessage += ($"Parent or Classroom not found for student: {student.fullName} - {student.className} - {student.parentName} - {student.parentphone}\n");
                         }
                     }
-                    catch (Exception ex)
-                    {
-                        errorMessage += ($"Error processing student {student.fullName}: {ex.Message}\n");
-                    }
+
+                    else errorMessage += ($"Student already exist: {student.fullName} - {student.className} - {student.parentName} - {student.parentphone}\n");
+
+
                 }
-                _classroomrepo.Save();
-                _parentrepo.Save();
-                _studentrepo.Save();
-                if (errorMessage != string.Empty)
+                catch (Exception ex)
                 {
-                    throw new InvalidDataException(errorMessage);
+                    errorMessage += ($"Error processing student {student.fullName}: {ex.Message}\n");
                 }
-                return "Student insert successfully";
             }
-            catch (InvalidOperationException ex)
+            _classroomrepo.Save();
+            _parentrepo.Save();
+            _studentrepo.Save();
+            if (errorMessage != string.Empty)
             {
-                throw new InvalidOperationException($"Error uploading student list: {ex.Message}", ex);
+                throw new InvalidDataException(errorMessage);
             }
-            catch (Exception e)
-            {
-                throw new Exception($"Unexpected error uploading student list: {e.Message}", e);
-            }
+            return "Student insert successfully";
         }
+    
         public (List<InsertStudent>, string) ProcessExcelFile(IFormFile file)
         {
             if (file == null || file.Length == 0)
@@ -229,19 +217,18 @@ namespace BussinessLayer.Service
                     continue; // Skip empty rows
                 try
                 {
-                    DateTime date = ParseDateValue(GetCellStringValue(row, 6));
+                    DateTime date = ParseDateValue(GetCellStringValue(row, 5));
                     var student = new InsertStudent
                     {
-                        studentCode = GetCellStringValue(row, 0).Trim(),
-                        fullName = GetCellStringValue(row, 1).Trim(),
-                        bloodtype = GetCellStringValue(row, 2).Trim(),
-                        className = GetCellStringValue(row, 3).Trim(),
-                        parentName = GetCellStringValue(row, 4).Trim(),
-                        parentphone = GetCellStringValue(row, 5).Trim(),
+                        fullName = GetCellStringValue(row, 0).Trim(),
+                        bloodtype = GetCellStringValue(row, 1).Trim(),
+                        className = GetCellStringValue(row, 2).Trim(),
+                        parentName = GetCellStringValue(row, 3).Trim(),
+                        parentphone = GetCellStringValue(row, 4).Trim(),
 
                         birthDate = DateOnly.FromDateTime(date),
-                        gender = GetCellStringValue(row, 7).Trim(),
-                        healthStatus = GetCellStringValue(row, 8).Trim()
+                        gender = GetCellStringValue(row, 6).Trim(),
+                        healthStatus = GetCellStringValue(row, 7).Trim()
 
                     };
                     students.Add(student);
