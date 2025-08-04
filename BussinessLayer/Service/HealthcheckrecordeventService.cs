@@ -17,9 +17,11 @@ namespace BussinessLayer.Service
     {
         public async Task<List<HealthCheckDtoIgnoreClass>> GetAllHealthCheckRecordEventsAsync()
         {
+            var classroom = await classRoomRepository.GetAllAsync();
 
             var healthcheck = await healthCheckEventRepository.GetAllAsync();
             var list = mapper.Map<List<HealthCheckDtoIgnoreClass>>(healthcheck);
+
             return list.OrderBy(x => x.Healthcheckevent.Eventdate).Reverse().ToList();
         }
         public async Task<Healthcheckrecordevent?> GetHealthCheckRecordEventByIdAsync(int eventId)

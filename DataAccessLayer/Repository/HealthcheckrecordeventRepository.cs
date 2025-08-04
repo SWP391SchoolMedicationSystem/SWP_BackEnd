@@ -20,6 +20,7 @@ namespace DataAccessLayer.Repository
         {
             return await _dbset
                 .Include(h => h.Healthcheckevent)
+                
                 .Include(h => h.Healthcheckrecord)
                 .ToListAsync();
         }

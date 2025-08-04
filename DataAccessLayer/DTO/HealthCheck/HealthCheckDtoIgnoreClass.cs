@@ -19,7 +19,8 @@ namespace DataAccessLayer.DTO.HealthCheck
         public bool Isdeleted { get; set; }
 
         public virtual Healthcheckevent Healthcheckevent { get; set; } = null!;
-        public StudentDTO student { get; set; } = new StudentDTO();
+        public virtual Healthcheck Healthcheckrecord { get; set; } = null!;
+        public string ClassName { get; set; } = null!;
 
     }
 }

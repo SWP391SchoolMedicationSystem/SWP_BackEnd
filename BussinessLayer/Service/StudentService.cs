@@ -42,6 +42,7 @@ namespace BussinessLayer.Service
             int studentcode = students[students.Count - 1].Studentid + 1;
             addedstudent.StudentCode = $"HS{studentcode}";
             await _studentrepo.AddAsync(addedstudent);
+            await _studentrepo.SaveChangesAsync();
             return addedstudent;
         }
 
