@@ -30,8 +30,7 @@ namespace SchoolMedicalSystem.Controllers
         [HttpPost]
         public async Task<IActionResult> AddHealthCheck([FromBody] AddHealthCheckDto healthCheckDto)
         {
-            try
-            {
+            
                 if (healthCheckDto == null)
                     return BadRequest("Health check data is null.");
                 if (healthCheckDto.Checkdate < DateTime.Now)
@@ -39,11 +38,8 @@ namespace SchoolMedicalSystem.Controllers
 
                 await _healthCheckService.AddHealthCheckAsync(healthCheckDto);
                 return Ok("Health check added successfully.");
-            }
-            catch (Exception ex)
-            {
-                return null;
-            }
+            
+
         }
         [HttpPut]
         public async Task<IActionResult> UpdateHealthCheck([FromBody] HealthCheckDTO healthCheckDto)

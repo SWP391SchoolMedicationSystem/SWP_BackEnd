@@ -59,7 +59,7 @@ namespace SchoolMedicalSystem.Controllers
                 return BadRequest("Invalid health check record event data.");
             }
             await healthCheckEventRecordService.AddHealthCheckRecordEventAsync(healthCheckRecordEvent);
-            return CreatedAtAction(nameof(GetHealthCheckRecordEventById), new { eventId = healthCheckRecordEvent.Healthcheckrecordid }, healthCheckRecordEvent);
+            return Ok("HealthCheck and Event connected.");
         }
         [HttpPut]
         [Route("healthcheckrecordevents/{eventId}")]
