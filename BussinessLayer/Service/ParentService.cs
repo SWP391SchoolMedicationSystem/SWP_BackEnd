@@ -46,28 +46,31 @@ namespace BussinessLayer.Service
             return computedHash.SequenceEqual(storedHash);
         }
         #endregion
-        public async Task AddParentAsync(ParentRegister parent)
+        public async Task<int> AddParentAsync(ParentRegister parent)
         {
             try
             {
+                //Check existed Email
                 List<Parent> Parent = await parentRepository.GetAllAsync();
                 if (Parent.Any(p => p.Email == parent.Email))
                 {
                     throw new InvalidOperationException("A parent with this email already exists.");
                 }
 
+                //Create new User
                 CreatePasswordHash(parent.Password, out byte[] hash, out byte[] salt);
-
-                var newParent = mapper.Map<Parent>(parent);
-                newParent.CreatedDate = DateTime.Now;
-                UserDTO userdto = new()
+                User user = mapper.Map<User>(new UserDTO
                 {
                     isStaff = false,
                     Email = parent.Email,
                     Hash = hash,
                     Salt = salt
-                };
-                var user = mapper.Map<User>(userdto);
+                });
+
+                //Create new Parent
+                var newParent = mapper.Map<Parent>(parent);
+                newParent.CreatedDate = DateTime.Now;
+
                 try
                 {
                     await userRepository.AddAsync(user);
@@ -87,8 +90,11 @@ namespace BussinessLayer.Service
                     userRepository.Save();
                     parentRepository.Delete(newParent.Userid);
                     parentRepository.Save();
-
+                    studentRepo.Delete(newParent.Userid);
+                    studentRepo.Save();
                 }
+
+                return newParent.Parentid;
             }
             catch (Exception ex)
             {
