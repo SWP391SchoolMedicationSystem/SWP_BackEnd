@@ -62,9 +62,11 @@ namespace BussinessLayer.Service
             return list.Where(x => x.Healthcheckrecord.Studentid == studentId).OrderBy(x => x.Healthcheckevent.Eventdate).Reverse().ToList();
         }
 
-        public Task<List<Healthcheckrecordevent>> GetHealthCheckRecordEventsByEventIdAsync(int eventId)
+        public async Task<List<Healthcheckrecordevent>> GetHealthCheckRecordEventsByEventIdAsync(int eventId)
         {
-            throw new NotImplementedException();
+            var list = await healthCheckEventRepository.GetAllAsync();
+            return list.Where(x => x.Healthcheckevent.HealthcheckeventID == eventId).OrderBy(x => x.Healthcheckevent.Eventdate).Reverse().ToList();
         }
+       
     }
 }

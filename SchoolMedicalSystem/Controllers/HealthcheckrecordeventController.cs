@@ -18,10 +18,10 @@ namespace SchoolMedicalSystem.Controllers
             return Ok(events);
         }
         [HttpGet]
-        [Route("healthcheckrecordevents/{eventId}")]
-        public async Task<IActionResult> GetHealthCheckRecordEventById(int eventId)
+        [Route("healthcheckrecordevents/{id}")]
+        public async Task<IActionResult> GetHealthCheckRecordEventById(int id)
         {
-            var healthCheckRecordEvent = await healthCheckEventRecordService.GetHealthCheckRecordEventByIdAsync(eventId);
+            var healthCheckRecordEvent = await healthCheckEventRecordService.GetHealthCheckRecordEventByIdAsync(id);
             if (healthCheckRecordEvent == null)
             {
                 return NotFound();
@@ -33,6 +33,17 @@ namespace SchoolMedicalSystem.Controllers
         public async Task<IActionResult> GetHealthCheckRecordEventsByStudentId(int studentId)
         {
             var events = await healthCheckEventRecordService.GetHealthCheckRecordEventsByStudentIdAsync(studentId);
+            if (events == null || !events.Any())
+            {
+                return NotFound();
+            }
+            return Ok(events);
+        }
+        [HttpGet]
+        [Route("healthcheckrecordevents/event/{eventId}")]
+        public async Task<IActionResult> GetHealthCheckRecordEventsByEventId(int eventId)
+        {
+            var events = await healthCheckEventRecordService.GetHealthCheckRecordEventsByEventIdAsync(eventId);
             if (events == null || !events.Any())
             {
                 return NotFound();
