@@ -41,6 +41,7 @@ namespace BussinessLayer.Service
 
         public async Task AddHealthCheckAsync(AddHealthCheckDto healthCheckDto)
         {
+            try {
             var studentlist = await _studentService.GetAllStudentsAsync();
             if (await _staffservice.GetStaffByIdAsync(healthCheckDto.Staffid) != null
                 && studentlist.FirstOrDefault(s => s.StudentId == healthCheckDto.Studentid) != null)
@@ -65,6 +66,7 @@ namespace BussinessLayer.Service
                 }
 
             }
+            } catch(Exception e) { throw new Exception($"Error adding health check: {e.Message}"); }
         }
 
         public async Task<bool> DeleteHealthCheckAsync(int checkId)

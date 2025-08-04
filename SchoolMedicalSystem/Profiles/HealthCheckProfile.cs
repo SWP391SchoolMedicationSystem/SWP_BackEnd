@@ -19,6 +19,10 @@ namespace SchoolMedicalSystem.Profiles
                 .ForMember(dest => dest.Documentfilename, opt => opt.Ignore())
                 .ForMember(dest => dest.Documentaccesstoken, opt => opt.Ignore())
                 .ReverseMap();
+            CreateMap<Healthcheckevent, HeatlhCheckEventDto>().ReverseMap();
+            CreateMap<Healthcheckrecordevent, HeatlhCheckRecordEventDto>().ForMember(dest => dest.Healthcheckevent.Healthcheckrecordevents, opt => opt.Ignore())
+                .ForMember(dest => dest.Healthcheckrecord.Healthcheckrecordevents, opt => opt.Ignore()).ReverseMap();
+            
         }
 
     }

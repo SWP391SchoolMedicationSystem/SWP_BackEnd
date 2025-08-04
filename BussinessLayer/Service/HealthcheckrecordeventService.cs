@@ -24,9 +24,17 @@ namespace BussinessLayer.Service
         }
         public async Task AddHealthCheckRecordEventAsync(AddHealthcheckrecordeventDTO healthCheckRecordEvent)
         {
-            var record = mapper.Map<Healthcheckrecordevent>(healthCheckRecordEvent);
-            await healthCheckEventRepository.AddAsync(record);
-            await healthCheckEventRepository.SaveChangesAsync();
+            try
+            {
+                var record = mapper.Map<Healthcheckrecordevent>(healthCheckRecordEvent);
+                await healthCheckEventRepository.AddAsync(record);
+                await healthCheckEventRepository.SaveChangesAsync();
+            }
+            catch (Exception e)
+            {
+                throw new Exception($"Error adding Health Check and Event Together {e.Message}");
+            }
+
         }
         public async Task UpdateHealthCheckRecordEventAsync(Healthcheckrecordevent healthCheckRecordEvent)
         {

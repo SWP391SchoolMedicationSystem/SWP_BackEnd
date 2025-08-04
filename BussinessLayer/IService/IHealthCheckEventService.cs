@@ -10,7 +10,7 @@ namespace BussinessLayer.IService
 {
     public interface IHealthCheckEventService
     {
-        Task<List<Healthcheckevent>> GetAllHealthCheckEventsAsync();
+        Task<List<AddHealthCheckEventDto>> GetAllHealthCheckEventsAsync();
         Task<Healthcheckevent?> GetHealthCheckEventByIdAsync(int eventId);
         Task AddHealthCheckEventAsync(AddHealthCheckEventDto healthCheckEvent, string? storedFileName);
         Task UpdateHealthCheckEventAsync(Healthcheckevent healthCheckEvent);

@@ -18,6 +18,7 @@ using Microsoft.IdentityModel.Tokens;
 using OfficeOpenXml;
 using Quartz;
 using SchoolMedicalSystem.Configurations;
+using SchoolMedicalSystem.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -47,6 +48,7 @@ builder.Services.AddCors(options =>
               .AllowCredentials();
     });
 });
+
 #region Quartz Scheduler Configuration
 // SETUP QUARTZ SCHEDULER
 builder.Services.AddQuartz();
@@ -208,6 +210,7 @@ builder.Services.AddSwaggerGen(c =>
 var app = builder.Build();
 app.UseCors("AllowAllOrigins");
 app.UseCors("AllowReact");
+app.UseMiddleware<GlobalExceptionMiddleware>();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {

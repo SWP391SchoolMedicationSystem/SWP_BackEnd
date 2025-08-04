@@ -54,17 +54,25 @@ namespace BussinessLayer.Service
 
         public async Task<List<StudentDTO>> GetAllStudentsAsync()
         {
-            var list = await _studentrepo.GetAllAsync();
-            List<StudentDTO> returnlist = new List<StudentDTO>();
-            foreach (var student in list)
+            try
             {
-                var parent = await _parentrepo.GetByIdAsync(student.Parentid);
-                var listparent = _mapper.Map<ParentStudent>(parent);
-                var studentDTO = _mapper.Map<StudentDTO>(student);
-                studentDTO.parent = listparent;
-                returnlist.Add(studentDTO);
+                var list = await _studentrepo.GetAllAsync();
+                List<StudentDTO> returnlist = new List<StudentDTO>();
+                foreach (var student in list)
+                {
+                    var parent = await _parentrepo.GetByIdAsync(student.Parentid);
+                    var listparent = _mapper.Map<ParentStudent>(parent);
+                    var studentDTO = _mapper.Map<StudentDTO>(student);
+                    studentDTO.parent = listparent;
+                    returnlist.Add(studentDTO);
+                }
+                return returnlist;
             }
-            return returnlist;
+            catch(Exception e)
+            {
+                throw new Exception($"Error retrieving students: {e.Message}", e);
+            }
+
         }
 
         public async Task<StudentDTO> GetStudentByIdAsync(int id)

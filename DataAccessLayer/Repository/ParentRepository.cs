@@ -37,7 +37,7 @@ namespace DataAccessLayer.Repository
         }
         public async Task<Parent> GetByIdAsync(int id)
         {
-            var parent = await _dbset.IgnoreAutoIncludes()
+            var parent = await _dbset
                                      .Include(p => p.Students)
                                      .
                 FirstOrDefaultAsync(p => p.Parentid == id && !p.IsDeleted);
