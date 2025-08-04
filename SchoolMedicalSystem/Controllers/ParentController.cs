@@ -69,11 +69,11 @@ namespace SchoolMedicalSystem.Controllers
             }
         }
         [HttpDelete("parent/{id}")]
-        public IActionResult DeleteParent([FromBody] int id)
+        public async Task<IActionResult> DeleteParent([FromBody] int id)
         {
             try
             {
-                _parentservice.DeleteParent(id);
+                await _parentservice.DeleteParent(id);
                 return Ok("Parent deleted successfully.");
             }
             catch (Exception e)

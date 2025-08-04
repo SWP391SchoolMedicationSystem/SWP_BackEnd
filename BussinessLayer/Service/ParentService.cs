@@ -91,7 +91,7 @@ namespace BussinessLayer.Service
             }
         }
 
-        public async void DeleteParent(int id)
+        public async Task DeleteParent(int id)
         {
             var parent = await parentRepository.GetByIdAsync(id);
             if ( parent != null)
