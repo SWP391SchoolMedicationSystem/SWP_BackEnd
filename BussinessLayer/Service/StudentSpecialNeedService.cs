@@ -27,20 +27,20 @@ namespace BussinessLayer.Service
             _studentSpecialNeedCategoryRepo = studentSpecialNeedCategoryRepo;
         }
 
-        public void AddStudentSpecialNeed(CreateSpecialStudentNeedDTO studentSpecialNeed)
+        public async Task AddStudentSpecialNeed(CreateSpecialStudentNeedDTO studentSpecialNeed)
         {
             StudentSpecialNeed student = _mapper.Map<StudentSpecialNeed>(studentSpecialNeed);
-            _studentNeedRepository.AddAsync(student);
-            _studentNeedRepository.Save();
+            await _studentNeedRepository.AddAsync(student);
+            await _studentNeedRepository.SaveChangesAsync();
         }
 
-        public void DeleteStudentSpecialNeed(int id)
+        public async Task DeleteStudentSpecialNeed(int id)
         {
             if (id <= 0)
             {
                 throw new ArgumentException("Invalid student special need ID.", nameof(id));
             }
-            var studentSpecialNeed = _studentNeedRepository.GetByIdAsync(id).Result;
+            var studentSpecialNeed = await _studentNeedRepository.GetByIdAsync(id);
             if (studentSpecialNeed == null)
             {
                 throw new KeyNotFoundException("Student special need not found.");
@@ -84,14 +84,14 @@ namespace BussinessLayer.Service
             return Task.FromResult(dtos);
         }
 
-        public void UpdateStudentSpecialNeed(UpdateStudentSpecialNeedDTO studentSpecialNeed)
+        public async Task UpdateStudentSpecialNeed(UpdateStudentSpecialNeedDTO studentSpecialNeed)
         {
             if (studentSpecialNeed == null)
             {
                 throw new ArgumentNullException(nameof(studentSpecialNeed), "Student special need cannot be null.");
             }
             var entity = _mapper.Map<StudentSpecialNeed>(studentSpecialNeed);
-            var existingEntity = _studentNeedRepository.GetByIdAsync(entity.StudentSpecialNeedId).Result;
+            var existingEntity = await _studentNeedRepository.GetByIdAsync(entity.StudentSpecialNeedId);
             if (existingEntity == null)
             {
                 throw new KeyNotFoundException("Student special need not found.");

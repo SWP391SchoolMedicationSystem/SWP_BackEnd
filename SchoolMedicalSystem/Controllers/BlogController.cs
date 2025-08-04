@@ -121,7 +121,7 @@ namespace SchoolMedicalSystem.Controllers
         [HttpPost]
         [Route("ApproveBlog")]
         [ProducesResponseType<int>(StatusCodes.Status200OK)]
-        public IActionResult ApproveBlog([FromBody] ApproveBlogDTO approveBlogDto)
+        public async Task<IActionResult> ApproveBlog([FromBody] ApproveBlogDTO approveBlogDto)
         {
             if (approveBlogDto == null)
                 return BadRequest("Invalid approval data.");
@@ -129,7 +129,7 @@ namespace SchoolMedicalSystem.Controllers
                 return BadRequest("Invalid blog ID.");
             try
             {
-                _blogService.ApproveBlog(approveBlogDto);
+                await _blogService.ApproveBlog(approveBlogDto);
                 return Ok("Blog approved successfully.");
             }
             catch (Exception ex)

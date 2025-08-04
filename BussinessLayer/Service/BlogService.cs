@@ -247,9 +247,9 @@ namespace BussinessLayer.Service
             return Task.FromResult(blogDTOs);
 
         }
-        public void ApproveBlog(ApproveBlogDTO dto)
+        public async Task ApproveBlog(ApproveBlogDTO dto)
         {
-            var blog = _blogRepo.GetByIdAsync(dto.BlogId).Result;
+            var blog = await _blogRepo.GetByIdAsync(dto.BlogId);
             if (blog != null)
             {
                 blog.ApprovedBy = dto.ApprovedBy;
@@ -259,9 +259,9 @@ namespace BussinessLayer.Service
                 _blogRepo.Save();
             }
         }
-        public Task<List<BlogDTO>> GetPublishedBlogs()
+        public async Task<List<BlogDTO>> GetPublishedBlogs()
         {
-            var blogs = _blogRepo.GetAllAsync().Result.Where(b =>
+            var blogs = (await _blogRepo.GetAllAsync()).Where(b =>
                     b.IsDeleted != true &&
                     //                    b.ApprovedBy != null &&
                     //                   b.ApprovedOn != null &&
@@ -292,13 +292,13 @@ namespace BussinessLayer.Service
                     //    blog.ApprovedByName = _parentRepository.GetAllAsync().Result.FirstOrDefault(s => s.Userid == blog.ApprovedBy)?.Fullname ?? "Unknown";
                 }
             }
-            return Task.FromResult(blogDTOs);
+            return blogDTOs;
 
 
         }
-        public void RejectBlog(RejectBlogDTO dto)
+        public async Task RejectBlog(RejectBlogDTO dto)
         {
-            var blog = _blogRepo.GetByIdAsync(dto.BlogId).Result;
+            var blog = await _blogRepo.GetByIdAsync(dto.BlogId);
             if (blog != null)
             {
                 blog.ApprovedBy = dto.ApprovedBy;

@@ -16,8 +16,8 @@ namespace BussinessLayer.IService
         Task <String> UpdateBlog(UpdateBlogDTO dto);
         Task DeleteBlog(int id);
         Task<List<BlogDTO>> SearchBlogsAsync(string searchTerm);
-        void ApproveBlog(ApproveBlogDTO dto);
-        void RejectBlog(RejectBlogDTO dto);
+        Task ApproveBlog(ApproveBlogDTO dto);
+        Task RejectBlog(RejectBlogDTO dto);
         Task<List<BlogDTO>> GetPublishedBlogs();
         Task<List<BlogDTO>> GetRejectedBlogs();
         //        public Task<string> UploadBlogImageAsync(BlogImageUploadDTO dto);   
