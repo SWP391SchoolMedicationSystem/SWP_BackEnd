@@ -7,6 +7,7 @@ using AutoMapper;
 using BussinessLayer.IService;
 using DataAccessLayer.DTO;
 using DataAccessLayer.DTO.HealthCheck;
+using DataAccessLayer.DTO.HealthRecords;
 using DataAccessLayer.Entity;
 using DataAccessLayer.IRepository;
 using DataAccessLayer.Repository;
@@ -70,9 +71,19 @@ namespace BussinessLayer.Service
             await healthCheckEventRepository.SaveChangesAsync();
         }
 
-        public async Task<List<Healthcheckrecordevent>> GetHealthCheckRecordEventsByStudentIdAsync(int studentId)
+        public async Task<List<HealthCheckDtoIgnoreClass>> GetHealthCheckRecordEventsByStudentIdAsync(int studentId)
         {
-            var list = await healthCheckEventRepository.GetAllAsync();
+            var classroom = await classRoomRepository.GetAllAsync();
+
+            var healthcheck = await healthCheckEventRepository.GetAllAsync();
+            var students = await studentRepo.GetAllAsync();
+            var list = mapper.Map<List<HealthCheckDtoIgnoreClass>>(healthcheck);
+            foreach (var item in list)
+            {
+                var student = students.FirstOrDefault(x => x.Studentid == item.Healthcheckrecord.Studentid);
+                item.ClassName = student.Class.Classname;
+            }
+
             return list.Where(x => x.Healthcheckrecord.Studentid == studentId).OrderBy(x => x.Healthcheckevent.Eventdate).Reverse().ToList();
         }
 

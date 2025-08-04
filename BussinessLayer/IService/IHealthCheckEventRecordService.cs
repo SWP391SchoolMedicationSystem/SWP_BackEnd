@@ -16,7 +16,7 @@ namespace BussinessLayer.IService
         Task AddHealthCheckRecordEventAsync(AddHealthcheckrecordeventDTO healthCheckRecordEvent);
         Task UpdateHealthCheckRecordEventAsync(Healthcheckrecordevent healthCheckRecordEvent);
         Task DeleteHealthCheckRecordEventAsync(int eventId);
-        Task<List<Healthcheckrecordevent>> GetHealthCheckRecordEventsByStudentIdAsync(int studentId);
+        Task<List<HealthCheckDtoIgnoreClass>> GetHealthCheckRecordEventsByStudentIdAsync(int studentId);
         Task<List<Healthcheckrecordevent>> GetHealthCheckRecordEventsByEventIdAsync(int eventId);
     }
 }
