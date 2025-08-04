@@ -19,7 +19,7 @@ namespace BussinessLayer.Service
 
         }
 
-        public async void DeleteClassRoom(int id)
+        public async Task DeleteClassRoom(int id)
         {
             var classroom = await _classroomRepository.GetByIdAsync(id);
             if (classroom != null)

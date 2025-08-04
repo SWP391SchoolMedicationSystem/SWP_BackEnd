@@ -53,9 +53,9 @@ namespace BussinessLayer.Service
             return Task.CompletedTask;
         }
 
-        public void DeleteHealthRecord(int id)
+        public async Task DeleteHealthRecord(int id)
         {
-            var entity = _healthRecordRepository.GetByIdAsync(id).Result;
+            var entity = await _healthRecordRepository.GetByIdAsync(id);
 
             if (entity != null)
             {
@@ -142,9 +142,9 @@ namespace BussinessLayer.Service
             return Task.FromResult(check);
         }
 
-        public void UpdateHealthRecord(UpdateHealthRecordDTO healthRecorddto, int id)
+        public async Task UpdateHealthRecord(UpdateHealthRecordDTO healthRecorddto, int id)
         {
-            var entity = _healthRecordRepository.GetByIdAsync(id).Result;
+            var entity = await _healthRecordRepository.GetByIdAsync(id);
             if (entity != null)
             {
                 entity.Studentid = healthRecorddto.StudentID;

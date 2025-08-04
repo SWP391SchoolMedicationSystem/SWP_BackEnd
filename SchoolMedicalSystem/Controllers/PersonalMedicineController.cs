@@ -51,13 +51,13 @@ namespace SchoolMedicalSystem.Controllers
             }
         [HttpPut("Personalmedicine")]
 
-        public IActionResult UpdatePersonalmedicine([FromBody] UpdatePersonalMedicineDTO PersonalmedicineDto)
+        public async Task<IActionResult> UpdatePersonalmedicine([FromBody] UpdatePersonalMedicineDTO PersonalmedicineDto)
         {
             if (PersonalmedicineDto == null)
                 return BadRequest("Invalid data.");
             try
             {
-                PersonalmedicineService.UpdatePersonalmedicine(PersonalmedicineDto);
+                await PersonalmedicineService.UpdatePersonalmedicine(PersonalmedicineDto);
                 return Ok("Medicine donation updated successfully.");
             }
             catch (Exception ex)

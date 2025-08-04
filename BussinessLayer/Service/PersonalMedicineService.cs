@@ -9,6 +9,7 @@ using DataAccessLayer.DTO;
 using DataAccessLayer.DTO.PersonalMedicine;
 using DataAccessLayer.Entity;
 using DataAccessLayer.IRepository;
+using Microsoft.AspNetCore.Http.HttpResults;
 using NPOI.OpenXmlFormats.Dml;
 
 namespace BussinessLayer.Service
@@ -18,19 +19,19 @@ namespace BussinessLayer.Service
         IMedicineScheduleRepository medicineScheduleRepository, IMedicineCategoryRepository medicineCategoryRepository,
         IScheduleDetailRepo scheduleDetailRepo, IMapper mapper) : IPersonalmedicineService
     {
-        public Task AddPersonalmedicineAsync(AddPersonalMedicineDTO Personalmedicine)
+        public async Task AddPersonalmedicineAsync(AddPersonalMedicineDTO Personalmedicine)
         {
             var PersonalmedicineEntity = mapper.Map<Personalmedicine>(Personalmedicine);
 
-            PersonalmedicineEntity.Parent = parentRepository.GetByIdAsync(Personalmedicine.Parentid.Value).Result;
+            PersonalmedicineEntity.Parent = await parentRepository.GetByIdAsync(Personalmedicine.Parentid.Value);
             if (PersonalmedicineEntity.Parent == null)
             {
-                return Task.FromException(new KeyNotFoundException("Parent not found."));
+                throw new KeyNotFoundException("Parent not found.");
             }
-            PersonalmedicineEntity.Student = studentRepo.GetByIdAsync(Personalmedicine.Studentid.Value).Result;
+            PersonalmedicineEntity.Student = await studentRepo.GetByIdAsync(Personalmedicine.Studentid.Value);
             if (PersonalmedicineEntity.Student == null)
             {
-                return Task.FromException(new KeyNotFoundException("Student not found."));
+                throw new KeyNotFoundException("Student not found.");
             }
 
             PersonalmedicineEntity.Status = true;
@@ -38,12 +39,11 @@ namespace BussinessLayer.Service
             PersonalmedicineEntity.Createddate = DateTime.Now;
             PersonalmedicineRepository.AddAsync(PersonalmedicineEntity);
             PersonalmedicineRepository.Save();
-            return Task.CompletedTask;
         }
 
-        public void DeletePersonalmedicine(int id)
+        public async Task DeletePersonalmedicine(int id)
         {
-            var Personalmedicine = PersonalmedicineRepository.GetByIdAsync(id).Result;
+            var Personalmedicine = await PersonalmedicineRepository.GetByIdAsync(id);
             if (Personalmedicine != null)
             {
                 Personalmedicine.Isdeleted = true;
@@ -100,9 +100,9 @@ namespace BussinessLayer.Service
             });
         }
 
-        public void UpdatePersonalmedicine(UpdatePersonalMedicineDTO Personalmedicine)
+        public async Task UpdatePersonalmedicine(UpdatePersonalMedicineDTO Personalmedicine)
         {
-            var PersonalmedicineEntity = PersonalmedicineRepository.GetByIdAsync(Personalmedicine.personalMedicineId).Result;
+            var PersonalmedicineEntity = await PersonalmedicineRepository.GetByIdAsync(Personalmedicine.personalMedicineId);
             if (PersonalmedicineEntity == null)
             {
                 throw new KeyNotFoundException("Medicine donation not found.");

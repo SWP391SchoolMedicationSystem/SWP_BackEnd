@@ -70,13 +70,13 @@ namespace SchoolMedicalSystem.Controllers
                 }*/
         [HttpPut]
         [Route("update")]
-        public IActionResult Update([FromBody] UpdateHealthRecordDTO content, [FromQuery] int id)
+        public async Task<IActionResult> Update([FromBody] UpdateHealthRecordDTO content, [FromQuery] int id)
         {
             if (content == null)
                 return BadRequest("Invalid data.");
             try
             {
-                _healthRecordService.UpdateHealthRecord(content, id);
+                await _healthRecordService.UpdateHealthRecord(content, id);
                 return Ok("Health record updated.");
             }
             catch (Exception ex)
@@ -87,13 +87,13 @@ namespace SchoolMedicalSystem.Controllers
 
         [HttpDelete]
         [Route("delete")]
-        public IActionResult Delete([FromQuery] int id)
+        public async Task<IActionResult> Delete([FromQuery] int id)
         {
             if (id <= 0)
                 return BadRequest("Invalid health record ID.");
             try
             {
-                _healthRecordService.DeleteHealthRecord(id);
+                await _healthRecordService.DeleteHealthRecord(id);
                 return Ok("Health record deleted.");
             }
             catch (Exception ex)
