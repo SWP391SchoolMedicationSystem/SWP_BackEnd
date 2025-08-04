@@ -161,44 +161,44 @@ namespace BussinessLayer.Service
             string? imageUrl = null;
             if (dto != null)
             {
-                    if (entity != null)
+                if (entity != null)
+                {
+                    entity.Title = dto.Title;
+                    entity.Content = dto.Content;
+                    //                    entity.ApprovedBy = dto.ApprovedBy;
+                    //                    entity.ApprovedOn = dto.ApprovedOn;
+                    //                    entity.CreatedBy = dto.CreatedBy;
+                    //                   entity.CreatedAt = DateTime.Now;
+                    entity.UpdatedAt = DateTime.Now;
+                    entity.UpdatedBy = dto.UpdatedBy;
+                    entity.Status = dto.Status;
+                    entity.IsDeleted = dto.IsDeleted;
+                    //                    entity.Image = dto.Image;
+                    if (dto.ImageFile != null && dto.ImageFile.Length > 0)
                     {
-                        entity.Title = dto.Title;
-                        entity.Content = dto.Content;
-                        //                    entity.ApprovedBy = dto.ApprovedBy;
-                        //                    entity.ApprovedOn = dto.ApprovedOn;
-                        //                    entity.CreatedBy = dto.CreatedBy;
-                        //                   entity.CreatedAt = DateTime.Now;
-                        entity.UpdatedAt = DateTime.Now;
-                        entity.UpdatedBy = dto.UpdatedBy;
-                        entity.Status = dto.Status;
-                        entity.IsDeleted = dto.IsDeleted;
-                        //                    entity.Image = dto.Image;
-                        if (dto.ImageFile != null && dto.ImageFile.Length > 0)
-                        {
-                            var allowedExtensions = new[] { ".jpg", ".jpeg", ".png" };
-                            var extension = Path.GetExtension(dto.ImageFile.FileName).ToLower();
-                            if (!allowedExtensions.Contains(extension))
-                                throw new Exception("Only JPG and PNG and jpeg files are allowed.");
-                            if (dto.ImageFile.Length > 2 * 1024 * 1024)
-                                throw new Exception("File size must be less than 2MB.");
+                        var allowedExtensions = new[] { ".jpg", ".jpeg", ".png" };
+                        var extension = Path.GetExtension(dto.ImageFile.FileName).ToLower();
+                        if (!allowedExtensions.Contains(extension))
+                            throw new Exception("Only JPG and PNG and jpeg files are allowed.");
+                        if (dto.ImageFile.Length > 2 * 1024 * 1024)
+                            throw new Exception("File size must be less than 2MB.");
 
-                            using var stream = dto.ImageFile.OpenReadStream();
-                            var uploadParams = new ImageUploadParams
-                            {
-                                File = new FileDescription(dto.ImageFile.FileName, stream),
-                                Transformation = new Transformation().AspectRatio("16:9").Crop("fill")
-                            };
-                            var uploadResult = await _cloudinary.UploadAsync(uploadParams);
-                            if (uploadResult.StatusCode == System.Net.HttpStatusCode.OK)
-                            {
-                                imageUrl = uploadResult.SecureUrl.ToString();
-                                entity.Image = uploadResult.SecureUrl.ToString();
-                            }
+                        using var stream = dto.ImageFile.OpenReadStream();
+                        var uploadParams = new ImageUploadParams
+                        {
+                            File = new FileDescription(dto.ImageFile.FileName, stream),
+                            Transformation = new Transformation().AspectRatio("16:9").Crop("fill")
+                        };
+                        var uploadResult = await _cloudinary.UploadAsync(uploadParams);
+                        if (uploadResult.StatusCode == System.Net.HttpStatusCode.OK)
+                        {
+                            imageUrl = uploadResult.SecureUrl.ToString();
+                            entity.Image = uploadResult.SecureUrl.ToString();
                         }
-                        _blogRepo.Update(entity);
-                        _blogRepo.Save();
                     }
+                    _blogRepo.Update(entity);
+                    _blogRepo.Save();
+                }
             }
             return imageUrl;
 
@@ -250,13 +250,24 @@ namespace BussinessLayer.Service
         public async Task ApproveBlog(ApproveBlogDTO dto)
         {
             var blog = await _blogRepo.GetByIdAsync(dto.BlogId);
-            if (blog != null)
+            try
             {
-                blog.ApprovedBy = dto.ApprovedBy;
-                blog.ApprovedOn = DateTime.Now;
-                blog.Status = published;
-                _blogRepo.Update(blog);
-                _blogRepo.Save();
+                if (blog == null)
+                    throw new Exception("Blog not found.");
+                if (dto.ApprovedBy == null || dto.ApprovedBy <= 0)
+                    throw new Exception("Invalid ApprovedBy ID.");
+                if (blog != null)
+                {
+                    blog.ApprovedBy = dto.ApprovedBy;
+                    blog.ApprovedOn = DateTime.Now;
+                    blog.Status = published;
+                    _blogRepo.Update(blog);
+                    _blogRepo.Save();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error approving blog: {ex.Message}");
             }
         }
         public async Task<List<BlogDTO>> GetPublishedBlogs()
@@ -273,21 +284,21 @@ namespace BussinessLayer.Service
             {
                 if (blog.CreatedBy != null)
                 {
-                        blog.CreatedByName = _staffRepository.GetAllAsync().Result.FirstOrDefault(s => s.Userid == blog.CreatedBy)?.Fullname ?? "Unknown";
+                    blog.CreatedByName = _staffRepository.GetAllAsync().Result.FirstOrDefault(s => s.Userid == blog.CreatedBy)?.Fullname ?? "Unknown";
                     //else
                     //    blog.CreatedByName = _parentRepository.GetAllAsync().Result.FirstOrDefault(s => s.Userid == blog.CreatedBy)?.Fullname ?? "Unknown";
                 }
 
                 if (blog.UpdatedBy != null)
                 {
-                        blog.UpdatedByName = _staffRepository.GetAllAsync().Result.FirstOrDefault(s => s.Userid == blog.UpdatedBy)?.Fullname ?? "Unknown";
+                    blog.UpdatedByName = _staffRepository.GetAllAsync().Result.FirstOrDefault(s => s.Userid == blog.UpdatedBy)?.Fullname ?? "Unknown";
                     //else
                     //    blog.UpdatedByName = _parentRepository.GetAllAsync().Result.FirstOrDefault(s => s.Userid == blog.UpdatedBy)?.Fullname ?? "Unknown";
                 }
 
                 if (blog.ApprovedBy != null)
                 {
-                        blog.ApprovedByName = _staffRepository.GetAllAsync().Result.FirstOrDefault(s => s.Userid == blog.ApprovedBy)?.Fullname ?? "Unknown";
+                    blog.ApprovedByName = _staffRepository.GetAllAsync().Result.FirstOrDefault(s => s.Userid == blog.ApprovedBy)?.Fullname ?? "Unknown";
                     //else
                     //    blog.ApprovedByName = _parentRepository.GetAllAsync().Result.FirstOrDefault(s => s.Userid == blog.ApprovedBy)?.Fullname ?? "Unknown";
                 }
@@ -299,13 +310,24 @@ namespace BussinessLayer.Service
         public async Task RejectBlog(RejectBlogDTO dto)
         {
             var blog = await _blogRepo.GetByIdAsync(dto.BlogId);
-            if (blog != null)
+            try
             {
-                blog.ApprovedBy = dto.ApprovedBy;
-                blog.ApprovedOn = DateTime.Now;
-                blog.Status = rejected;
-                _blogRepo.Update(blog);
-                _blogRepo.Save();
+                if (blog == null)
+                    throw new Exception("Blog not found.");
+                if (dto.ApprovedBy == null || dto.ApprovedBy <= 0)
+                    throw new Exception("Invalid ApprovedBy ID.");
+                if (blog != null)
+                {
+                    blog.ApprovedBy = dto.ApprovedBy;
+                    blog.ApprovedOn = DateTime.Now;
+                    blog.Status = rejected;
+                    _blogRepo.Update(blog);
+                    _blogRepo.Save();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error approving blog: {ex.Message}");
             }
         }
 
@@ -321,21 +343,21 @@ namespace BussinessLayer.Service
             {
                 if (blog.CreatedBy != null)
                 {
-                        blog.CreatedByName = _staffRepository.GetAllAsync().Result.FirstOrDefault(s => s.Userid == blog.CreatedBy)?.Fullname ?? "Unknown";
+                    blog.CreatedByName = _staffRepository.GetAllAsync().Result.FirstOrDefault(s => s.Userid == blog.CreatedBy)?.Fullname ?? "Unknown";
                     //else
                     //    blog.CreatedByName = _parentRepository.GetAllAsync().Result.FirstOrDefault(s => s.Userid == blog.CreatedBy)?.Fullname ?? "Unknown";
                 }
 
                 if (blog.UpdatedBy != null)
                 {
-                        blog.UpdatedByName = _staffRepository.GetAllAsync().Result.FirstOrDefault(s => s.Userid == blog.UpdatedBy)?.Fullname ?? "Unknown";
+                    blog.UpdatedByName = _staffRepository.GetAllAsync().Result.FirstOrDefault(s => s.Userid == blog.UpdatedBy)?.Fullname ?? "Unknown";
                     //else
                     //    blog.UpdatedByName = _parentRepository.GetAllAsync().Result.FirstOrDefault(s => s.Userid == blog.UpdatedBy)?.Fullname ?? "Unknown";
                 }
 
                 if (blog.ApprovedBy != null)
                 {
-                        blog.ApprovedByName = _staffRepository.GetAllAsync().Result.FirstOrDefault(s => s.Userid == blog.ApprovedBy)?.Fullname ?? "Unknown";
+                    blog.ApprovedByName = _staffRepository.GetAllAsync().Result.FirstOrDefault(s => s.Userid == blog.ApprovedBy)?.Fullname ?? "Unknown";
                     //else
                     //    blog.ApprovedByName = _parentRepository.GetAllAsync().Result.FirstOrDefault(s => s.Userid == blog.ApprovedBy)?.Fullname ?? "Unknown";
                 }

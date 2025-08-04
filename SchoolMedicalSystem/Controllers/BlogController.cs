@@ -140,7 +140,7 @@ namespace SchoolMedicalSystem.Controllers
         [HttpPost]
         [Route("RejectBlog")]
         [ProducesResponseType<int>(StatusCodes.Status200OK)]
-        public IActionResult RejectBlog([FromBody] RejectBlogDTO rejectBlogDto)
+        public async Task<IActionResult> RejectBlog([FromBody] RejectBlogDTO rejectBlogDto)
         {
             if (rejectBlogDto == null)
                 return BadRequest("Invalid rejection data.");
@@ -148,7 +148,7 @@ namespace SchoolMedicalSystem.Controllers
                 return BadRequest("Invalid blog ID.");
             try
             {
-                _blogService.RejectBlog(rejectBlogDto);
+                await _blogService.RejectBlog(rejectBlogDto);
                 return Ok(new { Message = rejectBlogDto.Message });
             }
             catch (Exception ex)
