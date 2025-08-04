@@ -1,6 +1,7 @@
 ﻿using BussinessLayer.IService;
 using DataAccessLayer.DTO;
 using DataAccessLayer.Entity;
+using DataAccessLayer.IRepository;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,7 +9,7 @@ namespace SchoolMedicalSystem.Controllers
 {
     [Route("api")]
     [ApiController]
-    public class HealthcheckrecordeventController(IHealthCheckEventRecordService healthCheckEventRecordService) : ControllerBase
+    public class HealthcheckrecordeventController(IHealthCheckEventRecordService healthCheckEventRecordService, IClassRoomRepository classRoomRepository) : ControllerBase
     {
         [HttpGet]
         [Route("healthcheckrecordevents")]
@@ -22,6 +23,7 @@ namespace SchoolMedicalSystem.Controllers
         public async Task<IActionResult> GetHealthCheckRecordEventById(int id)
         {
             var healthCheckRecordEvent = await healthCheckEventRecordService.GetHealthCheckRecordEventByIdAsync(id);
+
             if (healthCheckRecordEvent == null)
             {
                 return NotFound();

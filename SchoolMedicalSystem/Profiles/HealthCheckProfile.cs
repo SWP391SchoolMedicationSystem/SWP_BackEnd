@@ -21,6 +21,11 @@ namespace SchoolMedicalSystem.Profiles
                 .ReverseMap();
             CreateMap<Healthcheckevent, HeatlhCheckEventDto>().ReverseMap();
             CreateMap<Healthcheckrecordevent, HeatlhCheckRecordEventDto>().ReverseMap();
+
+            CreateMap<Healthcheckrecordevent, HealthCheckDtoIgnoreClass>()
+                .ForMember(dest => dest.student, opt => opt.MapFrom(src => src.Healthcheckrecord.Student))
+                .ReverseMap();
+
             
         }
 

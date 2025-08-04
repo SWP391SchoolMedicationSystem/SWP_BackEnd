@@ -38,6 +38,9 @@ namespace BussinessLayer.Service
         public async Task<Student> AddStudentAsync(AddStudentDTO student)
         {
             Student addedstudent = _mapper.Map<Student>(student);
+            var students = await _studentrepo.GetAllAsync();
+            int studentcode = students[students.Count - 1].Studentid + 1;
+            addedstudent.StudentCode = $"HS{studentcode}";
             await _studentrepo.AddAsync(addedstudent);
             return addedstudent;
         }
@@ -130,9 +133,7 @@ namespace BussinessLayer.Service
         {
             var parentlist = await _parentrepo.GetAllAsync();
             var classlist = await _classroomrepo.GetAllAsync();
-            var students = await _studentrepo.GetAllAsync();
             string errorMessage = string.Empty;
-
             foreach (var student in studentlist)
             {
                 try
@@ -154,7 +155,6 @@ namespace BussinessLayer.Service
                                 Parentid = parent.Parentid,
                                 Dob = student.birthDate,
                                 Gender = student.gender == "Nam" ? true : student.gender == "Nữ" ? false : throw new ArgumentException("Invalid gender value"),
-                                StudentCode = $"HS{students[students.Count - 1].Studentid}",
                             };
                             Student newstudent = await AddStudentAsync(addstudent);
                             classroom.Students.Add(newstudent);

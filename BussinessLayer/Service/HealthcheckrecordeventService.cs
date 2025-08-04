@@ -6,17 +6,21 @@ using System.Threading.Tasks;
 using AutoMapper;
 using BussinessLayer.IService;
 using DataAccessLayer.DTO;
+using DataAccessLayer.DTO.HealthCheck;
 using DataAccessLayer.Entity;
 using DataAccessLayer.IRepository;
+using DataAccessLayer.Repository;
 
 namespace BussinessLayer.Service
 {
-    public class HealthcheckrecordeventService(IHealthcheckrecordeventRepository healthCheckEventRepository, IMapper mapper) : IHealthCheckEventRecordService
+    public class HealthcheckrecordeventService(IHealthcheckrecordeventRepository healthCheckEventRepository, IMapper mapper, IClassRoomRepository classRoomRepository) : IHealthCheckEventRecordService
     {
-        public async Task<List<Healthcheckrecordevent>> GetAllHealthCheckRecordEventsAsync()
+        public async Task<List<HealthCheckDtoIgnoreClass>> GetAllHealthCheckRecordEventsAsync()
         {
-            var list = await healthCheckEventRepository.GetAllAsync();
-                return list.OrderBy(x => x.Healthcheckevent.Eventdate).Reverse().ToList();
+
+            var healthcheck = await healthCheckEventRepository.GetAllAsync();
+            var list = mapper.Map<List<HealthCheckDtoIgnoreClass>>(healthcheck);
+            return list.OrderBy(x => x.Healthcheckevent.Eventdate).Reverse().ToList();
         }
         public async Task<Healthcheckrecordevent?> GetHealthCheckRecordEventByIdAsync(int eventId)
         {

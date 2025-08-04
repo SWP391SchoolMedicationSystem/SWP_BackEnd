@@ -9,9 +9,6 @@ namespace DataAccessLayer.DTO.Students
 {
     public class AddStudentDTO
     {
-        [Required(ErrorMessage = "Vui lòng nhập số báo danh")]
-        [StringLength(10, ErrorMessage = "Số báo danh không được vượt quá 10 ký tự")]
-        public string? StudentCode { get; set; }
         [Required(ErrorMessage = "Vui lòng nhập họ và tên")]
         public string Fullname { get; set; } = null!;
         [Required(ErrorMessage = "Vui lòng nhập tuổi")]
