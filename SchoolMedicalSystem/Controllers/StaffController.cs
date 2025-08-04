@@ -79,7 +79,7 @@ namespace SchoolMedicalSystem.Controllers
             }
         }
         [HttpPut("staff")]
-        public IActionResult UpdateStaff([FromBody] StaffUpdate staffUpdate)
+        public async Task<IActionResult> UpdateStaff([FromBody] StaffUpdate staffUpdate)
         {
             try
             {
@@ -87,7 +87,7 @@ namespace SchoolMedicalSystem.Controllers
                 {
                     return BadRequest("Staff update data is null.");
                 }
-                _staffService.UpdateStaff(staffUpdate);
+                await _staffService.UpdateStaff(staffUpdate);
                 return Ok("Staff updated successfully.");
             }
             catch (KeyNotFoundException knfEx)
