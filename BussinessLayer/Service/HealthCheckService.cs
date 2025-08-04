@@ -41,32 +41,34 @@ namespace BussinessLayer.Service
 
         public async Task AddHealthCheckAsync(AddHealthCheckDto healthCheckDto)
         {
-            try {
-            var studentlist = await _studentService.GetAllStudentsAsync();
-            if (await _staffservice.GetStaffByIdAsync(healthCheckDto.Staffid) != null
-                && studentlist.FirstOrDefault(s => s.StudentId == healthCheckDto.Studentid) != null)
+            try
             {
-
-                if (healthCheckDto.Visionleft == 10) healthCheckDto.Visionleft = (decimal?)9.99;
-                if (healthCheckDto.Visionright == 10) healthCheckDto.Visionright = (decimal)9.99;
-                Healthcheck healthcheck = _mapper.Map<Healthcheck>(healthCheckDto);
-                healthcheck.Createdat = DateTime.Now;
-                var healthCheckEvent = _healthCheckEventRepository.GetByIdAsync(healthCheckDto.Eventid);
-                if (healthCheckEvent != null)
+                var studentlist = await _studentService.GetAllStudentsAsync();
+                if (await _staffservice.GetStaffByIdAsync(healthCheckDto.Staffid) != null
+                    && studentlist.FirstOrDefault(s => s.StudentId == healthCheckDto.Studentid) != null)
                 {
-                    await _healthCheckRepository.AddAsync(healthcheck);
-                    await _healthCheckRepository.SaveChangesAsync();
-                    AddHealthcheckrecordeventDTO addHealthcheckrecordeventDTO = new AddHealthcheckrecordeventDTO
+
+                    if (healthCheckDto.Visionleft == 10) healthCheckDto.Visionleft = (decimal?)9.99;
+                    if (healthCheckDto.Visionright == 10) healthCheckDto.Visionright = (decimal)9.99;
+                    Healthcheck healthcheck = _mapper.Map<Healthcheck>(healthCheckDto);
+                    healthcheck.Createdat = DateTime.Now;
+                    var healthCheckEvent = await _healthCheckEventRepository.GetByIdAsync(healthCheckDto.Eventid);
+                    if (healthCheckEvent != null)
                     {
-                        Healthcheckrecordid = healthcheck.Checkid,
-                        Healthcheckeventid = healthCheckDto.Eventid
-                    };
-                    await _healthCheckEventRecordService.AddHealthCheckRecordEventAsync(addHealthcheckrecordeventDTO);
+                        await _healthCheckRepository.AddAsync(healthcheck);
+                        await _healthCheckRepository.SaveChangesAsync();
+                        AddHealthcheckrecordeventDTO addHealthcheckrecordeventDTO = new AddHealthcheckrecordeventDTO
+                        {
+                            Healthcheckrecordid = healthcheck.Checkid,
+                            Healthcheckeventid = healthCheckDto.Eventid
+                        };
+                        await _healthCheckEventRecordService.AddHealthCheckRecordEventAsync(addHealthcheckrecordeventDTO);
+
+                    }
 
                 }
-
             }
-            } catch(Exception e) { throw new Exception($"Error adding health check: {e.Message}"); }
+            catch (Exception e) { throw new Exception($"Error adding health check: {e.Message}"); }
         }
 
         public async Task<bool> DeleteHealthCheckAsync(int checkId)
