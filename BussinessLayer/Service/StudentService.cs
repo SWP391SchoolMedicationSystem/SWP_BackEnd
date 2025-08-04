@@ -37,16 +37,17 @@ namespace BussinessLayer.Service
 
         public async Task<Student> AddStudentAsync(AddStudentDTO student)
         {
-            Student addedstudent = _mapper.Map<Student>(student);
-            var students = await _studentrepo.GetAllAsync();
-            int studentcode = students[students.Count - 1].Studentid + 1;
-            addedstudent.StudentCode = $"HS{studentcode}";
-            addedstudent.Age = DateTime.Now.Year - student.Dob.Year -
-                                      (DateTime.Now.DayOfYear < student.Dob.DayOfYear ? 1 : 0);
-            await _studentrepo.AddAsync(addedstudent);
-            await _studentrepo.SaveChangesAsync();
-            return addedstudent;
-        }
+
+                Student addedstudent = _mapper.Map<Student>(student);
+                var students = await _studentrepo.GetAllAsync();
+                int studentcode = students[students.Count - 1].Studentid + 1;
+                addedstudent.StudentCode = $"HS{studentcode}";
+                addedstudent.Age = DateTime.Now.Year - student.Dob.Year -
+                                          (DateTime.Now.DayOfYear < student.Dob.DayOfYear ? 1 : 0);
+                await _studentrepo.AddAsync(addedstudent);
+                await _studentrepo.SaveChangesAsync();
+                return addedstudent;
+        } 
 
         public async Task DeleteStudent(int id)
         {

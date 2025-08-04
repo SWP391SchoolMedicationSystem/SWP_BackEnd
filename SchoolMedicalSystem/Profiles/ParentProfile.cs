@@ -10,7 +10,9 @@ namespace SchoolMedicalSystem.Profiles
         public ParentProfile()
         {
             CreateMap<LoginDTO, Parent>().ReverseMap();
-            CreateMap<ParentRegister, Parent>().ReverseMap();
+            CreateMap<ParentRegister, Parent>()
+                .ForMember(dest => dest.Students, opt => opt.Ignore())
+                .ReverseMap();
             CreateMap<Parent, ParentDTO>().ReverseMap();
             CreateMap<ParentUpdate, Parent>().ReverseMap();
             CreateMap<Parent, ParentUpdate>().ReverseMap();

@@ -71,10 +71,10 @@ namespace BussinessLayer.Service
                 try
                 {
                     await userRepository.AddAsync(user);
-                    userRepository.Save();
+                    await userRepository.SaveChangesAsync();
                     newParent.Userid = user.UserId;
                     await parentRepository.AddAsync(newParent);
-                    parentRepository.Save();
+                    await parentRepository.SaveChangesAsync();
                     foreach(var student in parent.Students)
                     {
                         student.Parentid = newParent.Parentid;

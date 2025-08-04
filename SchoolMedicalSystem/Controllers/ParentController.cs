@@ -36,19 +36,13 @@ namespace SchoolMedicalSystem.Controllers
         [HttpPost("registration")]
         public async Task<IActionResult> Registration([FromBody] ParentRegister parent)
         {
-            try
-            {
                 if (parent == null)
                 {
                     return BadRequest("Parent data is null.");
                 }
                 await _parentservice.AddParentAsync(parent);
                 return CreatedAtAction(nameof(GetParentById), new { id = parent.Fullname }, parent);
-            }
-            catch (Exception e)
-            {
-                return BadRequest(e.Message);
-            }
+    
         }
 
         [HttpPut("parent")]
