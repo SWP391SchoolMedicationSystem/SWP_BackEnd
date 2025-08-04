@@ -62,11 +62,11 @@ namespace SchoolMedicalSystem.Controllers
         }
 
         [HttpDelete("staff/{id}")]
-        public IActionResult DeleteStaff(int id)
+        public async Task<IActionResult> DeleteStaff(int id)
         {
             try
             {
-                _staffService.DeleteStaff(id);
+                await _staffService.DeleteStaff(id);
                 return Ok($"Staff with ID {id} deleted successfully.");
             }
             catch (KeyNotFoundException knfEx)

@@ -79,7 +79,7 @@ namespace BussinessLayer.Service
             }
         }
 
-        public async void DeleteStaff(int id)
+        public async Task DeleteStaff(int id)
         {
             var staff = await staffRepository.GetByIdAsync(id);
             if (staff == null)
@@ -88,12 +88,15 @@ namespace BussinessLayer.Service
             }
             else
             {
-                var user = (await userRepository.GetAllAsync()).
-                    FirstOrDefault(u => u.UserId == staff.Userid);
-                staff.IsDeleted = true;
-                user.IsDeleted = true;
-                staffRepository.Save();
-                userRepository.Save();
+                var user = await userRepository.GetAllAsync();
+                var userByID = user.FirstOrDefault(u => u.UserId == staff.Userid);
+                if (userByID != null) {
+                    staff.IsDeleted = true;
+                    userByID.IsDeleted = true;
+                    staffRepository.Save();
+                    userRepository.Save();
+                }
+                
             }
 
         }
