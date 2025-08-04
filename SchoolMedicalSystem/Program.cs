@@ -170,6 +170,8 @@ builder.Services.AddScoped<IHealthCheckEventService, HealthCheckEventService>();
 builder.Services.AddScoped<IHealthCheckEventRecordService, HealthcheckrecordeventService>();
 builder.Services.AddScoped<IHealthcheckrecordeventRepository, HealthcheckrecordeventRepository>();
 builder.Services.AddScoped<IMedicineCategoryService, MedicineCategoryService>();
+
+builder.Services.AddSingleton<GlobalExceptionMiddleware>();
 #endregion
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
