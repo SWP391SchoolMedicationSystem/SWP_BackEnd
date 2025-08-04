@@ -64,8 +64,7 @@ namespace BussinessLayer.Service
 
             if (entity != null)
             {
-                entity.Isdeleted = true;
-                _healthRecordRepository.Update(entity);
+                _healthRecordRepository.Delete(id);
                 _healthRecordRepository.Save();
             }
         }
