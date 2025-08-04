@@ -54,7 +54,7 @@ namespace SchoolMedicalSystem.Controllers
         }
         [HttpPut]
         [Route("healthcheckevent/{eventId}")]
-        public async Task<IActionResult> UpdateHealthCheckEvent(int eventId, [FromBody] DataAccessLayer.Entity.Healthcheckevent healthCheckEvent)
+        public async Task<IActionResult> UpdateHealthCheckEvent(int eventId, [FromBody] UpdateHeatlhCheckEventDto healthCheckEvent)
         {
             if (healthCheckEvent == null || healthCheckEvent.HealthcheckeventID != eventId)
             {

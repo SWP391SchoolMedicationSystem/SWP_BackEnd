@@ -38,9 +38,12 @@ namespace BussinessLayer.Service
         }
         public async Task UpdateHealthCheckRecordEventAsync(Healthcheckrecordevent healthCheckRecordEvent)
         {
-            if (await healthCheckEventRepository.GetByIdAsync(healthCheckRecordEvent.Healthcheckrecordid) != null)
+            var healthcheck = await healthCheckEventRepository.GetByIdAsync(healthCheckRecordEvent.Healthcheckrecordid);
+            if (healthcheck != null)
             {
-                healthCheckEventRepository.Update(healthCheckRecordEvent);
+                healthcheck.Healthcheckrecordid = healthCheckRecordEvent.Healthcheckrecordid;
+                healthcheck.Healthcheckeventid = healthCheckRecordEvent.Healthcheckeventid;
+                healthCheckEventRepository.Update(healthcheck);
                 await healthCheckEventRepository.SaveChangesAsync();
             }
             else
