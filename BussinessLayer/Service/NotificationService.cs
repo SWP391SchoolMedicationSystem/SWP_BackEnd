@@ -200,7 +200,7 @@ namespace BussinessLayer.Service
             }
             catch (Exception ex)
             {
-                throw new Exception($"Failed to create notification for parents: {ex.Message}", ex);
+                throw new Exception($"Failed to create notification for staff: {ex.Message}", ex);
             }
         }
 
