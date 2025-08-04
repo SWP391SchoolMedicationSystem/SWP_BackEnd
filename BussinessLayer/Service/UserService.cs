@@ -193,7 +193,7 @@ namespace BussinessLayer.Service
                 Body = $"Mã OTP đễ đặt lại mật khẩu của bạn là :\n <h1>{otp}</h1>",
             };
 
-            _otpRepo.Add(otpEntry);
+            await _otpRepo.AddAsync(otpEntry);
             await _otpRepo.SaveChangesAsync();
 
             await _emailService.SendEmailAsync(emailTemplateDTO);

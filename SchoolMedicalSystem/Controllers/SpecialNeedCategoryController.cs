@@ -38,13 +38,13 @@ namespace SchoolMedicalSystem.Controllers
             }
         }
         [HttpPost("AddCategory")]
-        public IActionResult AddCategory([FromBody] CreateSpecialNeedCategoryDTO categoryDto)
+        public async Task<IActionResult> AddCategory([FromBody] CreateSpecialNeedCategoryDTO categoryDto)
         {
             if (categoryDto == null)
                 return BadRequest("Category data is null.");
             try
             {
-                _specialNeedCategoryService.AddCategoryAsync(categoryDto);
+                await _specialNeedCategoryService.AddCategoryAsync(categoryDto);
                 return Ok("Category added successfully.");
             }
             catch (Exception ex)
@@ -53,13 +53,13 @@ namespace SchoolMedicalSystem.Controllers
             }
         }
         [HttpPut("UpdateCategory")]
-        public IActionResult UpdateCategory([FromBody] UpdateSpecialNeedCategoryDTO categoryDto)
+        public async Task<IActionResult> UpdateCategory([FromBody] UpdateSpecialNeedCategoryDTO categoryDto)
         {
             if (categoryDto == null)
                 return BadRequest("Category data is null.");
             try
             {
-                _specialNeedCategoryService.UpdateCategoryAsync(categoryDto);
+                await _specialNeedCategoryService.UpdateCategoryAsync(categoryDto);
                 return Ok("Category updated successfully.");
             }
             catch (Exception ex)
@@ -68,13 +68,13 @@ namespace SchoolMedicalSystem.Controllers
             }
         }
         [HttpDelete("DeleteCategory")]
-        public IActionResult DeleteCategory([FromQuery] int id)
+        public async Task<IActionResult> DeleteCategory([FromQuery] int id)
         {
             if (id <= 0)
                 return BadRequest("Invalid category ID.");
             try
             {
-                _specialNeedCategoryService.DeleteCategoryAsync(id);
+                await _specialNeedCategoryService.DeleteCategoryAsync(id);
                 return Ok("Category deleted successfully.");
             }
             catch (KeyNotFoundException)

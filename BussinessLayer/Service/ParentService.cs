@@ -91,7 +91,7 @@ namespace BussinessLayer.Service
             }
         }
 
-        public async void DeleteParent(int id)
+        public async Task DeleteParent(int id)
         {
             var parent = await parentRepository.GetByIdAsync(id);
             if ( parent != null)
@@ -105,9 +105,9 @@ namespace BussinessLayer.Service
             }
 
         }
-        public void UpdateParent(ParentUpdate parentdto)
+        public async Task UpdateParent(ParentUpdate parentdto)
         {
-            Parent parent = (Parent) parentRepository.GetByIdAsync(parentdto.Parentid).Result;
+            Parent parent = await parentRepository.GetByIdAsync(parentdto.Parentid);
             if (parent != null)
             {
                 // Only assign if value is not null/empty/0

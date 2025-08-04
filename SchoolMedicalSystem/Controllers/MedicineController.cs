@@ -42,13 +42,13 @@ namespace SchoolMedicalSystem.Controllers
         }
         [HttpPost]
         [Route("AddMedicine")]
-        public IActionResult AddMedicine([FromBody] CreateMedicineDTO medicineDto)
+        public async Task<IActionResult> AddMedicine([FromBody] CreateMedicineDTO medicineDto)
         {
             if (medicineDto == null)
                 return BadRequest("Medicine data is null.");
             try
             {
-                _medicineService.AddMedicine(medicineDto);
+                await _medicineService.AddMedicine(medicineDto);
                 return Ok("Medicine added successfully.");
             }
             catch (Exception ex)
@@ -58,13 +58,13 @@ namespace SchoolMedicalSystem.Controllers
         }
         [HttpPut]
         [Route("UpdateMedicine")]
-        public IActionResult UpdateMedicine([FromBody] UpdateMedicineDTO medicineDto)
+        public async Task<IActionResult> UpdateMedicine([FromBody] UpdateMedicineDTO medicineDto)
         {
             if (medicineDto == null)
                 return BadRequest("Invalid data.");
             try
             {
-                _medicineService.UpdateMedicine(medicineDto);
+                await _medicineService.UpdateMedicine(medicineDto);
                 return Ok("Medicine updated successfully.");
             }
             catch (Exception ex)
@@ -92,13 +92,13 @@ namespace SchoolMedicalSystem.Controllers
         }
         [HttpDelete]
         [Route("DeleteMedicine")]
-        public IActionResult DeleteMedicine([FromQuery] int id)
+        public async Task<IActionResult> DeleteMedicine([FromQuery] int id)
         {
             if (id <= 0)
                 return BadRequest("Invalid medicine ID.");
             try
             {
-                _medicineService.DeleteMedicine(id);
+                await _medicineService.DeleteMedicine(id);
                 return Ok("Medicine deleted successfully.");
             }
             catch (Exception ex)

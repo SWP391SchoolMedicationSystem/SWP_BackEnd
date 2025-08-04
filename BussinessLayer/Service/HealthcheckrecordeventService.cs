@@ -6,17 +6,28 @@ using System.Threading.Tasks;
 using AutoMapper;
 using BussinessLayer.IService;
 using DataAccessLayer.DTO;
+using DataAccessLayer.DTO.HealthCheck;
 using DataAccessLayer.Entity;
 using DataAccessLayer.IRepository;
+using DataAccessLayer.Repository;
 
 namespace BussinessLayer.Service
 {
-    public class HealthcheckrecordeventService(IHealthcheckrecordeventRepository healthCheckEventRepository, IMapper mapper) : IHealthCheckEventRecordService
+    public class HealthcheckrecordeventService(IHealthcheckrecordeventRepository healthCheckEventRepository, IMapper mapper, IClassRoomRepository classRoomRepository, IStudentRepo studentRepo) : IHealthCheckEventRecordService
     {
-        public async Task<List<Healthcheckrecordevent>> GetAllHealthCheckRecordEventsAsync()
+        public async Task<List<HealthCheckDtoIgnoreClass>> GetAllHealthCheckRecordEventsAsync()
         {
-            var list = await healthCheckEventRepository.GetAllAsync();
-                return list.OrderBy(x => x.Healthcheckevent.Eventdate).Reverse().ToList();
+            var classroom = await classRoomRepository.GetAllAsync();
+
+            var healthcheck = await healthCheckEventRepository.GetAllAsync();
+            var students = await studentRepo.GetAllAsync();
+            var list = mapper.Map<List<HealthCheckDtoIgnoreClass>>(healthcheck);
+            foreach(var item in list)
+            {
+                var student = students.FirstOrDefault(x => x.Studentid == item.Healthcheckrecord.Studentid);
+                item.ClassName = student.Class.Classname;
+            }
+            return list.OrderBy(x => x.Healthcheckevent.Eventdate).Reverse().ToList();
         }
         public async Task<Healthcheckrecordevent?> GetHealthCheckRecordEventByIdAsync(int eventId)
         {
@@ -24,15 +35,26 @@ namespace BussinessLayer.Service
         }
         public async Task AddHealthCheckRecordEventAsync(AddHealthcheckrecordeventDTO healthCheckRecordEvent)
         {
-            var record = mapper.Map<Healthcheckrecordevent>(healthCheckRecordEvent);
-            await healthCheckEventRepository.AddAsync(record);
-            await healthCheckEventRepository.SaveChangesAsync();
+            try
+            {
+                var record = mapper.Map<Healthcheckrecordevent>(healthCheckRecordEvent);
+                await healthCheckEventRepository.AddAsync(record);
+                await healthCheckEventRepository.SaveChangesAsync();
+            }
+            catch (Exception e)
+            {
+                throw new Exception($"Error adding Health Check and Event Together {e.Message}");
+            }
+
         }
         public async Task UpdateHealthCheckRecordEventAsync(Healthcheckrecordevent healthCheckRecordEvent)
         {
-            if (await healthCheckEventRepository.GetByIdAsync(healthCheckRecordEvent.Healthcheckrecordid) != null)
+            var healthcheck = await healthCheckEventRepository.GetByIdAsync(healthCheckRecordEvent.Healthcheckrecordid);
+            if (healthcheck != null)
             {
-                healthCheckEventRepository.Update(healthCheckRecordEvent);
+                healthcheck.Healthcheckrecordid = healthCheckRecordEvent.Healthcheckrecordid;
+                healthcheck.Healthcheckeventid = healthCheckRecordEvent.Healthcheckeventid;
+                healthCheckEventRepository.Update(healthcheck);
                 await healthCheckEventRepository.SaveChangesAsync();
             }
             else
@@ -42,7 +64,9 @@ namespace BussinessLayer.Service
         }
         public async Task DeleteHealthCheckRecordEventAsync(int eventId)
         {
-            healthCheckEventRepository.Delete(eventId);
+            var healthcheck = await healthCheckEventRepository.GetByIdAsync(eventId);
+            healthcheck.Isdeleted = true; // Soft delete
+            healthCheckEventRepository.Update(healthcheck);
             await healthCheckEventRepository.SaveChangesAsync();
         }
 
@@ -52,9 +76,11 @@ namespace BussinessLayer.Service
             return list.Where(x => x.Healthcheckrecord.Studentid == studentId).OrderBy(x => x.Healthcheckevent.Eventdate).Reverse().ToList();
         }
 
-        public Task<List<Healthcheckrecordevent>> GetHealthCheckRecordEventsByEventIdAsync(int eventId)
+        public async Task<List<Healthcheckrecordevent>> GetHealthCheckRecordEventsByEventIdAsync(int eventId)
         {
-            throw new NotImplementedException();
+            var list = await healthCheckEventRepository.GetAllAsync();
+            return list.Where(x => x.Healthcheckevent.HealthcheckeventID == eventId).OrderBy(x => x.Healthcheckevent.Eventdate).Reverse().ToList();
         }
+       
     }
 }

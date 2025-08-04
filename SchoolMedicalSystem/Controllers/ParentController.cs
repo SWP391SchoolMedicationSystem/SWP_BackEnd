@@ -52,7 +52,7 @@ namespace SchoolMedicalSystem.Controllers
         }
 
         [HttpPut("parent")]
-        public IActionResult UpdateParentRequest([FromBody] ParentUpdate parent)
+        public async Task<IActionResult> UpdateParentRequest([FromBody] ParentUpdate parent)
         {
             try
             {
@@ -60,7 +60,7 @@ namespace SchoolMedicalSystem.Controllers
                 {
                     return BadRequest("Parent data is null.");
                 }
-                _parentservice.UpdateParent(parent);
+                await _parentservice.UpdateParent(parent);
                 return Ok("Parent request updated successfully.");
             }
             catch (Exception e)
@@ -69,11 +69,11 @@ namespace SchoolMedicalSystem.Controllers
             }
         }
         [HttpDelete("parent/{id}")]
-        public IActionResult DeleteParent([FromBody] int id)
+        public async Task<IActionResult> DeleteParent([FromBody] int id)
         {
             try
             {
-                _parentservice.DeleteParent(id);
+                await _parentservice.DeleteParent(id);
                 return Ok("Parent deleted successfully.");
             }
             catch (Exception e)

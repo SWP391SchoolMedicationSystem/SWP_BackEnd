@@ -11,8 +11,8 @@ namespace BussinessLayer.IService
     {
         Task<List<SpecialNeedCategoryDTO>> GetAllCategoriesAsync();
         Task<SpecialNeedCategoryDTO> GetCategoryByIdAsync(int id);
-        void AddCategoryAsync(CreateSpecialNeedCategoryDTO categoryDto);
-        void UpdateCategoryAsync(UpdateSpecialNeedCategoryDTO categoryDto);
-        void DeleteCategoryAsync(int id);
+        Task AddCategoryAsync(CreateSpecialNeedCategoryDTO categoryDto);
+        Task UpdateCategoryAsync(UpdateSpecialNeedCategoryDTO categoryDto);
+        Task DeleteCategoryAsync(int id);
     }
 }

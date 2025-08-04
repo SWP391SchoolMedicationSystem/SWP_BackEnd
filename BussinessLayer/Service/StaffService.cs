@@ -79,7 +79,7 @@ namespace BussinessLayer.Service
             }
         }
 
-        public async void DeleteStaff(int id)
+        public async Task DeleteStaff(int id)
         {
             var staff = await staffRepository.GetByIdAsync(id);
             if (staff == null)
@@ -88,12 +88,15 @@ namespace BussinessLayer.Service
             }
             else
             {
-                var user = (await userRepository.GetAllAsync()).
-                    FirstOrDefault(u => u.UserId == staff.Userid);
-                staff.IsDeleted = true;
-                user.IsDeleted = true;
-                staffRepository.Save();
-                userRepository.Save();
+                var user = await userRepository.GetAllAsync();
+                var userByID = user.FirstOrDefault(u => u.UserId == staff.Userid);
+                if (userByID != null) {
+                    staff.IsDeleted = true;
+                    userByID.IsDeleted = true;
+                    staffRepository.Save();
+                    userRepository.Save();
+                }
+                
             }
 
         }
@@ -186,12 +189,23 @@ namespace BussinessLayer.Service
             return staffDTO ?? throw new KeyNotFoundException($"Staff with ID {id} not found.");
         }
 
-        public void UpdateStaff(StaffUpdate staff)
+        public async Task UpdateStaff(StaffUpdate staff)
         {
-            Staff staffupdated = mapper.Map<Staff>(staff);
-            staffupdated.UpdatedAt = DateTime.Now;
-            staffRepository.Update(staffupdated);
-            staffRepository.Save();
+            Staff staffById = await staffRepository.GetByIdAsync(staff.Staffid);
+            if (staffById == null)
+            {
+                throw new KeyNotFoundException($"Staff with ID {staff.Staffid} not found.");
+            }
+            else
+            {
+                staffById.Fullname = staff.Fullname;
+                staffById.Phone = staff.Phone;
+                staffById.Email = staff.Email;
+                staffById.Roleid = staff.Roleid;
+                staffRepository.Update(staffById);
+                await staffRepository.SaveChangesAsync();
+
+            }
         }
 
         public async Task<String> ValidateGoogleToken(string token)

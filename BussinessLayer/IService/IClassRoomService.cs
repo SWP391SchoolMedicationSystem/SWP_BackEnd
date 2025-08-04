@@ -12,6 +12,6 @@ namespace BussinessLayer.IService
         Task<List<Classroom>> GetAllClassRoomsAsync();
         Task<Classroom> GetClassRoomByName(string name);
 
-        void DeleteClassRoom(int id);
+        Task DeleteClassRoom(int id);
     }
 }

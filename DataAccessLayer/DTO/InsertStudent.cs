@@ -9,8 +9,6 @@ namespace DataAccessLayer.DTO
 {
     public class InsertStudent
     {
-        [Required(ErrorMessage = "Mã học sinh là bắt buộc")]
-        public string studentCode { get; set; } = null!;
         [Required(ErrorMessage = "Tên học sinh là bắt buộc")]
         public string fullName { get; set; } = null!;
         [Required(ErrorMessage = "Nhóm máu là bắt buộc")]

@@ -1,6 +1,7 @@
 ﻿using BussinessLayer.IService;
 using DataAccessLayer.DTO;
 using DataAccessLayer.Entity;
+using DataAccessLayer.IRepository;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,7 +9,7 @@ namespace SchoolMedicalSystem.Controllers
 {
     [Route("api")]
     [ApiController]
-    public class HealthcheckrecordeventController(IHealthCheckEventRecordService healthCheckEventRecordService) : ControllerBase
+    public class HealthcheckrecordeventController(IHealthCheckEventRecordService healthCheckEventRecordService, IClassRoomRepository classRoomRepository) : ControllerBase
     {
         [HttpGet]
         [Route("healthcheckrecordevents")]
@@ -18,10 +19,11 @@ namespace SchoolMedicalSystem.Controllers
             return Ok(events);
         }
         [HttpGet]
-        [Route("healthcheckrecordevents/{eventId}")]
-        public async Task<IActionResult> GetHealthCheckRecordEventById(int eventId)
+        [Route("healthcheckrecordevents/{id}")]
+        public async Task<IActionResult> GetHealthCheckRecordEventById(int id)
         {
-            var healthCheckRecordEvent = await healthCheckEventRecordService.GetHealthCheckRecordEventByIdAsync(eventId);
+            var healthCheckRecordEvent = await healthCheckEventRecordService.GetHealthCheckRecordEventByIdAsync(id);
+
             if (healthCheckRecordEvent == null)
             {
                 return NotFound();
@@ -39,6 +41,17 @@ namespace SchoolMedicalSystem.Controllers
             }
             return Ok(events);
         }
+        [HttpGet]
+        [Route("healthcheckrecordevents/event/{eventId}")]
+        public async Task<IActionResult> GetHealthCheckRecordEventsByEventId(int eventId)
+        {
+            var events = await healthCheckEventRecordService.GetHealthCheckRecordEventsByEventIdAsync(eventId);
+            if (events == null || !events.Any())
+            {
+                return NotFound();
+            }
+            return Ok(events);
+        }
         [HttpPost]
         [Route("healthcheckrecordevents")]
         public async Task<IActionResult> AddHealthCheckRecordEvent([FromBody] AddHealthcheckrecordeventDTO healthCheckRecordEvent)
@@ -48,7 +61,7 @@ namespace SchoolMedicalSystem.Controllers
                 return BadRequest("Invalid health check record event data.");
             }
             await healthCheckEventRecordService.AddHealthCheckRecordEventAsync(healthCheckRecordEvent);
-            return CreatedAtAction(nameof(GetHealthCheckRecordEventById), new { eventId = healthCheckRecordEvent.Healthcheckrecordid }, healthCheckRecordEvent);
+            return Ok("HealthCheck and Event connected.");
         }
         [HttpPut]
         [Route("healthcheckrecordevents/{eventId}")]

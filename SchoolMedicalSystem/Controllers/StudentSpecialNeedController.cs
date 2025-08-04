@@ -41,13 +41,13 @@ namespace SchoolMedicalSystem.Controllers
         }
         [HttpPost]
         [Route("AddSpecialNeed")]
-        public IActionResult AddSpecialNeed([FromBody] CreateSpecialStudentNeedDTO specialNeedDto)
+        public async Task<IActionResult> AddSpecialNeed([FromBody] CreateSpecialStudentNeedDTO specialNeedDto)
         {
             if (specialNeedDto == null)
                 return BadRequest("Special need data is null.");
             try
             {
-                _studentSpecialNeedService.AddStudentSpecialNeed(specialNeedDto);
+                await _studentSpecialNeedService.AddStudentSpecialNeed(specialNeedDto);
                 return Ok("Special need added successfully.");
             }
             catch (Exception ex)

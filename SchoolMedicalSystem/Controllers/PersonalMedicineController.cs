@@ -51,13 +51,13 @@ namespace SchoolMedicalSystem.Controllers
             }
         [HttpPut("Personalmedicine")]
 
-        public IActionResult UpdatePersonalmedicine([FromBody] UpdatePersonalMedicineDTO PersonalmedicineDto)
+        public async Task<IActionResult> UpdatePersonalmedicine([FromBody] UpdatePersonalMedicineDTO PersonalmedicineDto)
         {
             if (PersonalmedicineDto == null)
                 return BadRequest("Invalid data.");
             try
             {
-                PersonalmedicineService.UpdatePersonalmedicine(PersonalmedicineDto);
+                await PersonalmedicineService.UpdatePersonalmedicine(PersonalmedicineDto);
                 return Ok("Medicine donation updated successfully.");
             }
             catch (Exception ex)
@@ -66,11 +66,11 @@ namespace SchoolMedicalSystem.Controllers
             }
         }
         [HttpDelete("Personalmedicine/{id}")]
-        public IActionResult DeletePersonalmedicine(int id)
+        public async Task<IActionResult> DeletePersonalmedicine(int id)
         {
             try
             {
-                PersonalmedicineService.DeletePersonalmedicine(id);
+                await PersonalmedicineService.DeletePersonalmedicine(id);
                 return Ok("Medicine donation deleted successfully.");
             }
             catch (KeyNotFoundException ex)

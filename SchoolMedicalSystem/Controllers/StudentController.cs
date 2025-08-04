@@ -32,21 +32,23 @@ namespace SchoolMedicalSystem.Controllers
         }
 
         [HttpPost("student")]
-        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UploadStudent(IFormFile file)
         {
             try
             {
                 var list = _studentService.ProcessExcelFile(file);
-                
+
                 var result = await _studentService.UploadStudentList(list.Item1);
                 return Ok(new
                 {
                     result,
                 });
             }
-            catch (Exception ex) {}
-            return null;
+            catch (Exception ex)
+            {
+                throw new Exception($"Error adding Student {ex.Message}");
+
+            }
         }
 
         [HttpGet("GetAllStudents")]
@@ -80,9 +82,9 @@ namespace SchoolMedicalSystem.Controllers
         }
 
         [HttpDelete("DeleteStudent/{id}")]
-        public IActionResult DeleteStudent([FromBody] int id)
+        public async Task<IActionResult> DeleteStudent([FromBody] int id)
         {
-            _studentService.DeleteStudent(id);
+            await _studentService.DeleteStudent(id);
             return Ok($"Student with ID {id} deleted successfully.");
         }
 

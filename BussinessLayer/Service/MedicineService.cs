@@ -20,17 +20,17 @@ namespace BussinessLayer.Service
             _medicineRepository = medicineRepository;
             _mapper = mapper;
         }
-        public void AddMedicine(CreateMedicineDTO medicine)
+        public async Task AddMedicine(CreateMedicineDTO medicine)
         {
             Medicine entity = _mapper.Map<Medicine>(medicine);
             entity.Isdeleted = false;
-            _medicineRepository.AddAsync(entity);
-            _medicineRepository.Save();
+            await _medicineRepository.AddAsync(entity);
+            await _medicineRepository.SaveChangesAsync();
         }
 
-        public void DeleteMedicine(int id)
+        public async Task DeleteMedicine(int id)
         {
-            var medicine = _medicineRepository.GetByIdAsync(id).Result;
+            var medicine = await _medicineRepository.GetByIdAsync(id);
             if (medicine != null)
             {
                 medicine.Isdeleted = true;
@@ -78,11 +78,11 @@ namespace BussinessLayer.Service
             return _mapper.Map<List<MedicineDTO>>(filtered);
         }
 
-        public void UpdateMedicine(UpdateMedicineDTO medicine)
+        public async Task UpdateMedicine(UpdateMedicineDTO medicine)
         {
             if (medicine != null)
             {
-                var entity = _medicineRepository.GetByIdAsync(medicine.Medicineid).Result;
+                var entity = await _medicineRepository.GetByIdAsync(medicine.Medicineid);
                 if (entity != null)
                 {
                     entity.Medicinename = medicine.Medicinename;

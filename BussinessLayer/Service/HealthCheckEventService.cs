@@ -14,13 +14,15 @@ namespace BussinessLayer.Service
 
         ) : IHealthCheckEventService
     {
-        public async Task<List<DataAccessLayer.Entity.Healthcheckevent>> GetAllHealthCheckEventsAsync()
+        public async Task<List<HeatlhCheckEventDto>> GetAllHealthCheckEventsAsync()
         {
-            return await healthCheckEventRepository.GetAllAsync();
+            var healthcheck = await healthCheckEventRepository.GetAllAsync();
+            return mapper.Map<List<HeatlhCheckEventDto>>(healthcheck);
         }
-        public async Task<DataAccessLayer.Entity.Healthcheckevent?> GetHealthCheckEventByIdAsync(int eventId)
+        public async Task<HeatlhCheckEventDto> GetHealthCheckEventByIdAsync(int eventId)
         {
-            return await healthCheckEventRepository.GetByIdAsync(eventId);
+            var healthcheck = await healthCheckEventRepository.GetByIdAsync(eventId);
+            return mapper.Map<HeatlhCheckEventDto>(healthcheck);
         }
         public async Task AddHealthCheckEventAsync(AddHealthCheckEventDto dto, string? storedFileName)
         {
@@ -38,10 +40,23 @@ namespace BussinessLayer.Service
             await healthCheckEventRepository.AddAsync(healthCheckEvent);
             await healthCheckEventRepository.SaveChangesAsync();
         }
-        public async Task UpdateHealthCheckEventAsync(DataAccessLayer.Entity.Healthcheckevent healthCheckEvent)
+        public async Task UpdateHealthCheckEventAsync(UpdateHeatlhCheckEventDto dto)
         {
-            healthCheckEventRepository.Update(healthCheckEvent);
-            await healthCheckEventRepository.SaveChangesAsync();
+            var healthCheckEvent = await healthCheckEventRepository.GetByIdAsync(dto.HealthcheckeventID);
+            if (healthCheckEvent == null)
+            {
+                throw new KeyNotFoundException("Health check event not found.");
+            }
+            else
+            {
+                healthCheckEvent.Healthcheckeventname = dto.Healthcheckeventname;
+                healthCheckEvent.Eventdate = dto.Eventdate;
+                healthCheckEvent.Healthcheckeventname = dto.Healthcheckeventname;
+                healthCheckEvent.Location = dto.Location;
+                healthCheckEvent.Isdeleted = dto.Isdeleted;
+                healthCheckEventRepository.Update(healthCheckEvent);
+                await healthCheckEventRepository.SaveChangesAsync();
+            }
         }
         public async Task DeleteHealthCheckEventAsync(int eventId)
         {
