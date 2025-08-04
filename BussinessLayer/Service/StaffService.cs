@@ -189,7 +189,7 @@ namespace BussinessLayer.Service
             return staffDTO ?? throw new KeyNotFoundException($"Staff with ID {id} not found.");
         }
 
-        public async void UpdateStaff(StaffUpdate staff)
+        public async Task UpdateStaff(StaffUpdate staff)
         {
             Staff staffById = await staffRepository.GetByIdAsync(staff.Staffid);
             if (staffById == null)

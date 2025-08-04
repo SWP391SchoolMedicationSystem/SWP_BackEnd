@@ -15,7 +15,7 @@ namespace BussinessLayer.IService
         Task<StaffDTO> GetStaffByIdAsync(int id);
         Task<List<StaffDTO>> GetAllNurseAsync();
         Task AddStaffAsync(StaffRegister staff);
-        void UpdateStaff(StaffUpdate staff);
+        Task UpdateStaff(StaffUpdate staff);
         Task DeleteStaff(int id);
         Task<String> GenerateToken(LoginDTO login);
 

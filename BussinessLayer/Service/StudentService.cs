@@ -184,7 +184,7 @@ namespace BussinessLayer.Service
                 _studentrepo.Save();
                 if (errorMessage != string.Empty)
                 {
-                    return errorMessage;
+                    throw new InvalidDataException(errorMessage);
                 }
                 return "Student insert successfully";
             }

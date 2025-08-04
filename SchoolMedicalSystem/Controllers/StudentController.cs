@@ -37,15 +37,18 @@ namespace SchoolMedicalSystem.Controllers
             try
             {
                 var list = _studentService.ProcessExcelFile(file);
-                
+
                 var result = await _studentService.UploadStudentList(list.Item1);
                 return Ok(new
                 {
                     result,
                 });
             }
-            catch (Exception ex) {}
-            return null;
+            catch (Exception ex)
+            {
+                throw new Exception($"Error adding Student {ex.Message}");
+
+            }
         }
 
         [HttpGet("GetAllStudents")]
