@@ -11,6 +11,9 @@ namespace DataAccessLayer.DTO.Students
     {
         [Required(ErrorMessage = "Vui lòng nhập họ và tên")]
         public string Fullname { get; set; } = null!;
+        [Required(ErrorMessage = "Vui lòng nhập tuổi")]
+        [Range(3, 6, ErrorMessage = "Tuổi phải từ 3 đến 6")]
+        public int Age { get; set; } = 0;
         [Required(ErrorMessage = "Vui lòng nhập nhóm máu")]
         public string? BloodType { get; set; }
         [Required(ErrorMessage = "Vui lòng chọn giới tính")]

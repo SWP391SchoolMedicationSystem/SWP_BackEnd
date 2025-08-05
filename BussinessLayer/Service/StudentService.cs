@@ -45,11 +45,11 @@ namespace BussinessLayer.Service
                 int studentcode = students[students.Count - 1].Studentid + 1;
                 addedstudent.StudentCode = $"HS{studentcode}";
            
-                addedstudent.Age = DateTime.Now.Year - student.Dob.Year -
+                int age = DateTime.Now.Year - student.Dob.Year -
                                           (DateTime.Now.DayOfYear < student.Dob.DayOfYear ? 1 : 0);
-            if (addedstudent.Age <= 3 || addedstudent.Age >= 5 )
+            if (age != student.Age)
             {
-                throw new ArgumentException("Ngày sinh không hợp lệ");
+                throw new ArgumentException("Ngày sinh không trùng với tuổi.");
             }
             await _studentrepo.AddAsync(addedstudent);
                 await _studentrepo.SaveChangesAsync();
