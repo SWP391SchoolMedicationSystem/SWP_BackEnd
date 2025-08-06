@@ -50,7 +50,7 @@ namespace BussinessLayer.Service
             form.Createdby = createdBy;
             form.Modifiedby = createdBy;
             form.Isaccepted = false;
-
+            form.Ispending = true;
             await _formRepository.AddAsync(form);
             await _formRepository.SaveChangesAsync();
             return _mapper.Map<FormDTO>(form);
