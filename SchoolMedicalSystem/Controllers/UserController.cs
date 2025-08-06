@@ -99,9 +99,13 @@ namespace SchoolMedicalSystem.Controllers
     }
     public class ResetPasswordDTO
     {
-        [Required]
+        [Required(ErrorMessage = "Vui lòng nhập email.")]
+        [EmailAddress(ErrorMessage = "Email không hợp lệ.")]
         public string Email { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Vui lòng nhập mật khẩu.")]
+        [RegularExpression(@"^(?=.{8,})(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*]).*$",
+            ErrorMessage = "Mật khẩu cần ít nhất 8 chữ cái," +
+            "bao gồm 1 chữ in hoa, 1 số và 1 ký tự đặc biệt ")]
         public string NewPassword { get; set; }
     }
 

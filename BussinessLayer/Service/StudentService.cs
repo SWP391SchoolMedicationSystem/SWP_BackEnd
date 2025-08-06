@@ -39,22 +39,32 @@ namespace BussinessLayer.Service
 
         public async Task<Student> AddStudentAsync(AddStudentDTO student)
         {
-
+            try
+            {
                 Student addedstudent = _mapper.Map<Student>(student);
                 var students = await _studentrepo.GetAllAsync();
                 int studentcode = students[students.Count - 1].Studentid + 1;
                 addedstudent.StudentCode = $"HS{studentcode}";
-           
+
                 int age = DateTime.Now.Year - student.Dob.Year -
                                           (DateTime.Now.DayOfYear < student.Dob.DayOfYear ? 1 : 0);
-            if (age != student.Age)
-            {
-                throw new ArgumentException("Ngày sinh không trùng với tuổi.");
-            }
-            await _studentrepo.AddAsync(addedstudent);
+                if (age != student.Age)
+                {
+                    throw new ArgumentException("Ngày sinh không trùng với tuổi.");
+                }
+                await _studentrepo.AddAsync(addedstudent);
                 await _studentrepo.SaveChangesAsync();
                 return addedstudent;
-        } 
+            }
+            catch (ArgumentException)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while adding the student.", ex);
+            }
+        }
 
         public async Task DeleteStudent(int id)
         {
@@ -122,22 +132,35 @@ namespace BussinessLayer.Service
 
         public async Task<Student> UpdateStudentAsync(UpdateStudentDTo student)
         {
-            var s = await _studentrepo.GetByIdAsync(student.Id);
-            if (s == null)
-                return null;
+            try
+            {
+                var s = await _studentrepo.GetByIdAsync(student.Id);
+                if (s == null)
+                    return null;
+                int age = DateTime.Now.Year - student.Dob.Year -
+                              (DateTime.Now.DayOfYear < student.Dob.DayOfYear ? 1 : 0);
+                if (age != student.Age)
+                {
+                    throw new ArgumentException("Ngày sinh không trùng với tuổi.");
+                }
 
-            s.StudentCode = student.StudentCode;
-            s.Fullname = student.Fullname;
-            s.Age = student.Age;
-            s.BloodType = student.BloodType;
-            s.Gender = student.Gender;
-            s.Dob = student.Dob;
-            s.Classid = student.Classid;
-            s.Parentid = student.Parentid;
-            s.UpdatedAt = DateTime.Now;
-            _studentrepo.Update(s);
-            await _studentrepo.SaveChangesAsync();
-            return s;
+                s.Fullname = student.Fullname;
+                s.Age = student.Age;
+                s.BloodType = student.BloodType;
+                s.Gender = student.Gender;
+                s.Dob = student.Dob;
+                s.Classid = student.Classid;
+                s.Parentid = student.Parentid;
+                s.UpdatedAt = DateTime.Now;
+                _studentrepo.Update(s);
+                await _studentrepo.SaveChangesAsync();
+                return s;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
         }
 
         public async Task<string> UploadStudentList(List<InsertStudent> studentlist)

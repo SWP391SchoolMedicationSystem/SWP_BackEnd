@@ -46,7 +46,7 @@ namespace BussinessLayer.Service
             return computedHash.SequenceEqual(storedHash);
         }
         #endregion
-        public async Task<int> AddParentAsync(ParentRegister parent)
+        public async Task AddParentAsync(ParentRegister parent)
         {
             try
             {
@@ -54,7 +54,7 @@ namespace BussinessLayer.Service
                 List<Parent> Parent = await parentRepository.GetAllAsync();
                 if (Parent.Any(p => p.Email == parent.Email))
                 {
-                    throw new InvalidOperationException("A parent with this email already exists.");
+                    throw new InvalidOperationException("Email này đã tồn tại.");
                 }
 
                 //Create new User
@@ -83,24 +83,29 @@ namespace BussinessLayer.Service
                         student.Parentid = newParent.Parentid;
                         await studentService.AddStudentAsync(student);
                     }
-                }
-                catch
-                {
-                    userRepository.Delete(user.UserId);
-                    userRepository.Save();
-                    parentRepository.Delete(newParent.Userid);
-                    parentRepository.Save();
-                    studentRepo.Delete(newParent.Userid);
-                    studentRepo.Save();
+                    
+
                 }
 
-                return newParent.Parentid;
+                catch (Exception ex)
+                {
+                    
+                    studentRepo.Delete(newParent.Userid);
+                    studentRepo.Save();
+                    parentRepository.Delete(newParent.Parentid);
+                    parentRepository.Save();
+                    userRepository.Delete(user.UserId);
+                    userRepository.Save();
+                    throw ex;
+                }
+
             }
             catch (Exception ex)
             {
                 // Log the exception or handle it as needed
                 throw new Exception("An error occurred while adding the parent.", ex);
             }
+
         }
 
         public async Task DeleteParent(int id)

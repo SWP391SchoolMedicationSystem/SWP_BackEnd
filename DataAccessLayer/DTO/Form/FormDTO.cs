@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -53,6 +54,7 @@ namespace DataAccessLayer.DTO.Form
         public int FormId { get; set; }
         public int ParentId { get; set; }
         public int FormCategoryId { get; set; }
+        [Required(ErrorMessage = "Vui lòng nhập tiêu đề")]
         public string Title { get; set; } = null!;
         public string Reason { get; set; } = null!;
         public string? OriginalFileName { get; set; } = null!;
