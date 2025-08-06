@@ -441,7 +441,7 @@ namespace BussinessLayer.Service
                 var detail = _notificationdRepository.GetAllAsync().Result.FirstOrDefault(n => n.NotificationId == notificationId);
                 if (detail != null)
                 {
-                    detail.isRead = true;
+                    detail.IsRead = true;
                     _notificationdRepository.Update(detail);
                     _notificationdRepository.Save();
                 }

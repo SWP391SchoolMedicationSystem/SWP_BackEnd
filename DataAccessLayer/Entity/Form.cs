@@ -20,14 +20,12 @@ public partial class Form
     public byte[]? File { get; set; }
 
     public int? Staffid { get; set; }
-    public bool? IsPending { get; set; }
-
 
     public bool? Isaccepted { get; set; }
 
-    public string? Reasonfordecline { get; set; }
+    public bool? Ispending { get; set; }
 
-    public bool? IsDeleted {get; set;}
+    public string? Reasonfordecline { get; set; }
 
     public string? Createdby { get; set; }
 
@@ -41,7 +39,9 @@ public partial class Form
 
     public int? Studentid { get; set; }
 
-    public virtual Student? FormNavigation { get; set; } = null!;
+    public bool? IsDeleted { get; set; }
+
+    public virtual Student FormNavigation { get; set; } = null!;
 
     public virtual Formcategory? Formcategory { get; set; }
 

@@ -17,8 +17,6 @@ public partial class SchoolMedicalSystemContext : DbContext
 
     public virtual DbSet<Blog> Blogs { get; set; }
 
-    public virtual DbSet<Class> Classes { get; set; }
-
     public virtual DbSet<Classroom> Classrooms { get; set; }
 
     public virtual DbSet<Consultationrequest> Consultationrequests { get; set; }
@@ -65,6 +63,8 @@ public partial class SchoolMedicalSystemContext : DbContext
 
     public virtual DbSet<Personalmedicine> Personalmedicines { get; set; }
 
+    public virtual DbSet<Receiveemailstatus> Receiveemailstatuses { get; set; }
+
     public virtual DbSet<Role> Roles { get; set; }
 
     public virtual DbSet<Scheduledetail> Scheduledetails { get; set; }
@@ -77,6 +77,8 @@ public partial class SchoolMedicalSystemContext : DbContext
 
     public virtual DbSet<StudentSpecialNeed> StudentSpecialNeeds { get; set; }
 
+    public virtual DbSet<Table> Tables { get; set; }
+
     public virtual DbSet<User> Users { get; set; }
 
     public virtual DbSet<Vaccinationevent> Vaccinationevents { get; set; }
@@ -86,7 +88,6 @@ public partial class SchoolMedicalSystemContext : DbContext
     public virtual DbSet<Vaccine> Vaccines { get; set; }
 
     public virtual DbSet<VaccineDiseaseAssociation> VaccineDiseaseAssociations { get; set; }
-    public virtual DbSet<Receiveemailstatus> Receiveemailstatuses { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
@@ -96,7 +97,7 @@ public partial class SchoolMedicalSystemContext : DbContext
     {
         modelBuilder.Entity<Blog>(entity =>
         {
-            entity.HasKey(e => e.BlogId).HasName("PK__BLOG__F913A29D750A9DDD");
+            entity.HasKey(e => e.BlogId).HasName("PK__BLOG__F913A29D31D9FEF8");
 
             entity.ToTable("BLOG");
 
@@ -128,34 +129,9 @@ public partial class SchoolMedicalSystemContext : DbContext
             entity.Property(e => e.UpdatedBy).HasColumnName("UPDATED_BY");
         });
 
-        modelBuilder.Entity<Receiveemailstatus>(entity =>
-        {
-            entity.HasKey(e => e.Id).HasName("PK__Receive__3214EC27A1B0F3D2");
-            entity.ToTable("RECEIVEEMAILSTATUS");
-            entity.Property(e => e.Id).HasColumnName("Id");
-            entity.Property(e => e.EmailTemplateId).HasColumnName("TEMPLATE_ID");
-            entity.Property(e => e.Email).HasMaxLength(255).HasColumnName("EMAIL");
-            entity.Property(e => e.Status).HasColumnName("STATUS");
-            entity.Property(e => e.SendDate)
-                .HasColumnType("datetime")
-                .HasColumnName("SENDDATE");
-        });
-
-        modelBuilder.Entity<Class>(entity =>
-        {
-            entity.HasKey(e => e.Classid).HasName("PK__CLASS__96D40B6C5D0495A7");
-
-            entity.ToTable("CLASS");
-
-            entity.HasIndex(e => e.ClassName, "UQ__CLASS__F8BF561B5180B798").IsUnique();
-
-            entity.Property(e => e.Classid).HasColumnName("CLASSID");
-            entity.Property(e => e.ClassName).HasMaxLength(100);
-        });
-
         modelBuilder.Entity<Classroom>(entity =>
         {
-            entity.HasKey(e => e.Classid).HasName("PK__CLASSROO__96D40B6C19CA881F");
+            entity.HasKey(e => e.Classid).HasName("PK__CLASSROO__96D40B6C88A41858");
 
             entity.ToTable("CLASSROOM");
 
@@ -184,7 +160,7 @@ public partial class SchoolMedicalSystemContext : DbContext
 
         modelBuilder.Entity<Consultationrequest>(entity =>
         {
-            entity.HasKey(e => e.Consultationid).HasName("PK__CONSULTA__D2399067C588FC36");
+            entity.HasKey(e => e.Consultationid).HasName("PK__CONSULTA__D23990675E92DE58");
 
             entity.ToTable("CONSULTATIONREQUEST");
 
@@ -240,7 +216,7 @@ public partial class SchoolMedicalSystemContext : DbContext
 
         modelBuilder.Entity<Consultationtype>(entity =>
         {
-            entity.HasKey(e => e.Typeid).HasName("PK__CONSULTA__B2802A0121949D0A");
+            entity.HasKey(e => e.Typeid).HasName("PK__CONSULTA__B2802A01575206F2");
 
             entity.ToTable("CONSULTATIONTYPE");
 
@@ -258,9 +234,9 @@ public partial class SchoolMedicalSystemContext : DbContext
 
         modelBuilder.Entity<Disease>(entity =>
         {
-            entity.HasKey(e => e.DiseaseId).HasName("PK__Diseases__69B533A9B2478C9D");
+            entity.HasKey(e => e.DiseaseId).HasName("PK__Diseases__69B533A91AB9ECE1");
 
-            entity.HasIndex(e => e.DiseaseName, "UQ__Diseases__5112584DE245B5B2").IsUnique();
+            entity.HasIndex(e => e.DiseaseName, "UQ__Diseases__5112584DA9BED140").IsUnique();
 
             entity.Property(e => e.DiseaseId).HasColumnName("DiseaseID");
             entity.Property(e => e.DiseaseName).HasMaxLength(255);
@@ -297,7 +273,9 @@ public partial class SchoolMedicalSystemContext : DbContext
 
             entity.ToTable("FORM");
 
-            entity.Property(e => e.FormId).HasColumnName("FORM_ID");
+            entity.Property(e => e.FormId)
+                .ValueGeneratedOnAdd()
+                .HasColumnName("FORM_ID");
             entity.Property(e => e.Createdby)
                 .HasMaxLength(255)
                 .HasColumnName("CREATEDBY");
@@ -312,8 +290,8 @@ public partial class SchoolMedicalSystemContext : DbContext
             entity.Property(e => e.Isaccepted)
                 .HasDefaultValue(false)
                 .HasColumnName("ISACCEPTED");
-            entity.Property(e => e.IsPending)
-                .HasDefaultValue(true)
+            entity.Property(e => e.Ispending)
+                .HasDefaultValue(false)
                 .HasColumnName("ISPENDING");
             entity.Property(e => e.Modifiedby)
                 .HasMaxLength(255)
@@ -340,6 +318,11 @@ public partial class SchoolMedicalSystemContext : DbContext
                 .HasMaxLength(255)
                 .HasColumnName("TITLE");
 
+            entity.HasOne(d => d.FormNavigation).WithOne(p => p.Form)
+                .HasForeignKey<Form>(d => d.FormId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_FORM_STUDENTID");
+
             entity.HasOne(d => d.Formcategory).WithMany(p => p.Forms)
                 .HasForeignKey(d => d.FormcategoryId)
                 .HasConstraintName("FK__FORM__FORMCATEGO__3A4CA8FD");
@@ -351,15 +334,11 @@ public partial class SchoolMedicalSystemContext : DbContext
             entity.HasOne(d => d.Staff).WithMany(p => p.Forms)
                 .HasForeignKey(d => d.Staffid)
                 .HasConstraintName("FK__FORM__STAFFID__3C34F16F");
-
-            entity.HasOne(d => d.FormNavigation).WithMany(p => p.Forms)
-                .HasForeignKey(d => d.Studentid)
-                .HasConstraintName("FK_FORM_STUDENTID");
         });
 
         modelBuilder.Entity<Formcategory>(entity =>
         {
-            entity.HasKey(e => e.Categoryid).HasName("PK__FORMCATE__A50F9896F80EEB86");
+            entity.HasKey(e => e.Categoryid).HasName("PK__FORMCATE__A50F9896DB07E9D9");
 
             entity.ToTable("FORMCATEGORY");
 
@@ -374,7 +353,7 @@ public partial class SchoolMedicalSystemContext : DbContext
 
         modelBuilder.Entity<Healthcategory>(entity =>
         {
-            entity.HasKey(e => e.Healthcategoryid).HasName("PK__HEALTHCA__21157DD60C186615");
+            entity.HasKey(e => e.Healthcategoryid).HasName("PK__HEALTHCA__21157DD634753752");
 
             entity.ToTable("HEALTHCATEGORY");
 
@@ -402,7 +381,7 @@ public partial class SchoolMedicalSystemContext : DbContext
 
         modelBuilder.Entity<Healthcheck>(entity =>
         {
-            entity.HasKey(e => e.Checkid).HasName("PK__HEALTHCH__7A9DCA67B830F92A");
+            entity.HasKey(e => e.Checkid).HasName("PK__HEALTHCH__7A9DCA6773403D88");
 
             entity.ToTable("HEALTHCHECK");
 
@@ -454,16 +433,14 @@ public partial class SchoolMedicalSystemContext : DbContext
 
         modelBuilder.Entity<Healthcheckevent>(entity =>
         {
-            entity.HasKey(e => e.HealthcheckeventID).HasName("PK__tmp_ms_x__01DA7F81AABB9700");
-
             entity.ToTable("HEALTHCHECKEVENT");
 
-            entity.Property(e => e.HealthcheckeventID)
-                .HasColumnName("HEALTHCHECKEVENTID");
+            entity.Property(e => e.Healthcheckeventid).HasColumnName("HEALTHCHECKEVENTID");
             entity.Property(e => e.Createdby)
-                .HasMaxLength(100)
+                .HasMaxLength(50)
                 .HasColumnName("CREATEDBY");
             entity.Property(e => e.Createddate)
+                .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime")
                 .HasColumnName("CREATEDDATE");
             entity.Property(e => e.Documentaccesstoken)
@@ -475,39 +452,45 @@ public partial class SchoolMedicalSystemContext : DbContext
             entity.Property(e => e.Eventdate)
                 .HasColumnType("datetime")
                 .HasColumnName("EVENTDATE");
-            entity.Property(e => e.Healthcheckeventdescription).HasColumnName("HEALTHCHECKEVENTDESCRIPTION");
+            entity.Property(e => e.Healthcheckeventdescription)
+                .HasMaxLength(500)
+                .HasColumnName("HEALTHCHECKEVENTDESCRIPTION");
             entity.Property(e => e.Healthcheckeventname)
                 .HasMaxLength(100)
                 .HasColumnName("HEALTHCHECKEVENTNAME");
             entity.Property(e => e.Isdeleted).HasColumnName("ISDELETED");
             entity.Property(e => e.Location)
-                .HasMaxLength(100)
+                .HasMaxLength(255)
                 .HasColumnName("LOCATION");
+            entity.Property(e => e.Modifiedby)
+                .HasMaxLength(50)
+                .HasColumnName("MODIFIEDBY");
+            entity.Property(e => e.Modifieddate)
+                .HasColumnType("datetime")
+                .HasColumnName("MODIFIEDDATE");
         });
 
         modelBuilder.Entity<Healthcheckrecordevent>(entity =>
         {
-            entity.HasKey(e => e.Healthcheckrecordeventid).HasName("PK__HEALTHCH__64F665AA160231A4");
-
             entity.ToTable("HEALTHCHECKRECORDEVENT");
 
             entity.Property(e => e.Healthcheckrecordeventid).HasColumnName("HEALTHCHECKRECORDEVENTID");
             entity.Property(e => e.Healthcheckeventid).HasColumnName("HEALTHCHECKEVENTID");
-            entity.Property(e => e.Healthcheckrecordid).HasColumnName("HEALTHCHECKRECORDID");
+            entity.Property(e => e.Healthcheckid).HasColumnName("HEALTHCHECKID");
             entity.Property(e => e.Isdeleted).HasColumnName("ISDELETED");
 
             entity.HasOne(d => d.Healthcheckevent).WithMany(p => p.Healthcheckrecordevents)
                 .HasForeignKey(d => d.Healthcheckeventid)
                 .HasConstraintName("FK_HEALTHCHECKRECORDEVENT_HEALTHCHECKEVENT");
 
-            entity.HasOne(d => d.Healthcheckrecord).WithMany(p => p.Healthcheckrecordevents)
-                .HasForeignKey(d => d.Healthcheckrecordid)
-                .HasConstraintName("FK_HEALTHCHECKRECORDEVENT_HEALTHCHECKRECORD");
+            entity.HasOne(d => d.Healthcheck).WithMany(p => p.Healthcheckrecordevents)
+                .HasForeignKey(d => d.Healthcheckid)
+                .HasConstraintName("FK_HEALTHCHECKRECORDEVENT_HEALTHCHECK");
         });
 
         modelBuilder.Entity<Healthrecord>(entity =>
         {
-            entity.HasKey(e => e.Healthrecordid).HasName("PK__HEALTHRE__05992FCE22E3B441");
+            entity.HasKey(e => e.Healthrecordid).HasName("PK__HEALTHRE__05992FCEAA74B936");
 
             entity.ToTable("HEALTHRECORD");
 
@@ -555,7 +538,7 @@ public partial class SchoolMedicalSystemContext : DbContext
 
         modelBuilder.Entity<Healthstatus>(entity =>
         {
-            entity.HasKey(e => e.HealthId).HasName("PK__HEALTHST__D05E23F8CE44894F");
+            entity.HasKey(e => e.HealthId).HasName("PK__HEALTHST__D05E23F8C15EC4D5");
 
             entity.ToTable("HEALTHSTATUS");
 
@@ -598,7 +581,7 @@ public partial class SchoolMedicalSystemContext : DbContext
 
         modelBuilder.Entity<Healthstatuscategory>(entity =>
         {
-            entity.HasKey(e => e.HealthStatusCategoryId).HasName("PK__HEALTHST__7C33ADE19CCB1EA1");
+            entity.HasKey(e => e.HealthStatusCategoryId).HasName("PK__HEALTHST__7C33ADE1A78B92C7");
 
             entity.ToTable("HEALTHSTATUSCATEGORY");
 
@@ -621,7 +604,7 @@ public partial class SchoolMedicalSystemContext : DbContext
 
         modelBuilder.Entity<Medicine>(entity =>
         {
-            entity.HasKey(e => e.Medicineid).HasName("PK__Medicine__FA10A9A362FEA29E");
+            entity.HasKey(e => e.Medicineid).HasName("PK__Medicine__FA10A9A3BFE686ED");
 
             entity.ToTable("Medicine");
 
@@ -653,12 +636,12 @@ public partial class SchoolMedicalSystemContext : DbContext
             entity.HasOne(d => d.Medicinecategory).WithMany(p => p.Medicines)
                 .HasForeignKey(d => d.Medicinecategoryid)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__Medicine__MEDICI__46B27FE2");
+                .HasConstraintName("FK__Medicine__MEDICI__4A8310C6");
         });
 
         modelBuilder.Entity<Medicinecategory>(entity =>
         {
-            entity.HasKey(e => e.Medicinecategoryid).HasName("PK__MEDICINE__786AB6309F9F89DD");
+            entity.HasKey(e => e.Medicinecategoryid).HasName("PK__MEDICINE__786AB630445049CC");
 
             entity.ToTable("MEDICINECATEGORY");
 
@@ -673,7 +656,7 @@ public partial class SchoolMedicalSystemContext : DbContext
 
         modelBuilder.Entity<Medicineschedule>(entity =>
         {
-            entity.HasKey(e => e.Schedulemedicineid).HasName("PK__MEDICINE__E8D9781AD1DE70A6");
+            entity.HasKey(e => e.Schedulemedicineid).HasName("PK__MEDICINE__E8D9781A8AD42028");
 
             entity.ToTable("MEDICINESCHEDULE");
 
@@ -699,7 +682,7 @@ public partial class SchoolMedicalSystemContext : DbContext
 
         modelBuilder.Entity<Notification>(entity =>
         {
-            entity.HasKey(e => e.NotificationId).HasName("PK__Notifica__20CF2E12AAFD8827");
+            entity.HasKey(e => e.NotificationId).HasName("PK__tmp_ms_x__20CF2E127775A9D2");
 
             entity.ToTable("Notification");
 
@@ -713,7 +696,6 @@ public partial class SchoolMedicalSystemContext : DbContext
                 .HasColumnType("datetime")
                 .HasColumnName("CREATEDDATE");
             entity.Property(e => e.IsDeleted).HasColumnName("isDeleted");
-            entity.Property(e => e.isRead).HasColumnName("isRead");
             entity.Property(e => e.Modifiedby)
                 .HasMaxLength(255)
                 .HasColumnName("MODIFIEDBY");
@@ -781,7 +763,7 @@ public partial class SchoolMedicalSystemContext : DbContext
 
         modelBuilder.Entity<Otp>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Otp__3214EC2713137091");
+            entity.HasKey(e => e.Id).HasName("PK__Otp__3214EC27B7596CC4");
 
             entity.ToTable("Otp");
 
@@ -793,7 +775,7 @@ public partial class SchoolMedicalSystemContext : DbContext
 
         modelBuilder.Entity<Parent>(entity =>
         {
-            entity.HasKey(e => e.Parentid).HasName("PK__PARENT__7444E66A887006C7");
+            entity.HasKey(e => e.Parentid).HasName("PK__PARENT__7444E66A190C0BE9");
 
             entity.ToTable("PARENT");
 
@@ -829,7 +811,7 @@ public partial class SchoolMedicalSystemContext : DbContext
 
         modelBuilder.Entity<Personalmedicine>(entity =>
         {
-            entity.HasKey(e => e.Personalmedicineid).HasName("PK__PERSONAL__E0FDAEFF90A25875");
+            entity.HasKey(e => e.Personalmedicineid).HasName("PK__PERSONAL__E0FDAEFFBC68C3C7");
 
             entity.ToTable("PERSONALMEDICINE");
 
@@ -872,22 +854,43 @@ public partial class SchoolMedicalSystemContext : DbContext
             entity.HasOne(d => d.Medicine).WithMany(p => p.Personalmedicines)
                 .HasForeignKey(d => d.Medicineid)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__PERSONALM__MEDIC__4E53A1AA");
+                .HasConstraintName("FK__PERSONALM__MEDIC__5224328E");
 
             entity.HasOne(d => d.Parent).WithMany(p => p.Personalmedicines)
                 .HasForeignKey(d => d.Parentid)
                 .OnDelete(DeleteBehavior.Cascade)
-                .HasConstraintName("FK__PERSONALM__PAREN__4F47C5E3");
+                .HasConstraintName("FK__PERSONALM__PAREN__531856C7");
 
             entity.HasOne(d => d.Student).WithMany(p => p.Personalmedicines)
                 .HasForeignKey(d => d.Studentid)
                 .OnDelete(DeleteBehavior.Cascade)
-                .HasConstraintName("FK__PERSONALM__STUDE__503BEA1C");
+                .HasConstraintName("FK__PERSONALM__STUDE__540C7B00");
+        });
+
+        modelBuilder.Entity<Receiveemailstatus>(entity =>
+        {
+            entity.ToTable("RECEIVEEMAILSTATUS");
+
+            entity.Property(e => e.Id).HasColumnName("ID");
+            entity.Property(e => e.Email)
+                .HasMaxLength(255)
+                .HasColumnName("EMAIL");
+            entity.Property(e => e.Senddate)
+                .HasColumnType("datetime")
+                .HasColumnName("SENDDATE");
+            entity.Property(e => e.Status)
+                .HasMaxLength(50)
+                .HasColumnName("STATUS");
+            entity.Property(e => e.TemplateId).HasColumnName("TEMPLATE_ID");
+
+            entity.HasOne(d => d.Template).WithMany(p => p.Receiveemailstatuses)
+                .HasForeignKey(d => d.TemplateId)
+                .HasConstraintName("FK_RECEIVEEMAILSTATUS_TEMPLATE");
         });
 
         modelBuilder.Entity<Role>(entity =>
         {
-            entity.HasKey(e => e.Roleid).HasName("PK__ROLE__006568E9603A09F5");
+            entity.HasKey(e => e.Roleid).HasName("PK__ROLE__006568E9241DA0AD");
 
             entity.ToTable("ROLE");
 
@@ -904,7 +907,7 @@ public partial class SchoolMedicalSystemContext : DbContext
 
         modelBuilder.Entity<Scheduledetail>(entity =>
         {
-            entity.HasKey(e => e.Scheduledetailid).HasName("PK__SCHEDULE__466875F6680625D5");
+            entity.HasKey(e => e.Scheduledetailid).HasName("PK__SCHEDULE__466875F6D75092C3");
 
             entity.ToTable("SCHEDULEDETAILS");
 
@@ -927,9 +930,9 @@ public partial class SchoolMedicalSystemContext : DbContext
 
         modelBuilder.Entity<SpecialNeedsCategory>(entity =>
         {
-            entity.HasKey(e => e.SpecialNeedCategoryId).HasName("PK__SpecialN__BAED81C0EB1546F3");
+            entity.HasKey(e => e.SpecialNeedCategoryId).HasName("PK__SpecialN__BAED81C044DE6EA7");
 
-            entity.HasIndex(e => e.CategoryName, "UQ__SpecialN__8517B2E04B69C420").IsUnique();
+            entity.HasIndex(e => e.CategoryName, "UQ__SpecialN__8517B2E0CEA02876").IsUnique();
 
             entity.Property(e => e.SpecialNeedCategoryId).HasColumnName("SpecialNeedCategoryID");
             entity.Property(e => e.CategoryName).HasMaxLength(150);
@@ -938,7 +941,7 @@ public partial class SchoolMedicalSystemContext : DbContext
 
         modelBuilder.Entity<Staff>(entity =>
         {
-            entity.HasKey(e => e.Staffid).HasName("PK__STAFF__28B5063BD6A0FFA9");
+            entity.HasKey(e => e.Staffid).HasName("PK__STAFF__28B5063BF6C6576B");
 
             entity.ToTable("STAFF");
 
@@ -977,7 +980,7 @@ public partial class SchoolMedicalSystemContext : DbContext
 
         modelBuilder.Entity<Student>(entity =>
         {
-            entity.HasKey(e => e.Studentid).HasName("PK__STUDENT__495196F0BE4B3D2F");
+            entity.HasKey(e => e.Studentid).HasName("PK__STUDENT__495196F0D25FC1B8");
 
             entity.ToTable("STUDENT");
 
@@ -1021,7 +1024,7 @@ public partial class SchoolMedicalSystemContext : DbContext
 
         modelBuilder.Entity<StudentSpecialNeed>(entity =>
         {
-            entity.HasKey(e => e.StudentSpecialNeedId).HasName("PK__StudentS__00E0B0F59706C1FD");
+            entity.HasKey(e => e.StudentSpecialNeedId).HasName("PK__StudentS__00E0B0F5938A2DD1");
 
             entity.Property(e => e.StudentSpecialNeedId).HasColumnName("StudentSpecialNeedID");
             entity.Property(e => e.Isdeleted).HasColumnName("ISDELETED");
@@ -1037,6 +1040,15 @@ public partial class SchoolMedicalSystemContext : DbContext
                 .HasForeignKey(d => d.StudentId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_StudentSpecialNeeds_Student");
+        });
+
+        modelBuilder.Entity<Table>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__Table__3214EC072B9D117C");
+
+            entity.ToTable("Table");
+
+            entity.Property(e => e.Id).ValueGeneratedNever();
         });
 
         modelBuilder.Entity<User>(entity =>
@@ -1055,7 +1067,7 @@ public partial class SchoolMedicalSystemContext : DbContext
 
         modelBuilder.Entity<Vaccinationevent>(entity =>
         {
-            entity.HasKey(e => e.Vaccinationeventid).HasName("PK__tmp_ms_x__E5A79A9A29ECC157");
+            entity.HasKey(e => e.Vaccinationeventid).HasName("PK__VACCINAT__E5A79A9AFBE0A6ED");
 
             entity.ToTable("VACCINATIONEVENT");
 
@@ -1099,7 +1111,7 @@ public partial class SchoolMedicalSystemContext : DbContext
 
         modelBuilder.Entity<Vaccinationrecord>(entity =>
         {
-            entity.HasKey(e => e.Vaccinationrecordid).HasName("PK__VACCINAT__BCD6C54890D49DF8");
+            entity.HasKey(e => e.Vaccinationrecordid).HasName("PK__VACCINAT__BCD6C5482F04897C");
 
             entity.ToTable("VACCINATIONRECORD");
 
@@ -1153,7 +1165,7 @@ public partial class SchoolMedicalSystemContext : DbContext
 
         modelBuilder.Entity<Vaccine>(entity =>
         {
-            entity.HasKey(e => e.VaccineId).HasName("PK__Vaccines__45DC68E988393B18");
+            entity.HasKey(e => e.VaccineId).HasName("PK__Vaccines__45DC68E91E510F9C");
 
             entity.Property(e => e.VaccineId).HasColumnName("VaccineID");
             entity.Property(e => e.BrandName).HasMaxLength(255);
@@ -1163,7 +1175,7 @@ public partial class SchoolMedicalSystemContext : DbContext
 
         modelBuilder.Entity<VaccineDiseaseAssociation>(entity =>
         {
-            entity.HasKey(e => e.AssociationId).HasName("PK__Vaccine___B51A19CDFDA4CD12");
+            entity.HasKey(e => e.AssociationId).HasName("PK__Vaccine___B51A19CD63EE2D7C");
 
             entity.ToTable("Vaccine_Disease_Association");
 

@@ -1,5 +1,5 @@
 ﻿using BussinessLayer.IService;
-using DataAccessLayer.DTO;
+using DataAccessLayer.DTO.HealthCheck;
 using DataAccessLayer.Entity;
 using DataAccessLayer.IRepository;
 using Microsoft.AspNetCore.Http;
@@ -67,7 +67,7 @@ namespace SchoolMedicalSystem.Controllers
         [Route("healthcheckrecordevents/{eventId}")]
         public async Task<IActionResult> UpdateHealthCheckRecordEvent(int eventId, [FromBody] Healthcheckrecordevent healthCheckRecordEvent)
         {
-            if (healthCheckRecordEvent == null || healthCheckRecordEvent.Healthcheckrecordid != eventId)
+            if (healthCheckRecordEvent == null || healthCheckRecordEvent.Healthcheckid != eventId)
             {
                 return BadRequest("Invalid health check record event data.");
             }

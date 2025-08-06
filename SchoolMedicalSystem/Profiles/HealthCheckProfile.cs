@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using DataAccessLayer.DTO;
 using DataAccessLayer.DTO.HealthCheck;
 using DataAccessLayer.Entity;
 
@@ -23,7 +22,7 @@ namespace SchoolMedicalSystem.Profiles
             CreateMap<Healthcheckrecordevent, HeatlhCheckRecordEventDto>().ReverseMap();
 
             CreateMap<Healthcheckrecordevent, HealthCheckDtoIgnoreClass>()
-                .ForMember(dest => dest.Healthcheckrecord, opt => opt.MapFrom(src => src.Healthcheckrecord))
+                .ForMember(dest => dest.Healthcheckrecord, opt => opt.MapFrom(src => src.Healthcheck))
                 .ReverseMap();
 
             

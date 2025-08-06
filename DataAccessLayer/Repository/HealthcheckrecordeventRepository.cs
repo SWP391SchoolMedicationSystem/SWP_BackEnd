@@ -20,7 +20,7 @@ namespace DataAccessLayer.Repository
         {
             return await _dbset
                 .Include(h => h.Healthcheckevent)
-                .Include(h => h.Healthcheckrecord)
+                .Include(h => h.Healthcheck)
                     .ThenInclude(hr => hr.Student)
                         .ThenInclude(s => s.Class)
                 // Do NOT include Student.Healthchecks or Class.Students

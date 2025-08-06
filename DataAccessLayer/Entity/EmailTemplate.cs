@@ -22,4 +22,6 @@ public partial class EmailTemplate
     public string? UpdatedBy { get; set; }
 
     public bool IsDeleted { get; set; }
+
+    public virtual ICollection<Receiveemailstatus> Receiveemailstatuses { get; set; } = new List<Receiveemailstatus>();
 }

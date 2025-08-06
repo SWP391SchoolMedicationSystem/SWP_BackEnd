@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using BussinessLayer.IService;
-using DataAccessLayer.DTO;
 using DataAccessLayer.DTO.HealthCheck;
 using Microsoft.AspNetCore.Mvc;
 
