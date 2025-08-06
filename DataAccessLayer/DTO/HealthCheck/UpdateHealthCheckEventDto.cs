@@ -21,7 +21,6 @@ namespace DataAccessLayer.DTO.HealthCheck
         public string? Location { get; set; }
         [Required(ErrorMessage = "Vui lòng nhập ngày sự kiện")]
         [DataType(DataType.DateTime, ErrorMessage = "Ngày sự kiện không hợp lệ")]
-
         public DateTime Eventdate { get; set; }
 
         public bool Isdeleted { get; set; }

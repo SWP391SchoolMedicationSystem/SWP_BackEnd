@@ -104,10 +104,8 @@ namespace BussinessLayer.Service
             }
         }
 
+        
         public async Task<bool> ResetPassword(string email,
-        [RegularExpression(@"^(?=.{8,})(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*]).*$",
-            ErrorMessage = "Mật khẩu cần ít nhất 8 chữ cái," +
-            "bao gồm 1 chữ in hoa, 1 số và 1 ký tự đặc biệt ")]
 
             string newPassword)
         {
@@ -118,13 +116,6 @@ namespace BussinessLayer.Service
             using var hmac = new HMACSHA512();
             user.Salt = hmac.Key;
             user.Hash = hmac.ComputeHash(Encoding.UTF8.GetBytes(newPassword));
-            var emailTemplateDTO = new EmailDTO
-            {
-                To = email,
-                Subject = "Thông báo bảo mật",
-                Body = $"Mật khẩu tài khoản đã được thay đổi",
-            };
-            await _emailService.SendEmailAsync(emailTemplateDTO);
 
             _userRepository.Update(user);
             await _userRepository.SaveChangesAsync();
@@ -283,6 +274,13 @@ namespace BussinessLayer.Service
             otpEntry.IsUsed = true;
             await _otpRepo.SaveChangesAsync();
 
+            var emailTemplateDTO = new EmailDTO
+            {
+                To = request.Email,
+                Subject = "Thông báo bảo mật",
+                Body = $"Mật khẩu tài khoản đã được thay đổi",
+            };
+            await _emailService.SendEmailAsync(emailTemplateDTO);
 
             return true;
         }

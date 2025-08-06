@@ -9,6 +9,8 @@ namespace DataAccessLayer.DTO.PersonalMedicine
 {
     public class UpdatePersonalMedicineDTO
     {
+        public int personalMedicineId { get; set; }
+
         [Required(ErrorMessage = "Vui lòng chọn thuốc")]
         [Range(1, int.MaxValue, ErrorMessage = "Vui lòng chọn thuốc hợp lí")]
         public int Medicineid { get; set; }
@@ -29,7 +31,7 @@ namespace DataAccessLayer.DTO.PersonalMedicine
         public DateTime Receiveddate { get; set; }
         [DataType(DataType.DateTime, ErrorMessage = "Ngày hết hạn không hợp lệ")]
         public DateTime? ExpiryDate { get; set; }
-
+        public bool Status { get; set; }
         public string? Note { get; set; }
     }
 }
