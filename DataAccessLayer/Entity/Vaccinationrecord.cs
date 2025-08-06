@@ -27,6 +27,8 @@ public partial class Vaccinationrecord
 
     public DateTime? Responsedate { get; set; }
 
+    public bool IsDone { get; set; } = false;
+
     public bool Isdeleted { get; set; }
 
     public DateTime Createdat { get; set; }

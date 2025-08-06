@@ -1095,6 +1095,9 @@ public partial class SchoolMedicalSystemContext : DbContext
             entity.Property(e => e.Vaccinationeventname)
                 .HasMaxLength(100)
                 .HasColumnName("VACCINATIONEVENTNAME");
+            entity.Property(e => e.IsEnded)
+                .HasDefaultValue(false)
+                .HasColumnName("ISENDED");
         });
 
         modelBuilder.Entity<Vaccinationrecord>(entity =>
@@ -1149,6 +1152,10 @@ public partial class SchoolMedicalSystemContext : DbContext
                 .HasForeignKey(d => d.Vaccinationeventid)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_VACCINATIONRECORD_VACCINATIONEVENT");
+
+            entity.Property(e => e.IsDone)
+                .HasDefaultValue(false)
+                .HasColumnName("ISDONE");
         });
 
         modelBuilder.Entity<Vaccine>(entity =>
