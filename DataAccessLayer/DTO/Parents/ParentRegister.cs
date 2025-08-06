@@ -31,6 +31,6 @@ namespace DataAccessLayer.DTO.Parents
 
         public string Address { get; set; } = null!;
 
-        public List<AddStudentDTO> Students { get; set; } = new List<AddStudentDTO>();
+        public List<AddStudentDTO> Students { get; set; } = [];
     }
 }

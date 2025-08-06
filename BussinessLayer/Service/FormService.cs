@@ -185,6 +185,8 @@ namespace BussinessLayer.Service
             addForm.Createddate = DateTime.Now; 
             addForm.Storedpath = accessToken;
             addForm.Originalfilename = storedFileName;
+            addForm.Ispending = true;
+            addForm.Isaccepted = false;
             await _formRepository.AddAsync(addForm);
             await _formRepository.SaveChangesAsync();
             return addForm;
