@@ -73,7 +73,7 @@ namespace SchoolMedicalSystem.Controllers
             var result = _notificationService.GetAllNotificationsForParent();
             return Ok(result);
         }
-/*        [HttpGet]
+        [HttpGet]
         [Route("getNotiForParent/notread/{parentId}")]
         public ActionResult<List<NotificationDTO>> GetNotificationsForParentNotRead(int parentId)
         {
@@ -87,7 +87,7 @@ namespace SchoolMedicalSystem.Controllers
             var result = _notificationService.UpdateParentNotifciationRead(parentID);
             return Ok(result);
 
-        }*/
+        }
 
         [HttpGet]
         [Route("getNotiForStaff")]
@@ -96,7 +96,7 @@ namespace SchoolMedicalSystem.Controllers
             var result = _notificationService.GetAllNotificationsForStaff();
             return Ok(result);
         }
- /*       [HttpGet]
+        [HttpGet]
         [Route("getNotiForStaff/notread/{staffid}")]
         public ActionResult<List<NotificationDTO>> GetNotificationsForStaffNotRead(int staffid)
         {
@@ -109,7 +109,7 @@ namespace SchoolMedicalSystem.Controllers
         {
             var result = _notificationService.UpdateStaffNotifciationRead(staffid);
             return Ok(result);
-        }*/
+        }
         [HttpDelete]
         [Route("delete/{id}")]
         public IActionResult DeleteNotification([FromBody] int id)

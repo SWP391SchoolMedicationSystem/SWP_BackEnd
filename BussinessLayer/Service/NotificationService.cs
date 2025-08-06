@@ -236,7 +236,7 @@ namespace BussinessLayer.Service
 
             var notifications = (from d in details
                                  join n in allNotifications on d.NotificationId equals n.NotificationId
-                                 where !d.IsDeleted && !n.IsDeleted
+                                 where !d.IsDeleted && !d.IsRead && !n.IsDeleted
                                  select n)
                                 .Distinct()
                                 .ToList();
@@ -297,7 +297,7 @@ namespace BussinessLayer.Service
 
             var notifications = (from d in details
                                  join n in allNotifications on d.NotificationId equals n.NotificationId
-                                 where !d.IsDeleted && !n.IsDeleted
+                                 where !d.IsDeleted && !d.IsRead && !n.IsDeleted
                                  select n)
                                 .Distinct()
                                 .ToList();
