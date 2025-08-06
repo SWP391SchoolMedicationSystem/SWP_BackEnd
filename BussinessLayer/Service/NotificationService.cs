@@ -171,7 +171,7 @@ namespace BussinessLayer.Service
                 notification.CreatedAt = DateTime.Now;
                 notification.Createddate = DateTime.Now;
                 notification.IsDeleted = false;
-                _notificationdRepository.Add(notification);
+                await _notificationdRepository.AddAsync(notification);
                 _notificationdRepository.Save();
 
                 foreach (var staff in activeStaffs)
