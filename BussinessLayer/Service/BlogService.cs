@@ -151,6 +151,10 @@ namespace BussinessLayer.Service
                     blog.Image = uploadResult.SecureUrl.ToString();
                 }
             }
+            if(dto.ImageFile == null || dto.ImageFile.Length == 0)
+            {
+                throw new Exception("Image file is required and must be less than 2MB.");
+            }
             await _blogRepo.AddAsync(blog);
             _blogRepo.Save();
             return imageUrl;
