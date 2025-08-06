@@ -1,5 +1,5 @@
 ﻿using BussinessLayer.IService;
-using DataAccessLayer.DTO;
+using DataAccessLayer.DTO.HealthCheck;
 using DataAccessLayer.Entity;
 using DataAccessLayer.IRepository;
 using Microsoft.AspNetCore.Http;

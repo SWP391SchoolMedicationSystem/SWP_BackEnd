@@ -15,8 +15,6 @@ public partial class Notification
 
     public bool IsDeleted { get; set; }
 
-    public bool isRead { get; set; }
-
     public string? Createdby { get; set; }
 
     public DateTime? Createddate { get; set; }
