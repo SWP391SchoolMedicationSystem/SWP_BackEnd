@@ -171,8 +171,8 @@ namespace BussinessLayer.Service
                 notification.CreatedAt = DateTime.Now;
                 notification.Createddate = DateTime.Now;
                 notification.IsDeleted = false;
-                _notificationdRepository.Add(notification);
-                _notificationdRepository.Save();
+                await _notificationdRepository.AddAsync(notification);
+                await _notificationdRepository.SaveChangesAsync();
 
                 foreach (var staff in activeStaffs)
                 {
@@ -441,7 +441,7 @@ namespace BussinessLayer.Service
                 var detail = _notificationdRepository.GetAllAsync().Result.FirstOrDefault(n => n.NotificationId == notificationId);
                 if (detail != null)
                 {
-                    detail.isRead = true;
+                    detail.IsRead = true;
                     _notificationdRepository.Update(detail);
                     _notificationdRepository.Save();
                 }

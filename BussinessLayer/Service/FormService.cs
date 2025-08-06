@@ -109,7 +109,7 @@ namespace BussinessLayer.Service
             {
                 return false;
             }
-            form.IsPending = false;
+            form.Ispending = false;
 
             form.Isaccepted = true;
             form.Modifieddate = DateTime.UtcNow;
@@ -142,7 +142,7 @@ namespace BussinessLayer.Service
             {
                 return false;
             }
-            form.IsPending = false;
+            form.Ispending = false;
             form.Isaccepted = false;
             form.Reasonfordecline = dto.Reasonfordecline;
             form.Modifieddate = DateTime.UtcNow;

@@ -20,6 +20,7 @@ namespace DataAccessLayer.DTO
         public string CreatedBy { get; set; } = null!;
         public string ModifiedBy { get; set; } = null!;
         public bool IsDeleted { get; set; }
+        public bool IsEnded { get; set; } = false;
         public int TotalStudents { get; set; }
         public int ConfirmedCount { get; set; }
         public int DeclinedCount { get; set; }

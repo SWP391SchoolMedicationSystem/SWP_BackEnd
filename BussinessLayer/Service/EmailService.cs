@@ -69,6 +69,7 @@ namespace BussinessLayer.Service
             };
         }
 
+        //Send single email async
         public async Task SendEmailAsync(EmailDTO request)
         {
             await _smtpSemaphore.WaitAsync();
@@ -85,6 +86,11 @@ namespace BussinessLayer.Service
                 await smtp.AuthenticateAsync(_config["EmailUserName"], _config["EmailPassword"]);
                 await smtp.SendAsync(email);
                 await smtp.DisconnectAsync(true);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Failed to send email to {request.To}: {ex.Message}");
+                failEmailList.Add(request); // Add to failed list
             }
             finally
             {
@@ -141,7 +147,6 @@ namespace BussinessLayer.Service
                 finally
                 {
                     await RetrySendEmailAsync(failEmailList); // Retry sending failed emails
-                    Console.WriteLine("OnBulkEmailProcessingCompleted event raised.");
                 }
             });
 

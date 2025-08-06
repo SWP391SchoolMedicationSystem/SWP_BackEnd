@@ -33,7 +33,7 @@ public partial class Healthcheck
 
     public string? Createdby { get; set; }
 
-    public virtual Student Student { get; set; } = null!;
     public virtual ICollection<Healthcheckrecordevent> Healthcheckrecordevents { get; set; } = new List<Healthcheckrecordevent>();
 
+    public virtual Student Student { get; set; } = null!;
 }

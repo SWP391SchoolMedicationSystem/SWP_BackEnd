@@ -35,7 +35,7 @@ namespace SchoolMedicalSystem.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Error retrieving forms: {ex.Message}");
+                return StatusCode(500, $"Lỗi không thể nhận form: {ex.Message}");
             }
         }
 

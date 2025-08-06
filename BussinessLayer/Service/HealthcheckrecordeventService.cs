@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
 using BussinessLayer.IService;
-using DataAccessLayer.DTO;
 using DataAccessLayer.DTO.HealthCheck;
 using DataAccessLayer.DTO.HealthRecords;
 using DataAccessLayer.Entity;
@@ -50,10 +49,10 @@ namespace BussinessLayer.Service
         }
         public async Task UpdateHealthCheckRecordEventAsync(Healthcheckrecordevent healthCheckRecordEvent)
         {
-            var healthcheck = await healthCheckEventRepository.GetByIdAsync(healthCheckRecordEvent.Healthcheckrecordid);
+            var healthcheck = await healthCheckEventRepository.GetByIdAsync(healthCheckRecordEvent.Healthcheckid);
             if (healthcheck != null)
             {
-                healthcheck.Healthcheckrecordid = healthCheckRecordEvent.Healthcheckrecordid;
+                healthcheck.Healthcheckid = healthCheckRecordEvent.Healthcheckid;
                 healthcheck.Healthcheckeventid = healthCheckRecordEvent.Healthcheckeventid;
                 healthCheckEventRepository.Update(healthcheck);
                 await healthCheckEventRepository.SaveChangesAsync();
@@ -90,7 +89,7 @@ namespace BussinessLayer.Service
         public async Task<List<Healthcheckrecordevent>> GetHealthCheckRecordEventsByEventIdAsync(int eventId)
         {
             var list = await healthCheckEventRepository.GetAllAsync();
-            return list.Where(x => x.Healthcheckevent.HealthcheckeventID == eventId).OrderBy(x => x.Healthcheckevent.Eventdate).Reverse().ToList();
+            return list.Where(x => x.Healthcheckevent.Healthcheckeventid == eventId).OrderBy(x => x.Healthcheckevent.Eventdate).Reverse().ToList();
         }
        
     }
