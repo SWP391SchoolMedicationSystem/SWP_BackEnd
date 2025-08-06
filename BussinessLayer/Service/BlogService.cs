@@ -134,9 +134,9 @@ namespace BussinessLayer.Service
                 var allowedExtensions = new[] { ".jpg", ".jpeg", ".png" };
                 var extension = Path.GetExtension(dto.ImageFile.FileName).ToLower();
                 if (!allowedExtensions.Contains(extension))
-                    throw new Exception("Only JPG and PNG and jpeg files are allowed.");
+                    throw new Exception("Chỉ hỗ trợ file jpg, jpeg, png.");
                 if (dto.ImageFile.Length > 2 * 1024 * 1024)
-                    throw new Exception("File size must be less than 2MB.");
+                    throw new Exception("File phải nhỏ hơn 2MB.");
 
                 using var stream = dto.ImageFile.OpenReadStream();
                 var uploadParams = new ImageUploadParams
@@ -153,7 +153,7 @@ namespace BussinessLayer.Service
             }
             if(dto.ImageFile == null || dto.ImageFile.Length == 0)
             {
-                throw new Exception("Image file is required and must be less than 2MB.");
+                throw new Exception("Phải tải hình lên và kích thước nhỏ hơn 2MB");
             }
             await _blogRepo.AddAsync(blog);
             _blogRepo.Save();
