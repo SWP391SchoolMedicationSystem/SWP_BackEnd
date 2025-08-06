@@ -71,5 +71,11 @@ namespace BussinessLayer.Service
             _vaccinationRecordRepo.Save();
 
         }
+
+        public async Task<List<Vaccinationrecord>> GetDoneRecordBiEventID(int eventID)
+        {
+            var records = await _vaccinationRecordRepo.GetRecordsByEventAsync(eventID);
+            return records.Where(r => r.IsDone).ToList();
+        }
     }
 }

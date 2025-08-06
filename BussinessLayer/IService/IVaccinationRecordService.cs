@@ -15,6 +15,7 @@ namespace BussinessLayer.IService
         Task AddVaccinationRecordAsync(VaccinationRecordDTO record);
         void UpdateVaccinationRecord(VaccinationRecordDTO record);
         void DeleteVaccinationRecord(int id);
+        Task<List<Vaccinationrecord>> GetDoneRecordBiEventID(int eventID);
 
     }
 }

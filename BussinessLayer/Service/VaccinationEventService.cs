@@ -67,6 +67,21 @@ namespace BussinessLayer.Service
                 eventDto.PendingCount = stats["Pending"];
                 eventDto.TotalStudents = stats["Total"];
 
+                if(eventDto.EventDate < DateTime.Now)
+                {
+                    eventDto.IsEnded = true;
+
+                    //Set all record IsDone to true
+                    var records = await _vaccinationRecordRepository.GetRecordsByEventAsync(eventDto.VaccinationEventId);
+                    foreach (var record in records)
+                    {
+                        record.IsDone = true;
+                        _vaccinationRecordRepository.Update(record);
+                    }
+
+                    await _vaccinationRecordRepository.SaveChangesAsync();
+                }
+
                 if (!string.IsNullOrEmpty(eventDto.DocumentFileName))
                 {
                     // Create download URL
@@ -79,7 +94,6 @@ namespace BussinessLayer.Service
 
             return eventDtos;
         }
-
         
 
         public async Task<VaccinationEventDTO> GetEventByAccessToken(string accessToken)
@@ -109,6 +123,21 @@ namespace BussinessLayer.Service
             eventDto.DeclinedCount = stats["Declined"];
             eventDto.PendingCount = stats["Pending"];
             eventDto.TotalStudents = stats["Total"];
+
+            if (eventDto.EventDate < DateTime.Now)
+            {
+                eventDto.IsEnded = true;
+
+                //Set all record IsDone to true
+                var records = await _vaccinationRecordRepository.GetRecordsByEventAsync(eventDto.VaccinationEventId);
+                foreach (var record in records)
+                {
+                    record.IsDone = true;
+                    _vaccinationRecordRepository.Update(record);
+                }
+
+                await _vaccinationRecordRepository.SaveChangesAsync();
+            }
 
             return eventDto;
         }
@@ -145,8 +174,6 @@ namespace BussinessLayer.Service
             }
             catch (Exception ex)
             {
-                // Log the exception
-                // You can use a logging framework like Serilog, NLog, etc.
                 throw new InvalidOperationException("An error occurred while creating the vaccination event.", ex);
             }
 
@@ -217,7 +244,7 @@ namespace BussinessLayer.Service
 
             string existingFileName = existingEvent.Documentfilename;
 
-            if(existingFileName.IsNullOrEmpty())
+            if(!existingFileName.IsNullOrEmpty())
                 // Delete the file from the disk
                 _fileHandler.Delete(existingFileName);
 
@@ -298,15 +325,15 @@ namespace BussinessLayer.Service
                     batchSize: 20 // Process 20 emails per batch
                 );
 
+                //Create record for all student
+                await _vaccinationRecordRepository.CreateRecordForAll(eventInfo);
+
                 return failList;
             }
             catch (Exception ex)
             {
-                // Log the exception
-                // You can use a logging framework like Serilog, NLog, etc.
+                throw new InvalidOperationException("An error occurred while sending emails to all parents.", ex);
             }
-            
-            return new List<EmailDTO>();
         }
 
         public async Task<List<EmailDTO>> SendVaccinationEmailToSpecificParentsAsync(SendVaccinationEmailDTO dto, List<int> parentIds, string baseUrl)
@@ -359,15 +386,17 @@ namespace BussinessLayer.Service
                     batchSize: 20 // Process 20 emails per batch
                 );
 
+                //Create record for specific parent
+                foreach (var parent in specificParents)
+                {
+                    await _vaccinationRecordRepository.CreateRecordForSpecificStudent(eventInfo, parent.Parentid);
+                }
                 return failList;
             }
             catch (Exception ex)
             {
-                // Log the exception
-                // You can use a logging framework like Serilog, NLog, etc.
+                throw new InvalidOperationException("An error occurred while sending emails to specific parents.", ex);
             }
-
-            return new List<EmailDTO>();
         }
 
         public async Task<List<EmailDTO>> SendVaccinationEmailToSpecificStudentsAsync(SendVaccinationEmailDTO dto, List<int> studentIds, string baseUrl)
@@ -421,10 +450,8 @@ namespace BussinessLayer.Service
             }
             catch (Exception ex)
             {
-                // Log the exception
-                // You can use a logging framework like Serilog, NLog, etc.
+                throw new InvalidOperationException("An error occurred while sending emails to specific students.", ex);
             }
-            return new List<EmailDTO>();
         }
 
         public async Task<bool> ProcessParentResponseAsync(ParentVaccinationResponseDTO dto)
@@ -452,19 +479,22 @@ namespace BussinessLayer.Service
                     }
                     else
                     {
+                        var eventInfo = await _vaccinationEventRepository.GetByIdAsync(dto.VaccinationEventId);
+
                         // Create new record
                         var newRecord = new Vaccinationrecord
                         {
                             Studentid = student.StudentId,
                             Vaccinationeventid = dto.VaccinationEventId,
-                            Vaccinename = "To be determined", // Will be set when actual vaccination occurs
-                            Dosenumber = 1,
-                            Vaccinationdate = DateOnly.FromDateTime(DateTime.Now), // Will be updated when actual vaccination occurs
+                            Vaccinename = "To be determined",
+                            Dosenumber = 0,
+                            Vaccinationdate = DateOnly.FromDateTime(eventInfo.Eventdate),
                             Confirmedbyparent = student.WillAttend,
                             Willattend = student.WillAttend,
                             Reasonfordecline = student.ReasonForDecline,
                             Parentconsent = dto.ParentConsent,
                             Responsedate = DateTime.Now,
+                            IsDone = false,
                             Isdeleted = false,
                             Createdat = DateTime.Now,
                             Updatedat = DateTime.Now,

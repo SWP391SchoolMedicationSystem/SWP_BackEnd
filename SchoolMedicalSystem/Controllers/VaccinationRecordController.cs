@@ -58,5 +58,19 @@ namespace SchoolMedicalSystem.Controllers
             return Ok("Updated successfully");
         }
 
+        [HttpGet]
+        [Route("vaccinationrecord/{id}")]
+        public async Task<IActionResult> GetVaccinationRecordById(int id)
+        {
+            try
+            {
+                var record = await _vaccinationRecordService.GetDoneRecordBiEventID(id);
+                return Ok(record);
+            }
+            catch (Exception ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
     }
 }

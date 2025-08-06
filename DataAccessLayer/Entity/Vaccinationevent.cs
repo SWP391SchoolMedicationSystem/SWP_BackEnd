@@ -31,5 +31,7 @@ public partial class Vaccinationevent
 
     public bool Isdeleted { get; set; }
 
+    public bool IsEnded { get; set; }
+
     public virtual ICollection<Vaccinationrecord> Vaccinationrecords { get; set; } = new List<Vaccinationrecord>();
 }

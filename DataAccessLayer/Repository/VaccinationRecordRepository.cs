@@ -29,7 +29,7 @@ namespace DataAccessLayer.Repository
         {
             return await _context.Vaccinationrecords
                 .Include(r => r.Vaccinationevent)
-                .Where(r => r.Studentid == studentId && !r.Isdeleted)
+                .Where(r => r.Studentid == studentId && !r.Isdeleted && r.IsDone)
                 .OrderByDescending(r => r.Vaccinationdate)
                 .ToListAsync();
         }
@@ -42,8 +42,6 @@ namespace DataAccessLayer.Repository
                 .Include(r => r.Vaccinationevent)
                 .FirstOrDefaultAsync(r => r.Studentid == studentId && r.Vaccinationeventid == eventId && !r.Isdeleted);
         }
-
-        //public async Task<
 
         public async Task<int> GetConfirmedCountAsync(int eventId)
         {
@@ -67,6 +65,66 @@ namespace DataAccessLayer.Repository
                 .CountAsync();
 
             return totalStudents - respondedStudents;
+        }
+
+        public async Task CreateRecordForAll(Vaccinationevent vaccineEvent)
+        {
+            var students = await _context.Students
+                .Where(s => !s.IsDeleted)
+                .ToListAsync();
+            foreach (var student in students)
+            {
+                var existingRecord = await GetRecordByStudentAndEventAsync(student.Studentid, vaccineEvent.Vaccinationeventid);
+                if (existingRecord == null)
+                {
+                    var newRecord = new Vaccinationrecord
+                    {
+                        Studentid = student.Studentid,
+                        Vaccinationeventid = vaccineEvent.Vaccinationeventid,
+                        IsDone = false,
+                        Willattend = null,
+                        Confirmedbyparent = false,
+                        Vaccinename = "To be determined",
+                        Dosenumber = 0,
+                        Vaccinationdate = DateOnly.FromDateTime(vaccineEvent.Eventdate),
+                        Isdeleted = false
+                    };
+                    await AddAsync(newRecord);
+                }
+            }
+
+            await SaveChangesAsync();
+        }
+
+        public async Task CreateRecordForSpecificStudent(Vaccinationevent vaccineEvent, int parentID)
+        {
+            var students = await _context.Students.Where(s => s.Parentid == parentID && !s.IsDeleted).ToListAsync();
+            foreach(var student in students)
+            {
+                var existingRecord = await GetRecordByStudentAndEventAsync(student.Studentid, vaccineEvent.Vaccinationeventid);
+                if (existingRecord == null)
+                {
+                    var newRecord = new Vaccinationrecord
+                    {
+                        Studentid = student.Studentid,
+                        Vaccinationeventid = vaccineEvent.Vaccinationeventid,
+                        IsDone = false,
+                        Willattend = null,
+                        Confirmedbyparent = false,
+                        Vaccinename = "To be determined",
+                        Dosenumber = 0,
+                        Vaccinationdate = DateOnly.FromDateTime(vaccineEvent.Eventdate),
+                        Createdat = DateTime.Now,
+                        Updatedat = DateTime.Now,
+                        Createdby = "System",
+                        Updatedby = "System",
+                        Isdeleted = false
+                    };
+                    await AddAsync(newRecord);
+                }
+            }
+
+            await SaveChangesAsync();
         }
     }
 } 

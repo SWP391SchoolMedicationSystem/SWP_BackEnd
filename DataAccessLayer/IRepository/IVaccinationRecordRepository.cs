@@ -10,5 +10,7 @@ namespace DataAccessLayer.IRepository
         Task<int> GetConfirmedCountAsync(int eventId);
         Task<int> GetDeclinedCountAsync(int eventId);
         Task<int> GetPendingCountAsync(int eventId);
+        Task CreateRecordForAll(Vaccinationevent vaccineEvent);
+        Task CreateRecordForSpecificStudent(Vaccinationevent vaccineEvent, int parentID);
     }
 } 
