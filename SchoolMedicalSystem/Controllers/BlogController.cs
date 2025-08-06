@@ -44,26 +44,26 @@ namespace SchoolMedicalSystem.Controllers
         public async Task<IActionResult> AddBlog([FromForm] CreateBlogDTO blogDto)
         {
             if (blogDto == null)
-                return BadRequest("Blog data is null.");
+                return BadRequest("Blog data null.");
             if (string.IsNullOrWhiteSpace(blogDto.Title) || blogDto.Title.Length < 5 ||
                 string.IsNullOrWhiteSpace(blogDto.Content) || blogDto.Content.Length < 5)
             {
-                return BadRequest("Title and content must be at least 5 characters.");
+                return BadRequest("Tên và tiêu đề phải có ít nhất 5 kí tự.");
             }
             if (blogDto.CreatedBy <= 0)
-                return BadRequest("Invalid CreatedBy ID.");
+                return BadRequest("CreatedBy Id không phù hợp.");
             try
             {
                 var imageUrl = await _blogService.AddBlogAsync(blogDto);
                 if (string.IsNullOrEmpty(imageUrl))
                 {
-                    return BadRequest("No image found.");
+                    return BadRequest("Không tìm thấy ảnh.");
                 }
-                return Ok(new { message = "Blog added successfully.", imageUrl });
+                return Ok(new { message = "Blog thêm thành công.", imageUrl });
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Error adding blog: {ex.Message}");
+                return StatusCode(500, $"Lỗi thêm blog: {ex.Message}");
             }
         }
         [HttpPut]
