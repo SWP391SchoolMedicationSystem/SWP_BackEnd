@@ -172,7 +172,7 @@ namespace BussinessLayer.Service
                 notification.Createddate = DateTime.Now;
                 notification.IsDeleted = false;
                 await _notificationdRepository.AddAsync(notification);
-                _notificationdRepository.Save();
+                await _notificationdRepository.SaveChangesAsync();
 
                 foreach (var staff in activeStaffs)
                 {
