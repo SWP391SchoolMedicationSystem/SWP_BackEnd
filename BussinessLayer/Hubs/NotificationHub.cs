@@ -30,6 +30,7 @@ namespace BussinessLayer.Hubs
                 await Groups.AddToGroupAsync(Context.ConnectionId, userId);
                 _logger.LogInformation("User {UserId} connected with ConnectionId: {ConnectionId}", userId, Context.ConnectionId);
 
+
                 // Có thể thêm vào nhiều group khác nhau
                 // Ví dụ: thêm vào group theo role
                 if (!string.IsNullOrEmpty(userRole) && userRole == "Parent")

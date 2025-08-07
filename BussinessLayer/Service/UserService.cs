@@ -105,9 +105,7 @@ namespace BussinessLayer.Service
         }
 
         
-        public async Task<bool> ResetPassword(string email,
-
-            string newPassword)
+        public async Task<bool> ResetPassword(string email, string newPassword)
         {
             var user = await GetByEmailAsync(email);
             if (user == null)
@@ -119,6 +117,15 @@ namespace BussinessLayer.Service
 
             _userRepository.Update(user);
             await _userRepository.SaveChangesAsync();
+
+            var emailTemplateDTO = new EmailDTO
+            {
+                To = email,
+                Subject = "Thông báo bảo mật",
+                Body = $"Mật khẩu tài khoản đã được thay đổi",
+            };
+            await _emailService.SendEmailAsync(emailTemplateDTO);
+
             return true;
         }
 
@@ -273,14 +280,6 @@ namespace BussinessLayer.Service
 
             otpEntry.IsUsed = true;
             await _otpRepo.SaveChangesAsync();
-
-            var emailTemplateDTO = new EmailDTO
-            {
-                To = request.Email,
-                Subject = "Thông báo bảo mật",
-                Body = $"Mật khẩu tài khoản đã được thay đổi",
-            };
-            await _emailService.SendEmailAsync(emailTemplateDTO);
 
             return true;
         }
