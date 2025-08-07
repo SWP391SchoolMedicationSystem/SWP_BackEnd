@@ -14,51 +14,38 @@ using System.Threading.Tasks;
 
 namespace BussinessLayer.Service
 {
-    public class FormService : IFormService
+    public class FormService(IFormRepository formRepository, IMapper mapper, IEmailService emailService
+            , IParentRepository parentRepository, IEmailRepo emailRepo) : IFormService
     {
-        private readonly IFormRepository _formRepository;
-        private readonly IParentRepository _parentRepository;
-        private readonly IEmailService _emailService;
-        private readonly IMapper _mapper;
-
-        public FormService(IFormRepository formRepository, IMapper mapper, IEmailService emailService
-            , IParentRepository parentRepository)
-        {
-            _formRepository = formRepository;
-            _mapper = mapper;
-            _emailService = emailService;
-            _parentRepository = parentRepository;
-        }
-
         public async Task<List<FormDTO>> GetAllFormsAsync()
         {
-            var forms = await _formRepository.GetAllAsync();
-            return _mapper.Map<List<FormDTO>>(forms);
+            var forms = await formRepository.GetAllAsync();
+            return mapper.Map<List<FormDTO>>(forms);
         }
 
         public async Task<FormDTO> GetFormByIdAsync(int id)
         {
-            var form = await _formRepository.GetByIdAsync(id);
-            return _mapper.Map<FormDTO>(form);
+            var form = await formRepository.GetByIdAsync(id);
+            return mapper.Map<FormDTO>(form);
         }
 
         public async Task<FormDTO> CreateFormAsync(CreateFormDTO formDto, string createdBy)
         {
-            var form = _mapper.Map<Form>(formDto);
+            var form = mapper.Map<Form>(formDto);
             form.Createddate = DateTime.Now;
             form.Modifieddate = DateTime.Now;
             form.Createdby = createdBy;
             form.Modifiedby = createdBy;
             form.Isaccepted = false;
             form.Ispending = true;
-            await _formRepository.AddAsync(form);
-            await _formRepository.SaveChangesAsync();
-            return _mapper.Map<FormDTO>(form);
+            await formRepository.AddAsync(form);
+            await formRepository.SaveChangesAsync();
+            return mapper.Map<FormDTO>(form);
         }
 
         public async Task<FormDTO> UpdateFormAsync(UpdateFormDTO formDto, string modifiedBy)
         {
-            var form = await _formRepository.GetByIdAsync(formDto.FormId);
+            var form = await formRepository.GetByIdAsync(formDto.FormId);
             if (form == null)
             {
                 throw new KeyNotFoundException("Form not found");
@@ -69,14 +56,14 @@ namespace BussinessLayer.Service
             form.Modifieddate = DateTime.UtcNow;
             form.Modifiedby = modifiedBy;
 
-            _formRepository.Update(form);
-            await _formRepository.SaveChangesAsync();
-            return _mapper.Map<FormDTO>(form);
+            formRepository.Update(form);
+            await formRepository.SaveChangesAsync();
+            return mapper.Map<FormDTO>(form);
         }
 
         public async Task<bool> DeleteFormAsync(int id)
         {
-            var form = await _formRepository.GetByIdAsync(id);
+            var form = await formRepository.GetByIdAsync(id);
             if (form == null)
             {
                 return false;
@@ -85,26 +72,26 @@ namespace BussinessLayer.Service
             form.Modifieddate = DateTime.UtcNow;
             
 
-            _formRepository.Update(form);
-            await _formRepository.SaveChangesAsync();
+            formRepository.Update(form);
+            await formRepository.SaveChangesAsync();
             return true;
         }
 
         public async Task<List<FormDTO>> GetFormsByParentIdAsync(int parentId)
         {
-            var forms = await _formRepository.GetFormsByParentIdAsync(parentId);
-            return _mapper.Map<List<FormDTO>>(forms);
+            var forms = await formRepository.GetFormsByParentIdAsync(parentId);
+            return mapper.Map<List<FormDTO>>(forms);
         }
 
         public async Task<List<FormDTO>> GetFormsByCategoryIdAsync(int categoryId)
         {
-            var forms = await _formRepository.GetFormsByCategoryIdAsync(categoryId);
-            return _mapper.Map<List<FormDTO>>(forms);
+            var forms = await formRepository.GetFormsByCategoryIdAsync(categoryId);
+            return mapper.Map<List<FormDTO>>(forms);
         }
 
         public async Task<bool> AcceptFormAsync(ResponseFormDTO dto)
         {
-            var form = _formRepository.GetAllAsync().Result.FirstOrDefault(f => f.FormId ==dto.FormId);
+            var form = formRepository.GetAllAsync().Result.FirstOrDefault(f => f.FormId ==dto.FormId);
             if (form == null)
             {
                 return false;
@@ -119,17 +106,25 @@ namespace BussinessLayer.Service
 
 
             // Send email notification
-                var emailTemplate = await _emailService.GetEmailByName(EmailTemplateKeys.FormResponseEmail);
+            var parent = await parentRepository.GetByIdAsync(form.Parentid.Value);
+            // Send email notification
+            var emailTemplate = await emailService.GetEmailByName(EmailTemplateKeys.FormResponseEmail);
             if (emailTemplate == null)
                 return false;
 
             emailTemplate.To = form.Parent.Email;
-            string replacedBody = FillResponseData(emailTemplate, form);
-            emailTemplate.Body = replacedBody;
+            emailTemplate.Body = emailTemplate.Body
+                .Replace("{ParentName}", parent.Fullname)
+                .Replace("{Title}", form.Title)
+                .Replace("{Reason}", form.Reason)
+                .Replace("{Reasonfordecline}", form.Reasonfordecline)
+                .Replace("{Modifieddate}", form.Modifieddate.ToString())
+                .Replace("{accepted}", "<div><p>Yêu cầu của Quý phụ huynh đã được <span class=\"status-accepted\">CHẤP THUẬN</span>.</p><p>Chúng tôi sẽ tiến hành các bước tiếp theo dựa trên nội dung yêu cầu. Chúng tôi sẽ liên hệ lại nếu cần thêm thông tin.</p></div>");
+            
 
-            await _emailService.SendEmailAsync(emailTemplate);
-            _formRepository.Update(form);
-            await _formRepository.SaveChangesAsync();
+            await emailService.SendEmailAsync(emailTemplate);
+            formRepository.Update(form);
+            await formRepository.SaveChangesAsync();
 
 
             return true;
@@ -137,7 +132,7 @@ namespace BussinessLayer.Service
 
         public async Task<bool> DeclineFormAsync(ResponseFormDTO dto)
         {
-            var form = _formRepository.GetAllAsync().Result.FirstOrDefault(f => f.FormId == dto.FormId);
+            var form = formRepository.GetAllAsync().Result.FirstOrDefault(f => f.FormId == dto.FormId);
             if (form == null)
             {
                 return false;
@@ -148,47 +143,41 @@ namespace BussinessLayer.Service
             form.Modifieddate = DateTime.UtcNow;
             form.Modifiedby = dto.Modifiedby;
             form.Staffid = dto.Staffid;
-
+            var parent = await parentRepository.GetByIdAsync(form.Parentid.Value);
             // Send email notification
-            var emailTemplate = await _emailService.GetEmailByName(EmailTemplateKeys.FormResponseEmail);
+            var emailTemplate = await emailService.GetEmailByName(EmailTemplateKeys.FormResponseEmail);
             if (emailTemplate == null)
                 return false;
 
             emailTemplate.To = form.Parent.Email;
-            string replacedBody = FillResponseData(emailTemplate, form);
-            emailTemplate.Body = replacedBody;
+            emailTemplate.Body = emailTemplate.Body
+                .Replace("{ParentName}",parent.Fullname)
+                .Replace("{Title}", form.Title)
+                .Replace("{Reason}",form.Reason)
+                .Replace("{accepted}", "<div><p>Rất tiếc, yêu cầu của Quý phụ huynh đã bị <span class=\"status-declined\">TỪ CHỐI</span>.</p><div class=\"reason-decline\"><p><strong>Lý do từ chối:</strong> {Reasonfordecline}</p><p><strong>Ngày xử lý:</strong> {Modifieddate}</p></div><p>Nếu có bất kỳ thắc mắc nào, xin vui lòng liên hệ lại với chúng tôi. Cảm ơn Quý phụ huynh đã quan tâm.</p></div>")
+                                .Replace("{Reasonfordecline}", form.Reasonfordecline)
+                .Replace("{Modifieddate}", form.Modifieddate.ToString())
+;
 
-            await _emailService.SendEmailAsync(emailTemplate);
+            await emailService.SendEmailAsync(emailTemplate);
 
-            _formRepository.Update(form);
-            await _formRepository.SaveChangesAsync();
+            formRepository.Update(form);
+            await formRepository.SaveChangesAsync();
             return true;
         }
 
-        private string FillResponseData(EmailDTO emailDTO, Form form)
-        {
-            var scribanTemplate = Template.Parse(emailDTO.Body);
-            string result = scribanTemplate.Render(new
-            {
-                parent_name = form.Parent.Fullname,
-                isAccepted = form.Isaccepted,
-                description = form.Reasonfordecline,
-                response_date = DateTime.UtcNow.ToString("dd/MM/yyyy")
-            }, member => member.Name);
-            return result;
-        }
 
 
         //Cap thuoc
         public async Task<Form> AddFormMedicineRequest(object form, string? storedFileName, string? accessToken) {
-            var addForm = _mapper.Map<Form>(form);
+            var addForm = mapper.Map<Form>(form);
             addForm.Createddate = DateTime.Now; 
             addForm.Storedpath = accessToken;
             addForm.Originalfilename = storedFileName;
             addForm.Ispending = true;
             addForm.Isaccepted = false;
-            await _formRepository.AddAsync(addForm);
-            await _formRepository.SaveChangesAsync();
+            await formRepository.AddAsync(addForm);
+            await formRepository.SaveChangesAsync();
             return addForm;
         }
         //Nghi phep
