@@ -18,6 +18,7 @@ namespace DataAccessLayer.DTO.Students
         public int Age { get; set; }
         public DateOnly Dob { get; set; }
         public bool Gender { get; set; }
+        public bool IsDeleted { get; set; }
         public ParentStudent parent { get; set; }
 
     }
