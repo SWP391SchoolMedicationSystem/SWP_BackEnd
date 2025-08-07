@@ -10,6 +10,7 @@ using AutoMapper;
 using AutoMapper.Execution;
 using BussinessLayer.IService;
 using BussinessLayer.Utils.Configurations;
+using DataAccessLayer.Constants;
 using DataAccessLayer.DTO;
 using DataAccessLayer.DTO.Parents;
 using DataAccessLayer.DTO.Students;
@@ -26,7 +27,7 @@ namespace BussinessLayer.Service
         IStudentRepo studentRepo,
         IStudentService studentService,
         IParentRepository parentRepository, IUserRepository userRepository,
-        IMapper mapper,
+        IMapper mapper, IEmailService emailService,
         IOptionsMonitor<AppSetting> option, IHttpContextAccessor httpContextAccessor) : IParentService
     {
         private readonly AppSetting _appSettings = option.CurrentValue;
@@ -83,7 +84,15 @@ namespace BussinessLayer.Service
                         student.Parentid = newParent.Parentid;
                         await studentService.AddStudentAsync(student);
                     }
-                    
+
+                    // Send email notification
+                    var emailTemplateDTO = await emailService.GetEmailByName(EmailTemplateKeys.CreateAccountEmail);
+                    emailTemplateDTO.To = parent.Email;
+                    emailTemplateDTO.Body = emailTemplateDTO.Body
+                        .Replace("{UserName}", parent.Email)
+                        .Replace("{Password}", parent.Password);
+
+                    await emailService.SendEmailAsync(emailTemplateDTO);
 
                 }
 
