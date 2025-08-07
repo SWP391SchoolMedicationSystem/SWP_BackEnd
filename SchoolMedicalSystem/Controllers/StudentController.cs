@@ -82,7 +82,7 @@ namespace SchoolMedicalSystem.Controllers
         }
 
         [HttpDelete("DeleteStudent/{id}")]
-        public async Task<IActionResult> DeleteStudent([FromBody] int id)
+        public async Task<IActionResult> DeleteStudent(int id)
         {
             await _studentService.DeleteStudent(id);
             return Ok($"Student with ID {id} deleted successfully.");
