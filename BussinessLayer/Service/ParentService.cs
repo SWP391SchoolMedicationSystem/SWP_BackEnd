@@ -23,13 +23,13 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace BussinessLayer.Service
 {
-    public class ParentService() : IParentService
+    public class ParentService(
+        IStudentRepo studentRepo,
+        IStudentService studentService,
+        IParentRepository parentRepository, IUserRepository userRepository,
+        IMapper mapper, IEmailService emailService,
+        IOptionsMonitor<AppSetting> option, IHttpContextAccessor httpContextAccessor) : IParentService
     {
-        private readonly IMapper _mapper;
-        public ParentService(IMapper mapper)
-        {
-            _mapper = mapper;
-        }
         private readonly AppSetting _appSettings = option.CurrentValue;
 
         #region HashingPassword

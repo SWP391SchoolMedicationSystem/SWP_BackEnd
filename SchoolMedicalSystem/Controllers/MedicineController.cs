@@ -1,6 +1,5 @@
 ﻿using BussinessLayer.IService;
 using DataAccessLayer.DTO.Medicines;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,7 +16,6 @@ namespace SchoolMedicalSystem.Controllers
         }
         [HttpGet]
         [Route("GetAllMedicines")]
-        [Authorize]
         public async Task<IActionResult> GetAllMedicines()
         {
             var medicines = await _medicineService.GetAllMedicinesAsync();
